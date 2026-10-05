@@ -1,0 +1,6 @@
+FROM localhost:5001/ax-task-runner@sha256:a3009d1351c4d3d6227ec77e2e4566ae8b5360b8c65dac32d22114b7d1084ab5
+COPY .state/egress-ca.crt /usr/local/share/ca-certificates/ax-local-egress.crt
+RUN update-ca-certificates
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+COPY runner/model-smoke.py /usr/local/bin/ax-model-smoke.py

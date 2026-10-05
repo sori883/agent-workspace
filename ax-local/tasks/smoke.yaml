@@ -1,0 +1,16 @@
+apiVersion: ax.io/v1alpha1
+kind: Task
+metadata:
+  name: ax-smoke
+  atespace: ax-demo
+spec:
+  image: localhost:5001/ax-task-runner@sha256:d629eeb09e0270e0819e0968ecc7e3f3989e2fc11c32d068a7b92eaa3fe5c93e
+  command:
+    - /bin/bash
+    - -lc
+    - |
+      set -euo pipefail
+      test "$(uname -m)" = aarch64
+      printf 'AX_SMOKE_OK\n' > /workspace/ax-smoke-result.txt
+      cat /workspace/ax-smoke-result.txt
+  debug: true
