@@ -1,0 +1,33 @@
+apiVersion: ax.io/v1alpha1
+kind: Task
+metadata:
+  name: ax-model-smoke-v2
+  atespace: ax-demo
+spec:
+  image: localhost:5001/ax-task-runner@sha256:6f4f48e64ae1eab1a9d1755d24675f676b0164e936d316d76ab64fa0246a2cad
+  command:
+    - /bin/bash
+    - -lc
+    - |
+      set -euo pipefail
+      trial=/workspace/model-smoke
+      mkdir -p "$trial"
+      [[ -f "$trial/verified" ]] && exit 0
+      rm -f "$trial/exit-status.txt" "$trial/result.txt"
+      while [[ ! -f "$trial/start" ]]; do
+        [[ -f "$trial/verified" ]] && exit 0
+        sleep 1
+      done
+      rm "$trial/start"
+      [[ -f "$trial/verified" ]] && exit 0
+      test -n "${GEMINI_API_KEY:-}"
+      result=0
+      timeout --signal=TERM --kill-after=5s 90s \
+        python /usr/local/bin/ax-model-smoke.py --workspace "$trial" \
+        || result=$?
+      printf '%s\n' "$result" > "$trial/exit-status.txt"
+      test "$result" -eq 0
+      test "$(cat "$trial/result.txt")" = AX_AGENT_OK
+      touch "$trial/verified"
+      printf 'AX_AGENT_VERIFIED\n'
+  debug: true

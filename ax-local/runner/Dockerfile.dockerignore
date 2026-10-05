@@ -1,0 +1,8 @@
+**
+!bin/
+!bin/ax-task-runner
+!.sources/
+!.sources/ax/
+!.sources/ax/cmd/
+!.sources/ax/cmd/ax-task-runner/
+!.sources/ax/cmd/ax-task-runner/antigravity_bootstrap.py
