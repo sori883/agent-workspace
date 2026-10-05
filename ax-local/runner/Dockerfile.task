@@ -1,0 +1,2 @@
+FROM localhost:5001/ax-task-runner@sha256:6f4f48e64ae1eab1a9d1755d24675f676b0164e936d316d76ab64fa0246a2cad
+COPY task_runtime/ /opt/ax-task/

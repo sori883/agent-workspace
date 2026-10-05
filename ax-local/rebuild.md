@@ -94,3 +94,27 @@ bash ax-local/with-env.sh docker run --rm --network none \
 ```
 
 7ケースがpassedになり終了0となる。試験対象は固定したイメージ内のmodel-smoke.pyで、ホスト側の未ビルド変更を検証したことにはならない。実モデルの試験は通信許可後に通常Actorへstartを1回だけ渡し、result・exit-status・verified・usageを確認して通信をdeny-allへ戻す。成功済みTaskの再開ではモデルを再実行しない。
+
+## タスクCLI用イメージ
+
+初期試験で使ったrunner_budgetイメージを土台に、指示と入力を受け取る実行コードを追加する。以下はリポジトリのルートで実行する。別環境で土台をビルドした場合は `runner/Dockerfile.task` のFROMもそのdigestへ更新する。
+
+```bash
+bash ax-local/with-env.sh docker build --platform linux/arm64 \
+  -t localhost:5001/ax-task-runner:task-cli \
+  -f ax-local/runner/Dockerfile.task ax-local
+bash ax-local/with-env.sh docker push localhost:5001/ax-task-runner:task-cli
+bash ax-local/with-env.sh docker image inspect localhost:5001/ax-task-runner:task-cli \
+  --format '{{json .RepoDigests}}'
+```
+
+取得したdigestを `versions.json` の `runner_task` へ設定する。新しいCLIはこの値を使ってTaskを作る。通信設定の読戻し確認を使うため、`set-egress.go` を変更した場合は上のSubstrate手順で `bin/set-egress` も再ビルドする。
+
+```bash
+runner_image=$(python3 -c 'import json; print(json.load(open("ax-local/versions.json"))["runner_task"])')
+bash ax-local/with-env.sh docker run --rm --network none \
+  --mount "type=bind,src=$PWD/ax-local/tests/verify_task_sdk.py,dst=/tmp/verify-task-sdk.py,readonly" \
+  --entrypoint python "$runner_image" /tmp/verify-task-sdk.py
+```
+
+外部ネットワークと実キーを使わず、イメージ内のSDKとHTTPスタブで12ケースを確認する。人工的な使用量は実API利用として数えない。ホスト側と共通の実行処理は `python3 -m unittest discover -s ax-local/tests -p 'test_*.py' -v` で確認できる。

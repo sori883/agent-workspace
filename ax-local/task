@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root="$(cd "$(dirname "$0")" && pwd)"
+umask 077
+exec python3 "$root/task_cli.py" "$@"

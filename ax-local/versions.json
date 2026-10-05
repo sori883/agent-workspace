@@ -10,5 +10,6 @@
   "runner_local_trust": "localhost:5001/ax-task-runner@sha256:d629eeb09e0270e0819e0968ecc7e3f3989e2fc11c32d068a7b92eaa3fe5c93e",
   "runner_budget": "localhost:5001/ax-task-runner@sha256:6f4f48e64ae1eab1a9d1755d24675f676b0164e936d316d76ab64fa0246a2cad",
   "ax_server": "localhost:5001/ax-server-340c3583cc4a989b584acf55b1619e8e@sha256:2987fd43a36f9fd0ffbed7654f5d2466045bc8aa9f1578af066a4c56b9333ce9",
-  "worker": "localhost:5001/ateom-gvisor-715889664656de67e44382a8d6ab981d@sha256:f42bf8b3a46e8212fada0ac3cd47a1e97d8818d1d614601b92be58af4a78f4c6"
+  "worker": "localhost:5001/ateom-gvisor-715889664656de67e44382a8d6ab981d@sha256:f42bf8b3a46e8212fada0ac3cd47a1e97d8818d1d614601b92be58af4a78f4c6",
+  "runner_task": "localhost:5001/ax-task-runner@sha256:1bce740d1ab5a5f7f051d67a7c36c24f7c9a21ffeebd1bb38a77c7d2b95939a5"
 }

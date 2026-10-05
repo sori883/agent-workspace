@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 func run() error {
@@ -78,7 +79,14 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("ax-demo/%s: egress hostnames set to %v\n", *actorName, hosts)
+	confirmed, err := client.GetActorEgressPolicy(ctx, &ateapipb.GetActorEgressPolicyRequest{Actor: actor})
+	if err != nil {
+		return err
+	}
+	if !proto.Equal(&ateapipb.EgressPolicy{Rules: policy.Rules}, &ateapipb.EgressPolicy{Rules: confirmed.Rules}) {
+		return fmt.Errorf("egress policy readback does not match requested rules")
+	}
+	fmt.Printf("ax-demo/%s: egress hostnames confirmed as %v\n", *actorName, hosts)
 	return nil
 }
 
