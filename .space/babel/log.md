@@ -1,4 +1,6 @@
 ## 2026-10-06
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Creation**: [認証窓口をKeycloakへ集約し内部利用者IDで会話を所有する](decisions/systems/ax/auth-foundation.md).
 * **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).
 * **Creation**: [会話の各往復を既存receipt付きAX実行として保存する](decisions/systems/ax/chat-turns.md).
 * **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).

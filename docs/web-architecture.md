@@ -4,7 +4,9 @@
 
 WebはReact RouterのFramework ModeでSSR（サーバー側での画面生成）とBFF（ブラウザ向けのサーバー処理）を提供する。共通バックエンドにAX操作をまとめ、AX内のエージェントはPythonを使う。別のPython操作サービスは必須とせず、既存Python処理を共通バックエンドから再利用する方式を採用している。受付・実行・費用の正本をPythonに置き、Honoは短命のJSONコマンドで呼び出す。workerはAPIとは別のプロセスとして動き、Web/API再起動でも受け付け済みの処理を追跡する。
 
-共通バックエンドはW1でHono/TypeScriptを採用した。認証のKeycloak、AWS各サービス、RAGの製品は候補であり、配置先は確定していない。認証基盤はOIDCを接続の基本とし、Amazon Cognitoの利用やMicrosoft Entra IDとの連携も選択肢に残す。以下はKeycloakを使った配置例で、AWSへの配置・動作確認・費用見積もりは行っていない。
+共通バックエンドはW1でHono/TypeScriptを採用した。次の認証基盤はKeycloak＋PostgreSQLを使う設計に調整し、初期のメールアドレス＋パスワード・パスキーと、将来のAmazon Cognito・Microsoft Entra ID連携を整理した。認証とアプリ用のDBを分離し、既存の会話本文・実行状態はreceiptに保持する。構成と保存先の詳細は[チャットの認証基盤](auth-foundation.md)を参照する。認証はまだ未実装である。
+
+Webからのエージェント操作・定期実行の製品拡張は、利用者が用途を整理するまで保留する。既存のチャットを土台に、認証を次の対象とする。AWS各サービス、RAGの製品と配置先は引き続き候補。以下は将来の配置例で、AWSへの配置・動作確認・費用見積もりは行っていない。
 
 ## 仮配置
 
@@ -21,7 +23,7 @@ flowchart TB
       subgraph ECS["ECS Fargate：通常のアプリ群"]
         Web["Web＋BFF<br/>React Router・SSR"]
         API["共通バックエンド<br/>認可・タスク管理・AX操作"]
-        IdP["共通認証：Keycloak候補<br/>本人確認・トークン発行"]
+        IdP["共通認証：Keycloak<br/>導入予定・配置は候補"]
         RAG["RAGサービス：将来<br/>文書の検索・アクセス判定"]
       end
       subgraph EKS["EKS＋EC2ノード：AX実行基盤・適合は未検証"]

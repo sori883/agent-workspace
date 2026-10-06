@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: AXエージェント実行基盤の構想と検討事項
-description: AX単発CLIとローカルWeb実行までの現在地、receipt統合の採用、認証・RAG・クラウド配置の構想
+description: チャット実装後に認証基盤を優先し、メール・パスキーと将来IdP連携を設計する現在地と、製品拡張の保留方針
 status: draft
 tags: 
   - ax
@@ -10,7 +10,7 @@ tags:
   - egress
 generated: 
   by: agent:codex
-  at: 2026-10-06T03:06:21.298Z
+  at: 2026-10-06T06:25:04.543Z
 sources: 
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: ax-local/task-cli.md
@@ -25,6 +25,14 @@ sources:
   - resource: .space/tasks/ax-web-runs/verification.md
 ---
 # AXを中心とするエージェント実行基盤の構想
+
+## 現在の優先事項：チャットから認証基盤へ（2026-10-06）
+
+会話履歴を踏まえるチャットをPR #8で実装し、利用者は動作を確認した。その後、Webからのエージェント操作や定期実行の製品拡張は、用途を決め切れていないため一旦保留するよう指示した。既存のチャットを土台に、次は認証基盤を整える。
+
+利用者はログイン・ログアウト、未ログイン時のチャット利用拒否、自分の会話だけを扱う3点を了承した。初期のログイン方式はメールアドレス＋パスワードとパスキー。将来はMicrosoft Entra IDやAmazon Cognitoの利用も想定する。
+
+今回の構成調整ではKeycloak＋PostgreSQLを初期の設計とし、認証用DBとアプリ用DBの権限を分離する。アプリの内部利用者IDで会話の所有者を表し、会話本文・費用・実行状態は既存receiptに維持する。詳細は[認証基盤の設計](../decisions/systems/ax/auth-foundation.md)と `docs/auth-foundation.md`。認証機能・DBの導入と実動作は未実施であり、概略設計の完了と混同しない。以下は当時の経緯として読む。
 
 ## ローカルWebから実AXへ接続（2026-10-06）
 
