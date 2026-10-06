@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "plugin": "koto",
+  "product": "codex",
+  "version": "0.1.5",
+  "entries": [
+    {
+      "source": "space/babel/LICENSE",
+      "destination": ".space/babel/LICENSE",
+      "mode": "seed",
+      "hash": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
+    },
+    {
+      "source": "space/babel/decisions/index.md",
+      "destination": ".space/babel/decisions/index.md",
+      "mode": "merge-index",
+      "hash": "189126899391b6402a811c005543cf9d4aab6f3cd0c9dcec8f478373d1b513d0",
+      "indexSource": "# decisions\n"
+    },
+    {
+      "source": "space/babel/index.md",
+      "destination": ".space/babel/index.md",
+      "mode": "merge-index",
+      "hash": "3efebaea2819f8a718a42bbf92dca3e6ac195fed9051319eebb7aa1e4e91d095",
+      "indexSource": "---\nokf_version: \"0.2\"\n---\n\n# Knowledge Base\n* [rules](rules/index.md)\n* [principles](principles/index.md)\n* [knowledge](knowledge/index.md)\n* [procedures](procedures/index.md)\n* [decisions](decisions/index.md)\n"
+    },
+    {
+      "source": "space/babel/knowledge/index.md",
+      "destination": ".space/babel/knowledge/index.md",
+      "mode": "merge-index",
+      "hash": "838e8c9b62581d32866b991cc652888ef8d800b664115927cf65b5a069441041",
+      "indexSource": "# knowledge\n"
+    },
+    {
+      "source": "space/babel/log.md",
+      "destination": ".space/babel/log.md",
+      "mode": "seed",
+      "hash": "bbc151022a66412f9639a21fc35d0152818faba05372c4c0bba7c9d1bd51e7f2"
+    },
+    {
+      "source": "space/babel/principles/attack-the-premise.md",
+      "destination": ".space/babel/principles/attack-the-premise.md",
+      "mode": "copy",
+      "hash": "119dff17c4274ae896dcd56707c1ac3837d4643d379a860c757dbb2744c2a458"
+    },
+    {
+      "source": "space/babel/principles/boundary-discipline.md",
+      "destination": ".space/babel/principles/boundary-discipline.md",
+      "mode": "copy",
+      "hash": "f1ad8b37b9a84b13ed0c50609dbca68cb7fd5b326af4b44ef1567b239026759e"
+    },
+    {
+      "source": "space/babel/principles/build-the-lever.md",
+      "destination": ".space/babel/principles/build-the-lever.md",
+      "mode": "copy",
+      "hash": "dd7d459e790527c010be1d58afb517ab5a08ccd071984ebd9ee2ffca40beb3f3"
+    },
+    {
+      "source": "space/babel/principles/encode-lessons-in-structure.md",
+      "destination": ".space/babel/principles/encode-lessons-in-structure.md",
+      "mode": "copy",
+      "hash": "08676bc5d82ce5d9d2d634c236beed887c87f272b87a458122c6dab7fd9ee595"
+    },
+    {
+      "source": "space/babel/principles/exhaust-the-design-space.md",
+      "destination": ".space/babel/principles/exhaust-the-design-space.md",
+      "mode": "copy",
+      "hash": "a8d33a1fae35932a5484b468f85ae89707d4462869762be5d7c8fef490fe63db"
+    },
+    {
+      "source": "space/babel/principles/experience-first.md",
+      "destination": ".space/babel/principles/experience-first.md",
+      "mode": "copy",
+      "hash": "12b1acd182fe0063ef4333c786b3d13ae830fe614877ca394c245bbfd9c220e7"
+    },
+    {
+      "source": "space/babel/principles/fix-root-causes.md",
+      "destination": ".space/babel/principles/fix-root-causes.md",
+      "mode": "copy",
+      "hash": "873ebab0cfeff7f7862335d3b8e8f92d2320e7588ccd752ead4e27c658d74446"
+    },
+    {
+      "source": "space/babel/principles/foundational-thinking.md",
+      "destination": ".space/babel/principles/foundational-thinking.md",
+      "mode": "copy",
+      "hash": "74218a4ab5fcb6559f6983088471d0e0659cd0549439ddc86af03386b4c3c086"
+    },
+    {
+      "source": "space/babel/principles/guard-the-context-window.md",
+      "destination": ".space/babel/principles/guard-the-context-window.md",
+      "mode": "copy",
+      "hash": "9495c9fe2ae0f00a0d6efbf13dec8aa761eee8a66779499f881b43c632acd8c7"
+    },
+    {
+      "source": "space/babel/principles/index.md",
+      "destination": ".space/babel/principles/index.md",
+      "mode": "merge-index",
+      "hash": "107ae80a2ebeb30ccdf5235d22be235876a8042fcd997cdfa3508fd37dcbf82b",
+      "indexSource": "# principles\n* [最小の変更と複雑さで解決する](laziness-protocol.md) - リファクタリングや変更量を評価し、抽象化・層・引数の受け渡しを追加するとき、削除と単純化を優先して問題を解決する最小の変更を選ぶ。\n* [ロジックより先にデータと基盤を整える](foundational-thinking.md) - 中心となる型・データ構造・共有状態や基盤と機能の順序を決めるとき、ロジックの前にデータとアクセス方法を整える。\n* [新しい要件を前提に設計し直す](redesign-from-first-principles.md) - 既存設計へ新しい要件を組み込むとき、その要件が最初から存在した場合の構造を考えて段階的に反映する。\n* [修正が繰り返し失敗したら前提を疑う](attack-the-premise.md) - 同じ前提を共有する修正が同じ検証で2回以上失敗したら、前提と偏りの所在を調べてから次の修正へ進む。\n* [追加する前に不要なものを取り除く](subtract-before-you-add.md) - 機能追加・リファクタリング・書き換えの順序を決めるとき、不要なコードや指示を先に除き、観測された用途に必要な構造を作る。\n* [読み手が追う層と覚える状態を減らす](minimize-reader-load.md) - 追いにくいコードをレビューしたり、層・ラッパー・可変状態を追加したりするとき、読み手がたどる層と覚える状態を減らして値の出所を追いやすくする。\n* [検証できる最終状態へ向けて移行する](outcome-oriented-execution.md) - 段階と検証の区切りを明示した書き換え・移行を行うとき、目標の構造へ収束させ、一時的な不整合を作業単位の終わりで解消する。\n* [実装の都合より利用者の体験を優先する](experience-first.md) - 製品・UX・機能範囲を判断するとき、利用者と保守担当者の体験を優先し、機能数より中心的な体験の完成度を高める。\n* [有力な設計案を具体化して比較する](exhaust-the-design-space.md) - 前例のないUI、複数の有力な構造、操作感が重要な判断で設計が明らかでないとき、異なる2〜3案を試作または具体化して比較する。\n* [作業や検証を再実行できる道具を作る](build-the-lever.md) - 自明な少数の編集を超える編集・移行・分析・検証を行うとき、同じ作業や確認を再実行できる最小の道具を作る。\n* [ドメインの規則をデータ構造に表す](model-the-domain.md) - 状態を持つ処理、分岐が多い処理、同じデータの前提が複数箇所へ広がる処理を書くとき、規則を型・状態機械・表などに集約する。\n* [検証を境界へ集めて内部の責務を分ける](boundary-discipline.md) - 入力検証・エラー処理・CLIや通信の接続部分を設計するとき、検証と型への変換をシステム境界に集約し、内部の業務ロジックを純粋な処理に保つ。\n* [型で不正な状態と扱い漏れを防ぐ](type-system-discipline.md) - 型・関数の引数と戻り値・状態の表現を設計またはレビューするとき、不正な組み合わせを型で防ぎ、境界での解析と網羅的な分岐で実行時の失敗を減らす。\n* [再実行で同じ最終状態へ収束させる](make-operations-idempotent.md) - 停止・再起動・再試行が起こり得るコマンド、起動終了処理、ループを設計するとき、重複実行や途中失敗からも同じ最終状態へ収束させる。\n* [呼び出し元を移行して旧APIを取り除く](migrate-callers-then-delete-legacy-apis.md) - 外部への互換性が不要で呼び出し元をまとめて移行できる内部APIの刷新では、同じ改修で呼び出し元を移行し、旧APIと不要な互換層を削除する。\n* [共有状態を分離してから排他制御を考える](separate-before-serializing-shared-state.md) - 複数の処理主体が同じファイル・ブランチ・キー・状態を書き換える可能性があるとき、共有の除去を先に検討し、必要な共有だけを構造的に直列化する。\n* [成果物の実際の動作を確かめる](prove-it-works.md) - 作業の完了を報告するときや他の担当者の成果を受け入れるとき、実際の成果物・値・動作を確認し、間接的な指標や自己申告だけを成功の根拠にしない。\n* [不具合を再現して根本原因を直す](fix-root-causes.md) - 不具合や異常な挙動を調査・修正するとき、先に再現し、観測した証拠から原因を追って症状だけを隠す修正を避ける。\n* [検証できる小さな単位で作業を進める](sequence-verifiable-units.md) - 複数箇所の修正・移行・反復する編集やコミット・PRの順序を組み立てるとき、作業を確認可能な小さな単位へ分け、各単位の検証後に次へ進む。\n* [内部実装より観測できる振る舞いをテストする](test-behavior-not-implementation.md) - テストを追加・変更するときや既存テストを残すか判断するとき、利用者と同じ入口から処理を動かし、独立した期待値と観測できる結果を比較する。\n* [必要な情報に絞ってコンテキストを保つ](guard-the-context-window.md) - 大量の出力・長い文書・反復した読み込み・並行作業で情報が増えるとき、必要な情報に絞り、主担当には根拠へ戻れる要点を集める。\n* [許可された可逆的な作業を確認待ちで止めない](never-block-on-the-human.md) - 既に依頼され権限が明らかな可逆的作業について改めて実行許可を尋ねようとするとき、自律的に進め、判断が不可欠な曖昧さや未承認の操作だけを確認する。\n* [繰り返す教訓を仕組みとして定着させる](encode-lessons-in-structure.md) - 同じ指示や修正、テスト失敗が繰り返されるとき、型・lint・共通処理・実行時検証などの仕組みで再発を防ぐ。\n"
+    },
+    {
+      "source": "space/babel/principles/laziness-protocol.md",
+      "destination": ".space/babel/principles/laziness-protocol.md",
+      "mode": "copy",
+      "hash": "de71b5a33ec94572cb1e79daf09eb60a647cb3c175742bcc951114264892acd7"
+    },
+    {
+      "source": "space/babel/principles/make-operations-idempotent.md",
+      "destination": ".space/babel/principles/make-operations-idempotent.md",
+      "mode": "copy",
+      "hash": "6b7b20fabac336364b669634877459fd3fd8e374d074ece3c2f73aea1a3d7da5"
+    },
+    {
+      "source": "space/babel/principles/migrate-callers-then-delete-legacy-apis.md",
+      "destination": ".space/babel/principles/migrate-callers-then-delete-legacy-apis.md",
+      "mode": "copy",
+      "hash": "161520805d765334f596f85f5fbffdab168b890917cc213b5236ba8fe8a4a501"
+    },
+    {
+      "source": "space/babel/principles/minimize-reader-load.md",
+      "destination": ".space/babel/principles/minimize-reader-load.md",
+      "mode": "copy",
+      "hash": "b16c67af5aaf60f8fba8aed38bf683e1e72bb578efed8032d0a5d5554de03caa"
+    },
+    {
+      "source": "space/babel/principles/model-the-domain.md",
+      "destination": ".space/babel/principles/model-the-domain.md",
+      "mode": "copy",
+      "hash": "622dad6f285f938cd5e3bb9bd5577040940cde35267771edf3d759ca55ea2f4c"
+    },
+    {
+      "source": "space/babel/principles/never-block-on-the-human.md",
+      "destination": ".space/babel/principles/never-block-on-the-human.md",
+      "mode": "copy",
+      "hash": "ffa0e150f4caf767ee1ffa3f403e79665349738304536a43fd000a024281abc7"
+    },
+    {
+      "source": "space/babel/principles/outcome-oriented-execution.md",
+      "destination": ".space/babel/principles/outcome-oriented-execution.md",
+      "mode": "copy",
+      "hash": "8d0c6830370f9bcb6b50ec7d1f785e5f7cd7167a6c3c44f0a458843b20587983"
+    },
+    {
+      "source": "space/babel/principles/prove-it-works.md",
+      "destination": ".space/babel/principles/prove-it-works.md",
+      "mode": "copy",
+      "hash": "5ace5a8192279f1e92bbf18a98948c7d95da9df1cbf43f7fd7c5bfccc5d7c14b"
+    },
+    {
+      "source": "space/babel/principles/redesign-from-first-principles.md",
+      "destination": ".space/babel/principles/redesign-from-first-principles.md",
+      "mode": "copy",
+      "hash": "97bd355db09a4cd5e046f36d91722b28b0acd69d0947bc97fa860887c50e07f5"
+    },
+    {
+      "source": "space/babel/principles/separate-before-serializing-shared-state.md",
+      "destination": ".space/babel/principles/separate-before-serializing-shared-state.md",
+      "mode": "copy",
+      "hash": "7cf5113549ef8075ddf4e8bfa92cd46c60652b46ca2770bb7c3f50f5cc93f1eb"
+    },
+    {
+      "source": "space/babel/principles/sequence-verifiable-units.md",
+      "destination": ".space/babel/principles/sequence-verifiable-units.md",
+      "mode": "copy",
+      "hash": "82ab9f7c979de12ea93cce33f61e90aba6b845158f5b22e67818475f89c31528"
+    },
+    {
+      "source": "space/babel/principles/subtract-before-you-add.md",
+      "destination": ".space/babel/principles/subtract-before-you-add.md",
+      "mode": "copy",
+      "hash": "ee45e31ed4926195605d927b92b5b4d88b8c7e74afe83097b0bd9a9f16cac85a"
+    },
+    {
+      "source": "space/babel/principles/test-behavior-not-implementation.md",
+      "destination": ".space/babel/principles/test-behavior-not-implementation.md",
+      "mode": "copy",
+      "hash": "92c915137a67d607a2e9e7bbfee43c40a689819a34e78e4e46c5b3d8df0abd9d"
+    },
+    {
+      "source": "space/babel/principles/type-system-discipline.md",
+      "destination": ".space/babel/principles/type-system-discipline.md",
+      "mode": "copy",
+      "hash": "427d5f6d7479eca7200f5cea8dc7f3af671010b0947c257e72bd6d52253f6f9d"
+    },
+    {
+      "source": "space/babel/procedures/index.md",
+      "destination": ".space/babel/procedures/index.md",
+      "mode": "merge-index",
+      "hash": "a4cfb78192f61d26dffad896651fedc60927600f5ba7388f2c8f69fae680e53b",
+      "indexSource": "# procedures\n"
+    },
+    {
+      "source": "space/babel/rules/index.md",
+      "destination": ".space/babel/rules/index.md",
+      "mode": "merge-index",
+      "hash": "b063d404f1417cfe60efad23a84eb7a9539b123ebc87f401aa0b7c3b86067df1",
+      "indexSource": "# rules\n"
+    },
+    {
+      "source": "templates/agents/comment-curator.toml",
+      "destination": ".codex/agents/comment-curator.toml",
+      "mode": "copy",
+      "hash": "55fd9709f114fab173c39bd0ade996886fe07a441a2250f90065c08b33922671"
+    },
+    {
+      "source": "templates/agents/devlow-worker.toml",
+      "destination": ".codex/agents/devlow-worker.toml",
+      "mode": "copy",
+      "hash": "b503fe64c43c86f316fea5e7ea0661a095a37fb27df85d6937081d48bcb8219e"
+    },
+    {
+      "source": "templates/AGENTS.md",
+      "destination": "AGENTS.md",
+      "mode": "managed-block",
+      "hash": "3b519730a5a3781f99657718531eae4e9b452a788ea3484af2a24835650df0ab"
+    }
+  ]
+}

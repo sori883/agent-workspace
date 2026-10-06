@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "plugin": "koto",
+  "product": "codex",
+  "version": "0.1.5",
+  "files": [
+    {
+      "source": "space/babel/LICENSE",
+      "destination": ".space/babel/LICENSE",
+      "mode": "seed"
+    },
+    {
+      "source": "space/babel/decisions/index.md",
+      "destination": ".space/babel/decisions/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "space/babel/index.md",
+      "destination": ".space/babel/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "space/babel/knowledge/index.md",
+      "destination": ".space/babel/knowledge/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "space/babel/log.md",
+      "destination": ".space/babel/log.md",
+      "mode": "seed"
+    },
+    {
+      "source": "space/babel/principles/attack-the-premise.md",
+      "destination": ".space/babel/principles/attack-the-premise.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/boundary-discipline.md",
+      "destination": ".space/babel/principles/boundary-discipline.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/build-the-lever.md",
+      "destination": ".space/babel/principles/build-the-lever.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/encode-lessons-in-structure.md",
+      "destination": ".space/babel/principles/encode-lessons-in-structure.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/exhaust-the-design-space.md",
+      "destination": ".space/babel/principles/exhaust-the-design-space.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/experience-first.md",
+      "destination": ".space/babel/principles/experience-first.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/fix-root-causes.md",
+      "destination": ".space/babel/principles/fix-root-causes.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/foundational-thinking.md",
+      "destination": ".space/babel/principles/foundational-thinking.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/guard-the-context-window.md",
+      "destination": ".space/babel/principles/guard-the-context-window.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/index.md",
+      "destination": ".space/babel/principles/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "space/babel/principles/laziness-protocol.md",
+      "destination": ".space/babel/principles/laziness-protocol.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/make-operations-idempotent.md",
+      "destination": ".space/babel/principles/make-operations-idempotent.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/migrate-callers-then-delete-legacy-apis.md",
+      "destination": ".space/babel/principles/migrate-callers-then-delete-legacy-apis.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/minimize-reader-load.md",
+      "destination": ".space/babel/principles/minimize-reader-load.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/model-the-domain.md",
+      "destination": ".space/babel/principles/model-the-domain.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/never-block-on-the-human.md",
+      "destination": ".space/babel/principles/never-block-on-the-human.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/outcome-oriented-execution.md",
+      "destination": ".space/babel/principles/outcome-oriented-execution.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/prove-it-works.md",
+      "destination": ".space/babel/principles/prove-it-works.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/redesign-from-first-principles.md",
+      "destination": ".space/babel/principles/redesign-from-first-principles.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/separate-before-serializing-shared-state.md",
+      "destination": ".space/babel/principles/separate-before-serializing-shared-state.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/sequence-verifiable-units.md",
+      "destination": ".space/babel/principles/sequence-verifiable-units.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/subtract-before-you-add.md",
+      "destination": ".space/babel/principles/subtract-before-you-add.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/test-behavior-not-implementation.md",
+      "destination": ".space/babel/principles/test-behavior-not-implementation.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/type-system-discipline.md",
+      "destination": ".space/babel/principles/type-system-discipline.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/procedures/index.md",
+      "destination": ".space/babel/procedures/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "space/babel/rules/index.md",
+      "destination": ".space/babel/rules/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "templates/agents/comment-curator.toml",
+      "destination": ".codex/agents/comment-curator.toml",
+      "mode": "copy"
+    },
+    {
+      "source": "templates/agents/devlow-worker.toml",
+      "destination": ".codex/agents/devlow-worker.toml",
+      "mode": "copy"
+    },
+    {
+      "source": "templates/AGENTS.md",
+      "destination": "AGENTS.md",
+      "mode": "managed-block"
+    }
+  ]
+}
