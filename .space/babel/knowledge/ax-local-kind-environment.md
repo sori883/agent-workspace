@@ -10,10 +10,10 @@ code_refs:
   - ax-local/
 type: knowledge
 title: AXローカル実行基盤の構成と確認方法
-description: ARM64のAXローカル基盤と単発タスクCLIの構成・費用制御・復旧方法・実行検証結果
+description: Kubernetes外のDocker上PostgreSQLへ移行したAXローカル基盤の構成・費用制御・保存と復旧の検証結果
 generated: 
   by: agent:codex
-  at: 2026-10-05T12:35:29.376Z
+  at: 2026-10-06T07:52:08.309Z
 sources: 
   - title: 検証対象AXソース
     resource: https://github.com/google/ax/tree/ac2332829f22360ff97b0ba34d94dd0dd782f17e
@@ -23,10 +23,23 @@ sources:
     title: ローカル実行の検証結果
   - resource: https://github.com/sori883/agent-workspace/pull/2
   - resource: ax-local/verification.md
+  - resource: ax-local/postgres/README.md
 ---
 # AXのローカル実行基盤
 
 2026-10-03にkindを構築し、2026-10-05に既存クラスタを再作成せずローカルレジストリ・Substrate・AXを追加した。AXからARM64のgVisor Taskを起動して出力と正常終了、削除・再作成、停止・再開時のファイル保持を確認済み。Geminiを使ったエージェントのファイル作成・正常終了・使用量を確認し、最初のマイルストーンを達成した。2,000円の費用ルールを維持し、試験後の外部通信は閉じている。
+
+## PostgreSQLをKubernetesの外へ移行（2026-10-06）
+
+利用者の承認で、ローカルDockerのPostgreSQL 18.4へSubstrateの既存atepgを移した。旧Podと同一image digestをComposeに固定し、専用Docker volume ax-local-postgres-dataの/var/lib/postgresql/18/dockerへ保存する。ホストは127.0.0.1:55432、kindのPodはhost.docker.internal:55432を使う。接続先はローカル環境の設定であり、本番のDB配置・提供元は未選定。
+
+substrate/ax_substrate、keycloak/ax_keycloak、app/ax_appの3組に分離した。用途別loginは非superuserで他DB接続を拒否し、TLSのCA・ホスト名をverify-fullで確認する。Keycloakとアプリ用DBは空、認証機能は未実装。既存会話・receiptは.state/runsに維持する。固定Substrateは起動ログへDSNを出すためパスワードをDSNへ含めず、SecretのPGPASSWORDで渡す。秘密ファイル・dumpは.state/postgres配下に限定しGitへ入れない。
+
+全API停止・Pod消滅・旧client接続0の後、最終dump前後と復元先の16表全行hash/件数とsequence1件が一致した。worker_outbox全partitionとworker_outbox_trimは旧cluster固有のXIDを持つ派生通知なので、一致を記録した後に復元先だけ同一transactionで初期化し、一次表の不変を再照合した。全APIのcold起動で現在状態を読み直す。新APIの起動自体が書き込むため、起動前に永続markerを作り、以降は古いDBへ自動rollbackしない。
+
+既存15 Taskを保持し、新offline Taskの終了0・成果物23bytes・回収/通信deny/停止を確認。DBコンテナ再作成後も全表/sequenceが一致し、Task snapshotの再開でも成果物hashを保持した。移行後の3DB dumpとSubstrateの試験復元も成功。旧Postgresは0台、data-postgres-0 PVCと移行backupを保持する。追加モデルAPI呼び出し0。Redis永続化とRustFSを含む全体復旧は未実施。
+
+再利用手順はax-local/postgres/README.md、実測はax-local/verification.md、作業記録は.space/tasks/ax-postgres/task.md。初期導入用rebuild.mdの上流installerを無条件に再適用して外部DB接続を上書きしない。
 
 ## 現在の構成
 
@@ -69,7 +82,7 @@ ActorのEgressPolicyがない場合は拒否される。標準TLS passthroughで
 
 AXのKubernetes権限はax-demo/gemini-api-secretのgetだけに限定し、独立レビューで他Secret取得・一覧・他namespaceの拒否を実測した。解決後のキーはActorTemplateのenvとしてSubstrate側にも保存される。この版はSubstrateのatespace単位RBACが未実装なので、共有利用者間の隔離が完成したとは扱わない。公開CAの再作成時は派生runnerとTaskの更新が必要。
 
-公式kind構成のPrometheusに6 targetのup=1、Jaegerに4 service（ateom-gvisor、atenet-router、ateapi、atelet）を確認した。Actorログはkubectl-ate logsで取得できる。アラートと長期保管は未構築。Postgres/RustFSはkindのPVC、レジストリはDocker volume、AX Redisは永続volumeなし。Redis Pod再作成によるAX登録情報の消失、kind削除後の復旧は本番向けの耐久性を満たしていない。
+公式kind構成のPrometheusに6 targetのup=1、Jaegerに4 service（ateom-gvisor、atenet-router、ateapi、atelet）を確認した。Actorログはkubectl-ate logsで取得できる。アラートと長期保管は未構築。初期導入時はPostgres/RustFSともkindのPVCだった。2026-10-06にPostgresだけを上記Docker volumeへ移し、RustFSはkindのPVC、レジストリはDocker volume、AX Redisは永続volumeなし。Redis Pod再作成によるAX登録情報の消失、kind削除後の復旧は本番向けの耐久性を満たしていない。
 
 ## モデル接続と操作
 

@@ -23,7 +23,7 @@ flowchart LR
     AX --> API[Substrate API]
     API --> Worker[gVisorワーカー]
     Worker --> Task[AX runnerとTask]
-    API --> PG[Postgres]
+    API --> PG[Docker上のPostgreSQL]
     Worker --> Store[RustFSのスナップショット]
     Task --> Gateway[外向き通信ゲートウェイ]
     Gateway --> Allowed[許可した接続先]
@@ -31,6 +31,8 @@ flowchart LR
 ```
 
 AXサーバーは `ax-system`、Substrateは主に `ate-system`、実行ワーカーは `ax-demo` に置く。ワーカーは1GiB・1 CPU上限で2台。Task本体と起動用スナップショットの準備が1台を取り合わないための構成。
+
+PostgreSQLはKubernetesの外のDockerコンテナに置く。実行基盤・認証・アプリでDBと接続ユーザーを分けた。[DBの起動・接続・バックアップ手順](postgres/README.md)を参照。認証用・アプリ用DBは空で、会話は引き続き `.state/runs` に保存する。
 
 ## Taskを操作する
 
@@ -119,6 +121,7 @@ bash ax-local/with-env.sh kubectl -n otel-system port-forward --address=127.0.0.
 | `kind.yaml` / `kubeconfig` | 既存クラスタの設定と専用接続情報。kubeconfigはGit対象外 |
 | `mise.toml` / `versions.json` | Go・koの指定と、AX・Substrate・イメージの固定版 |
 | `deploy/` | AXのローカル設定、Secret取得権限、WorkerPool |
+| `postgres/` | Kubernetes外のPostgreSQL、TLS・権限分離、移行・照合手順 |
 | `runner/` | 公式runnerをARM64で動かすDockerfileと、公開CAを加える派生イメージ |
 | `tasks/` / `egress/` | 実行例と通信許可先 |
 | `.sources/` | 固定した公式ソース。Git対象外 |
@@ -133,6 +136,6 @@ bash ax-local/with-env.sh kubectl -n otel-system port-forward --address=127.0.0.
 
 単一利用者向けのローカル検証環境。AXのSecret取得は指定した1件のgetに制限したが、解決後のキーはActorTemplateのenvとしてSubstrate側にも保存される。この版にはSubstrateのatespace単位RBACがまだないため、共有サービスとしての利用者間隔離は別途必要。
 
-PostgresとRustFSはkind内のPVC、レジストリはDocker volumeを使う。AXのRedisは公式サンプル同様に永続volumeがなく、Redis Podを作り直すとAXのTask等の登録情報が失われる。kind削除後の復旧、バックアップ、本番向けの耐久性は未確認。
+PostgreSQLは専用のDocker volume、RustFSはkind内のPVC、レジストリはDocker volumeを使う。AXのRedisは公式サンプル同様に永続volumeがなく、Redis Podを作り直すとAXのTask等の登録情報が失われる。PostgreSQLのdump復元と再起動後の保持は確認済み。Redis/RustFSを含む全体の復旧、kind削除後の復旧、本番向けの耐久性は未確認。
 
 クラスタの検査用CAを再作成した場合は、公開CAを取り直して派生runnerを再ビルドし、新しいイメージでTaskを作り直す。既存CAを無条件に使い続けない。
