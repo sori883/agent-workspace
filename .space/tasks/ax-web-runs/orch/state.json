@@ -1,0 +1,2718 @@
+{
+  "schemaVersion": 1,
+  "revision": 20,
+  "project": "/Users/const/sori883/agent-workspace",
+  "coordinator": {
+    "actor": "parent",
+    "session": "ax-web-runs-parent"
+  },
+  "createdAt": "2026-10-06T02:24:40.693Z",
+  "updatedAt": "2026-10-06T03:07:03.776Z",
+  "units": [
+    {
+      "id": "ax-web-runs",
+      "parent": null,
+      "size": "standard",
+      "purpose": "Webからの実AX実行を1PRで完成させる",
+      "track": "",
+      "owner": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "verifiers": [],
+      "scope": [
+        "UI、統合、実AX、記録、PR"
+      ],
+      "taskRef": ".space/tasks/ax-web-runs/task.md",
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "delivery",
+          "description": "Webからの実AX実行を1PRで完成させる。検証結果と限界を記録した",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "result"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 5,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "running",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-web-runs/design.md",
+                  "digest": "6d2460bc35a3da2ad710b5b5d75ab94bc821d777ca51fd8f063c6987a3629e8d"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-web-runs/verification.md",
+                  "digest": "a224fbadd38e8b9e69a57c0a1c557e823be861cb62fa8f182844978a7924a4f1"
+                }
+              ]
+            },
+            "review": {
+              "selection": "execute",
+              "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-web-runs/review.md",
+                  "digest": "8e825b10595f2db9d9fd037a756dbc14ff4749833fbc385b330d661d16fe1dc9"
+                }
+              ]
+            },
+            "deliver": {
+              "selection": "execute",
+              "reason": "Webからの実AX実行を1PRで完成させる",
+              "state": "pending",
+              "refs": []
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-06T02:40:06.251Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": null,
+      "contractHistory": []
+    },
+    {
+      "id": "ax-web-python",
+      "parent": "ax-web-runs",
+      "size": "small",
+      "purpose": "受付・実行・復旧を既存receiptで安全に扱う",
+      "track": "",
+      "owner": {
+        "actor": "python",
+        "session": "ax-web-runs-python"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "verifiers": [],
+      "scope": [
+        "ax-local/task_cli.py",
+        "ax-local/web_bridge.py",
+        "ax-local/tests/"
+      ],
+      "taskRef": null,
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "delivery",
+          "description": "受付・実行・復旧を既存receiptで安全に扱う。検証結果と限界を記録した",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "result"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 7,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+                  "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+                  "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-06T02:40:06.309Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": "f0c9aad6-4a21-4e12-95e1-7dd763c32658",
+      "contractHistory": []
+    },
+    {
+      "id": "ax-web-http",
+      "parent": "ax-web-runs",
+      "size": "small",
+      "purpose": "Webの認証境界を保ってPythonと接続する",
+      "track": "",
+      "owner": {
+        "actor": "http",
+        "session": "ax-web-runs-http"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "verifiers": [],
+      "scope": [
+        "web/api/",
+        "web/shared/run-contracts.ts",
+        "web/shared/http.ts",
+        "web/app/lib/runs.server.ts",
+        "web/tests/runs.test.ts"
+      ],
+      "taskRef": null,
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "delivery",
+          "description": "Webの認証境界を保ってPythonと接続する。検証結果と限界を記録した",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "result"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 7,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+                  "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+                  "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-06T02:40:06.357Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": "3622b803-da54-4d9a-be1a-2c6ae418483f",
+      "contractHistory": []
+    }
+  ],
+  "checks": [
+    {
+      "id": "4ee5a8e6-c685-43d8-8b17-8cd927f0d4d4",
+      "unit": "ax-web-python",
+      "attempt": 1,
+      "condition": "delivery",
+      "target": {
+        "id": "result",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "ax-local/task_cli.py",
+            "digest": "92916509ac8bbc93f8765264a51413a8d0b2028e15b11afcddf4ccdfb6a5c449"
+          },
+          {
+            "ref": "ax-local/tests/test_web_bridge.py",
+            "digest": "7ed52fd4b66a4fd40664178d2a4594f9c414379e2abe0321d2ec041cb107ae31"
+          },
+          {
+            "ref": "ax-local/web_bridge.py",
+            "digest": "127a4473048d21cbfc266ca37728fd1059895532cf4390d06f4723a75e48a5af"
+          }
+        ],
+        "version": "df9ae6960b840b1654ef37a0248977478c91c2dbcdc42cf23131b58e44792163"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+          "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+        }
+      ],
+      "reason": "",
+      "method": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+      "environment": "macOS local checkout; fake transport/loopback tests",
+      "observedAt": "2026-10-06T02:59:03.484519+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-06T02:59:03.551Z"
+    },
+    {
+      "id": "ecfb6efb-e6f6-4e23-8e2d-8954e076b5b4",
+      "unit": "ax-web-http",
+      "attempt": 1,
+      "condition": "delivery",
+      "target": {
+        "id": "result",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "web/api/app.ts",
+            "digest": "fd1da4793b91561a711821cac6b5bef9a450e3e62707de52d3e8edf6220cd534"
+          },
+          {
+            "ref": "web/api/index.ts",
+            "digest": "7b35cb77bef64a1d669606dea6270d3c3bb7d2f7a3e6906f8ab118e31ae876a1"
+          },
+          {
+            "ref": "web/api/run-service.ts",
+            "digest": "baf9bbf58bf3cf22dd0851441ced1ba79b240fe174a8048849639f0c679b8336"
+          },
+          {
+            "ref": "web/app/lib/runs.server.ts",
+            "digest": "74753760a4c9940bc37647dcf2b1bfe07dc30159d04e2fb48335b9d011524444"
+          },
+          {
+            "ref": "web/shared/http.ts",
+            "digest": "7c4382523798d924e577d5a7a987559c352eefa5302bee3fe15ee6e56e986106"
+          },
+          {
+            "ref": "web/shared/run-contracts.ts",
+            "digest": "6f5f271a68c8069ac6329637fc9ecaf78aa28e28cc9ba67e165f06fb3ae15a5d"
+          },
+          {
+            "ref": "web/tests/runs.test.ts",
+            "digest": "a2f66ae49f72bd15837d8a50322bcd96b9ab8a284f6d04adb58f55cbfda4bfcc"
+          }
+        ],
+        "version": "c756b3cb84898d4a05643f11dc320457789d4c8c168fba3a52819e61c80e1cf3"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+          "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+        }
+      ],
+      "reason": "",
+      "method": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+      "environment": "macOS local checkout; fake transport/loopback tests",
+      "observedAt": "2026-10-06T02:59:12.564307+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-06T02:59:12.599Z"
+    }
+  ],
+  "submissions": [
+    {
+      "id": "f0c9aad6-4a21-4e12-95e1-7dd763c32658",
+      "unit": "ax-web-python",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "4ee5a8e6-c685-43d8-8b17-8cd927f0d4d4"
+      ],
+      "outputs": [
+        {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/task_cli.py",
+              "digest": "92916509ac8bbc93f8765264a51413a8d0b2028e15b11afcddf4ccdfb6a5c449"
+            },
+            {
+              "ref": "ax-local/tests/test_web_bridge.py",
+              "digest": "7ed52fd4b66a4fd40664178d2a4594f9c414379e2abe0321d2ec041cb107ae31"
+            },
+            {
+              "ref": "ax-local/web_bridge.py",
+              "digest": "127a4473048d21cbfc266ca37728fd1059895532cf4390d06f4723a75e48a5af"
+            }
+          ],
+          "version": "df9ae6960b840b1654ef37a0248977478c91c2dbcdc42cf23131b58e44792163"
+        }
+      ],
+      "report": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+          "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "at": "2026-10-06T02:59:03.802Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "reason": "親が差分、実テスト結果、独立レビューと統合証拠を照合した。",
+        "at": "2026-10-06T02:59:04.127Z"
+      }
+    },
+    {
+      "id": "3622b803-da54-4d9a-be1a-2c6ae418483f",
+      "unit": "ax-web-http",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "ecfb6efb-e6f6-4e23-8e2d-8954e076b5b4"
+      ],
+      "outputs": [
+        {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/api/app.ts",
+              "digest": "fd1da4793b91561a711821cac6b5bef9a450e3e62707de52d3e8edf6220cd534"
+            },
+            {
+              "ref": "web/api/index.ts",
+              "digest": "7b35cb77bef64a1d669606dea6270d3c3bb7d2f7a3e6906f8ab118e31ae876a1"
+            },
+            {
+              "ref": "web/api/run-service.ts",
+              "digest": "baf9bbf58bf3cf22dd0851441ced1ba79b240fe174a8048849639f0c679b8336"
+            },
+            {
+              "ref": "web/app/lib/runs.server.ts",
+              "digest": "74753760a4c9940bc37647dcf2b1bfe07dc30159d04e2fb48335b9d011524444"
+            },
+            {
+              "ref": "web/shared/http.ts",
+              "digest": "7c4382523798d924e577d5a7a987559c352eefa5302bee3fe15ee6e56e986106"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "6f5f271a68c8069ac6329637fc9ecaf78aa28e28cc9ba67e165f06fb3ae15a5d"
+            },
+            {
+              "ref": "web/tests/runs.test.ts",
+              "digest": "a2f66ae49f72bd15837d8a50322bcd96b9ab8a284f6d04adb58f55cbfda4bfcc"
+            }
+          ],
+          "version": "c756b3cb84898d4a05643f11dc320457789d4c8c168fba3a52819e61c80e1cf3"
+        }
+      ],
+      "report": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+          "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "at": "2026-10-06T02:59:12.652Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "reason": "親が差分、実テスト結果、独立レビューと統合証拠を照合した。",
+        "at": "2026-10-06T02:59:12.725Z"
+      }
+    }
+  ],
+  "messages": [
+    {
+      "id": "6b7af09c-4ec6-48c4-970b-bf1680035d8c",
+      "unit": "ax-web-python",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+          "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+        }
+      ],
+      "submission": "f0c9aad6-4a21-4e12-95e1-7dd763c32658",
+      "state": "processed",
+      "resolution": "accepted: 親が差分、実テスト結果、独立レビューと統合証拠を照合した。",
+      "at": "2026-10-06T02:59:03.802Z"
+    },
+    {
+      "id": "0aacad78-8a78-4bc7-a146-c9a6b6293326",
+      "unit": "ax-web-http",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+          "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+        }
+      ],
+      "submission": "3622b803-da54-4d9a-be1a-2c6ae418483f",
+      "state": "processed",
+      "resolution": "accepted: 親が差分、実テスト結果、独立レビューと統合証拠を照合した。",
+      "at": "2026-10-06T02:59:12.652Z"
+    }
+  ],
+  "gates": [],
+  "operations": [
+    {
+      "id": "init-ax-web-runs",
+      "hash": "61e30832352d9cc710833ab4e33697b2d187091de4225f1f1b6efd1100359de3",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "init",
+      "request": {
+        "command": "init",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "init-ax-web-runs",
+        "input": {
+          "project": "/Users/const/sori883/agent-workspace"
+        }
+      },
+      "affectedUnits": [],
+      "evidence": [],
+      "revision": 1,
+      "data": {
+        "project": "/Users/const/sori883/agent-workspace",
+        "coordinator": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "store": "/Users/const/sori883/agent-workspace/.space/tasks/ax-web-runs/orch"
+      },
+      "at": "2026-10-06T02:24:40.693Z"
+    },
+    {
+      "id": "add-ax-web-runs",
+      "hash": "e7b97f6eda9676f89805835378c9bf8b1e5a535d0de97a6c2f33dd5d11692738",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "ax-web-runs",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "add-ax-web-runs",
+        "input": {
+          "size": "standard",
+          "purpose": "Webからの実AX実行を1PRで完成させる",
+          "owner": {
+            "actor": "parent",
+            "session": "ax-web-runs-parent"
+          },
+          "recorder": {
+            "actor": "parent",
+            "session": "ax-web-runs-parent"
+          },
+          "scope": [
+            "UI、統合、実AX、記録、PR"
+          ],
+          "conditions": [
+            {
+              "id": "delivery",
+              "description": "Webからの実AX実行を1PRで完成させる。検証結果と限界を記録した",
+              "purpose": "delivery",
+              "required": true,
+              "target": "result"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "Webからの実AX実行を1PRで完成させる"
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "Webからの実AX実行を1PRで完成させる"
+            },
+            "review": {
+              "selection": "execute",
+              "reason": "Webからの実AX実行を1PRで完成させる"
+            },
+            "deliver": {
+              "selection": "execute",
+              "reason": "Webからの実AX実行を1PRで完成させる"
+            }
+          },
+          "taskRef": ".space/tasks/ax-web-runs/task.md"
+        }
+      },
+      "affectedUnits": [
+        "ax-web-runs"
+      ],
+      "evidence": [],
+      "revision": 2,
+      "data": {
+        "id": "ax-web-runs",
+        "parent": null,
+        "size": "standard",
+        "purpose": "Webからの実AX実行を1PRで完成させる",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "UI、統合、実AX、記録、PR"
+        ],
+        "taskRef": ".space/tasks/ax-web-runs/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webからの実AX実行を1PRで完成させる。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.251Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T02:40:06.251Z"
+    },
+    {
+      "id": "start-ax-web-runs",
+      "hash": "bb6d664c2645a5987bf2b9a0d191ed2078209304a49dc60dd04b384205ef9a61",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "ax-web-runs",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "start-ax-web-runs",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-runs"
+      ],
+      "evidence": [],
+      "revision": 3,
+      "data": {
+        "id": "ax-web-runs",
+        "parent": null,
+        "size": "standard",
+        "purpose": "Webからの実AX実行を1PRで完成させる",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "UI、統合、実AX、記録、PR"
+        ],
+        "taskRef": ".space/tasks/ax-web-runs/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webからの実AX実行を1PRで完成させる。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.251Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T02:40:06.284Z"
+    },
+    {
+      "id": "add-ax-web-python",
+      "hash": "f3bfd8393f12a0bcbdd9b516b3c13edde81dfe4e675cc3738a48614fb936a5f5",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "ax-web-python",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "add-ax-web-python",
+        "input": {
+          "size": "small",
+          "purpose": "受付・実行・復旧を既存receiptで安全に扱う",
+          "owner": {
+            "actor": "python",
+            "session": "ax-web-runs-python"
+          },
+          "recorder": {
+            "actor": "parent",
+            "session": "ax-web-runs-parent"
+          },
+          "scope": [
+            "ax-local/task_cli.py",
+            "ax-local/web_bridge.py",
+            "ax-local/tests/"
+          ],
+          "conditions": [
+            {
+              "id": "delivery",
+              "description": "受付・実行・復旧を既存receiptで安全に扱う。検証結果と限界を記録した",
+              "purpose": "delivery",
+              "required": true,
+              "target": "result"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "受付・実行・復旧を既存receiptで安全に扱う"
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "受付・実行・復旧を既存receiptで安全に扱う"
+            }
+          },
+          "parent": "ax-web-runs"
+        }
+      },
+      "affectedUnits": [
+        "ax-web-python"
+      ],
+      "evidence": [],
+      "revision": 4,
+      "data": {
+        "id": "ax-web-python",
+        "parent": "ax-web-runs",
+        "size": "small",
+        "purpose": "受付・実行・復旧を既存receiptで安全に扱う",
+        "track": "",
+        "owner": {
+          "actor": "python",
+          "session": "ax-web-runs-python"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "ax-local/task_cli.py",
+          "ax-local/web_bridge.py",
+          "ax-local/tests/"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "受付・実行・復旧を既存receiptで安全に扱う。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "受付・実行・復旧を既存receiptで安全に扱う",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "受付・実行・復旧を既存receiptで安全に扱う",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.309Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T02:40:06.309Z"
+    },
+    {
+      "id": "start-ax-web-python",
+      "hash": "1b8ebb99dff8f7003d8602141f05a487fe0588f11d909d12554bcc8b8f9911d7",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "ax-web-python",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "start-ax-web-python",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-python"
+      ],
+      "evidence": [],
+      "revision": 5,
+      "data": {
+        "id": "ax-web-python",
+        "parent": "ax-web-runs",
+        "size": "small",
+        "purpose": "受付・実行・復旧を既存receiptで安全に扱う",
+        "track": "",
+        "owner": {
+          "actor": "python",
+          "session": "ax-web-runs-python"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "ax-local/task_cli.py",
+          "ax-local/web_bridge.py",
+          "ax-local/tests/"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "受付・実行・復旧を既存receiptで安全に扱う。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "受付・実行・復旧を既存receiptで安全に扱う",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "受付・実行・復旧を既存receiptで安全に扱う",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.309Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T02:40:06.333Z"
+    },
+    {
+      "id": "add-ax-web-http",
+      "hash": "56df75116be50a5d59892acb8c19e5f0744a2c0684a42584a70498b476fd89eb",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "ax-web-http",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "add-ax-web-http",
+        "input": {
+          "size": "small",
+          "purpose": "Webの認証境界を保ってPythonと接続する",
+          "owner": {
+            "actor": "http",
+            "session": "ax-web-runs-http"
+          },
+          "recorder": {
+            "actor": "parent",
+            "session": "ax-web-runs-parent"
+          },
+          "scope": [
+            "web/api/",
+            "web/shared/run-contracts.ts",
+            "web/shared/http.ts",
+            "web/app/lib/runs.server.ts",
+            "web/tests/runs.test.ts"
+          ],
+          "conditions": [
+            {
+              "id": "delivery",
+              "description": "Webの認証境界を保ってPythonと接続する。検証結果と限界を記録した",
+              "purpose": "delivery",
+              "required": true,
+              "target": "result"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "Webの認証境界を保ってPythonと接続する"
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "Webの認証境界を保ってPythonと接続する"
+            }
+          },
+          "parent": "ax-web-runs"
+        }
+      },
+      "affectedUnits": [
+        "ax-web-http"
+      ],
+      "evidence": [],
+      "revision": 6,
+      "data": {
+        "id": "ax-web-http",
+        "parent": "ax-web-runs",
+        "size": "small",
+        "purpose": "Webの認証境界を保ってPythonと接続する",
+        "track": "",
+        "owner": {
+          "actor": "http",
+          "session": "ax-web-runs-http"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/api/",
+          "web/shared/run-contracts.ts",
+          "web/shared/http.ts",
+          "web/app/lib/runs.server.ts",
+          "web/tests/runs.test.ts"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webの認証境界を保ってPythonと接続する。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "Webの認証境界を保ってPythonと接続する",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "Webの認証境界を保ってPythonと接続する",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.357Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T02:40:06.357Z"
+    },
+    {
+      "id": "start-ax-web-http",
+      "hash": "c9ad915d50610b326eee9b442922b532baec5f9813d632d4ffdf74d35ea2ae34",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "ax-web-http",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "start-ax-web-http",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-http"
+      ],
+      "evidence": [],
+      "revision": 7,
+      "data": {
+        "id": "ax-web-http",
+        "parent": "ax-web-runs",
+        "size": "small",
+        "purpose": "Webの認証境界を保ってPythonと接続する",
+        "track": "",
+        "owner": {
+          "actor": "http",
+          "session": "ax-web-runs-http"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/api/",
+          "web/shared/run-contracts.ts",
+          "web/shared/http.ts",
+          "web/app/lib/runs.server.ts",
+          "web/tests/runs.test.ts"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webの認証境界を保ってPythonと接続する。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "Webの認証境界を保ってPythonと接続する",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "Webの認証境界を保ってPythonと接続する",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.357Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T02:40:06.381Z"
+    },
+    {
+      "id": "stage-ax-web-python-2",
+      "hash": "3396dcb2f3b66e8b9bcac2c53ed7816c4c010fc0027642bb46dbcd34f5b65f2b",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-web-python",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "stage-ax-web-python-2",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+          "refs": [
+            ".space/tasks/ax-web-runs/evidence/python-verification.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-python"
+      ],
+      "evidence": [],
+      "revision": 8,
+      "data": {
+        "id": "ax-web-python",
+        "parent": "ax-web-runs",
+        "size": "small",
+        "purpose": "受付・実行・復旧を既存receiptで安全に扱う",
+        "track": "",
+        "owner": {
+          "actor": "python",
+          "session": "ax-web-runs-python"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "ax-local/task_cli.py",
+          "ax-local/web_bridge.py",
+          "ax-local/tests/"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "受付・実行・復旧を既存receiptで安全に扱う。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+                    "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "受付・実行・復旧を既存receiptで安全に扱う",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.309Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T02:59:03.117Z"
+    },
+    {
+      "id": "stage-ax-web-python-3",
+      "hash": "8122e3d0ce0bf960ab3f64cb02c845f0257d20150a932cc8996a2b564b8e2b74",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-web-python",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "stage-ax-web-python-3",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+          "refs": [
+            ".space/tasks/ax-web-runs/evidence/python-verification.md"
+          ]
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-python"
+      ],
+      "evidence": [],
+      "revision": 9,
+      "data": {
+        "id": "ax-web-python",
+        "parent": "ax-web-runs",
+        "size": "small",
+        "purpose": "受付・実行・復旧を既存receiptで安全に扱う",
+        "track": "",
+        "owner": {
+          "actor": "python",
+          "session": "ax-web-runs-python"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "ax-local/task_cli.py",
+          "ax-local/web_bridge.py",
+          "ax-local/tests/"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "受付・実行・復旧を既存receiptで安全に扱う。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 4,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+                    "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+                    "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.309Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T02:59:03.381Z"
+    },
+    {
+      "id": "check-ax-web-python",
+      "hash": "4a18b1c0dd7a443913172c864aec7ad148ae66d2a7d06e658cb5420c4959fc7a",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ax-web-python",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "check-ax-web-python",
+        "input": {
+          "condition": "delivery",
+          "verdict": "pass",
+          "target": {
+            "id": "result",
+            "kind": "files",
+            "files": [
+              "ax-local/task_cli.py",
+              "ax-local/web_bridge.py",
+              "ax-local/tests/test_web_bridge.py"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-web-runs/evidence/python-verification.md"
+          ],
+          "method": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+          "environment": "macOS local checkout; fake transport/loopback tests",
+          "observedAt": "2026-10-06T02:59:03.484519+00:00"
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-python"
+      ],
+      "evidence": [],
+      "revision": 10,
+      "data": {
+        "id": "4ee5a8e6-c685-43d8-8b17-8cd927f0d4d4",
+        "unit": "ax-web-python",
+        "attempt": 1,
+        "condition": "delivery",
+        "target": {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/task_cli.py",
+              "digest": "92916509ac8bbc93f8765264a51413a8d0b2028e15b11afcddf4ccdfb6a5c449"
+            },
+            {
+              "ref": "ax-local/tests/test_web_bridge.py",
+              "digest": "7ed52fd4b66a4fd40664178d2a4594f9c414379e2abe0321d2ec041cb107ae31"
+            },
+            {
+              "ref": "ax-local/web_bridge.py",
+              "digest": "127a4473048d21cbfc266ca37728fd1059895532cf4390d06f4723a75e48a5af"
+            }
+          ],
+          "version": "df9ae6960b840b1654ef37a0248977478c91c2dbcdc42cf23131b58e44792163"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+            "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+          }
+        ],
+        "reason": "",
+        "method": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+        "environment": "macOS local checkout; fake transport/loopback tests",
+        "observedAt": "2026-10-06T02:59:03.484519+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-06T02:59:03.551Z"
+      },
+      "at": "2026-10-06T02:59:03.551Z"
+    },
+    {
+      "id": "submit-ax-web-python-5",
+      "hash": "9d1155cf3f6fba4013d38497e1215fff290f9adbf218a7aebb343e2a05c0c7b1",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "ax-web-python",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "submit-ax-web-python-5",
+        "input": {
+          "checks": [
+            "4ee5a8e6-c685-43d8-8b17-8cd927f0d4d4"
+          ],
+          "report": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+          "refs": [
+            ".space/tasks/ax-web-runs/evidence/python-verification.md"
+          ]
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-python"
+      ],
+      "evidence": [],
+      "revision": 11,
+      "data": {
+        "id": "f0c9aad6-4a21-4e12-95e1-7dd763c32658",
+        "unit": "ax-web-python",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "4ee5a8e6-c685-43d8-8b17-8cd927f0d4d4"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/task_cli.py",
+                "digest": "92916509ac8bbc93f8765264a51413a8d0b2028e15b11afcddf4ccdfb6a5c449"
+              },
+              {
+                "ref": "ax-local/tests/test_web_bridge.py",
+                "digest": "7ed52fd4b66a4fd40664178d2a4594f9c414379e2abe0321d2ec041cb107ae31"
+              },
+              {
+                "ref": "ax-local/web_bridge.py",
+                "digest": "127a4473048d21cbfc266ca37728fd1059895532cf4390d06f4723a75e48a5af"
+              }
+            ],
+            "version": "df9ae6960b840b1654ef37a0248977478c91c2dbcdc42cf23131b58e44792163"
+          }
+        ],
+        "report": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+            "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "at": "2026-10-06T02:59:03.802Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-06T02:59:03.802Z"
+    },
+    {
+      "id": "accept-ax-web-python-6",
+      "hash": "b8d0cb598bcaf67181ead7e20f027a10853ff690729561fde378e7bcdcc3a29b",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "ax-web-python",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "accept-ax-web-python-6",
+        "input": {
+          "submission": "f0c9aad6-4a21-4e12-95e1-7dd763c32658",
+          "reason": "親が差分、実テスト結果、独立レビューと統合証拠を照合した。"
+        },
+        "ifVersion": 6,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-python"
+      ],
+      "evidence": [],
+      "revision": 12,
+      "data": {
+        "id": "f0c9aad6-4a21-4e12-95e1-7dd763c32658",
+        "unit": "ax-web-python",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "4ee5a8e6-c685-43d8-8b17-8cd927f0d4d4"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/task_cli.py",
+                "digest": "92916509ac8bbc93f8765264a51413a8d0b2028e15b11afcddf4ccdfb6a5c449"
+              },
+              {
+                "ref": "ax-local/tests/test_web_bridge.py",
+                "digest": "7ed52fd4b66a4fd40664178d2a4594f9c414379e2abe0321d2ec041cb107ae31"
+              },
+              {
+                "ref": "ax-local/web_bridge.py",
+                "digest": "127a4473048d21cbfc266ca37728fd1059895532cf4390d06f4723a75e48a5af"
+              }
+            ],
+            "version": "df9ae6960b840b1654ef37a0248977478c91c2dbcdc42cf23131b58e44792163"
+          }
+        ],
+        "report": "既存CLIと追加の受付・復旧・競合試験85件が成功。実AXのoffline経路も親が確認。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-web-runs/evidence/python-verification.md",
+            "digest": "64b6e602652896e175d1b6a5de9f77819d1c726b5a97eafbbfb8ab3f4f8bebc7"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "at": "2026-10-06T02:59:03.802Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "ax-web-runs-parent"
+          },
+          "reason": "親が差分、実テスト結果、独立レビューと統合証拠を照合した。",
+          "at": "2026-10-06T02:59:04.127Z"
+        }
+      },
+      "at": "2026-10-06T02:59:04.128Z"
+    },
+    {
+      "id": "stage-ax-web-http-2",
+      "hash": "a8034339673253f9d6d13176a296fc7d3c98ab75c5fa99c233767f51900f3082",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-web-http",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "stage-ax-web-http-2",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+          "refs": [
+            ".space/tasks/ax-web-runs/evidence/http-verification.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-http"
+      ],
+      "evidence": [],
+      "revision": 13,
+      "data": {
+        "id": "ax-web-http",
+        "parent": "ax-web-runs",
+        "size": "small",
+        "purpose": "Webの認証境界を保ってPythonと接続する",
+        "track": "",
+        "owner": {
+          "actor": "http",
+          "session": "ax-web-runs-http"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/api/",
+          "web/shared/run-contracts.ts",
+          "web/shared/http.ts",
+          "web/app/lib/runs.server.ts",
+          "web/tests/runs.test.ts"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webの認証境界を保ってPythonと接続する。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+                    "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "Webの認証境界を保ってPythonと接続する",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.357Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T02:59:12.477Z"
+    },
+    {
+      "id": "stage-ax-web-http-3",
+      "hash": "9c80cee2d56a478ff25e8db8c800d827ab7de4561aedd77f591dceee235b84b7",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-web-http",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "stage-ax-web-http-3",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+          "refs": [
+            ".space/tasks/ax-web-runs/evidence/http-verification.md"
+          ]
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-http"
+      ],
+      "evidence": [],
+      "revision": 14,
+      "data": {
+        "id": "ax-web-http",
+        "parent": "ax-web-runs",
+        "size": "small",
+        "purpose": "Webの認証境界を保ってPythonと接続する",
+        "track": "",
+        "owner": {
+          "actor": "http",
+          "session": "ax-web-runs-http"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/api/",
+          "web/shared/run-contracts.ts",
+          "web/shared/http.ts",
+          "web/app/lib/runs.server.ts",
+          "web/tests/runs.test.ts"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webの認証境界を保ってPythonと接続する。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 4,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+                    "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+                    "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.357Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T02:59:12.530Z"
+    },
+    {
+      "id": "check-ax-web-http",
+      "hash": "c45708e8a7573290a1f1bb398f9f2eac19f09e929d3c2ceffce9178dd012eae5",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ax-web-http",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "check-ax-web-http",
+        "input": {
+          "condition": "delivery",
+          "verdict": "pass",
+          "target": {
+            "id": "result",
+            "kind": "files",
+            "files": [
+              "web/api/app.ts",
+              "web/api/index.ts",
+              "web/api/run-service.ts",
+              "web/shared/run-contracts.ts",
+              "web/shared/http.ts",
+              "web/app/lib/runs.server.ts",
+              "web/tests/runs.test.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-web-runs/evidence/http-verification.md"
+          ],
+          "method": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+          "environment": "macOS local checkout; fake transport/loopback tests",
+          "observedAt": "2026-10-06T02:59:12.564307+00:00"
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-http"
+      ],
+      "evidence": [],
+      "revision": 15,
+      "data": {
+        "id": "ecfb6efb-e6f6-4e23-8e2d-8954e076b5b4",
+        "unit": "ax-web-http",
+        "attempt": 1,
+        "condition": "delivery",
+        "target": {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/api/app.ts",
+              "digest": "fd1da4793b91561a711821cac6b5bef9a450e3e62707de52d3e8edf6220cd534"
+            },
+            {
+              "ref": "web/api/index.ts",
+              "digest": "7b35cb77bef64a1d669606dea6270d3c3bb7d2f7a3e6906f8ab118e31ae876a1"
+            },
+            {
+              "ref": "web/api/run-service.ts",
+              "digest": "baf9bbf58bf3cf22dd0851441ced1ba79b240fe174a8048849639f0c679b8336"
+            },
+            {
+              "ref": "web/app/lib/runs.server.ts",
+              "digest": "74753760a4c9940bc37647dcf2b1bfe07dc30159d04e2fb48335b9d011524444"
+            },
+            {
+              "ref": "web/shared/http.ts",
+              "digest": "7c4382523798d924e577d5a7a987559c352eefa5302bee3fe15ee6e56e986106"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "6f5f271a68c8069ac6329637fc9ecaf78aa28e28cc9ba67e165f06fb3ae15a5d"
+            },
+            {
+              "ref": "web/tests/runs.test.ts",
+              "digest": "a2f66ae49f72bd15837d8a50322bcd96b9ab8a284f6d04adb58f55cbfda4bfcc"
+            }
+          ],
+          "version": "c756b3cb84898d4a05643f11dc320457789d4c8c168fba3a52819e61c80e1cf3"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+            "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+          }
+        ],
+        "reason": "",
+        "method": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+        "environment": "macOS local checkout; fake transport/loopback tests",
+        "observedAt": "2026-10-06T02:59:12.564307+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-06T02:59:12.599Z"
+      },
+      "at": "2026-10-06T02:59:12.599Z"
+    },
+    {
+      "id": "submit-ax-web-http-5",
+      "hash": "4884c5194e09cb6356c925ee8c9cb299b7561a5f257d6ab28e9e1e51a034d716",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "ax-web-http",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "submit-ax-web-http-5",
+        "input": {
+          "checks": [
+            "ecfb6efb-e6f6-4e23-8e2d-8954e076b5b4"
+          ],
+          "report": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+          "refs": [
+            ".space/tasks/ax-web-runs/evidence/http-verification.md"
+          ]
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-http"
+      ],
+      "evidence": [],
+      "revision": 16,
+      "data": {
+        "id": "3622b803-da54-4d9a-be1a-2c6ae418483f",
+        "unit": "ax-web-http",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "ecfb6efb-e6f6-4e23-8e2d-8954e076b5b4"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/api/app.ts",
+                "digest": "fd1da4793b91561a711821cac6b5bef9a450e3e62707de52d3e8edf6220cd534"
+              },
+              {
+                "ref": "web/api/index.ts",
+                "digest": "7b35cb77bef64a1d669606dea6270d3c3bb7d2f7a3e6906f8ab118e31ae876a1"
+              },
+              {
+                "ref": "web/api/run-service.ts",
+                "digest": "baf9bbf58bf3cf22dd0851441ced1ba79b240fe174a8048849639f0c679b8336"
+              },
+              {
+                "ref": "web/app/lib/runs.server.ts",
+                "digest": "74753760a4c9940bc37647dcf2b1bfe07dc30159d04e2fb48335b9d011524444"
+              },
+              {
+                "ref": "web/shared/http.ts",
+                "digest": "7c4382523798d924e577d5a7a987559c352eefa5302bee3fe15ee6e56e986106"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "6f5f271a68c8069ac6329637fc9ecaf78aa28e28cc9ba67e165f06fb3ae15a5d"
+              },
+              {
+                "ref": "web/tests/runs.test.ts",
+                "digest": "a2f66ae49f72bd15837d8a50322bcd96b9ab8a284f6d04adb58f55cbfda4bfcc"
+              }
+            ],
+            "version": "c756b3cb84898d4a05643f11dc320457789d4c8c168fba3a52819e61c80e1cf3"
+          }
+        ],
+        "report": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+            "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "at": "2026-10-06T02:59:12.652Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-06T02:59:12.652Z"
+    },
+    {
+      "id": "accept-ax-web-http-6",
+      "hash": "1617ed0c464af22125e010600b5b044db73542b6e4f9b43566fb939f24634961",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "ax-web-http",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "accept-ax-web-http-6",
+        "input": {
+          "submission": "3622b803-da54-4d9a-be1a-2c6ae418483f",
+          "reason": "親が差分、実テスト結果、独立レビューと統合証拠を照合した。"
+        },
+        "ifVersion": 6,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-http"
+      ],
+      "evidence": [],
+      "revision": 17,
+      "data": {
+        "id": "3622b803-da54-4d9a-be1a-2c6ae418483f",
+        "unit": "ax-web-http",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "ecfb6efb-e6f6-4e23-8e2d-8954e076b5b4"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/api/app.ts",
+                "digest": "fd1da4793b91561a711821cac6b5bef9a450e3e62707de52d3e8edf6220cd534"
+              },
+              {
+                "ref": "web/api/index.ts",
+                "digest": "7b35cb77bef64a1d669606dea6270d3c3bb7d2f7a3e6906f8ab118e31ae876a1"
+              },
+              {
+                "ref": "web/api/run-service.ts",
+                "digest": "baf9bbf58bf3cf22dd0851441ced1ba79b240fe174a8048849639f0c679b8336"
+              },
+              {
+                "ref": "web/app/lib/runs.server.ts",
+                "digest": "74753760a4c9940bc37647dcf2b1bfe07dc30159d04e2fb48335b9d011524444"
+              },
+              {
+                "ref": "web/shared/http.ts",
+                "digest": "7c4382523798d924e577d5a7a987559c352eefa5302bee3fe15ee6e56e986106"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "6f5f271a68c8069ac6329637fc9ecaf78aa28e28cc9ba67e165f06fb3ae15a5d"
+              },
+              {
+                "ref": "web/tests/runs.test.ts",
+                "digest": "a2f66ae49f72bd15837d8a50322bcd96b9ab8a284f6d04adb58f55cbfda4bfcc"
+              }
+            ],
+            "version": "c756b3cb84898d4a05643f11dc320457789d4c8c168fba3a52819e61c80e1cf3"
+          }
+        ],
+        "report": "Node 12件と型検査が成功。BFFから実HTTPの型・認証・上限・timeoutを確認。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-web-runs/evidence/http-verification.md",
+            "digest": "6a1c1ac353f39ae1e6561601660d8b9b6208fc3103e265ec3393bab2caf506b0"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "at": "2026-10-06T02:59:12.652Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "ax-web-runs-parent"
+          },
+          "reason": "親が差分、実テスト結果、独立レビューと統合証拠を照合した。",
+          "at": "2026-10-06T02:59:12.725Z"
+        }
+      },
+      "at": "2026-10-06T02:59:12.725Z"
+    },
+    {
+      "id": "stage-ax-web-runs-2",
+      "hash": "7092018295ac3288dbb8e3ff9772c50ed9d3650f11cd55b75a1380a72597ed8d",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-web-runs",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "stage-ax-web-runs-2",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+          "refs": [
+            ".space/tasks/ax-web-runs/design.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-runs"
+      ],
+      "evidence": [],
+      "revision": 18,
+      "data": {
+        "id": "ax-web-runs",
+        "parent": null,
+        "size": "standard",
+        "purpose": "Webからの実AX実行を1PRで完成させる",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "UI、統合、実AX、記録、PR"
+        ],
+        "taskRef": ".space/tasks/ax-web-runs/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webからの実AX実行を1PRで完成させる。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/design.md",
+                    "digest": "6d2460bc35a3da2ad710b5b5d75ab94bc821d777ca51fd8f063c6987a3629e8d"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.251Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T03:07:03.675Z"
+    },
+    {
+      "id": "stage-ax-web-runs-3",
+      "hash": "a02defeea48b205c07d2ff0b8c1cf1ee835ffca069948ad82f66cf03a0536db2",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-web-runs",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "stage-ax-web-runs-3",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+          "refs": [
+            ".space/tasks/ax-web-runs/verification.md"
+          ]
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-runs"
+      ],
+      "evidence": [],
+      "revision": 19,
+      "data": {
+        "id": "ax-web-runs",
+        "parent": null,
+        "size": "standard",
+        "purpose": "Webからの実AX実行を1PRで完成させる",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "UI、統合、実AX、記録、PR"
+        ],
+        "taskRef": ".space/tasks/ax-web-runs/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webからの実AX実行を1PRで完成させる。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 4,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/design.md",
+                    "digest": "6d2460bc35a3da2ad710b5b5d75ab94bc821d777ca51fd8f063c6987a3629e8d"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/verification.md",
+                    "digest": "a224fbadd38e8b9e69a57c0a1c557e823be861cb62fa8f182844978a7924a4f1"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.251Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T03:07:03.730Z"
+    },
+    {
+      "id": "stage-ax-web-runs-4",
+      "hash": "3b7906809cb5b4b1c754b0ca416ba6915ec82cdadf18cfcec8232207ebe91278",
+      "actor": {
+        "actor": "parent",
+        "session": "ax-web-runs-parent"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-web-runs",
+        "stage": "review",
+        "actor": "parent",
+        "session": "ax-web-runs-parent",
+        "operationId": "stage-ax-web-runs-4",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+          "refs": [
+            ".space/tasks/ax-web-runs/review.md"
+          ]
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-web-runs"
+      ],
+      "evidence": [],
+      "revision": 20,
+      "data": {
+        "id": "ax-web-runs",
+        "parent": null,
+        "size": "standard",
+        "purpose": "Webからの実AX実行を1PRで完成させる",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "ax-web-runs-parent"
+        },
+        "verifiers": [],
+        "scope": [
+          "UI、統合、実AX、記録、PR"
+        ],
+        "taskRef": ".space/tasks/ax-web-runs/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webからの実AX実行を1PRで完成させる。検証結果と限界を記録した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 5,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/design.md",
+                    "digest": "6d2460bc35a3da2ad710b5b5d75ab94bc821d777ca51fd8f063c6987a3629e8d"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/verification.md",
+                    "digest": "a224fbadd38e8b9e69a57c0a1c557e823be861cb62fa8f182844978a7924a4f1"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "実装・実AX統合、局所/ブラウザ試験、独立レビューの指摘解消を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-web-runs/review.md",
+                    "digest": "8e825b10595f2db9d9fd037a756dbc14ff4749833fbc385b330d661d16fe1dc9"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "Webからの実AX実行を1PRで完成させる",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T02:40:06.251Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T03:07:03.776Z"
+    }
+  ]
+}

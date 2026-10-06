@@ -2,6 +2,7 @@
 import argparse
 import base64
 import contextlib
+from datetime import datetime, timezone
 import fcntl
 import hashlib
 import json
@@ -10,6 +11,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import shutil
 import signal
 import stat
 import subprocess
@@ -144,10 +146,12 @@ def fingerprint(request, image):
 class Transport:
     def __init__(self, root=ROOT):
         self.root = Path(root)
+        self.lock_fd = None
 
     def command(self, arguments, timeout=40):
         process = subprocess.Popen(arguments, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, start_new_session=True)
+                                   stderr=subprocess.PIPE, start_new_session=True,
+                                   pass_fds=() if self.lock_fd is None else (self.lock_fd,))
         try:
             stdout, _ = process.communicate(timeout=timeout)
         except BaseException:
@@ -214,7 +218,7 @@ class TaskCLI:
         self.sleep = sleep
 
     @contextlib.contextmanager
-    def locked(self):
+    def locked(self, wait_seconds=0):
         os.umask(0o077)
         if any(part.is_symlink() for part in (self.runs, *self.runs.parents)):
             raise TaskError("symlink_rejected")
@@ -222,11 +226,45 @@ class TaskCLI:
         lock = self.runs / ".lock"
         fd = os.open(lock, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
         with os.fdopen(fd, "r+") as stream:
+            deadline = time.monotonic() + wait_seconds
+            while True:
+                try:
+                    fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    break
+                except BlockingIOError as exc:
+                    if time.monotonic() >= deadline:
+                        raise TaskError("another_cli_running") from exc
+                    time.sleep(0.01)
+            previous = getattr(self.transport, "lock_fd", None)
+            self.transport.lock_fd = stream.fileno()
+            try:
+                yield
+            finally:
+                self.transport.lock_fd = previous
+
+    @contextlib.contextmanager
+    def observing(self):
+        if any(part.is_symlink() for part in (self.runs, *self.runs.parents)):
+            raise TaskError("symlink_rejected")
+        try:
+            fd = os.open(self.runs / ".lock", os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK)
+        except FileNotFoundError:
+            yield False
+            return
+        with os.fdopen(fd, "r+") as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise TaskError("invalid_run_ledger")
             try:
                 fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except BlockingIOError as exc:
-                raise TaskError("another_cli_running") from exc
-            yield
+            except BlockingIOError:
+                active = True
+            else:
+                active = False
+            yield active
+
+    def is_active(self):
+        with self.observing() as active:
+            return active
 
     def directory(self, run_id):
         if not isinstance(run_id, str) or not RUN_ID.fullmatch(run_id):
@@ -393,60 +431,134 @@ class TaskCLI:
         self.store(directory, receipt, resolved=resolved, phase="finished" if resolved else "needs_recovery",
                    outcome="succeeded" if succeeded else "failed", cleanup=cleanup, cleanup_errors=errors)
 
-    def run(self, request, dry_run=False):
-        request = validate_request(request)
-        versions = read_json(self.root / "versions.json")
-        image = versions.get("runner_task", "")
+    def prepare(self, request, image, known_total, dry_run=False, submission=None):
         manifest = make_manifest(request, image)
-        with self.locked():
-            known_total = self.guard(request, image)
-            directory = self.runs / request["run_id"]
-            directory.mkdir(mode=0o700)
-            receipt = {
+        directory = self.runs / request["run_id"]
+        if directory.exists() or directory.is_symlink():
+            raise FileExistsError()
+        pending = Path(tempfile.mkdtemp(prefix=".pending-", dir=self.runs))
+        receipt = {
                 "schema_version": 1, "run_id": request["run_id"], "adapter": request["adapter"],
                 "fingerprint": fingerprint(request, image), "image": image,
-                "phase": "prepared", "start_attempted": False, "result": None,
+                "phase": "accepted" if submission else "prepared", "apply_attempted": False,
+                "start_attempted": False, "result": None,
                 "cleanup": {}, "cleanup_errors": [], "resolved": dry_run,
                 "outcome": "dry_run" if dry_run else "pending", "error_type": None,
                 "known_estimated_usd_before": known_total,
                 "estimate_is_billing_guarantee": False,
-            }
-            save_json(directory / "request.json", request)
-            save_json(directory / "manifest.json", manifest)
-            self.store(directory, receipt)
-            if dry_run:
-                self.store(directory, receipt, phase="dry_run")
-                return receipt
+        }
+        if submission is not None:
+            receipt["submission"] = submission
+        if dry_run:
+            receipt["phase"] = "dry_run"
+        try:
+            save_json(pending / "request.json", request)
+            save_json(pending / "manifest.json", manifest)
+            self.store(pending, receipt)
+            os.rename(pending, directory)
+            fd = os.open(self.runs, os.O_RDONLY)
             try:
-                self.store(directory, receipt, phase="apply_attempted")
-                self.transport.apply(directory / "manifest.json")
-                self.store(directory, receipt, phase="resume_attempted")
-                self.transport.resume(request["run_id"])
-                self.ready(request["run_id"])
-                self.transport.actor(request["run_id"])
-                response = self.transport.guest(request["run_id"], "stage", encode_request(request))
-                if response != {"run_id": request["run_id"], "state": "staged"}:
-                    raise TaskError("stage_unconfirmed")
-                self.store(directory, receipt, phase="egress_attempted")
-                self.transport.egress(request["run_id"], request["adapter"] != "offline")
-                self.store(directory, receipt, phase="start_attempted", start_attempted=True)
-                response = self.transport.guest(request["run_id"], "start")
-                if response != {"run_id": request["run_id"], "state": "started"}:
-                    raise TaskError("start_unconfirmed")
-                self.store(directory, receipt, phase="running")
-                self.wait_result(request["run_id"])
-                self.collect(directory, request, receipt)
-            except (Exception, KeyboardInterrupt) as exc:
-                self.store(directory, receipt, error_type=error_code(exc))
+                os.fsync(fd)
             finally:
-                self.cleanup(directory, receipt)
+                os.close(fd)
+        finally:
+            if pending.exists():
+                shutil.rmtree(pending)
+        return directory, receipt
+
+    def execute(self, directory, request, receipt):
+        try:
+            self.store(directory, receipt, phase="apply_attempted", apply_attempted=True)
+            self.transport.apply(directory / "manifest.json")
+            self.store(directory, receipt, phase="resume_attempted")
+            self.transport.resume(request["run_id"])
+            self.ready(request["run_id"])
+            self.transport.actor(request["run_id"])
+            response = self.transport.guest(request["run_id"], "stage", encode_request(request))
+            if response != {"run_id": request["run_id"], "state": "staged"}:
+                raise TaskError("stage_unconfirmed")
+            self.store(directory, receipt, phase="egress_attempted")
+            self.transport.egress(request["run_id"], request["adapter"] != "offline")
+            self.store(directory, receipt, phase="start_attempted", start_attempted=True)
+            response = self.transport.guest(request["run_id"], "start")
+            if response != {"run_id": request["run_id"], "state": "started"}:
+                raise TaskError("start_unconfirmed")
+            self.store(directory, receipt, phase="running")
+            self.wait_result(request["run_id"])
+            self.collect(directory, request, receipt)
+        except (Exception, KeyboardInterrupt) as exc:
+            self.store(directory, receipt, error_type=error_code(exc))
+        finally:
+            self.cleanup(directory, receipt)
+        return receipt
+
+    def run(self, request, dry_run=False):
+        request = validate_request(request)
+        image = read_json(self.root / "versions.json").get("runner_task", "")
+        make_manifest(request, image)
+        with self.locked():
+            known_total = self.guard(request, image)
+            directory, receipt = self.prepare(request, image, known_total, dry_run)
+            if not dry_run:
+                return self.execute(directory, request, receipt)
             return receipt
 
-    def recover(self, run_id):
+    def find_submission(self, key_hash, payload_hash):
+        if not self.runs.exists():
+            return None
+        for directory in self.runs.iterdir():
+            if directory.name.startswith("."):
+                continue
+            receipt = self.inspect(directory.name)
+            submission = receipt.get("submission")
+            if isinstance(submission, dict) and submission.get("key_hash") == key_hash:
+                if submission.get("payload_hash") != payload_hash:
+                    raise TaskError("idempotency_conflict")
+                return receipt
+        return None
+
+    def accept(self, request, key_hash, payload_hash):
+        request = validate_request(request)
+        existing = self.find_submission(key_hash, payload_hash)
+        if existing is not None:
+            return existing, True
         with self.locked():
+            existing = self.find_submission(key_hash, payload_hash)
+            if existing is not None:
+                return existing, True
+            image = read_json(self.root / "versions.json").get("runner_task", "")
+            make_manifest(request, image)
+            known_total = self.guard(request, image)
+            submission = {"key_hash": key_hash, "payload_hash": payload_hash,
+                          "accepted_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")}
+            _, receipt = self.prepare(request, image, known_total, submission=submission)
+            return receipt, False
+
+    def execute_accepted(self, run_id):
+        with self.locked(wait_seconds=2):
             directory = self.directory(run_id)
             receipt = self.inspect(run_id)
-            if receipt["phase"] == "dry_run":
+            if (receipt.get("phase") != "accepted" or receipt.get("resolved")
+                    or receipt.get("apply_attempted") is not False or receipt.get("start_attempted")
+                    or not isinstance(receipt.get("submission"), dict)):
+                raise TaskError("execution_already_claimed")
+            request = validate_request(read_json(directory / "request.json"))
+            if (request["run_id"] != run_id or request["adapter"] != receipt.get("adapter")
+                    or fingerprint(request, receipt["image"]) != receipt.get("fingerprint")
+                    or read_json(directory / "manifest.json") != make_manifest(request, receipt["image"])):
+                raise TaskError("request_receipt_mismatch")
+            return self.execute(directory, request, receipt)
+
+    def recover(self, run_id, wait_seconds=0):
+        with self.locked(wait_seconds=wait_seconds):
+            directory = self.directory(run_id)
+            receipt = self.inspect(run_id)
+            if receipt["phase"] == "dry_run" or receipt.get("resolved"):
+                return receipt
+            if (receipt.get("phase") == "accepted" and receipt.get("apply_attempted") is False
+                    and receipt.get("start_attempted") is False and isinstance(receipt.get("submission"), dict)):
+                self.store(directory, receipt, resolved=True, phase="not_started", outcome="not_started",
+                           error_type=None, cleanup={"egress_denied": False, "suspended": False}, cleanup_errors=[])
                 return receipt
             request = validate_request(read_json(directory / "request.json"))
             if request["run_id"] != run_id:

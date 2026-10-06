@@ -8,7 +8,7 @@ export default defineConfig({
   reporter: "list",
   use: { baseURL: "http://127.0.0.1:3210", trace: "retain-on-failure" },
   webServer: {
-    command: "npm start",
+    command: "node --import tsx tests/browser/serve.ts",
     env: { WEB_PORT: "3210", API_PORT: "3211" },
     url: "http://127.0.0.1:3210",
     timeout: 60000,

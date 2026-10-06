@@ -1,8 +1,8 @@
 # AXのWeb入口とAWSへの仮配置
 
-2026-10-06時点の概略設計。ローカルのkind上で動くAXと[タスクCLI](../ax-local/task-cli.md)に加え、[Webと共通APIの土台（W1）](../web/README.md)を実装した。現在のWebはメッセージを往復する模擬応答であり、AX操作と共通認証は未接続。[ローカルWeb版の概算](web-mvp-estimate.md)に残る作業をまとめる。
+2026-10-06時点の概略設計。ローカルのkind上で動くAXと[タスクCLI](../ax-local/task-cli.md)に加え、[ローカルWebワークスペース](../web/README.md)を実装した。続くW2〜W4では既存Pythonのreceipt台帳を使った非同期受付、AX内での実行、一覧・結果・成果物・使用量と復旧を接続した。共通認証は未接続。[ローカルWeb版の概算](web-mvp-estimate.md)に残る作業をまとめる。
 
-WebはReact RouterのFramework ModeでSSR（サーバー側での画面生成）とBFF（ブラウザ向けのサーバー処理）を提供する。共通バックエンドにAX操作をまとめ、AX内のエージェントはPythonを使う。別のPython操作サービスは必須とせず、既存Python処理を共通バックエンドから再利用する方式を次の見積もりの前提とする。
+WebはReact RouterのFramework ModeでSSR（サーバー側での画面生成）とBFF（ブラウザ向けのサーバー処理）を提供する。共通バックエンドにAX操作をまとめ、AX内のエージェントはPythonを使う。別のPython操作サービスは必須とせず、既存Python処理を共通バックエンドから再利用する方式を採用している。受付・実行・費用の正本をPythonに置き、Honoは短命のJSONコマンドで呼び出す。workerはAPIとは別のプロセスとして動き、Web/API再起動でも受け付け済みの処理を追跡する。
 
 共通バックエンドはW1でHono/TypeScriptを採用した。認証のKeycloak、AWS各サービス、RAGの製品は候補であり、配置先は確定していない。認証基盤はOIDCを接続の基本とし、Amazon Cognitoの利用やMicrosoft Entra IDとの連携も選択肢に残す。以下はKeycloakを使った配置例で、AWSへの配置・動作確認・費用見積もりは行っていない。
 

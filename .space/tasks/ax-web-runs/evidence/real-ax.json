@@ -1,0 +1,20 @@
+{
+  "run_id": "ax-run-da7fe9c039631b36",
+  "artifact_exact_match": true,
+  "size_bytes": 63,
+  "sha256": "bf9f58e0e594af0c5000707a458943b07db2c0127a3ffcd1a1abb21183874041",
+  "outcome": "succeeded",
+  "phase": "finished",
+  "resolved": true,
+  "cleanup": {
+    "egress_denied": true,
+    "suspended": true
+  },
+  "usage": {
+    "candidates_token_count": 0,
+    "prompt_token_count": 0,
+    "thoughts_token_count": 0,
+    "total_token_count": 0
+  },
+  "estimated_usd": 0
+}

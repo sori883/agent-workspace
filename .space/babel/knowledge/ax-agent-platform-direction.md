@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: AXエージェント実行基盤の構想と検討事項
-description: AX単発CLIとWeb土台W1までの現在地、SSR/BFFと共通APIの採用、認証・RAG・クラウド配置の構想
+description: AX単発CLIとローカルWeb実行までの現在地、receipt統合の採用、認証・RAG・クラウド配置の構想
 status: draft
 tags: 
   - ax
@@ -10,7 +10,7 @@ tags:
   - egress
 generated: 
   by: agent:codex
-  at: 2026-10-06T01:49:14.065Z
+  at: 2026-10-06T03:06:21.298Z
 sources: 
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: ax-local/task-cli.md
@@ -21,8 +21,18 @@ sources:
   - resource: https://github.com/sori883/agent-workspace/pull/3
   - resource: web/README.md
   - resource: .space/tasks/ax-web-foundation/task.md
+  - resource: .space/tasks/ax-web-runs/design.md
+  - resource: .space/tasks/ax-web-runs/verification.md
 ---
 # AXを中心とするエージェント実行基盤の構想
+
+## ローカルWebから実AXへ接続（2026-10-06）
+
+W1の接続確認後、利用者はAX接続・操作画面・検証を1本のPRへまとめるよう依頼した。W2〜W4を実装し、指示と入力の永続受付、実行一覧・詳細、成果物の表示と取得、使用量・停止確認、再開始しない復旧をWebから利用できる。既存PythonをAPI内部から再利用する方式を採用し、Web専用の別台帳や常駐ジョブキューは追加していない。
+
+既定の動作テストは実AXのoffline処理。モデルを使う場合は明示選択と外部送信・料金への同意が必要で、既存Antigravity/Geminiの上限を引き継ぐ。実AX offline2件、同一キー再送、完了後のWeb/API再起動と結果保持を確認した。今回は有料モデル送信0件で、Webからの有料モデル全経路と実行途中の実AX/API停止は未検証。自動検証はPython85件、Node12件、ブラウザ12件、型/buildが成功した。
+
+現在の契約と理由は[ローカルWeb](ax-web-foundation.md)、利用手順は `web/README.md`、証拠は `.space/tasks/ax-web-runs/verification.md`。共通認証・公開配置・複数利用者・RAG・新しいモデルサービスは後続候補であり、実装済みとはしない。以下の各日付の節は当時の経緯として読む。
 
 ## Webの土台W1を実装（2026-10-06）
 
@@ -62,7 +72,7 @@ sources:
 
 接続先を増やす場合も、既存の費用上限・無駄な送信の禁止、モニタリングと外向き通信制御を重視する方針を引き継ぐ。
 
-## 現在の到達点
+## 基盤導入時の到達点（2026-10-05）
 
 [ローカル検証環境](ax-local-kind-environment.md)にkind・レジストリ・Substrate・AXを導入済み。AXのARM64 Taskで出力と正常終了、削除・再作成、停止・再開のファイル保持、HTTP/HTTPSの許可・拒否を確認した。Geminiを使うエージェントのファイル作成・正常終了・使用量まで確認し、最初のマイルストーンを達成した。試験後の外部通信は閉じている。利用者が指定した[2,000円の上限と無駄な送信を禁じるルール](../rules/ax-model-spending.md)を守る。詳細は`.space/tasks/ax-first-agent/verification.md`。
 

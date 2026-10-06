@@ -109,7 +109,7 @@ export default function Home({ loaderData, actionData }: Route.ComponentProps) {
               <p className="environment-note">このパソコンの中だけで動作しています。</p>
             </aside>
           </div>
-          <section className="about-section" id="about" aria-labelledby="about-title"><p className="eyebrow">NEXT STEP</p><h2 id="about-title">ここから、エージェントとの作業へ。</h2><p>この画面で確認できるのは、メッセージを送って受け取るところまでです。<br />タスクの実行と成果物の確認は、次の段階で追加します。</p></section>
+          <section className="about-section" id="about" aria-labelledby="about-title"><p className="eyebrow">NEXT STEP</p><h2 id="about-title">エージェントで作業を始める</h2><p>接続を確認できたら、指示を渡して実行と成果物の確認へ進めます。</p><a className="button button-primary" href="/">エージェントを実行する</a></section>
           <footer className="page-footer"><span>AX WORKSPACE</span><span>ローカルプレビュー</span></footer>
         </main>
       </div>
