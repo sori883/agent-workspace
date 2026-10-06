@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: AXエージェント実行基盤の構想と検討事項
-description: チャットへメール・パスキー認証と利用者別アクセスを接続した現在地、本番配置と将来IdP連携の未実施範囲、製品拡張の保留方針
+description: 認証付きチャットの現在地、APIのPython・ファイル依存を外す未実装の設計案と、配置先・製品拡張の保留範囲
 status: draft
 tags: 
   - ax
@@ -10,7 +10,7 @@ tags:
   - egress
 generated: 
   by: agent:codex
-  at: 2026-10-06T09:24:45.922Z
+  at: 2026-10-06T10:47:54.117Z
 sources: 
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: ax-local/task-cli.md
@@ -27,8 +27,17 @@ sources:
   - resource: docs/auth-foundation.md
   - resource: .space/tasks/ax-auth/verification.md
   - resource: ax-local/keycloak/README.md
+  - resource: .space/tasks/ax-portable-api/design.md
 ---
 # AXを中心とするエージェント実行基盤の構想
+
+## 共通APIの配置依存を外す方針の整理（2026-10-06）
+
+利用者は、APIが同じホストのPythonとローカルファイルを必要とする構成を見直すよう求めた。Cloudflare Workersは配置先の例であり、採用決定ではない。会話・所有者・実行記録を共通APIが直接管理し、ファイル以外のデータストアへ移すことも含めて、今回は設計と作業順序を整理する依頼である。
+
+設計案は `.space/tasks/ax-portable-api/design.md`。外部接続可能な既存app PostgreSQLを会話・受付・実行記録の正本にし、AX付近の独立した実行コントローラーが処理する案を推奨している。AX RedisはAX内部の状態保存に留め、アプリの会話・所有権・確定費用の正本にはしない。Task内のPythonエージェントを継続することと、API配置先からPython依存を外すことは両立する。
+
+この案は未採用・未実装で、既存のローカルファイル保存とPython呼出しはまだ動いている。DB移行、Cloudflare等への配置、実行コントローラーの導入を実施済みと扱わない。実装前にAX/guest/Substrate接続と応答喪失時の動作を検証し、全writerの受付・費用・排他を一つのDBへ切り替える計画である。ユーザー機能としてのエージェント操作・定期実行の拡張は引き続き保留する。
 
 ## 現在地：チャットへ認証基盤を接続（2026-10-06）
 
