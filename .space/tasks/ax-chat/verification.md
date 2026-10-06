@@ -9,7 +9,7 @@
 | C3 再送と異常 | Pythonの原子的保存前後強制終了/同キー/古い親/競合/復旧、ブラウザの503→GET確認→同内容再送→1発言のまま→空の次フォームを確認 |
 | C4 境界・費用 | Python100件、Node19件成功。費用guard、Host/Origin/CSRF/厳密schema/上限/旧API互換性を確認。実AX2件ともusage既知・通信deny・停止完了 |
 | C5 操作と表示 | チャット5件、既存ブラウザ12件成功。日本語IME中は送信せず、Enter改行、Ctrl+Enter送信、320px/keyboard/axe、JSなし。CUAで実画面390px幅の横溢れなし、desktopの履歴文字省略とレイアウトを確認 |
-| C6 引き渡し | typecheck/build/diff check成功、evidence/review.mdで独立レビュー済み。PR/CI結果は納品時に追記 |
+| C6 引き渡し | typecheck/build/diff check成功、evidence/review.mdで独立レビュー済み。[PR #8](https://github.com/sori883/agent-workspace/pull/8)へ提出し、source b64e7c5のCI 2件成功 |
 
 ## 局所とブラウザ
 
@@ -34,3 +34,10 @@ receipt/request/成果物を照合し、2件ともsucceeded・resolved・usage�
 ## 確認範囲
 
 初版は短いテキスト会話で、履歴JSON4096バイトまたは32受付に達すると新規チャットを案内する。返答は完成後表示。入力途中の下書きの再読込保持、token streaming、会話編集/分岐、共有ログイン、本番K8s保存は今回の範囲外。Web/API停止後の実行継続は既存経路の性質として維持し、今回の実AX試験で途中停止を追加実施したとは扱わない。
+
+
+## PRでの全体確認
+
+source commit b64e7c59da14a24b05cbb106b50df0be2b085dbb。PR #8を作成・このチャットへ添付し、[offline-tests](https://github.com/sori883/agent-workspace/actions/runs/37419185116)と[web-tests](https://github.com/sori883/agent-workspace/actions/runs/37419185128)が成功。Web CIでは型検査、Node試験、ビルド、Playwright17件を一続きで確認した。ここからの追記は検証・台帳の納品記録だけで、product codeを変更しない。通常のPRマージは最終記録のCI後に進める。
+
+OKFにはdecisions/systems/ax/chat-turnsを作成し、knowledge/ax-web-foundationを更新。本文の読戻し一致、strict/drift検証のerrors/warnings 0を確認した。
