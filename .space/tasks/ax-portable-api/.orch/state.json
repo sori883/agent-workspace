@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 25,
+  "revision": 29,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "parent",
     "session": "portable-api-20261006"
   },
   "createdAt": "2026-10-06T11:15:49.133Z",
-  "updatedAt": "2026-10-06T12:32:15.721Z",
+  "updatedAt": "2026-10-06T12:35:54.425Z",
   "units": [
     {
       "id": "ax-portable-api",
@@ -94,12 +94,12 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 10,
+      "version": 14,
       "contractVersion": 1,
       "attempts": [
         {
           "number": 1,
-          "state": "running",
+          "state": "completed",
           "stages": {
             "implement": {
               "selection": "execute",
@@ -136,9 +136,18 @@
             },
             "deliver": {
               "selection": "execute",
-              "reason": "関連変更を一つのPRで納品",
-              "state": "pending",
-              "refs": []
+              "reason": "一つのPR #15へ実装と文書を納品し独立レビュー・CI合格を確認。最終反映状態はPRを参照",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-portable-api/task.md",
+                  "digest": "f4ac5fb70a65d1e4795f1f33ce529be28fa6a93be705990aa74c70d5aa75e0f3"
+                },
+                {
+                  "ref": "https://github.com/sori883/agent-workspace/pull/15",
+                  "digest": null
+                }
+              ]
             }
           },
           "inputs": {
@@ -153,7 +162,7 @@
         }
       ],
       "currentAttempt": 1,
-      "currentSubmission": null,
+      "currentSubmission": "1e618005-d985-4741-b174-0b8f96d74476",
       "contractHistory": []
     },
     {
@@ -818,6 +827,47 @@
       "reusedFrom": null,
       "reuseReason": "",
       "at": "2026-10-06T12:32:15.721Z"
+    },
+    {
+      "id": "9644edf0-7742-4fda-9539-3a2cc23c42dc",
+      "unit": "ax-portable-api",
+      "attempt": 1,
+      "condition": "C6",
+      "target": {
+        "id": "C6",
+        "kind": "external",
+        "refs": [
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/15",
+            "digest": null
+          }
+        ],
+        "version": "implementation bd5a5ecba019ff58f10f181873578129beb13a7c; workflow runs 37464038428,37464038343,37464038491"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-portable-api/task.md",
+          "digest": "f4ac5fb70a65d1e4795f1f33ce529be28fa6a93be705990aa74c70d5aa75e0f3"
+        },
+        {
+          "ref": ".space/tasks/ax-portable-api/verification.md",
+          "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+        }
+      ],
+      "reason": "",
+      "method": "実装と関連文書を一つのPRへ集約。独立レビューの解消・GitHub3job合格・OKF strict/drift 33conceptを確認",
+      "environment": "GitHub PR15とローカル確認済み構成",
+      "observedAt": "2026-10-06T12:35:54.034Z",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-06T12:35:54.142Z"
     }
   ],
   "submissions": [
@@ -1036,6 +1086,259 @@
         "reason": "担当結果と対象版、親による実AX offline回収・deny・実停止を照合した",
         "at": "2026-10-06T12:31:43.396Z"
       }
+    },
+    {
+      "id": "1e618005-d985-4741-b174-0b8f96d74476",
+      "unit": "ax-portable-api",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "fbf744a5-70ef-4147-a499-3f04371a9206",
+        "f28cac37-78d6-49ca-a154-5a8a13b55be1",
+        "93c5dc97-474d-43eb-9f98-f62e717621ce",
+        "0dedb7bf-b033-4519-b4ae-48f7d78cc103",
+        "921af920-741b-4239-b87e-f9dc0c526717",
+        "9644edf0-7742-4fda-9539-3a2cc23c42dc"
+      ],
+      "outputs": [
+        {
+          "id": "C1",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/api/app.ts",
+              "digest": "184c34c18f881b731c41a866cc0289fd341763e914cd89731a0279071aff9fdf"
+            },
+            {
+              "ref": "web/api/chat-service.ts",
+              "digest": "86aede771096d92fa7c00441cf65744757b32f4649e68903ba23eaab0ec2a54a"
+            },
+            {
+              "ref": "web/api/config.ts",
+              "digest": "38b9422436ba643005d0e7ac4e6d28b9180de014d3fb287f7e0a1cf02ce54ab6"
+            },
+            {
+              "ref": "web/api/run-service.ts",
+              "digest": "41cbdbac355ee07366e37f80579139f0f070db14f3007001474ea3ba5b92419a"
+            },
+            {
+              "ref": "web/api/runtime.ts",
+              "digest": "1841aa1947d04d06a751f84a82497e73281cf4550a871c4cfbf0fdeae9a38abc"
+            },
+            {
+              "ref": "web/api/settings.ts",
+              "digest": "f34b2c72e8a18022fc012cd5c5391a388d932a5722fd9a55a856f53ba463b835"
+            },
+            {
+              "ref": "web/shared/access-token.ts",
+              "digest": "d5bfe3108d82183c6043cf5720d393e10d5b1dc88c3c24dffd5c9bb57e42e988"
+            }
+          ],
+          "version": "9ad8d4bb2eb5a36001b7ad56e2566edaea373076a60c973608d88a3b5290cc30"
+        },
+        {
+          "id": "C2",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/scripts/import-legacy.sh",
+              "digest": "08152790be0963f939260722578eb9709b84c7e9be317a05e30ddc2db9a91632"
+            },
+            {
+              "ref": "web/data/canonical.ts",
+              "digest": "1dd93685825cd489c8e220752532545fdbc5217d17fee34b6f07051baf74314b"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "7308cea613b610d19e5ea6dc33a5281cb94bf4028d8864122087692d1d2a891b"
+            },
+            {
+              "ref": "web/data/schema.sql",
+              "digest": "6c1474540fb3e0b33f9b029c569030991ea3aea8bb155eb1e32e99dc716e17ca"
+            },
+            {
+              "ref": "web/scripts/import-legacy.ts",
+              "digest": "542921a9ccc51e1b31b4f4cba22370a840ad5b449cd6735be73c733201e3d1dd"
+            },
+            {
+              "ref": "web/server/legacy-import.ts",
+              "digest": "0d2cc81939c9ac68525c9d506cd6759219222b23cd24ccfa45c251c13cfe5125"
+            },
+            {
+              "ref": "web/tests/data.test.ts",
+              "digest": "c39f0719810d432f84695d21e814222b6ab71f0699edd33147d3295f650ae696"
+            }
+          ],
+          "version": "652b803469e40063ff445e744efb83f23d544452cee9bf9dae8f138ff15b11d8"
+        },
+        {
+          "id": "C3",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "c232c4ac79a0b0d9c4f62bf416a6e5c1062fdd4a208ae465ada88ae9404f6dce"
+            },
+            {
+              "ref": "execution/controller/controller_test.go",
+              "digest": "3b6098ff65069d8bdf7c5935d16ca35e35f9a4e413f088d03b864ab3ce899d00"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "90447247791635cbc75bb1e86d094fe063ad71acf2f1375fcd62e022151460cd"
+            },
+            {
+              "ref": "execution/native/adapter.go",
+              "digest": "eae33ad88afb0177678dee65921c987f8c4d8b5c4e47cff12d7455731bf31610"
+            },
+            {
+              "ref": "execution/native/direct_guest.go",
+              "digest": "2c5c81554381368e61e6547ff91f078e54847e327a386e06bca66fbb84eb5f53"
+            },
+            {
+              "ref": "execution/native/guest.go",
+              "digest": "c56a1ee910d00649b30b3c9ac39fe7df2941b576ebeae5a8e99ee9f2cb25030b"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "88b56f549019b357c76c6aad48b530491da916de68f0cda3a125852a3f904651"
+            }
+          ],
+          "version": "37d12f5f1b3c17dee4bb945387c0f4176d9b0b37b87eea0fcd430d5d9398d6f4"
+        },
+        {
+          "id": "C4",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/api/index.ts",
+              "digest": "8b9bb7803b48b71067490d96c8698c634803a814cf24edfe2240194ca66fdba3"
+            },
+            {
+              "ref": "web/api/postgres.ts",
+              "digest": "8f45eb2f26d95c169fb281b2aa3e413a668067bb201c7b8fcd3e060519b1fed1"
+            },
+            {
+              "ref": "web/api/worker.ts",
+              "digest": "52fef5ec2e0d06e1570555a3e279ecbec5b6fffcae7bc5eace39fb28d851925f"
+            },
+            {
+              "ref": "web/package-lock.json",
+              "digest": "8d38f64e6ee31f58ab0c61f6897e8482f393fb529cf4a40b47873bda3b47c73b"
+            },
+            {
+              "ref": "web/package.json",
+              "digest": "fc7b0fe3ff8d3f7300dc69e51b40bcdf12e3fc9804b08902ba597ef9cd87f028"
+            },
+            {
+              "ref": "web/server/api-settings.ts",
+              "digest": "1ca4f410b3ea5cfd8d7f6a11eaadf6a940d25e521f4e230701b65bf8fcdb1026"
+            },
+            {
+              "ref": "web/tests/runtime.test.ts",
+              "digest": "2ca12262e50931eda0b20be8ea44a4c5617a9857b3b1cf204bec7add2929e38f"
+            }
+          ],
+          "version": "4100a6ffaf4f300953899bae981a5fc4827c42e6faa0c56c1a16ac23eacc6584"
+        },
+        {
+          "id": "C5",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/ax",
+              "digest": "753bf01e5deb0ee31520f9b50631f7520d31df41c9123fa5bb7cb7124ea9cfc4"
+            },
+            {
+              "ref": "ax-local/scripts/set-egress.sh",
+              "digest": "0e6402dfdded766d849dd77245ff5fba100edb9fdb9dcb693262d10e5086c238"
+            },
+            {
+              "ref": "ax-local/task_cli.py",
+              "digest": "339268be53a3b8e2b8b1838e3573343f2f065fbd829e87599154346c0c58af73"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "f436a6a211375cbbd52d812383bd616be89a98fd7d338767495e975694b60a82"
+            },
+            {
+              "ref": "ax-local/web_bridge.py",
+              "digest": "8eb284618bd7e84f1f0934a83981332e62b9e059888dac5c9268e468a86c2465"
+            },
+            {
+              "ref": "ax-local/worker-controller.Dockerfile",
+              "digest": "cf86739e8eb46ad796701bba32a3834c100f8602be7d7824a64eec0cf28fdcd7"
+            },
+            {
+              "ref": "web/scripts/deploy-execution.ts",
+              "digest": "cac61a6abd27aa66ccbc8cc83a4a1cc3afdf960150df3c2f5757bb1e912713e7"
+            },
+            {
+              "ref": "web/scripts/prepare-execution.ts",
+              "digest": "db0a8ecabc98d163af2a3e44270f2e2103749d8b4d4caf1d7764ac1d0a9dfd0d"
+            },
+            {
+              "ref": "web/tests/browser/auth.spec.ts",
+              "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+            }
+          ],
+          "version": "25bba5bf8d17a45ebdce78f587651f942abaa46d288915e21acb2038a78b6fe6"
+        },
+        {
+          "id": "C6",
+          "kind": "external",
+          "refs": [
+            {
+              "ref": "https://github.com/sori883/agent-workspace/pull/15",
+              "digest": null
+            }
+          ],
+          "version": "implementation bd5a5ecba019ff58f10f181873578129beb13a7c; workflow runs 37464038428,37464038343,37464038491"
+        }
+      ],
+      "report": "共通API・PostgreSQL保存・独立実行管理への移行と既存15件保全を完了。ローカル実経路・所有権・再起動・Node/workerd・CI・独立レビューを確認しPR15へ一括納品。paid0、クラウド公開と全体復旧は未確認。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-portable-api/task.md",
+          "digest": "f4ac5fb70a65d1e4795f1f33ce529be28fa6a93be705990aa74c70d5aa75e0f3"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/15",
+          "digest": null
+        }
+      ],
+      "children": [
+        {
+          "unit": "ax-portable-adapter",
+          "submission": "b6959dab-6677-43fd-9319-4d33656becd4"
+        },
+        {
+          "unit": "ax-portable-data",
+          "submission": "f45154d6-7315-4120-bd60-5ccad2c4fdec"
+        }
+      ],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "at": "2026-10-06T12:35:54.287Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "reason": "C1-C6と2子unitの現版証拠を照合し、実装・検証・一つのPR納品を受け入れた。最終GitHub反映は既存方針に従って続行",
+        "at": "2026-10-06T12:35:54.425Z"
+      }
     }
   ],
   "messages": [
@@ -1082,6 +1385,32 @@
       "state": "processed",
       "resolution": "accepted: 担当結果と対象版、親による実AX offline回収・deny・実停止を照合した",
       "at": "2026-10-06T12:31:20.057Z"
+    },
+    {
+      "id": "4dd073a1-be3f-4cb6-98d0-1b99af497c36",
+      "unit": "ax-portable-api",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "共通API・PostgreSQL保存・独立実行管理への移行と既存15件保全を完了。ローカル実経路・所有権・再起動・Node/workerd・CI・独立レビューを確認しPR15へ一括納品。paid0、クラウド公開と全体復旧は未確認。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-portable-api/task.md",
+          "digest": "f4ac5fb70a65d1e4795f1f33ce529be28fa6a93be705990aa74c70d5aa75e0f3"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/15",
+          "digest": null
+        }
+      ],
+      "submission": "1e618005-d985-4741-b174-0b8f96d74476",
+      "state": "processed",
+      "resolution": "accepted: C1-C6と2子unitの現版証拠を照合し、実装・検証・一つのPR納品を受け入れた。最終GitHub反映は既存方針に従って続行",
+      "at": "2026-10-06T12:35:54.287Z"
     }
   ],
   "gates": [],
@@ -4306,6 +4635,848 @@
         "at": "2026-10-06T12:32:15.721Z"
       },
       "at": "2026-10-06T12:32:15.721Z"
+    },
+    {
+      "id": "final-1791290153951-f7976cc0d8d7b8",
+      "hash": "fa26381683822096c936d448dd5ffd6fc1d750b33f03eafbf7033535e0a10387",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-portable-api",
+        "stage": "deliver",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791290153951-f7976cc0d8d7b8",
+        "input": {
+          "selection": "execute",
+          "reason": "一つのPR #15へ実装と文書を納品し独立レビュー・CI合格を確認。最終反映状態はPRを参照",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-portable-api/task.md",
+            "https://github.com/sori883/agent-workspace/pull/15"
+          ]
+        },
+        "ifVersion": 10,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 26,
+      "data": {
+        "id": "ax-portable-api",
+        "parent": null,
+        "size": "large",
+        "purpose": "共通APIとPostgreSQL保存への構成変更を実装・検証して一つのPRで納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "共通API、実行管理、履歴と成果物のDB保存・移行、互換性、PR方針"
+        ],
+        "taskRef": ".space/tasks/ax-portable-api/task.md",
+        "planRef": ".space/tasks/ax-portable-api/plan.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "C1",
+            "description": "Pythonを要しないTypeScript API",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C1"
+          },
+          {
+            "id": "C2",
+            "description": "PG保存と既存記録の保全",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C2"
+          },
+          {
+            "id": "C3",
+            "description": "独立実行管理と費用・排他・復旧",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C3"
+          },
+          {
+            "id": "C4",
+            "description": "WorkersとNodeの互換性",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C4"
+          },
+          {
+            "id": "C5",
+            "description": "所有者隔離と安全な切替",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C5"
+          },
+          {
+            "id": "C6",
+            "description": "独立レビューと一つのPR納品",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C6"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 11,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/verification.md",
+                    "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/verification.md",
+                    "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/verification.md",
+                    "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "一つのPR #15へ実装と文書を納品し独立レビュー・CI合格を確認。最終反映状態はPRを参照",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/task.md",
+                    "digest": "f4ac5fb70a65d1e4795f1f33ce529be28fa6a93be705990aa74c70d5aa75e0f3"
+                  },
+                  {
+                    "ref": "https://github.com/sori883/agent-workspace/pull/15",
+                    "digest": null
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:16:39.186Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T12:35:54.004Z"
+    },
+    {
+      "id": "final-1791290154105-45b890793b5e6",
+      "hash": "c8eb953692e9aa97083ffa07d3a773822d4e8eb728ea9e9b4b5a044eebb8a21f",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ax-portable-api",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791290154105-45b890793b5e6",
+        "input": {
+          "condition": "C6",
+          "verdict": "pass",
+          "target": {
+            "id": "C6",
+            "kind": "external",
+            "ref": "https://github.com/sori883/agent-workspace/pull/15",
+            "version": "implementation bd5a5ecba019ff58f10f181873578129beb13a7c; workflow runs 37464038428,37464038343,37464038491"
+          },
+          "evidence": [
+            ".space/tasks/ax-portable-api/task.md",
+            ".space/tasks/ax-portable-api/verification.md"
+          ],
+          "method": "実装と関連文書を一つのPRへ集約。独立レビューの解消・GitHub3job合格・OKF strict/drift 33conceptを確認",
+          "environment": "GitHub PR15とローカル確認済み構成",
+          "observedAt": "2026-10-06T12:35:54.034Z"
+        },
+        "ifVersion": 11,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 27,
+      "data": {
+        "id": "9644edf0-7742-4fda-9539-3a2cc23c42dc",
+        "unit": "ax-portable-api",
+        "attempt": 1,
+        "condition": "C6",
+        "target": {
+          "id": "C6",
+          "kind": "external",
+          "refs": [
+            {
+              "ref": "https://github.com/sori883/agent-workspace/pull/15",
+              "digest": null
+            }
+          ],
+          "version": "implementation bd5a5ecba019ff58f10f181873578129beb13a7c; workflow runs 37464038428,37464038343,37464038491"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-portable-api/task.md",
+            "digest": "f4ac5fb70a65d1e4795f1f33ce529be28fa6a93be705990aa74c70d5aa75e0f3"
+          },
+          {
+            "ref": ".space/tasks/ax-portable-api/verification.md",
+            "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+          }
+        ],
+        "reason": "",
+        "method": "実装と関連文書を一つのPRへ集約。独立レビューの解消・GitHub3job合格・OKF strict/drift 33conceptを確認",
+        "environment": "GitHub PR15とローカル確認済み構成",
+        "observedAt": "2026-10-06T12:35:54.034Z",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-06T12:35:54.142Z"
+      },
+      "at": "2026-10-06T12:35:54.142Z"
+    },
+    {
+      "id": "final-1791290154244-f0959069b997a",
+      "hash": "847dace6f1b6f3d634d6a86986b6c21073a0af7bfe5913732b0e30ceabd58c9b",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "ax-portable-api",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791290154244-f0959069b997a",
+        "input": {
+          "checks": [
+            "fbf744a5-70ef-4147-a499-3f04371a9206",
+            "f28cac37-78d6-49ca-a154-5a8a13b55be1",
+            "93c5dc97-474d-43eb-9f98-f62e717621ce",
+            "0dedb7bf-b033-4519-b4ae-48f7d78cc103",
+            "921af920-741b-4239-b87e-f9dc0c526717",
+            "9644edf0-7742-4fda-9539-3a2cc23c42dc"
+          ],
+          "report": "共通API・PostgreSQL保存・独立実行管理への移行と既存15件保全を完了。ローカル実経路・所有権・再起動・Node/workerd・CI・独立レビューを確認しPR15へ一括納品。paid0、クラウド公開と全体復旧は未確認。",
+          "refs": [
+            ".space/tasks/ax-portable-api/task.md",
+            "https://github.com/sori883/agent-workspace/pull/15"
+          ]
+        },
+        "ifVersion": 12,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 28,
+      "data": {
+        "id": "1e618005-d985-4741-b174-0b8f96d74476",
+        "unit": "ax-portable-api",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "fbf744a5-70ef-4147-a499-3f04371a9206",
+          "f28cac37-78d6-49ca-a154-5a8a13b55be1",
+          "93c5dc97-474d-43eb-9f98-f62e717621ce",
+          "0dedb7bf-b033-4519-b4ae-48f7d78cc103",
+          "921af920-741b-4239-b87e-f9dc0c526717",
+          "9644edf0-7742-4fda-9539-3a2cc23c42dc"
+        ],
+        "outputs": [
+          {
+            "id": "C1",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/api/app.ts",
+                "digest": "184c34c18f881b731c41a866cc0289fd341763e914cd89731a0279071aff9fdf"
+              },
+              {
+                "ref": "web/api/chat-service.ts",
+                "digest": "86aede771096d92fa7c00441cf65744757b32f4649e68903ba23eaab0ec2a54a"
+              },
+              {
+                "ref": "web/api/config.ts",
+                "digest": "38b9422436ba643005d0e7ac4e6d28b9180de014d3fb287f7e0a1cf02ce54ab6"
+              },
+              {
+                "ref": "web/api/run-service.ts",
+                "digest": "41cbdbac355ee07366e37f80579139f0f070db14f3007001474ea3ba5b92419a"
+              },
+              {
+                "ref": "web/api/runtime.ts",
+                "digest": "1841aa1947d04d06a751f84a82497e73281cf4550a871c4cfbf0fdeae9a38abc"
+              },
+              {
+                "ref": "web/api/settings.ts",
+                "digest": "f34b2c72e8a18022fc012cd5c5391a388d932a5722fd9a55a856f53ba463b835"
+              },
+              {
+                "ref": "web/shared/access-token.ts",
+                "digest": "d5bfe3108d82183c6043cf5720d393e10d5b1dc88c3c24dffd5c9bb57e42e988"
+              }
+            ],
+            "version": "9ad8d4bb2eb5a36001b7ad56e2566edaea373076a60c973608d88a3b5290cc30"
+          },
+          {
+            "id": "C2",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/scripts/import-legacy.sh",
+                "digest": "08152790be0963f939260722578eb9709b84c7e9be317a05e30ddc2db9a91632"
+              },
+              {
+                "ref": "web/data/canonical.ts",
+                "digest": "1dd93685825cd489c8e220752532545fdbc5217d17fee34b6f07051baf74314b"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "7308cea613b610d19e5ea6dc33a5281cb94bf4028d8864122087692d1d2a891b"
+              },
+              {
+                "ref": "web/data/schema.sql",
+                "digest": "6c1474540fb3e0b33f9b029c569030991ea3aea8bb155eb1e32e99dc716e17ca"
+              },
+              {
+                "ref": "web/scripts/import-legacy.ts",
+                "digest": "542921a9ccc51e1b31b4f4cba22370a840ad5b449cd6735be73c733201e3d1dd"
+              },
+              {
+                "ref": "web/server/legacy-import.ts",
+                "digest": "0d2cc81939c9ac68525c9d506cd6759219222b23cd24ccfa45c251c13cfe5125"
+              },
+              {
+                "ref": "web/tests/data.test.ts",
+                "digest": "c39f0719810d432f84695d21e814222b6ab71f0699edd33147d3295f650ae696"
+              }
+            ],
+            "version": "652b803469e40063ff445e744efb83f23d544452cee9bf9dae8f138ff15b11d8"
+          },
+          {
+            "id": "C3",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "c232c4ac79a0b0d9c4f62bf416a6e5c1062fdd4a208ae465ada88ae9404f6dce"
+              },
+              {
+                "ref": "execution/controller/controller_test.go",
+                "digest": "3b6098ff65069d8bdf7c5935d16ca35e35f9a4e413f088d03b864ab3ce899d00"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "90447247791635cbc75bb1e86d094fe063ad71acf2f1375fcd62e022151460cd"
+              },
+              {
+                "ref": "execution/native/adapter.go",
+                "digest": "eae33ad88afb0177678dee65921c987f8c4d8b5c4e47cff12d7455731bf31610"
+              },
+              {
+                "ref": "execution/native/direct_guest.go",
+                "digest": "2c5c81554381368e61e6547ff91f078e54847e327a386e06bca66fbb84eb5f53"
+              },
+              {
+                "ref": "execution/native/guest.go",
+                "digest": "c56a1ee910d00649b30b3c9ac39fe7df2941b576ebeae5a8e99ee9f2cb25030b"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "88b56f549019b357c76c6aad48b530491da916de68f0cda3a125852a3f904651"
+              }
+            ],
+            "version": "37d12f5f1b3c17dee4bb945387c0f4176d9b0b37b87eea0fcd430d5d9398d6f4"
+          },
+          {
+            "id": "C4",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/api/index.ts",
+                "digest": "8b9bb7803b48b71067490d96c8698c634803a814cf24edfe2240194ca66fdba3"
+              },
+              {
+                "ref": "web/api/postgres.ts",
+                "digest": "8f45eb2f26d95c169fb281b2aa3e413a668067bb201c7b8fcd3e060519b1fed1"
+              },
+              {
+                "ref": "web/api/worker.ts",
+                "digest": "52fef5ec2e0d06e1570555a3e279ecbec5b6fffcae7bc5eace39fb28d851925f"
+              },
+              {
+                "ref": "web/package-lock.json",
+                "digest": "8d38f64e6ee31f58ab0c61f6897e8482f393fb529cf4a40b47873bda3b47c73b"
+              },
+              {
+                "ref": "web/package.json",
+                "digest": "fc7b0fe3ff8d3f7300dc69e51b40bcdf12e3fc9804b08902ba597ef9cd87f028"
+              },
+              {
+                "ref": "web/server/api-settings.ts",
+                "digest": "1ca4f410b3ea5cfd8d7f6a11eaadf6a940d25e521f4e230701b65bf8fcdb1026"
+              },
+              {
+                "ref": "web/tests/runtime.test.ts",
+                "digest": "2ca12262e50931eda0b20be8ea44a4c5617a9857b3b1cf204bec7add2929e38f"
+              }
+            ],
+            "version": "4100a6ffaf4f300953899bae981a5fc4827c42e6faa0c56c1a16ac23eacc6584"
+          },
+          {
+            "id": "C5",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/ax",
+                "digest": "753bf01e5deb0ee31520f9b50631f7520d31df41c9123fa5bb7cb7124ea9cfc4"
+              },
+              {
+                "ref": "ax-local/scripts/set-egress.sh",
+                "digest": "0e6402dfdded766d849dd77245ff5fba100edb9fdb9dcb693262d10e5086c238"
+              },
+              {
+                "ref": "ax-local/task_cli.py",
+                "digest": "339268be53a3b8e2b8b1838e3573343f2f065fbd829e87599154346c0c58af73"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "f436a6a211375cbbd52d812383bd616be89a98fd7d338767495e975694b60a82"
+              },
+              {
+                "ref": "ax-local/web_bridge.py",
+                "digest": "8eb284618bd7e84f1f0934a83981332e62b9e059888dac5c9268e468a86c2465"
+              },
+              {
+                "ref": "ax-local/worker-controller.Dockerfile",
+                "digest": "cf86739e8eb46ad796701bba32a3834c100f8602be7d7824a64eec0cf28fdcd7"
+              },
+              {
+                "ref": "web/scripts/deploy-execution.ts",
+                "digest": "cac61a6abd27aa66ccbc8cc83a4a1cc3afdf960150df3c2f5757bb1e912713e7"
+              },
+              {
+                "ref": "web/scripts/prepare-execution.ts",
+                "digest": "db0a8ecabc98d163af2a3e44270f2e2103749d8b4d4caf1d7764ac1d0a9dfd0d"
+              },
+              {
+                "ref": "web/tests/browser/auth.spec.ts",
+                "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+              }
+            ],
+            "version": "25bba5bf8d17a45ebdce78f587651f942abaa46d288915e21acb2038a78b6fe6"
+          },
+          {
+            "id": "C6",
+            "kind": "external",
+            "refs": [
+              {
+                "ref": "https://github.com/sori883/agent-workspace/pull/15",
+                "digest": null
+              }
+            ],
+            "version": "implementation bd5a5ecba019ff58f10f181873578129beb13a7c; workflow runs 37464038428,37464038343,37464038491"
+          }
+        ],
+        "report": "共通API・PostgreSQL保存・独立実行管理への移行と既存15件保全を完了。ローカル実経路・所有権・再起動・Node/workerd・CI・独立レビューを確認しPR15へ一括納品。paid0、クラウド公開と全体復旧は未確認。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-portable-api/task.md",
+            "digest": "f4ac5fb70a65d1e4795f1f33ce529be28fa6a93be705990aa74c70d5aa75e0f3"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/15",
+            "digest": null
+          }
+        ],
+        "children": [
+          {
+            "unit": "ax-portable-adapter",
+            "submission": "b6959dab-6677-43fd-9319-4d33656becd4"
+          },
+          {
+            "unit": "ax-portable-data",
+            "submission": "f45154d6-7315-4120-bd60-5ccad2c4fdec"
+          }
+        ],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "at": "2026-10-06T12:35:54.287Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-06T12:35:54.287Z"
+    },
+    {
+      "id": "final-1791290154389-eb3e7184b27ac8",
+      "hash": "a0c671f97515f2f162eca3c57367d90414b8554e4bf8e720085ac0a7e399f89b",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "ax-portable-api",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791290154389-eb3e7184b27ac8",
+        "input": {
+          "submission": "1e618005-d985-4741-b174-0b8f96d74476",
+          "reason": "C1-C6と2子unitの現版証拠を照合し、実装・検証・一つのPR納品を受け入れた。最終GitHub反映は既存方針に従って続行"
+        },
+        "ifVersion": 13,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 29,
+      "data": {
+        "id": "1e618005-d985-4741-b174-0b8f96d74476",
+        "unit": "ax-portable-api",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "fbf744a5-70ef-4147-a499-3f04371a9206",
+          "f28cac37-78d6-49ca-a154-5a8a13b55be1",
+          "93c5dc97-474d-43eb-9f98-f62e717621ce",
+          "0dedb7bf-b033-4519-b4ae-48f7d78cc103",
+          "921af920-741b-4239-b87e-f9dc0c526717",
+          "9644edf0-7742-4fda-9539-3a2cc23c42dc"
+        ],
+        "outputs": [
+          {
+            "id": "C1",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/api/app.ts",
+                "digest": "184c34c18f881b731c41a866cc0289fd341763e914cd89731a0279071aff9fdf"
+              },
+              {
+                "ref": "web/api/chat-service.ts",
+                "digest": "86aede771096d92fa7c00441cf65744757b32f4649e68903ba23eaab0ec2a54a"
+              },
+              {
+                "ref": "web/api/config.ts",
+                "digest": "38b9422436ba643005d0e7ac4e6d28b9180de014d3fb287f7e0a1cf02ce54ab6"
+              },
+              {
+                "ref": "web/api/run-service.ts",
+                "digest": "41cbdbac355ee07366e37f80579139f0f070db14f3007001474ea3ba5b92419a"
+              },
+              {
+                "ref": "web/api/runtime.ts",
+                "digest": "1841aa1947d04d06a751f84a82497e73281cf4550a871c4cfbf0fdeae9a38abc"
+              },
+              {
+                "ref": "web/api/settings.ts",
+                "digest": "f34b2c72e8a18022fc012cd5c5391a388d932a5722fd9a55a856f53ba463b835"
+              },
+              {
+                "ref": "web/shared/access-token.ts",
+                "digest": "d5bfe3108d82183c6043cf5720d393e10d5b1dc88c3c24dffd5c9bb57e42e988"
+              }
+            ],
+            "version": "9ad8d4bb2eb5a36001b7ad56e2566edaea373076a60c973608d88a3b5290cc30"
+          },
+          {
+            "id": "C2",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/scripts/import-legacy.sh",
+                "digest": "08152790be0963f939260722578eb9709b84c7e9be317a05e30ddc2db9a91632"
+              },
+              {
+                "ref": "web/data/canonical.ts",
+                "digest": "1dd93685825cd489c8e220752532545fdbc5217d17fee34b6f07051baf74314b"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "7308cea613b610d19e5ea6dc33a5281cb94bf4028d8864122087692d1d2a891b"
+              },
+              {
+                "ref": "web/data/schema.sql",
+                "digest": "6c1474540fb3e0b33f9b029c569030991ea3aea8bb155eb1e32e99dc716e17ca"
+              },
+              {
+                "ref": "web/scripts/import-legacy.ts",
+                "digest": "542921a9ccc51e1b31b4f4cba22370a840ad5b449cd6735be73c733201e3d1dd"
+              },
+              {
+                "ref": "web/server/legacy-import.ts",
+                "digest": "0d2cc81939c9ac68525c9d506cd6759219222b23cd24ccfa45c251c13cfe5125"
+              },
+              {
+                "ref": "web/tests/data.test.ts",
+                "digest": "c39f0719810d432f84695d21e814222b6ab71f0699edd33147d3295f650ae696"
+              }
+            ],
+            "version": "652b803469e40063ff445e744efb83f23d544452cee9bf9dae8f138ff15b11d8"
+          },
+          {
+            "id": "C3",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "c232c4ac79a0b0d9c4f62bf416a6e5c1062fdd4a208ae465ada88ae9404f6dce"
+              },
+              {
+                "ref": "execution/controller/controller_test.go",
+                "digest": "3b6098ff65069d8bdf7c5935d16ca35e35f9a4e413f088d03b864ab3ce899d00"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "90447247791635cbc75bb1e86d094fe063ad71acf2f1375fcd62e022151460cd"
+              },
+              {
+                "ref": "execution/native/adapter.go",
+                "digest": "eae33ad88afb0177678dee65921c987f8c4d8b5c4e47cff12d7455731bf31610"
+              },
+              {
+                "ref": "execution/native/direct_guest.go",
+                "digest": "2c5c81554381368e61e6547ff91f078e54847e327a386e06bca66fbb84eb5f53"
+              },
+              {
+                "ref": "execution/native/guest.go",
+                "digest": "c56a1ee910d00649b30b3c9ac39fe7df2941b576ebeae5a8e99ee9f2cb25030b"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "88b56f549019b357c76c6aad48b530491da916de68f0cda3a125852a3f904651"
+              }
+            ],
+            "version": "37d12f5f1b3c17dee4bb945387c0f4176d9b0b37b87eea0fcd430d5d9398d6f4"
+          },
+          {
+            "id": "C4",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/api/index.ts",
+                "digest": "8b9bb7803b48b71067490d96c8698c634803a814cf24edfe2240194ca66fdba3"
+              },
+              {
+                "ref": "web/api/postgres.ts",
+                "digest": "8f45eb2f26d95c169fb281b2aa3e413a668067bb201c7b8fcd3e060519b1fed1"
+              },
+              {
+                "ref": "web/api/worker.ts",
+                "digest": "52fef5ec2e0d06e1570555a3e279ecbec5b6fffcae7bc5eace39fb28d851925f"
+              },
+              {
+                "ref": "web/package-lock.json",
+                "digest": "8d38f64e6ee31f58ab0c61f6897e8482f393fb529cf4a40b47873bda3b47c73b"
+              },
+              {
+                "ref": "web/package.json",
+                "digest": "fc7b0fe3ff8d3f7300dc69e51b40bcdf12e3fc9804b08902ba597ef9cd87f028"
+              },
+              {
+                "ref": "web/server/api-settings.ts",
+                "digest": "1ca4f410b3ea5cfd8d7f6a11eaadf6a940d25e521f4e230701b65bf8fcdb1026"
+              },
+              {
+                "ref": "web/tests/runtime.test.ts",
+                "digest": "2ca12262e50931eda0b20be8ea44a4c5617a9857b3b1cf204bec7add2929e38f"
+              }
+            ],
+            "version": "4100a6ffaf4f300953899bae981a5fc4827c42e6faa0c56c1a16ac23eacc6584"
+          },
+          {
+            "id": "C5",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/ax",
+                "digest": "753bf01e5deb0ee31520f9b50631f7520d31df41c9123fa5bb7cb7124ea9cfc4"
+              },
+              {
+                "ref": "ax-local/scripts/set-egress.sh",
+                "digest": "0e6402dfdded766d849dd77245ff5fba100edb9fdb9dcb693262d10e5086c238"
+              },
+              {
+                "ref": "ax-local/task_cli.py",
+                "digest": "339268be53a3b8e2b8b1838e3573343f2f065fbd829e87599154346c0c58af73"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "f436a6a211375cbbd52d812383bd616be89a98fd7d338767495e975694b60a82"
+              },
+              {
+                "ref": "ax-local/web_bridge.py",
+                "digest": "8eb284618bd7e84f1f0934a83981332e62b9e059888dac5c9268e468a86c2465"
+              },
+              {
+                "ref": "ax-local/worker-controller.Dockerfile",
+                "digest": "cf86739e8eb46ad796701bba32a3834c100f8602be7d7824a64eec0cf28fdcd7"
+              },
+              {
+                "ref": "web/scripts/deploy-execution.ts",
+                "digest": "cac61a6abd27aa66ccbc8cc83a4a1cc3afdf960150df3c2f5757bb1e912713e7"
+              },
+              {
+                "ref": "web/scripts/prepare-execution.ts",
+                "digest": "db0a8ecabc98d163af2a3e44270f2e2103749d8b4d4caf1d7764ac1d0a9dfd0d"
+              },
+              {
+                "ref": "web/tests/browser/auth.spec.ts",
+                "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+              }
+            ],
+            "version": "25bba5bf8d17a45ebdce78f587651f942abaa46d288915e21acb2038a78b6fe6"
+          },
+          {
+            "id": "C6",
+            "kind": "external",
+            "refs": [
+              {
+                "ref": "https://github.com/sori883/agent-workspace/pull/15",
+                "digest": null
+              }
+            ],
+            "version": "implementation bd5a5ecba019ff58f10f181873578129beb13a7c; workflow runs 37464038428,37464038343,37464038491"
+          }
+        ],
+        "report": "共通API・PostgreSQL保存・独立実行管理への移行と既存15件保全を完了。ローカル実経路・所有権・再起動・Node/workerd・CI・独立レビューを確認しPR15へ一括納品。paid0、クラウド公開と全体復旧は未確認。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-portable-api/task.md",
+            "digest": "f4ac5fb70a65d1e4795f1f33ce529be28fa6a93be705990aa74c70d5aa75e0f3"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/15",
+            "digest": null
+          }
+        ],
+        "children": [
+          {
+            "unit": "ax-portable-adapter",
+            "submission": "b6959dab-6677-43fd-9319-4d33656becd4"
+          },
+          {
+            "unit": "ax-portable-data",
+            "submission": "f45154d6-7315-4120-bd60-5ccad2c4fdec"
+          }
+        ],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "at": "2026-10-06T12:35:54.287Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "portable-api-20261006"
+          },
+          "reason": "C1-C6と2子unitの現版証拠を照合し、実装・検証・一つのPR納品を受け入れた。最終GitHub反映は既存方針に従って続行",
+          "at": "2026-10-06T12:35:54.425Z"
+        }
+      },
+      "at": "2026-10-06T12:35:54.425Z"
     }
   ]
 }
