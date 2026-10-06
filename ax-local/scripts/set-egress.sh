@@ -2,6 +2,10 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
+if [[ -e "$root/.state/execution/managed" && "${AX_ADMIN_RECOVERY:-}" != "1" ]]; then
+  echo "Direct egress changes are retired. Use the execution controller recovery procedure." >&2
+  exit 1
+fi
 actor="${1:?actor name is required}"
 hosts="${2:?hostname JSON file is required}"
 export KUBECONFIG="$root/kubeconfig"

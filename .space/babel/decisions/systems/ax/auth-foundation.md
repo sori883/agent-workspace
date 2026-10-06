@@ -1,7 +1,7 @@
 ---
 type: decision
 title: 認証窓口をKeycloakへ集約し内部利用者IDで会話を所有する
-description: Keycloakのメール・パスキー認証、内部利用者IDによる所有権、外部DB接続と復元を実装した構成と採用理由
+description: Keycloak認証と内部利用者ID、共通API・PostgreSQLでの所有権、外部DB接続の設計と履歴
 status: stable
 governance: context
 code_refs: 
@@ -24,7 +24,7 @@ sources:
   - resource: ax-local/keycloak/README.md
 generated: 
   by: agent:codex
-  at: 2026-10-06T09:24:45.770Z
+  at: 2026-10-06T12:27:50.159Z
 ---
 # チャットの認証基盤の構成
 
@@ -36,9 +36,9 @@ generated:
 
 同日、利用者はPostgreSQLの採用を了承し、DBをEKS/Kubernetes内に置く前提で記載しないよう指示した。本番DBの配置先・運用サービスは未選定で、AWSのマネージドDB、外部のPostgreSQLホスティング、Kubernetes内などでの自己管理を候補に残す。アプリの配置先とDBの配置先は別に決める。
 
-認証用とアプリ用のDB・接続権限の分離は、配置先によらず維持する。1インスタンスにまとめるのはローカル開発・検証で可能な構成であり、本番の配置・台数を指定しない。Keycloak・BFF・共通APIは接続先・資格情報・TLSを外部設定で受け取り、クラスタ内サービス名や永続ボリュームを前提にしない。選定後に提供元ごとの接続条件・対応バージョン・運用分担を検証する。認証用DBはKeycloakだけが扱う。アプリ用DBは内部利用者・外部ID対応・BFFセッションを保存し、パスワードやパスキーの秘密鍵は保持しない。共通APIはトークンを検証して内部利用者を確定し、Pythonへ渡す。
+認証用とアプリ用のDB・接続権限の分離は、配置先によらず維持する。1インスタンスにまとめるのはローカル開発・検証で可能な構成であり、本番の配置・台数を指定しない。Keycloak・BFF・共通APIは接続先・資格情報・TLSを外部設定で受け取り、クラスタ内サービス名や永続ボリュームを前提にしない。選定後に提供元ごとの接続条件・対応バージョン・運用分担を検証する。認証用DBはKeycloakだけが扱う。アプリ用DBは内部利用者・外部ID対応・BFFセッションを保存し、パスワードやパスキーの秘密鍵は保持しない。共通APIはトークンを検証して内部利用者を確定し、app DBの所有権付き関数へ渡す。
 
-会話本文・費用・実行状態は既存receiptと成果物を正本に維持する。新規受付時に内部利用者IDをownerとして原子的に保存し、一覧・詳細・継続送信・成果物・復旧・同キー再送すべてで照合する。会話所有権をアプリDBへ二重登録しない。本人確認には発行元とsubjectを使い、メールアドレス一致だけで統合しない。
+認証導入直後はreceiptを正本としていたが、同日の[共通API移行](portable-api-postgres.md)で会話本文・費用・実行状態・成果物をapp PostgreSQLへ移した。新規受付時に内部利用者IDをownerとして原子的に保存し、一覧・詳細・継続送信・成果物・復旧・同キー再送すべてで照合する。会話所有権も同じapp DBへ集約し、旧ファイルを別のwriterとして更新しない。本人確認には発行元とsubjectを使い、メールアドレス一致だけで統合しない。
 
 ## 互換性と復旧
 
@@ -56,7 +56,7 @@ Authorization Code＋PKCE S256、state、nonceを使い、ログイン途中の�
 
 APIはRS256署名、issuer、audience=ax-api、azp=ax-web、typ=Bearer、exp/iat/subを検証する。Keycloakのbasic scopeがaccess tokenのsub発行に必要だったため、profile/emailと共に明示している。ID tokenのaudienceはax-webのまま分ける。
 
-Python bridgeは検証済みowner UUIDと入力を別フィールドで受け取る。単発とチャットの両受付でownerを原子的に保存し、再送キーはownerと組にする。会話に別ownerが混在すれば拒否し、一覧はownerで絞ってから件数制限する。信頼するローカル管理CLI・workerの旧データ経路と、Webのowner必須経路を分ける。
+現在はTypeScript APIが検証済みowner UUIDと入力をDBへ渡す。以下のowner照合条件は旧Python bridgeから移植した。単発とチャットの両受付でownerを原子的に保存し、再送キーはownerと組にする。会話に別ownerが混在すれば拒否し、一覧はownerで絞ってから件数制限する。通常API role、実行管理role、移行・復旧用管理者のDB権限を分ける。旧管理CLIはretirement markerで通常操作を拒否する。
 
 標準のWeb配信器はcallback URLのcodeをアクセスログへ出すため、ログを出さないHonoの配信経路へ変更した。起動確認は公開login画面の署名Cookieを照合し、別プロセスが使うポートの成功応答を誤認しない。
 

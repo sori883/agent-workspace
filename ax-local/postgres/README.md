@@ -1,14 +1,14 @@
 # Kubernetesの外に置くローカルPostgreSQL
 
-Docker Desktop上の専用コンテナ `ax-local-postgres` に3つのDBを置く。アプリとDBの配置は独立しており、将来は接続先・認証情報・CAを外部のPostgreSQLに差し替える。RDS等のサービス契約や、認証機能の実装はこの手順に含めない。
+Docker Desktop上の専用コンテナ `ax-local-postgres` に3つのDBを置く。アプリとDBの配置は独立しており、将来は接続先・認証情報・CAを外部のPostgreSQLに差し替える。RDS等のサービス契約はこの手順に含めない。認証は[Keycloak](../keycloak/README.md)、会話・実行保存と限定ロールは[実行管理](../../execution/README.md)の手順に従う。
 
 | 用途 | DB | 接続ユーザー | 状態 |
 | --- | --- | --- | --- |
 | Substrate実行基盤 | `substrate` | `ax_substrate` | 2026-10-06、既存 `atepg` から移行済み |
-| Keycloak認証 | `keycloak` | `ax_keycloak` | 空のDBを準備。Keycloakは未導入 |
-| アプリ | `app` | `ax_app` | 空のDBを準備。会話の保存は引き続き `.state/runs` |
+| Keycloak認証 | `keycloak` | `ax_keycloak` | ログイン・パスキー・認証設定を保存 |
+| アプリ | `app` | 管理・BFFは`ax_app`、APIは`ax_api`、controllerは`ax_execution` | 認証セッション、会話、受付、結果、成果物bytes、旧原本を保存 |
 
-各ユーザーは自分のDBを所有する。他用途のDBには接続できず、DB作成・ユーザー管理・superuser権限は持たない。1つのPostgreSQLを共有するので、CPU・容量・障害の影響までは分離されない。
+基盤・認証・アプリ管理の各ユーザーは自分のDBを所有する。他用途のDBには接続できず、DB作成・ユーザー管理・superuser権限は持たない。APIとcontrollerのロールはDBを所有せず、用途別の関数・必要な参照権限だけを持つ。1つのPostgreSQLを共有するので、CPU・容量・障害の影響までは分離されない。
 
 ## 起動と接続
 
@@ -45,6 +45,8 @@ python3 ax-local/postgres/manage.py up
 
 ## 既存kind内DBからの移行
 
+この節はSubstrate DBを外置きした当時の手順。アプリのPostgreSQL移行後は旧CLIと直接AX操作を拒否するため、切替後の確認は[共通API・controllerの手順](../../execution/README.md)で行う。既に移行済みのDBにcutoverを再実行しない。
+
 このスクリプトは [versions.json](../versions.json) のSubstrateと、旧 `ate-system/postgres-0`・DB `atepg` の構成用。移行先は空の `substrate` DBでなければ停止する。外部から直接AXを操作する処理も止めてから実施する。
 
 先に `kubectl-ate get actors -A` で全Actorが停止中、`get actor-template -A` でgolden tag生成済み・ERRORなし、`get workers` で実行中Actorなしを確認する。CLIは `bash ax-local/with-env.sh ax-local/bin/kubectl-ate ...` で呼ぶ。これらはAXのTask一覧だけでは確認できない。
@@ -69,11 +71,7 @@ python3 ax-local/postgres/migrate.py cutover
 
 切替後は既存Taskの保持、新規offline実行と終了、DB再起動後の保持を確認する。モデルAPIは呼ばない。
 
-```bash
-bash ax-local/ax get tasks -a ax-demo
-bash ax-local/task run --instruction-file ax-local/examples/request.txt \
-  --input ax-local/examples/input.txt --output answer.txt --offline
-```
+managed移行後はWebの「動作テスト」からoffline実行を行い、成果物とDBの結果・実停止証拠を確認する。旧`ax-local/task run`を再有効化しない。受付再開前の管理者検証は[実行管理の検証](../../execution/README.md#モデルを呼ばない検証)を参照。
 
 確認後、旧DBだけを停止し、PVCは残す。
 

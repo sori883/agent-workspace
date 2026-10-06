@@ -1,12 +1,12 @@
 import * as oidc from "openid-client";
-import { createRemoteJWKSet, jwtVerify, type JWTPayload } from "jose";
+import { AccessTokenVerifier, type AccessClaims } from "../shared/access-token";
 import type { AuthConfig } from "./auth-config";
 import { AuthenticationError, type LoginFlow } from "./auth-store";
 
 export class IdentityProvider {
   private configuration?: Promise<oidc.Configuration>;
-  private keys?: ReturnType<typeof createRemoteJWKSet>;
-  constructor(private readonly settings: AuthConfig) {}
+  private readonly verifier: AccessTokenVerifier;
+  constructor(private readonly settings: AuthConfig) { this.verifier = new AccessTokenVerifier(settings); }
   private async config() {
     this.configuration ??= oidc.discovery(new URL(this.settings.issuer), this.settings.clientId,
       { client_secret: this.settings.clientSecret, id_token_signed_response_alg: "RS256" }, undefined,
@@ -32,19 +32,7 @@ export class IdentityProvider {
       displayName: typeof claims.email === "string" ? claims.email : typeof claims.name === "string" ? claims.name : "利用者",
       expiresAt: access.exp! * 1000 };
   }
-  async accessClaims(token: string): Promise<JWTPayload & { sub: string; iss: string; exp: number }> {
-    if (token.length > 16_384) throw new AuthenticationError("invalid_token");
-    const config = await this.config();
-    const jwks = config.serverMetadata().jwks_uri;
-    if (!jwks || new URL(jwks).origin !== new URL(this.settings.issuer).origin) throw new AuthenticationError("invalid_jwks");
-    this.keys ??= createRemoteJWKSet(new URL(jwks), { timeoutDuration: 3000, cooldownDuration: 30_000, cacheMaxAge: 300_000 });
-    try {
-      const { payload } = await jwtVerify(token, this.keys, { issuer: this.settings.issuer, audience: this.settings.audience,
-        algorithms: ["RS256"], requiredClaims: ["exp", "iat", "sub", "iss", "aud", "azp", "typ"], clockTolerance: 0, maxTokenAge: "30m" });
-      if (payload.azp !== this.settings.clientId || payload.typ !== "Bearer" || typeof payload.sub !== "string" || !payload.sub || typeof payload.exp !== "number" || typeof payload.iss !== "string") throw new Error();
-      return payload as JWTPayload & { sub: string; iss: string; exp: number };
-    } catch { throw new AuthenticationError("invalid_token"); }
-  }
+  async accessClaims(token: string): Promise<AccessClaims> { return this.verifier.verify(token); }
   async logout(redirectUri: string) {
     return oidc.buildEndSessionUrl(await this.config(), { post_logout_redirect_uri: redirectUri, client_id: this.settings.clientId }).href;
   }

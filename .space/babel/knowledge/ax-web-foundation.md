@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: ローカルWebの境界と非同期実行
-description: 認証済み利用者ごとのローカルWeb境界、非同期AX実行と会話継続、再送・復旧・永続セッションの構成
+description: Hono共通APIとPostgreSQL、独立Go実行管理、Keycloak認証を接続した現在の構成とWebの境界
 status: stable
 tags: 
   - ax
@@ -9,33 +9,39 @@ tags:
   - execution
 code_refs: 
   - web/
-  - ax-local/web_bridge.py
-  - ax-local/task_cli.py
-  - ax-local/chat.py
-  - web/shared/chat-contracts.ts
-  - web/app/routes/chat.tsx
+  - execution/
+  - ax-local/task_runtime/
+  - web/scripts/deploy-execution.ts
 sources: 
-  - resource: web/README.md
-  - resource: .space/tasks/ax-web-foundation/task.md
-  - resource: docs/web-architecture.md
-  - resource: web/tests/boundaries.test.ts
-  - resource: web/tests/browser/
-  - resource: .space/tasks/ax-web-runs/design.md
-  - resource: .space/tasks/ax-web-runs/verification.md
-  - resource: .space/tasks/ax-web-runs/review.md
-  - resource: ax-local/web_bridge.py
-  - resource: web/tests/runs.test.ts
-  - resource: .space/tasks/ax-chat/verification.md
-  - resource: docs/auth-foundation.md
-  - resource: .space/tasks/ax-auth/verification.md
-  - resource: ax-local/keycloak/README.md
+  - resource: web/api/runtime.ts
+  - resource: web/data/schema.sql
+  - resource: execution/controller/
+  - resource: .space/tasks/ax-portable-api/verification.md
 generated: 
   by: agent:codex
-  at: 2026-10-06T09:24:45.859Z
+  at: 2026-10-06T12:27:49.777Z
 ---
 # ローカルWebの境界と非同期実行
 
-2026-10-06、W1の接続確認に続き、W2〜W4の受付・実AX実行・結果画面を実装した。`web/` が入口、既存Python CLIが実行と費用の所有者である。当初は[全体構想](ax-agent-platform-direction.md)の単一利用者向け段階として導入し、同日認証を追加して利用者別の記録へ制限した。旧模擬応答は `/connection` に残す。
+2026-10-06、共通APIの受付・所有者確認・会話管理をHono/TypeScriptへ移し、会話・実行履歴・小さな成果物をapp PostgreSQLへ保存する構成へ切り替えた。PythonはTask内部で動く。対象はbase `0b6b4c8` からの `codex/portable-api-postgres` の変更とローカル実環境。Cloudflare等への公開は未実施。
+
+```mermaid
+flowchart LR
+  Browser[ブラウザ] -->|HTTP| Web[React Router BFF]
+  Web -->|OIDC| Keycloak[Keycloak]
+  Keycloak --> AuthDB[認証用PostgreSQL]
+  Web -->|認証付きHTTP| API[Hono 共通API]
+  Web -->|session・内部ID| AppDB[app PostgreSQL]
+  API -->|会話・受付・履歴・成果物| AppDB
+  Controller[Go 実行管理] -->|claim・操作記録・結果| AppDB
+  Controller -->|同Pod loopback gRPC| AX[AX]
+  AX --> Redis[AX内部Redis]
+  AX --> Substrate[Substrate]
+  Controller -->|現在割当確認・通信制御| Substrate
+  Controller -->|mTLS・開始と回収| Task[Task内Python]
+```
+
+API/business layer、SQL、native adapter、配備設定に対応する図である。DBの設置先は接続設定で決め、Kubernetes内に固定しない。採用理由と外部操作の制約は[移行の決定](../decisions/systems/ax/portable-api-postgres.md)。
 
 ## 責務と起動
 
@@ -49,19 +55,23 @@ WebはHost、送信時のOrigin、署名した匿名CSRF Cookie、CSRFを検証�
 
 Referrer-Policyはsame-origin。no-referrerではJavaScriptなしの通常フォームPOSTがOrigin:nullとなり、React Router 8の要求元検証で拒否されたため。フォーム構造とサイズを検証したら、セッション検証より前に表示用入力を保存し、期限切れ・再起動後の拒否でも入力を保持する。API呼出しは検証成功後に限定する。
 
-API全経路で固定Host・起動時Bearerを確認し、Origin付き要求を拒否する。status以外ではX-AX-Access-TokenのJWTとDB上の有効な利用者対応も確認する。内部UUIDだけをPythonへ渡し、ブラウザからownerを受け取らない。秘密値や内部接続先をブラウザへ渡さない。実行APIは要求64 KiB・応答512 KiB、短命Python bridgeの待ち時間5秒、BFFは本文まで8秒。redirectと自動再試行は禁止。旧接続確認は16 KiB・3秒、trim後1〜200 UTF-16コード単位を維持する。
+API全経路で固定Host・起動時Bearerを確認し、Origin付き要求を拒否する。status以外ではX-AX-Access-TokenのJWTとDB上の有効な利用者対応も確認する。確定した内部UUIDをDB関数へ渡し、ブラウザからownerを受け取らない。秘密値や内部接続先をブラウザへ渡さない。実行APIは要求64 KiB・応答512 KiB、DBのquery待ち時間に上限を設け、BFFは本文まで8秒。redirectと自動再試行は禁止。旧接続確認は16 KiB・3秒、trim後1〜200 UTF-16コード単位を維持する。
 
 React DOM 19.2.8はtextareaのhydrationで非空の既定値をvalueへ代入する。読み込み完了前の入力を失わないよう、初回stateで既存DOMの値を取得してdefaultValueへ渡す。SSRでは既定値かaction入力を使い、カウンターもSSRと同じ値で初期化してeffectでDOM値へ同期する。JavaScript取得を保留した実ブラウザ試験で保持を確認した。
 
-## 受付台帳とworker
+## PostgreSQLと実行管理
 
-独立設計ではWeb専用台帳と既存receiptへの統合を比較し、後者を採用した。台帳を分けるとCLI/Webの排他と受け付け済み状態の整合が二重になる。既存CLIをprepare/executeに分け、request・manifest・receiptを一時ディレクトリへ書いてfsync後、renameで一括公開する。
+受付・会話・実行・成果物の正本はapp DBのax_*領域。ownerと受付キー、入力のfingerprint、会話の親・順序をtransactionで保存する。同じ利用者の同じキー・内容は既存ID、内容の変更は409。旧ownerなしの記録は通常Webへ公開せず全体guardへ含める。GETはAXを操作しない。
 
-ownerと組にした受付キー、内部owner UUID、入力のfingerprintをreceiptへ保存する。同じ利用者の同じキー・内容の再送は既存IDを返し、異なる内容は409。ownerなしの既存記録はWebへ公開せず、同じ全体guardには含める。同一キーの照合をロック前後で行い、新規受付は既存の全体flockと費用guardを通す。acceptedも未解決としてWeb/CLI両方の追加実行を止める。GETとSSRはTaskやworkerを起動しない。
+常駐Go controllerはHTTPから独立してDBの受付を処理する。外部操作ごとに一度だけintentを保存し、結果・manifest・成果物bytes・usageと通信遮断・実Actor停止を確認して終了する。claimの期限切れやHTTP再送で実行を自動再開しない。API・controllerのDB権限は分離され、通常APIからclaim・import・管理者復旧を呼べない。
 
-新規受付だけが有限workerを1回起動する。workerはAPIの寿命から独立し、既存ロック下でaccepted・未着手の記録だけを実行する。外部コマンドへロックFDを渡し、worker強制終了時にコマンドだけが残っても並行操作を防ぐ。観測時も同じロックを利用して、receiptと実行中状態のずれによる誤った復旧表示を抑える。Python変更は実行中worker終了後に行う。
+復旧要求はDBへ記録する。開始した可能性のある実行は、旧controllerと残存RPCの停止を証明する管理者処理が必要。復旧は回収・遮断・停止のみでstart/resumeを送らない。状態不明は全体枠を保留する。旧Python bridge/CLIはretirement markerで通常操作を拒否し、移行後の二重writerを避ける。
 
-復旧は既存の結果回収・通信遮断・停止に限定し、開始合図を再送せずTaskをresumeしない。外部操作前の受付はnot_startedで解決し、未実施の通信遮断・停止を成功扱いにしない。復旧直後はworker開始とのタイミングで自動更新が始まらない場合があり、手動更新で確認できる。詳細は[単発CLI設計](../decisions/systems/ax/single-task-cli.md)。
+APIのNode entryはpg Pool、Workers entryは要求ごとのpg Clientを使う。DB接続断は503として終了し、再接続や受付の自動再送はしない。workerdでAPIと実PostgreSQLの契約を確認したが、クラウド配備やBFFのWorkers移植は未実施。起動・移行・復旧手順は `web/README.md` と `execution/README.md`。
+
+## 今回の確認
+
+既存15件の原bytes・hash・owner・順序・費用を移行し、旧ファイルを保全した。APIのNode/workerd共通契約、認証・所有者分離、DB障害、実AX offlineの回収・遮断・停止を確認した。実KeycloakのログインからWeb→API→PostgreSQL→controller→AXを通すofflineも成功し、同一キー再送は同じIDだった。追加モデル呼出は0。詳細は `.space/tasks/ax-portable-api/verification.md`。
 
 ## 操作と入力
 
@@ -69,7 +79,7 @@ ownerと組にした受付キー、内部owner UUID、入力のfingerprintをrec
 
 既定offlineは実AX内で入力を成果物に保存し、モデルを使わない。modelの明示選択と外部送信・料金への同意がある場合だけ、設定済みAntigravity/Geminiを選ぶ。指示2048バイト・入力4096バイト、成果物1件64 KiBまで。成果物はサイズ・SHA256・UTF-8を再確認して表示・取得する。未知usage、cleanup未完、有料失敗のguardと[費用ルール](../rules/ax-model-spending.md)を維持する。
 
-## 確認と経緯
+## 以前の構成と確認の経緯
 
 W1は境界5件・ブラウザ8件で模擬往復を確認した。W2〜W4の最終確認はPython85件、Node12件、ブラウザ12件、型検査、buildが成功。ブラウザ試験の実行バックエンドはfixtureである。
 
@@ -78,7 +88,7 @@ W1は境界5件・ブラウザ8件で模擬往復を確認した。W2〜W4の最
 デザインはプロジェクト内の[参照スキル](project-design-skill.md)が保存したDADSの基本・フォーム・通知に基づく。320px・キーボード・axeは確認したが完全適合の証明ではない。根拠は `.space/tasks/ax-web-runs/{design,verification,review}.md`、利用手順は `web/README.md`。
 
 
-## 保存した会話を続ける画面
+## チャット導入時の構成と確認
 
 2026-10-06、ルート画面をチャットへ変更し、単発作業を/tasksへ移動した。会話の順序・本文・返答を既存receipt/request/成果物から復元し、成功ペアのrole付き履歴を各往復の有限Taskへ渡す。設計理由、再送と文脈の不変条件、制限は[会話の設計](../decisions/systems/ax/chat-turns.md)へまとめる。
 

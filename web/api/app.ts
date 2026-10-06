@@ -1,25 +1,34 @@
-import { randomUUID, timingSafeEqual } from "node:crypto";
 import { Hono, type Context } from "hono";
 import { z } from "zod";
 import { checkInputSchema } from "../shared/contracts";
 import { readLimitedText } from "../shared/http";
-import type { LocalConfig } from "../server/config";
+import { validateApiConfig, type ApiConfig } from "./config";
 import { artifactResultSchema, emptyRunBodySchema, MAX_RUN_REQUEST_BYTES, MAX_RUN_RESPONSE_BYTES, recoverResultSchema, runDetailSchema, runErrorStatusSchema, runHttpErrorSchema, runIdSchema, runInputSchema, runListSchema, submitResultSchema } from "../shared/run-contracts";
 import { chatInputSchema, chatSubmitResultSchema, conversationDetailSchema, conversationIdSchema, conversationListSchema, MAX_CHAT_RESPONSE_BYTES } from "../shared/chat-contracts";
 import { RunServiceError, type RunService } from "./run-service";
 import type { ChatService } from "./chat-service";
-import { authenticate as authenticateUser, type Authenticate } from "../server/auth";
-import { AuthenticationError } from "../server/auth-store";
+import { AuthenticationError, type Authenticate } from "../shared/authentication";
 
-export function createApi(config: LocalConfig, onCheck: (id: string) => void = () => {}, runs?: RunService, chats?: ChatService, authenticate: Authenticate = authenticateUser) {
+export function createApi(config: ApiConfig, onCheck: (id: string) => void = () => {}, runs?: RunService, chats?: ChatService, authenticate: Authenticate = async () => { throw new Error("Authentication is not configured."); }) {
+  validateApiConfig(config);
+  const encoder = new TextEncoder();
+  let credential: Promise<{ key: CryptoKey; signature: ArrayBuffer }> | undefined;
+  async function authorized(value: string) {
+    if (value.length !== config.apiToken.length + 7) return false;
+    credential ??= (async () => {
+      const key = await crypto.subtle.generateKey({ name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);
+      const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(`Bearer ${config.apiToken}`));
+      return { key, signature };
+    })();
+    const { key, signature } = await credential;
+    return crypto.subtle.verify("HMAC", key, signature, encoder.encode(value));
+  }
   const app = new Hono<{ Variables: { ownerUserId: string } }>();
   app.use("*", async (context, next) => {
-    const authorization = Buffer.from(context.req.header("authorization") ?? "");
-    const expected = Buffer.from(`Bearer ${config.apiToken}`);
     if (context.req.header("host") !== new URL(config.apiOrigin).host || context.req.header("origin")) {
       return context.json({ error: "forbidden" }, 403);
     }
-    if (authorization.length !== expected.length || !timingSafeEqual(authorization, expected)) {
+    if (!await authorized(context.req.header("authorization") ?? "")) {
       return context.json({ error: "unauthorized" }, 401);
     }
     context.header("Cache-Control", "no-store");
@@ -46,7 +55,7 @@ export function createApi(config: LocalConfig, onCheck: (id: string) => void = (
     }
     const parsed = checkInputSchema.safeParse(input);
     if (!parsed.success) return context.json({ error: "invalid_message" }, 400);
-    const requestId = randomUUID();
+    const requestId = crypto.randomUUID();
     onCheck(requestId);
     return context.json({
       mode: "mock",
@@ -89,7 +98,7 @@ export function createApi(config: LocalConfig, onCheck: (id: string) => void = (
     try {
       const parsed = schema.safeParse(await operation());
       if (!parsed.success) throw new RunServiceError("invalid_bridge_response");
-      if (Buffer.byteLength(JSON.stringify(parsed.data)) > maxBytes) throw new RunServiceError("invalid_bridge_response");
+      if (encoder.encode(JSON.stringify(parsed.data)).byteLength > maxBytes) throw new RunServiceError("invalid_bridge_response");
       return context.json(parsed.data, status);
     } catch (error) {
       if (error instanceof RunServiceError && runHttpErrorSchema.safeParse({ error: error.code }).success && runErrorStatusSchema.safeParse(error.status).success) return context.json({ error: error.code }, error.status);

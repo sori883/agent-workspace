@@ -1,4 +1,18 @@
-# 共通APIの配置先と保存先を切り離す設計
+# 共通APIとPostgreSQL保存への構成変更
+
+## 実装と検証の結果
+
+Hono/TypeScriptへ受付・所有者確認・会話管理を移し、app PostgreSQLへ既存15件と新規記録を保存する構成へ移行した。独立Go実行管理はTask内Pythonを維持し、旧file writerを閉鎖した。Node/workerd・DB障害、実Keycloakと実AX offline、再送・再起動・利用者分離を確認済み。追加モデル呼び出し0件。結果と限界は[検証記録](verification.md)、運用は `web/README.md` と `execution/README.md`、採用理由はOKF `decisions/systems/ax/portable-api-postgres` にまとめる。
+
+設計・方針訂正・実装・検証・文書を一つのPRへまとめる。納品操作の完了は台帳と末尾の反映結果で確認し、下記の設計段階の経緯とは区別する。
+
+## 実装への移行（2026-10-06）
+
+利用者が、Hono/TypeScriptへの受付・所有者確認の移行と、会話・実行履歴・現在の成果物のPostgreSQL保存を実装するよう依頼した。Task内Pythonは継続する。設計案の構造を再利用し、接続の試作、実装、既存データの保全・移行、動作確認、独立レビューまで進める。本番クラウドへの公開と追加の有償モデル呼び出しは行わない。
+
+同時にPR粒度の訂正を受けた。設計の補足や文書訂正だけでPRを作らず、今回の構成変更と検証をひとまとまりにする。`rules/pr-delivery` をCLIで修正した。この方針変更も今回の実装PRに含め、単独PRにはしない。
+
+実装の基準はmain `0b6b4c8143f367d2d2007eed3729629fbae0e308`。分担・依存・受け入れ条件は[実装計画](plan.md)、最新の進行・確認状態は `.space/tasks/ax-portable-api/.orch/` のCLI台帳を正本とする。以下は実装依頼前の設計記録であり、当時の未採用・対象外という記述を現在の承認範囲に適用しない。
 
 ## 依頼と終了地点
 

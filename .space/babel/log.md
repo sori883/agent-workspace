@@ -1,4 +1,12 @@
 ## 2026-10-06
+* **Update**: [認証窓口をKeycloakへ集約し内部利用者IDで会話を所有する](decisions/systems/ax/auth-foundation.md).
+* **Update**: [AXローカル実行基盤の構成と確認方法](knowledge/ax-local-kind-environment.md).
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Update**: [会話の各往復を既存receipt付きAX実行として保存する](decisions/systems/ax/chat-turns.md).
+* **Update**: [AXの単発CLIで開始・成果物・使用量を分離して管理する](decisions/systems/ax/single-task-cli.md).
+* **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).
+* **Creation**: [共通APIと実行管理を分離しPostgreSQLへ保存する](decisions/systems/ax/portable-api-postgres.md).
+* **Update**: [PRは意味のある変更単位にまとめ、検証・レビュー後に反映する](rules/pr-delivery.md).
 * **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
 * **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
 * **Update**: [AXローカル実行基盤の構成と確認方法](knowledge/ax-local-kind-environment.md).

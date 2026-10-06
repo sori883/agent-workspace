@@ -1,0 +1,4311 @@
+{
+  "schemaVersion": 1,
+  "revision": 25,
+  "project": "/Users/const/sori883/agent-workspace",
+  "coordinator": {
+    "actor": "parent",
+    "session": "portable-api-20261006"
+  },
+  "createdAt": "2026-10-06T11:15:49.133Z",
+  "updatedAt": "2026-10-06T12:32:15.721Z",
+  "units": [
+    {
+      "id": "ax-portable-api",
+      "parent": null,
+      "size": "large",
+      "purpose": "共通APIとPostgreSQL保存への構成変更を実装・検証して一つのPRで納品する",
+      "track": "",
+      "owner": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "verifiers": [],
+      "scope": [
+        "共通API、実行管理、履歴と成果物のDB保存・移行、互換性、PR方針"
+      ],
+      "taskRef": ".space/tasks/ax-portable-api/task.md",
+      "planRef": ".space/tasks/ax-portable-api/plan.md",
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "C1",
+          "description": "Pythonを要しないTypeScript API",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "C1"
+        },
+        {
+          "id": "C2",
+          "description": "PG保存と既存記録の保全",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "C2"
+        },
+        {
+          "id": "C3",
+          "description": "独立実行管理と費用・排他・復旧",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "C3"
+        },
+        {
+          "id": "C4",
+          "description": "WorkersとNodeの互換性",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "C4"
+        },
+        {
+          "id": "C5",
+          "description": "所有者隔離と安全な切替",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "C5"
+        },
+        {
+          "id": "C6",
+          "description": "独立レビューと一つのPR納品",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "C6"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 10,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "running",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-portable-api/verification.md",
+                  "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-portable-api/verification.md",
+                  "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                }
+              ]
+            },
+            "review": {
+              "selection": "execute",
+              "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-portable-api/verification.md",
+                  "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                }
+              ]
+            },
+            "deliver": {
+              "selection": "execute",
+              "reason": "関連変更を一つのPRで納品",
+              "state": "pending",
+              "refs": []
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-06T11:16:39.186Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": null,
+      "contractHistory": []
+    },
+    {
+      "id": "ax-portable-adapter",
+      "parent": "ax-portable-api",
+      "size": "small",
+      "purpose": "CLIなしのAX/guest/Substrateアダプターとoffline接続・停止の成立を確認する",
+      "track": "",
+      "owner": {
+        "actor": "execution",
+        "session": "w1-design-a-portable"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "verifiers": [],
+      "scope": [
+        "execution/ native adapterと試作テスト",
+        "実行接続の報告（クラスタ操作は親と調整）"
+      ],
+      "taskRef": null,
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "adapter",
+          "description": "typed native adapterの実装・局所試験とofflineの試験方法を引き渡した",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "adapter"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 7,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "native adapter実装・30試験・実AX offlineで成立を確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-portable-api/execution.md",
+                  "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "native adapter実装・30試験・実AX offlineで成立を確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-portable-api/execution.md",
+                  "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-06T11:16:39.235Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": "b6959dab-6677-43fd-9319-4d33656becd4",
+      "contractHistory": []
+    },
+    {
+      "id": "ax-portable-data",
+      "parent": "ax-portable-api",
+      "size": "small",
+      "purpose": "既存契約を保ちPG保存とTypeScriptの会話・実行サービスを実装する",
+      "track": "",
+      "owner": {
+        "actor": "data-api",
+        "session": "w1-design-b-portable"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "verifiers": [],
+      "scope": [
+        "web/data/ schema SQL canonical repository",
+        "web/api/run-service.ts chat-service.ts と関連試験"
+      ],
+      "taskRef": null,
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "data",
+          "description": "PG受付の排他・再送・所有者・費用・会話・成果物の実装と局所検証を引き渡した",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "data"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 7,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "実装と担当範囲の実DB試験を受領・照合",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-portable-api/data-verification.md",
+                  "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "実装と担当範囲の実DB試験を受領・照合",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-portable-api/data-verification.md",
+                  "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-06T11:25:44.952Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": "f45154d6-7315-4120-bd60-5ccad2c4fdec",
+      "contractHistory": []
+    }
+  ],
+  "checks": [
+    {
+      "id": "5398cc3a-2c23-4053-9ad0-19c29a5fb1b6",
+      "unit": "ax-portable-data",
+      "attempt": 1,
+      "condition": "data",
+      "target": {
+        "id": "data",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "web/api/chat-service.ts",
+            "digest": "86aede771096d92fa7c00441cf65744757b32f4649e68903ba23eaab0ec2a54a"
+          },
+          {
+            "ref": "web/api/run-service.ts",
+            "digest": "41cbdbac355ee07366e37f80579139f0f070db14f3007001474ea3ba5b92419a"
+          },
+          {
+            "ref": "web/data/canonical.ts",
+            "digest": "1dd93685825cd489c8e220752532545fdbc5217d17fee34b6f07051baf74314b"
+          },
+          {
+            "ref": "web/data/db.ts",
+            "digest": "e100e72f25bdd0be49f5db1d2b63a395fc651d51aecb4881d9a67a336319956f"
+          },
+          {
+            "ref": "web/data/repository.ts",
+            "digest": "7308cea613b610d19e5ea6dc33a5281cb94bf4028d8864122087692d1d2a891b"
+          },
+          {
+            "ref": "web/data/schema.sql",
+            "digest": "6c1474540fb3e0b33f9b029c569030991ea3aea8bb155eb1e32e99dc716e17ca"
+          },
+          {
+            "ref": "web/tests/canonical.test.ts",
+            "digest": "aa03c724b103752014fbc6e73911171bb59d8a3c0141c2e65487649d6b91583b"
+          },
+          {
+            "ref": "web/tests/chats.test.ts",
+            "digest": "76e3cdef82da9df30c5bb09e7ed669f487c8397a0a86c2946bdef914fc103f1d"
+          },
+          {
+            "ref": "web/tests/data.test.ts",
+            "digest": "c39f0719810d432f84695d21e814222b6ab71f0699edd33147d3295f650ae696"
+          },
+          {
+            "ref": "web/tests/runs.test.ts",
+            "digest": "6299d1d7a68e736554e49ee4be0a8dd7e568f739d2bece4d20b6de8057e52aa3"
+          }
+        ],
+        "version": "f7c60764f21885851242b4e840fcb2940ca2bebb8d91eec47125ae8761056c88"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-portable-api/data-verification.md",
+          "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+        }
+      ],
+      "reason": "",
+      "method": "担当試験24件・型チェックと独立読み取り評価を成果物に照合",
+      "environment": "local app_auth_test PostgreSQL / Node 24.15.0",
+      "observedAt": "2026-10-06T12:08:39.099Z",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-06T12:08:39.152Z"
+    },
+    {
+      "id": "c49d1835-3eeb-4a47-8a82-14a3c2d8a103",
+      "unit": "ax-portable-adapter",
+      "attempt": 1,
+      "condition": "adapter",
+      "target": {
+        "id": "adapter",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "execution/Dockerfile",
+            "digest": "1e99cd41af2b18fae50e7869b78e057cd4ca00c6b0e55e0e3ef40fe0235558d6"
+          },
+          {
+            "ref": "execution/cmd/ax-controller/main.go",
+            "digest": "ef851cc9939d7f1d0c2f1f2b0974f30d87c470d719f71154258ec797bebff522"
+          },
+          {
+            "ref": "execution/cmd/inspect/main.go",
+            "digest": "9e47445993e90be5bad0a07ce1fe2bd4f642d532780961f4d7688cbcb631af04"
+          },
+          {
+            "ref": "execution/cmd/offline-probe/main.go",
+            "digest": "3eb7cf145f8ef02cb5ab8e842b5a8740f6da835eb4a5897d396a905b0f5e983d"
+          },
+          {
+            "ref": "execution/controller/controller.go",
+            "digest": "c232c4ac79a0b0d9c4f62bf416a6e5c1062fdd4a208ae465ada88ae9404f6dce"
+          },
+          {
+            "ref": "execution/controller/controller_test.go",
+            "digest": "3b6098ff65069d8bdf7c5935d16ca35e35f9a4e413f088d03b864ab3ce899d00"
+          },
+          {
+            "ref": "execution/controller/postgres.go",
+            "digest": "90447247791635cbc75bb1e86d094fe063ad71acf2f1375fcd62e022151460cd"
+          },
+          {
+            "ref": "execution/go.mod",
+            "digest": "6550aa0fbc9046444ed3ab94e909b777a5f64726c3dafb18c089178870e63292"
+          },
+          {
+            "ref": "execution/go.sum",
+            "digest": "9cb180751a862515f01dd6cc8715b7493a0dc862e69dedbf05569bfe0cee1042"
+          },
+          {
+            "ref": "execution/native/adapter.go",
+            "digest": "eae33ad88afb0177678dee65921c987f8c4d8b5c4e47cff12d7455731bf31610"
+          },
+          {
+            "ref": "execution/native/adapter_test.go",
+            "digest": "93186618aa7c81934846549003346ff48412e1aec4c2361988524dca24af35e5"
+          },
+          {
+            "ref": "execution/native/diagnostic.go",
+            "digest": "44118dd43b709deba14bba8bc6441a70034976aa3cf6f724d9498888c43a912e"
+          },
+          {
+            "ref": "execution/native/direct_guest.go",
+            "digest": "2c5c81554381368e61e6547ff91f078e54847e327a386e06bca66fbb84eb5f53"
+          },
+          {
+            "ref": "execution/native/direct_guest_test.go",
+            "digest": "41e54cfceabba8bdb791bdcc4a7b9b0eb8bb52ecddfc16e755bd647cba0e55f3"
+          },
+          {
+            "ref": "execution/native/guest.go",
+            "digest": "c56a1ee910d00649b30b3c9ac39fe7df2941b576ebeae5a8e99ee9f2cb25030b"
+          },
+          {
+            "ref": "execution/native/health.go",
+            "digest": "8e56a4aa91a5d972b5d9eda810bd14c8be12ced49ab196c4a53a5813e9af9948"
+          },
+          {
+            "ref": "execution/native/health_test.go",
+            "digest": "2651babea862a2886e0099d54f3cbd2566f0cc40625a198d6d36e85d8f39412b"
+          },
+          {
+            "ref": "execution/native/protocol.go",
+            "digest": "88b56f549019b357c76c6aad48b530491da916de68f0cda3a125852a3f904651"
+          },
+          {
+            "ref": "execution/settings/settings.go",
+            "digest": "c40b3309971c63e7591f085a85b10e5916afded4f4d3182d022557cb7652e85c"
+          },
+          {
+            "ref": "execution/settings/settings_test.go",
+            "digest": "06a99d65d13098129b3f5eafaeb62de17dc829c9c090546011731eefab0b4484"
+          }
+        ],
+        "version": "8fa2f56d1fa832d25022f726e7bdebe5407f959f913ca33e8b7ea3036271537b"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-portable-api/execution.md",
+          "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+        }
+      ],
+      "reason": "",
+      "method": "担当の30試験/race/vet/buildとnative実装を照合し、親が実AX offlineで回収・deny・停止まで確認",
+      "environment": "macOS Go1.27.1、kind-ax-local ARM64、固定AX/Substrate",
+      "observedAt": "2026-10-06T12:31:05.749Z",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-06T12:31:05.867Z"
+    },
+    {
+      "id": "fbf744a5-70ef-4147-a499-3f04371a9206",
+      "unit": "ax-portable-api",
+      "attempt": 1,
+      "condition": "C1",
+      "target": {
+        "id": "C1",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "web/api/app.ts",
+            "digest": "184c34c18f881b731c41a866cc0289fd341763e914cd89731a0279071aff9fdf"
+          },
+          {
+            "ref": "web/api/chat-service.ts",
+            "digest": "86aede771096d92fa7c00441cf65744757b32f4649e68903ba23eaab0ec2a54a"
+          },
+          {
+            "ref": "web/api/config.ts",
+            "digest": "38b9422436ba643005d0e7ac4e6d28b9180de014d3fb287f7e0a1cf02ce54ab6"
+          },
+          {
+            "ref": "web/api/run-service.ts",
+            "digest": "41cbdbac355ee07366e37f80579139f0f070db14f3007001474ea3ba5b92419a"
+          },
+          {
+            "ref": "web/api/runtime.ts",
+            "digest": "1841aa1947d04d06a751f84a82497e73281cf4550a871c4cfbf0fdeae9a38abc"
+          },
+          {
+            "ref": "web/api/settings.ts",
+            "digest": "f34b2c72e8a18022fc012cd5c5391a388d932a5722fd9a55a856f53ba463b835"
+          },
+          {
+            "ref": "web/shared/access-token.ts",
+            "digest": "d5bfe3108d82183c6043cf5720d393e10d5b1dc88c3c24dffd5c9bb57e42e988"
+          }
+        ],
+        "version": "9ad8d4bb2eb5a36001b7ad56e2566edaea373076a60c973608d88a3b5290cc30"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-portable-api/verification.md",
+          "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+        }
+      ],
+      "reason": "",
+      "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+      "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+      "observedAt": "2026-10-06T12:32:14.977Z",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-06T12:32:15.186Z"
+    },
+    {
+      "id": "f28cac37-78d6-49ca-a154-5a8a13b55be1",
+      "unit": "ax-portable-api",
+      "attempt": 1,
+      "condition": "C2",
+      "target": {
+        "id": "C2",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "ax-local/scripts/import-legacy.sh",
+            "digest": "08152790be0963f939260722578eb9709b84c7e9be317a05e30ddc2db9a91632"
+          },
+          {
+            "ref": "web/data/canonical.ts",
+            "digest": "1dd93685825cd489c8e220752532545fdbc5217d17fee34b6f07051baf74314b"
+          },
+          {
+            "ref": "web/data/repository.ts",
+            "digest": "7308cea613b610d19e5ea6dc33a5281cb94bf4028d8864122087692d1d2a891b"
+          },
+          {
+            "ref": "web/data/schema.sql",
+            "digest": "6c1474540fb3e0b33f9b029c569030991ea3aea8bb155eb1e32e99dc716e17ca"
+          },
+          {
+            "ref": "web/scripts/import-legacy.ts",
+            "digest": "542921a9ccc51e1b31b4f4cba22370a840ad5b449cd6735be73c733201e3d1dd"
+          },
+          {
+            "ref": "web/server/legacy-import.ts",
+            "digest": "0d2cc81939c9ac68525c9d506cd6759219222b23cd24ccfa45c251c13cfe5125"
+          },
+          {
+            "ref": "web/tests/data.test.ts",
+            "digest": "c39f0719810d432f84695d21e814222b6ab71f0699edd33147d3295f650ae696"
+          }
+        ],
+        "version": "652b803469e40063ff445e744efb83f23d544452cee9bf9dae8f138ff15b11d8"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-portable-api/verification.md",
+          "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+        }
+      ],
+      "reason": "",
+      "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+      "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+      "observedAt": "2026-10-06T12:32:15.218Z",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-06T12:32:15.321Z"
+    },
+    {
+      "id": "93c5dc97-474d-43eb-9f98-f62e717621ce",
+      "unit": "ax-portable-api",
+      "attempt": 1,
+      "condition": "C3",
+      "target": {
+        "id": "C3",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "execution/controller/controller.go",
+            "digest": "c232c4ac79a0b0d9c4f62bf416a6e5c1062fdd4a208ae465ada88ae9404f6dce"
+          },
+          {
+            "ref": "execution/controller/controller_test.go",
+            "digest": "3b6098ff65069d8bdf7c5935d16ca35e35f9a4e413f088d03b864ab3ce899d00"
+          },
+          {
+            "ref": "execution/controller/postgres.go",
+            "digest": "90447247791635cbc75bb1e86d094fe063ad71acf2f1375fcd62e022151460cd"
+          },
+          {
+            "ref": "execution/native/adapter.go",
+            "digest": "eae33ad88afb0177678dee65921c987f8c4d8b5c4e47cff12d7455731bf31610"
+          },
+          {
+            "ref": "execution/native/direct_guest.go",
+            "digest": "2c5c81554381368e61e6547ff91f078e54847e327a386e06bca66fbb84eb5f53"
+          },
+          {
+            "ref": "execution/native/guest.go",
+            "digest": "c56a1ee910d00649b30b3c9ac39fe7df2941b576ebeae5a8e99ee9f2cb25030b"
+          },
+          {
+            "ref": "execution/native/protocol.go",
+            "digest": "88b56f549019b357c76c6aad48b530491da916de68f0cda3a125852a3f904651"
+          }
+        ],
+        "version": "37d12f5f1b3c17dee4bb945387c0f4176d9b0b37b87eea0fcd430d5d9398d6f4"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-portable-api/verification.md",
+          "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+        }
+      ],
+      "reason": "",
+      "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+      "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+      "observedAt": "2026-10-06T12:32:15.353Z",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-06T12:32:15.459Z"
+    },
+    {
+      "id": "0dedb7bf-b033-4519-b4ae-48f7d78cc103",
+      "unit": "ax-portable-api",
+      "attempt": 1,
+      "condition": "C4",
+      "target": {
+        "id": "C4",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "web/api/index.ts",
+            "digest": "8b9bb7803b48b71067490d96c8698c634803a814cf24edfe2240194ca66fdba3"
+          },
+          {
+            "ref": "web/api/postgres.ts",
+            "digest": "8f45eb2f26d95c169fb281b2aa3e413a668067bb201c7b8fcd3e060519b1fed1"
+          },
+          {
+            "ref": "web/api/worker.ts",
+            "digest": "52fef5ec2e0d06e1570555a3e279ecbec5b6fffcae7bc5eace39fb28d851925f"
+          },
+          {
+            "ref": "web/package-lock.json",
+            "digest": "8d38f64e6ee31f58ab0c61f6897e8482f393fb529cf4a40b47873bda3b47c73b"
+          },
+          {
+            "ref": "web/package.json",
+            "digest": "fc7b0fe3ff8d3f7300dc69e51b40bcdf12e3fc9804b08902ba597ef9cd87f028"
+          },
+          {
+            "ref": "web/server/api-settings.ts",
+            "digest": "1ca4f410b3ea5cfd8d7f6a11eaadf6a940d25e521f4e230701b65bf8fcdb1026"
+          },
+          {
+            "ref": "web/tests/runtime.test.ts",
+            "digest": "2ca12262e50931eda0b20be8ea44a4c5617a9857b3b1cf204bec7add2929e38f"
+          }
+        ],
+        "version": "4100a6ffaf4f300953899bae981a5fc4827c42e6faa0c56c1a16ac23eacc6584"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-portable-api/verification.md",
+          "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+        }
+      ],
+      "reason": "",
+      "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+      "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+      "observedAt": "2026-10-06T12:32:15.486Z",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-06T12:32:15.598Z"
+    },
+    {
+      "id": "921af920-741b-4239-b87e-f9dc0c526717",
+      "unit": "ax-portable-api",
+      "attempt": 1,
+      "condition": "C5",
+      "target": {
+        "id": "C5",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "ax-local/ax",
+            "digest": "753bf01e5deb0ee31520f9b50631f7520d31df41c9123fa5bb7cb7124ea9cfc4"
+          },
+          {
+            "ref": "ax-local/scripts/set-egress.sh",
+            "digest": "0e6402dfdded766d849dd77245ff5fba100edb9fdb9dcb693262d10e5086c238"
+          },
+          {
+            "ref": "ax-local/task_cli.py",
+            "digest": "339268be53a3b8e2b8b1838e3573343f2f065fbd829e87599154346c0c58af73"
+          },
+          {
+            "ref": "ax-local/versions.json",
+            "digest": "f436a6a211375cbbd52d812383bd616be89a98fd7d338767495e975694b60a82"
+          },
+          {
+            "ref": "ax-local/web_bridge.py",
+            "digest": "8eb284618bd7e84f1f0934a83981332e62b9e059888dac5c9268e468a86c2465"
+          },
+          {
+            "ref": "ax-local/worker-controller.Dockerfile",
+            "digest": "cf86739e8eb46ad796701bba32a3834c100f8602be7d7824a64eec0cf28fdcd7"
+          },
+          {
+            "ref": "web/scripts/deploy-execution.ts",
+            "digest": "cac61a6abd27aa66ccbc8cc83a4a1cc3afdf960150df3c2f5757bb1e912713e7"
+          },
+          {
+            "ref": "web/scripts/prepare-execution.ts",
+            "digest": "db0a8ecabc98d163af2a3e44270f2e2103749d8b4d4caf1d7764ac1d0a9dfd0d"
+          },
+          {
+            "ref": "web/tests/browser/auth.spec.ts",
+            "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+          }
+        ],
+        "version": "25bba5bf8d17a45ebdce78f587651f942abaa46d288915e21acb2038a78b6fe6"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-portable-api/verification.md",
+          "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+        }
+      ],
+      "reason": "",
+      "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+      "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+      "observedAt": "2026-10-06T12:32:15.627Z",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-06T12:32:15.721Z"
+    }
+  ],
+  "submissions": [
+    {
+      "id": "f45154d6-7315-4120-bd60-5ccad2c4fdec",
+      "unit": "ax-portable-data",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "5398cc3a-2c23-4053-9ad0-19c29a5fb1b6"
+      ],
+      "outputs": [
+        {
+          "id": "data",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/api/chat-service.ts",
+              "digest": "86aede771096d92fa7c00441cf65744757b32f4649e68903ba23eaab0ec2a54a"
+            },
+            {
+              "ref": "web/api/run-service.ts",
+              "digest": "41cbdbac355ee07366e37f80579139f0f070db14f3007001474ea3ba5b92419a"
+            },
+            {
+              "ref": "web/data/canonical.ts",
+              "digest": "1dd93685825cd489c8e220752532545fdbc5217d17fee34b6f07051baf74314b"
+            },
+            {
+              "ref": "web/data/db.ts",
+              "digest": "e100e72f25bdd0be49f5db1d2b63a395fc651d51aecb4881d9a67a336319956f"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "7308cea613b610d19e5ea6dc33a5281cb94bf4028d8864122087692d1d2a891b"
+            },
+            {
+              "ref": "web/data/schema.sql",
+              "digest": "6c1474540fb3e0b33f9b029c569030991ea3aea8bb155eb1e32e99dc716e17ca"
+            },
+            {
+              "ref": "web/tests/canonical.test.ts",
+              "digest": "aa03c724b103752014fbc6e73911171bb59d8a3c0141c2e65487649d6b91583b"
+            },
+            {
+              "ref": "web/tests/chats.test.ts",
+              "digest": "76e3cdef82da9df30c5bb09e7ed669f487c8397a0a86c2946bdef914fc103f1d"
+            },
+            {
+              "ref": "web/tests/data.test.ts",
+              "digest": "c39f0719810d432f84695d21e814222b6ab71f0699edd33147d3295f650ae696"
+            },
+            {
+              "ref": "web/tests/runs.test.ts",
+              "digest": "6299d1d7a68e736554e49ee4be0a8dd7e568f739d2bece4d20b6de8057e52aa3"
+            }
+          ],
+          "version": "f7c60764f21885851242b4e840fcb2940ca2bebb8d91eec47125ae8761056c88"
+        }
+      ],
+      "report": "PG保存/受付/参照と既存hash互換を実装、担当範囲の24試験と独立照合で条件を満たした。全体の実AX結合は親が継続。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-portable-api/data-verification.md",
+          "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "at": "2026-10-06T12:08:56.957Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "reason": "担当成果物・実PGの試験と独立読み取り評価を照合してdata単位を受入。全体は実AX結合継続。",
+        "at": "2026-10-06T12:09:33.652Z"
+      }
+    },
+    {
+      "id": "b6959dab-6677-43fd-9319-4d33656becd4",
+      "unit": "ax-portable-adapter",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "c49d1835-3eeb-4a47-8a82-14a3c2d8a103"
+      ],
+      "outputs": [
+        {
+          "id": "adapter",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "execution/Dockerfile",
+              "digest": "1e99cd41af2b18fae50e7869b78e057cd4ca00c6b0e55e0e3ef40fe0235558d6"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "ef851cc9939d7f1d0c2f1f2b0974f30d87c470d719f71154258ec797bebff522"
+            },
+            {
+              "ref": "execution/cmd/inspect/main.go",
+              "digest": "9e47445993e90be5bad0a07ce1fe2bd4f642d532780961f4d7688cbcb631af04"
+            },
+            {
+              "ref": "execution/cmd/offline-probe/main.go",
+              "digest": "3eb7cf145f8ef02cb5ab8e842b5a8740f6da835eb4a5897d396a905b0f5e983d"
+            },
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "c232c4ac79a0b0d9c4f62bf416a6e5c1062fdd4a208ae465ada88ae9404f6dce"
+            },
+            {
+              "ref": "execution/controller/controller_test.go",
+              "digest": "3b6098ff65069d8bdf7c5935d16ca35e35f9a4e413f088d03b864ab3ce899d00"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "90447247791635cbc75bb1e86d094fe063ad71acf2f1375fcd62e022151460cd"
+            },
+            {
+              "ref": "execution/go.mod",
+              "digest": "6550aa0fbc9046444ed3ab94e909b777a5f64726c3dafb18c089178870e63292"
+            },
+            {
+              "ref": "execution/go.sum",
+              "digest": "9cb180751a862515f01dd6cc8715b7493a0dc862e69dedbf05569bfe0cee1042"
+            },
+            {
+              "ref": "execution/native/adapter.go",
+              "digest": "eae33ad88afb0177678dee65921c987f8c4d8b5c4e47cff12d7455731bf31610"
+            },
+            {
+              "ref": "execution/native/adapter_test.go",
+              "digest": "93186618aa7c81934846549003346ff48412e1aec4c2361988524dca24af35e5"
+            },
+            {
+              "ref": "execution/native/diagnostic.go",
+              "digest": "44118dd43b709deba14bba8bc6441a70034976aa3cf6f724d9498888c43a912e"
+            },
+            {
+              "ref": "execution/native/direct_guest.go",
+              "digest": "2c5c81554381368e61e6547ff91f078e54847e327a386e06bca66fbb84eb5f53"
+            },
+            {
+              "ref": "execution/native/direct_guest_test.go",
+              "digest": "41e54cfceabba8bdb791bdcc4a7b9b0eb8bb52ecddfc16e755bd647cba0e55f3"
+            },
+            {
+              "ref": "execution/native/guest.go",
+              "digest": "c56a1ee910d00649b30b3c9ac39fe7df2941b576ebeae5a8e99ee9f2cb25030b"
+            },
+            {
+              "ref": "execution/native/health.go",
+              "digest": "8e56a4aa91a5d972b5d9eda810bd14c8be12ced49ab196c4a53a5813e9af9948"
+            },
+            {
+              "ref": "execution/native/health_test.go",
+              "digest": "2651babea862a2886e0099d54f3cbd2566f0cc40625a198d6d36e85d8f39412b"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "88b56f549019b357c76c6aad48b530491da916de68f0cda3a125852a3f904651"
+            },
+            {
+              "ref": "execution/settings/settings.go",
+              "digest": "c40b3309971c63e7591f085a85b10e5916afded4f4d3182d022557cb7652e85c"
+            },
+            {
+              "ref": "execution/settings/settings_test.go",
+              "digest": "06a99d65d13098129b3f5eafaeb62de17dc829c9c090546011731eefab0b4484"
+            }
+          ],
+          "version": "8fa2f56d1fa832d25022f726e7bdebe5407f959f913ca33e8b7ea3036271537b"
+        }
+      ],
+      "report": "native adapter・常駐controllerと30試験を引渡し。親の実Task offlineと停止読戻しも成功。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-portable-api/execution.md",
+          "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "at": "2026-10-06T12:31:20.057Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "reason": "担当結果と対象版、親による実AX offline回収・deny・実停止を照合した",
+        "at": "2026-10-06T12:31:43.396Z"
+      }
+    }
+  ],
+  "messages": [
+    {
+      "id": "aba2ce74-3eaa-46f7-9483-ddbd7b2338b5",
+      "unit": "ax-portable-data",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "PG保存/受付/参照と既存hash互換を実装、担当範囲の24試験と独立照合で条件を満たした。全体の実AX結合は親が継続。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-portable-api/data-verification.md",
+          "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+        }
+      ],
+      "submission": "f45154d6-7315-4120-bd60-5ccad2c4fdec",
+      "state": "processed",
+      "resolution": "accepted: 担当成果物・実PGの試験と独立読み取り評価を照合してdata単位を受入。全体は実AX結合継続。",
+      "at": "2026-10-06T12:08:56.957Z"
+    },
+    {
+      "id": "845aac2a-1871-4563-a229-2b4ce8111ba9",
+      "unit": "ax-portable-adapter",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "native adapter・常駐controllerと30試験を引渡し。親の実Task offlineと停止読戻しも成功。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-portable-api/execution.md",
+          "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+        }
+      ],
+      "submission": "b6959dab-6677-43fd-9319-4d33656becd4",
+      "state": "processed",
+      "resolution": "accepted: 担当結果と対象版、親による実AX offline回収・deny・実停止を照合した",
+      "at": "2026-10-06T12:31:20.057Z"
+    }
+  ],
+  "gates": [],
+  "operations": [
+    {
+      "id": "init-portable-api",
+      "hash": "0bafbc74e0e41b08c3ef8b31156f4eaa456ea65f16bd3c1bc5f3d7893b538966",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "init",
+      "request": {
+        "command": "init",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "init-portable-api",
+        "input": {
+          "project": "/Users/const/sori883/agent-workspace"
+        }
+      },
+      "affectedUnits": [],
+      "evidence": [],
+      "revision": 1,
+      "data": {
+        "project": "/Users/const/sori883/agent-workspace",
+        "coordinator": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "store": "/Users/const/sori883/agent-workspace/.space/tasks/ax-portable-api/.orch"
+      },
+      "at": "2026-10-06T11:15:49.133Z"
+    },
+    {
+      "id": "add-portable-root",
+      "hash": "79b0fafe7dbe5f65492a504cb95f49749ecd72cab7826e5beb11b91684fc840a",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "ax-portable-api",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "add-portable-root",
+        "input": {
+          "size": "large",
+          "purpose": "共通APIとPostgreSQL保存への構成変更を実装・検証して一つのPRで納品する",
+          "owner": {
+            "actor": "parent",
+            "session": "portable-api-20261006"
+          },
+          "scope": [
+            "共通API、実行管理、履歴と成果物のDB保存・移行、互換性、PR方針"
+          ],
+          "taskRef": ".space/tasks/ax-portable-api/task.md",
+          "planRef": ".space/tasks/ax-portable-api/plan.md",
+          "conditions": [
+            {
+              "id": "C1",
+              "description": "Pythonを要しないTypeScript API",
+              "purpose": "delivery",
+              "required": true,
+              "target": "C1"
+            },
+            {
+              "id": "C2",
+              "description": "PG保存と既存記録の保全",
+              "purpose": "delivery",
+              "required": true,
+              "target": "C2"
+            },
+            {
+              "id": "C3",
+              "description": "独立実行管理と費用・排他・復旧",
+              "purpose": "delivery",
+              "required": true,
+              "target": "C3"
+            },
+            {
+              "id": "C4",
+              "description": "WorkersとNodeの互換性",
+              "purpose": "delivery",
+              "required": true,
+              "target": "C4"
+            },
+            {
+              "id": "C5",
+              "description": "所有者隔離と安全な切替",
+              "purpose": "delivery",
+              "required": true,
+              "target": "C5"
+            },
+            {
+              "id": "C6",
+              "description": "独立レビューと一つのPR納品",
+              "purpose": "delivery",
+              "required": true,
+              "target": "C6"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "利用者が構成変更の実装を依頼"
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "実データ・外部副作用を扱う"
+            },
+            "review": {
+              "selection": "execute",
+              "reason": "認可・費用・移行の独立レビュー"
+            },
+            "deliver": {
+              "selection": "execute",
+              "reason": "関連変更を一つのPRで納品"
+            }
+          }
+        }
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 2,
+      "data": {
+        "id": "ax-portable-api",
+        "parent": null,
+        "size": "large",
+        "purpose": "共通APIとPostgreSQL保存への構成変更を実装・検証して一つのPRで納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "共通API、実行管理、履歴と成果物のDB保存・移行、互換性、PR方針"
+        ],
+        "taskRef": ".space/tasks/ax-portable-api/task.md",
+        "planRef": ".space/tasks/ax-portable-api/plan.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "C1",
+            "description": "Pythonを要しないTypeScript API",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C1"
+          },
+          {
+            "id": "C2",
+            "description": "PG保存と既存記録の保全",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C2"
+          },
+          {
+            "id": "C3",
+            "description": "独立実行管理と費用・排他・復旧",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C3"
+          },
+          {
+            "id": "C4",
+            "description": "WorkersとNodeの互換性",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C4"
+          },
+          {
+            "id": "C5",
+            "description": "所有者隔離と安全な切替",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C5"
+          },
+          {
+            "id": "C6",
+            "description": "独立レビューと一つのPR納品",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C6"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "利用者が構成変更の実装を依頼",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実データ・外部副作用を扱う",
+                "state": "pending",
+                "refs": []
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "認可・費用・移行の独立レビュー",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "関連変更を一つのPRで納品",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:16:39.186Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T11:16:39.186Z"
+    },
+    {
+      "id": "add-portable-adapter",
+      "hash": "0486795ed7ac9f143a2d834315a2695af5cb4706a44c6b3818bea0838a17f30a",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "ax-portable-adapter",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "add-portable-adapter",
+        "input": {
+          "parent": "ax-portable-api",
+          "size": "small",
+          "purpose": "CLIなしのAX/guest/Substrateアダプターとoffline接続・停止の成立を確認する",
+          "owner": {
+            "actor": "execution",
+            "session": "w1-design-a-portable"
+          },
+          "recorder": {
+            "actor": "parent",
+            "session": "portable-api-20261006"
+          },
+          "scope": [
+            "execution/ native adapterと試作テスト",
+            "実行接続の報告（クラスタ操作は親と調整）"
+          ],
+          "conditions": [
+            {
+              "id": "adapter",
+              "description": "typed native adapterの実装・局所試験とofflineの試験方法を引き渡した",
+              "purpose": "delivery",
+              "required": true,
+              "target": "adapter"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "既存設計P1接続を実装する"
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "native protocolと停止証明を確認する"
+            }
+          }
+        }
+      },
+      "affectedUnits": [
+        "ax-portable-adapter"
+      ],
+      "evidence": [],
+      "revision": 3,
+      "data": {
+        "id": "ax-portable-adapter",
+        "parent": "ax-portable-api",
+        "size": "small",
+        "purpose": "CLIなしのAX/guest/Substrateアダプターとoffline接続・停止の成立を確認する",
+        "track": "",
+        "owner": {
+          "actor": "execution",
+          "session": "w1-design-a-portable"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "execution/ native adapterと試作テスト",
+          "実行接続の報告（クラスタ操作は親と調整）"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "adapter",
+            "description": "typed native adapterの実装・局所試験とofflineの試験方法を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "adapter"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存設計P1接続を実装する",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "native protocolと停止証明を確認する",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:16:39.235Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T11:16:39.235Z"
+    },
+    {
+      "id": "start-ax-portable-api",
+      "hash": "8a6fcc8db9880a21698f1ee2568e76af3943191df0e8de79853c660ca0bae129",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "ax-portable-api",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "start-ax-portable-api",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 4,
+      "data": {
+        "id": "ax-portable-api",
+        "parent": null,
+        "size": "large",
+        "purpose": "共通APIとPostgreSQL保存への構成変更を実装・検証して一つのPRで納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "共通API、実行管理、履歴と成果物のDB保存・移行、互換性、PR方針"
+        ],
+        "taskRef": ".space/tasks/ax-portable-api/task.md",
+        "planRef": ".space/tasks/ax-portable-api/plan.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "C1",
+            "description": "Pythonを要しないTypeScript API",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C1"
+          },
+          {
+            "id": "C2",
+            "description": "PG保存と既存記録の保全",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C2"
+          },
+          {
+            "id": "C3",
+            "description": "独立実行管理と費用・排他・復旧",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C3"
+          },
+          {
+            "id": "C4",
+            "description": "WorkersとNodeの互換性",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C4"
+          },
+          {
+            "id": "C5",
+            "description": "所有者隔離と安全な切替",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C5"
+          },
+          {
+            "id": "C6",
+            "description": "独立レビューと一つのPR納品",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C6"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "利用者が構成変更の実装を依頼",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実データ・外部副作用を扱う",
+                "state": "pending",
+                "refs": []
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "認可・費用・移行の独立レビュー",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "関連変更を一つのPRで納品",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:16:39.186Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T11:16:49.289Z"
+    },
+    {
+      "id": "start-ax-portable-adapter",
+      "hash": "de98af2b65e7b8728cd45861de9406da9bc0a491baef0511627e63a39fffffb1",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "ax-portable-adapter",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "start-ax-portable-adapter",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-adapter"
+      ],
+      "evidence": [],
+      "revision": 5,
+      "data": {
+        "id": "ax-portable-adapter",
+        "parent": "ax-portable-api",
+        "size": "small",
+        "purpose": "CLIなしのAX/guest/Substrateアダプターとoffline接続・停止の成立を確認する",
+        "track": "",
+        "owner": {
+          "actor": "execution",
+          "session": "w1-design-a-portable"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "execution/ native adapterと試作テスト",
+          "実行接続の報告（クラスタ操作は親と調整）"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "adapter",
+            "description": "typed native adapterの実装・局所試験とofflineの試験方法を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "adapter"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存設計P1接続を実装する",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "native protocolと停止証明を確認する",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:16:39.235Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T11:16:49.374Z"
+    },
+    {
+      "id": "add-data",
+      "hash": "2fff0a35068eb42d76d3fb73b9e809277af3149ce5edaf4b0e0de33abd9ad738",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "ax-portable-data",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "add-data",
+        "input": {
+          "parent": "ax-portable-api",
+          "size": "small",
+          "purpose": "既存契約を保ちPG保存とTypeScriptの会話・実行サービスを実装する",
+          "owner": {
+            "actor": "data-api",
+            "session": "w1-design-b-portable"
+          },
+          "recorder": {
+            "actor": "parent",
+            "session": "portable-api-20261006"
+          },
+          "scope": [
+            "web/data/ schema SQL canonical repository",
+            "web/api/run-service.ts chat-service.ts と関連試験"
+          ],
+          "conditions": [
+            {
+              "id": "data",
+              "description": "PG受付の排他・再送・所有者・費用・会話・成果物の実装と局所検証を引き渡した",
+              "purpose": "delivery",
+              "required": true,
+              "allowed": [
+                "pass"
+              ],
+              "target": "data"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "利用者が実装を依頼した"
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "データ保持と費用・所有者・競合を確認する"
+            }
+          }
+        }
+      },
+      "affectedUnits": [
+        "ax-portable-data"
+      ],
+      "evidence": [],
+      "revision": 6,
+      "data": {
+        "id": "ax-portable-data",
+        "parent": "ax-portable-api",
+        "size": "small",
+        "purpose": "既存契約を保ちPG保存とTypeScriptの会話・実行サービスを実装する",
+        "track": "",
+        "owner": {
+          "actor": "data-api",
+          "session": "w1-design-b-portable"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/ schema SQL canonical repository",
+          "web/api/run-service.ts chat-service.ts と関連試験"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "data",
+            "description": "PG受付の排他・再送・所有者・費用・会話・成果物の実装と局所検証を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "data"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "利用者が実装を依頼した",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "データ保持と費用・所有者・競合を確認する",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:25:44.952Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T11:25:44.952Z"
+    },
+    {
+      "id": "start-data",
+      "hash": "07b8fe4e8c8f80842bb1e6cb6074276b6b887adee417ae21af04e450a693790d",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "ax-portable-data",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "start-data",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-data"
+      ],
+      "evidence": [],
+      "revision": 7,
+      "data": {
+        "id": "ax-portable-data",
+        "parent": "ax-portable-api",
+        "size": "small",
+        "purpose": "既存契約を保ちPG保存とTypeScriptの会話・実行サービスを実装する",
+        "track": "",
+        "owner": {
+          "actor": "data-api",
+          "session": "w1-design-b-portable"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/ schema SQL canonical repository",
+          "web/api/run-service.ts chat-service.ts と関連試験"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "data",
+            "description": "PG受付の排他・再送・所有者・費用・会話・成果物の実装と局所検証を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "data"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "利用者が実装を依頼した",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "データ保持と費用・所有者・競合を確認する",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:25:44.952Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T11:25:45.016Z"
+    },
+    {
+      "id": "data-implement-complete",
+      "hash": "f76b6ad7557b572294f33f8a8da07b64b3a562963afd507932830354f1e12f04",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-portable-data",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "data-implement-complete",
+        "input": {
+          "selection": "execute",
+          "reason": "実装と担当範囲の実DB試験を受領・照合",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-portable-api/data-verification.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-data"
+      ],
+      "evidence": [],
+      "revision": 8,
+      "data": {
+        "id": "ax-portable-data",
+        "parent": "ax-portable-api",
+        "size": "small",
+        "purpose": "既存契約を保ちPG保存とTypeScriptの会話・実行サービスを実装する",
+        "track": "",
+        "owner": {
+          "actor": "data-api",
+          "session": "w1-design-b-portable"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/ schema SQL canonical repository",
+          "web/api/run-service.ts chat-service.ts と関連試験"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "data",
+            "description": "PG受付の排他・再送・所有者・費用・会話・成果物の実装と局所検証を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "data"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と担当範囲の実DB試験を受領・照合",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/data-verification.md",
+                    "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "データ保持と費用・所有者・競合を確認する",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:25:44.952Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T12:08:38.994Z"
+    },
+    {
+      "id": "data-verify-complete",
+      "hash": "9f993c99c67ce260ab7ddcbee9e91c8236e74ac0093bfd46480569a5540d8004",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-portable-data",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "data-verify-complete",
+        "input": {
+          "selection": "execute",
+          "reason": "実装と担当範囲の実DB試験を受領・照合",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-portable-api/data-verification.md"
+          ]
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-data"
+      ],
+      "evidence": [],
+      "revision": 9,
+      "data": {
+        "id": "ax-portable-data",
+        "parent": "ax-portable-api",
+        "size": "small",
+        "purpose": "既存契約を保ちPG保存とTypeScriptの会話・実行サービスを実装する",
+        "track": "",
+        "owner": {
+          "actor": "data-api",
+          "session": "w1-design-b-portable"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/ schema SQL canonical repository",
+          "web/api/run-service.ts chat-service.ts と関連試験"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "data",
+            "description": "PG受付の排他・再送・所有者・費用・会話・成果物の実装と局所検証を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "data"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 4,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と担当範囲の実DB試験を受領・照合",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/data-verification.md",
+                    "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実装と担当範囲の実DB試験を受領・照合",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/data-verification.md",
+                    "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:25:44.952Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T12:08:39.072Z"
+    },
+    {
+      "id": "data-check",
+      "hash": "5b16504e04ae71f65931b3f7d7b5bcd54a1aa036e92cbab137c3b2a92d25bc67",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ax-portable-data",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "data-check",
+        "input": {
+          "condition": "data",
+          "verdict": "pass",
+          "target": {
+            "id": "data",
+            "kind": "files",
+            "files": [
+              "web/data/db.ts",
+              "web/data/canonical.ts",
+              "web/data/repository.ts",
+              "web/data/schema.sql",
+              "web/api/run-service.ts",
+              "web/api/chat-service.ts",
+              "web/tests/data.test.ts",
+              "web/tests/canonical.test.ts",
+              "web/tests/runs.test.ts",
+              "web/tests/chats.test.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-portable-api/data-verification.md"
+          ],
+          "method": "担当試験24件・型チェックと独立読み取り評価を成果物に照合",
+          "environment": "local app_auth_test PostgreSQL / Node 24.15.0",
+          "observedAt": "2026-10-06T12:08:39.099Z"
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-data"
+      ],
+      "evidence": [],
+      "revision": 10,
+      "data": {
+        "id": "5398cc3a-2c23-4053-9ad0-19c29a5fb1b6",
+        "unit": "ax-portable-data",
+        "attempt": 1,
+        "condition": "data",
+        "target": {
+          "id": "data",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/api/chat-service.ts",
+              "digest": "86aede771096d92fa7c00441cf65744757b32f4649e68903ba23eaab0ec2a54a"
+            },
+            {
+              "ref": "web/api/run-service.ts",
+              "digest": "41cbdbac355ee07366e37f80579139f0f070db14f3007001474ea3ba5b92419a"
+            },
+            {
+              "ref": "web/data/canonical.ts",
+              "digest": "1dd93685825cd489c8e220752532545fdbc5217d17fee34b6f07051baf74314b"
+            },
+            {
+              "ref": "web/data/db.ts",
+              "digest": "e100e72f25bdd0be49f5db1d2b63a395fc651d51aecb4881d9a67a336319956f"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "7308cea613b610d19e5ea6dc33a5281cb94bf4028d8864122087692d1d2a891b"
+            },
+            {
+              "ref": "web/data/schema.sql",
+              "digest": "6c1474540fb3e0b33f9b029c569030991ea3aea8bb155eb1e32e99dc716e17ca"
+            },
+            {
+              "ref": "web/tests/canonical.test.ts",
+              "digest": "aa03c724b103752014fbc6e73911171bb59d8a3c0141c2e65487649d6b91583b"
+            },
+            {
+              "ref": "web/tests/chats.test.ts",
+              "digest": "76e3cdef82da9df30c5bb09e7ed669f487c8397a0a86c2946bdef914fc103f1d"
+            },
+            {
+              "ref": "web/tests/data.test.ts",
+              "digest": "c39f0719810d432f84695d21e814222b6ab71f0699edd33147d3295f650ae696"
+            },
+            {
+              "ref": "web/tests/runs.test.ts",
+              "digest": "6299d1d7a68e736554e49ee4be0a8dd7e568f739d2bece4d20b6de8057e52aa3"
+            }
+          ],
+          "version": "f7c60764f21885851242b4e840fcb2940ca2bebb8d91eec47125ae8761056c88"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-portable-api/data-verification.md",
+            "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+          }
+        ],
+        "reason": "",
+        "method": "担当試験24件・型チェックと独立読み取り評価を成果物に照合",
+        "environment": "local app_auth_test PostgreSQL / Node 24.15.0",
+        "observedAt": "2026-10-06T12:08:39.099Z",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-06T12:08:39.152Z"
+      },
+      "at": "2026-10-06T12:08:39.152Z"
+    },
+    {
+      "id": "data-submit",
+      "hash": "03316c7f8590b832f7e4de892551ffd1c1a2d4a682390174f343793b96eea30c",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "ax-portable-data",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "data-submit",
+        "input": {
+          "checks": [
+            "5398cc3a-2c23-4053-9ad0-19c29a5fb1b6"
+          ],
+          "report": "PG保存/受付/参照と既存hash互換を実装、担当範囲の24試験と独立照合で条件を満たした。全体の実AX結合は親が継続。",
+          "refs": [
+            ".space/tasks/ax-portable-api/data-verification.md"
+          ]
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-data"
+      ],
+      "evidence": [],
+      "revision": 11,
+      "data": {
+        "id": "f45154d6-7315-4120-bd60-5ccad2c4fdec",
+        "unit": "ax-portable-data",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "5398cc3a-2c23-4053-9ad0-19c29a5fb1b6"
+        ],
+        "outputs": [
+          {
+            "id": "data",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/api/chat-service.ts",
+                "digest": "86aede771096d92fa7c00441cf65744757b32f4649e68903ba23eaab0ec2a54a"
+              },
+              {
+                "ref": "web/api/run-service.ts",
+                "digest": "41cbdbac355ee07366e37f80579139f0f070db14f3007001474ea3ba5b92419a"
+              },
+              {
+                "ref": "web/data/canonical.ts",
+                "digest": "1dd93685825cd489c8e220752532545fdbc5217d17fee34b6f07051baf74314b"
+              },
+              {
+                "ref": "web/data/db.ts",
+                "digest": "e100e72f25bdd0be49f5db1d2b63a395fc651d51aecb4881d9a67a336319956f"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "7308cea613b610d19e5ea6dc33a5281cb94bf4028d8864122087692d1d2a891b"
+              },
+              {
+                "ref": "web/data/schema.sql",
+                "digest": "6c1474540fb3e0b33f9b029c569030991ea3aea8bb155eb1e32e99dc716e17ca"
+              },
+              {
+                "ref": "web/tests/canonical.test.ts",
+                "digest": "aa03c724b103752014fbc6e73911171bb59d8a3c0141c2e65487649d6b91583b"
+              },
+              {
+                "ref": "web/tests/chats.test.ts",
+                "digest": "76e3cdef82da9df30c5bb09e7ed669f487c8397a0a86c2946bdef914fc103f1d"
+              },
+              {
+                "ref": "web/tests/data.test.ts",
+                "digest": "c39f0719810d432f84695d21e814222b6ab71f0699edd33147d3295f650ae696"
+              },
+              {
+                "ref": "web/tests/runs.test.ts",
+                "digest": "6299d1d7a68e736554e49ee4be0a8dd7e568f739d2bece4d20b6de8057e52aa3"
+              }
+            ],
+            "version": "f7c60764f21885851242b4e840fcb2940ca2bebb8d91eec47125ae8761056c88"
+          }
+        ],
+        "report": "PG保存/受付/参照と既存hash互換を実装、担当範囲の24試験と独立照合で条件を満たした。全体の実AX結合は親が継続。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-portable-api/data-verification.md",
+            "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "at": "2026-10-06T12:08:56.957Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-06T12:08:56.957Z"
+    },
+    {
+      "id": "data-accept",
+      "hash": "cb42a40f9455765b539974493a6fc58fb6df2bd5636f2fb7eb9336c53280f1aa",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "ax-portable-data",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "data-accept",
+        "input": {
+          "submission": "f45154d6-7315-4120-bd60-5ccad2c4fdec",
+          "reason": "担当成果物・実PGの試験と独立読み取り評価を照合してdata単位を受入。全体は実AX結合継続。"
+        },
+        "ifVersion": 6
+      },
+      "affectedUnits": [
+        "ax-portable-data"
+      ],
+      "evidence": [],
+      "revision": 12,
+      "data": {
+        "id": "f45154d6-7315-4120-bd60-5ccad2c4fdec",
+        "unit": "ax-portable-data",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "5398cc3a-2c23-4053-9ad0-19c29a5fb1b6"
+        ],
+        "outputs": [
+          {
+            "id": "data",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/api/chat-service.ts",
+                "digest": "86aede771096d92fa7c00441cf65744757b32f4649e68903ba23eaab0ec2a54a"
+              },
+              {
+                "ref": "web/api/run-service.ts",
+                "digest": "41cbdbac355ee07366e37f80579139f0f070db14f3007001474ea3ba5b92419a"
+              },
+              {
+                "ref": "web/data/canonical.ts",
+                "digest": "1dd93685825cd489c8e220752532545fdbc5217d17fee34b6f07051baf74314b"
+              },
+              {
+                "ref": "web/data/db.ts",
+                "digest": "e100e72f25bdd0be49f5db1d2b63a395fc651d51aecb4881d9a67a336319956f"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "7308cea613b610d19e5ea6dc33a5281cb94bf4028d8864122087692d1d2a891b"
+              },
+              {
+                "ref": "web/data/schema.sql",
+                "digest": "6c1474540fb3e0b33f9b029c569030991ea3aea8bb155eb1e32e99dc716e17ca"
+              },
+              {
+                "ref": "web/tests/canonical.test.ts",
+                "digest": "aa03c724b103752014fbc6e73911171bb59d8a3c0141c2e65487649d6b91583b"
+              },
+              {
+                "ref": "web/tests/chats.test.ts",
+                "digest": "76e3cdef82da9df30c5bb09e7ed669f487c8397a0a86c2946bdef914fc103f1d"
+              },
+              {
+                "ref": "web/tests/data.test.ts",
+                "digest": "c39f0719810d432f84695d21e814222b6ab71f0699edd33147d3295f650ae696"
+              },
+              {
+                "ref": "web/tests/runs.test.ts",
+                "digest": "6299d1d7a68e736554e49ee4be0a8dd7e568f739d2bece4d20b6de8057e52aa3"
+              }
+            ],
+            "version": "f7c60764f21885851242b4e840fcb2940ca2bebb8d91eec47125ae8761056c88"
+          }
+        ],
+        "report": "PG保存/受付/参照と既存hash互換を実装、担当範囲の24試験と独立照合で条件を満たした。全体の実AX結合は親が継続。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-portable-api/data-verification.md",
+            "digest": "dd30d39e2da08e770d468c2c242bbed35ac1b628764a27f755a5019e5cddc539"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "at": "2026-10-06T12:08:56.957Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "portable-api-20261006"
+          },
+          "reason": "担当成果物・実PGの試験と独立読み取り評価を照合してdata単位を受入。全体は実AX結合継続。",
+          "at": "2026-10-06T12:09:33.652Z"
+        }
+      },
+      "at": "2026-10-06T12:09:33.652Z"
+    },
+    {
+      "id": "final-1791289865480-b988df013937",
+      "hash": "2151b690ad9202972e1b2c7f84372963f106777235e485b37b7389f548a258de",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-portable-adapter",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289865480-b988df013937",
+        "input": {
+          "selection": "execute",
+          "reason": "native adapter実装・30試験・実AX offlineで成立を確認",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-portable-api/execution.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-adapter"
+      ],
+      "evidence": [],
+      "revision": 13,
+      "data": {
+        "id": "ax-portable-adapter",
+        "parent": "ax-portable-api",
+        "size": "small",
+        "purpose": "CLIなしのAX/guest/Substrateアダプターとoffline接続・停止の成立を確認する",
+        "track": "",
+        "owner": {
+          "actor": "execution",
+          "session": "w1-design-a-portable"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "execution/ native adapterと試作テスト",
+          "実行接続の報告（クラスタ操作は親と調整）"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "adapter",
+            "description": "typed native adapterの実装・局所試験とofflineの試験方法を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "adapter"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "native adapter実装・30試験・実AX offlineで成立を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/execution.md",
+                    "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "native protocolと停止証明を確認する",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:16:39.235Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T12:31:05.527Z"
+    },
+    {
+      "id": "final-1791289865625-77f6950e76317",
+      "hash": "fe61fe604085a16595344710bd1ee6e15af43216138ff4b476032bacc0b5bd53",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-portable-adapter",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289865625-77f6950e76317",
+        "input": {
+          "selection": "execute",
+          "reason": "native adapter実装・30試験・実AX offlineで成立を確認",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-portable-api/execution.md"
+          ]
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-adapter"
+      ],
+      "evidence": [],
+      "revision": 14,
+      "data": {
+        "id": "ax-portable-adapter",
+        "parent": "ax-portable-api",
+        "size": "small",
+        "purpose": "CLIなしのAX/guest/Substrateアダプターとoffline接続・停止の成立を確認する",
+        "track": "",
+        "owner": {
+          "actor": "execution",
+          "session": "w1-design-a-portable"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "execution/ native adapterと試作テスト",
+          "実行接続の報告（クラスタ操作は親と調整）"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "adapter",
+            "description": "typed native adapterの実装・局所試験とofflineの試験方法を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "adapter"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 4,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "native adapter実装・30試験・実AX offlineで成立を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/execution.md",
+                    "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "native adapter実装・30試験・実AX offlineで成立を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/execution.md",
+                    "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:16:39.235Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T12:31:05.660Z"
+    },
+    {
+      "id": "final-1791289865818-3dcea678ffe4b",
+      "hash": "073f8018fb48bfe661ad896b6303dbcc7fe8fb9788268a608288cc05bb38d018",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ax-portable-adapter",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289865818-3dcea678ffe4b",
+        "input": {
+          "condition": "adapter",
+          "verdict": "pass",
+          "target": {
+            "id": "adapter",
+            "kind": "files",
+            "files": [
+              "execution/go.mod",
+              "execution/Dockerfile",
+              "execution/go.sum",
+              "execution/controller/postgres.go",
+              "execution/controller/controller_test.go",
+              "execution/controller/controller.go",
+              "execution/native/health_test.go",
+              "execution/native/diagnostic.go",
+              "execution/native/guest.go",
+              "execution/native/health.go",
+              "execution/native/adapter.go",
+              "execution/native/protocol.go",
+              "execution/native/adapter_test.go",
+              "execution/native/direct_guest.go",
+              "execution/native/direct_guest_test.go",
+              "execution/cmd/ax-controller/main.go",
+              "execution/cmd/offline-probe/main.go",
+              "execution/cmd/inspect/main.go",
+              "execution/settings/settings.go",
+              "execution/settings/settings_test.go"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-portable-api/execution.md"
+          ],
+          "method": "担当の30試験/race/vet/buildとnative実装を照合し、親が実AX offlineで回収・deny・停止まで確認",
+          "environment": "macOS Go1.27.1、kind-ax-local ARM64、固定AX/Substrate",
+          "observedAt": "2026-10-06T12:31:05.749Z"
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-adapter"
+      ],
+      "evidence": [],
+      "revision": 15,
+      "data": {
+        "id": "c49d1835-3eeb-4a47-8a82-14a3c2d8a103",
+        "unit": "ax-portable-adapter",
+        "attempt": 1,
+        "condition": "adapter",
+        "target": {
+          "id": "adapter",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "execution/Dockerfile",
+              "digest": "1e99cd41af2b18fae50e7869b78e057cd4ca00c6b0e55e0e3ef40fe0235558d6"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "ef851cc9939d7f1d0c2f1f2b0974f30d87c470d719f71154258ec797bebff522"
+            },
+            {
+              "ref": "execution/cmd/inspect/main.go",
+              "digest": "9e47445993e90be5bad0a07ce1fe2bd4f642d532780961f4d7688cbcb631af04"
+            },
+            {
+              "ref": "execution/cmd/offline-probe/main.go",
+              "digest": "3eb7cf145f8ef02cb5ab8e842b5a8740f6da835eb4a5897d396a905b0f5e983d"
+            },
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "c232c4ac79a0b0d9c4f62bf416a6e5c1062fdd4a208ae465ada88ae9404f6dce"
+            },
+            {
+              "ref": "execution/controller/controller_test.go",
+              "digest": "3b6098ff65069d8bdf7c5935d16ca35e35f9a4e413f088d03b864ab3ce899d00"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "90447247791635cbc75bb1e86d094fe063ad71acf2f1375fcd62e022151460cd"
+            },
+            {
+              "ref": "execution/go.mod",
+              "digest": "6550aa0fbc9046444ed3ab94e909b777a5f64726c3dafb18c089178870e63292"
+            },
+            {
+              "ref": "execution/go.sum",
+              "digest": "9cb180751a862515f01dd6cc8715b7493a0dc862e69dedbf05569bfe0cee1042"
+            },
+            {
+              "ref": "execution/native/adapter.go",
+              "digest": "eae33ad88afb0177678dee65921c987f8c4d8b5c4e47cff12d7455731bf31610"
+            },
+            {
+              "ref": "execution/native/adapter_test.go",
+              "digest": "93186618aa7c81934846549003346ff48412e1aec4c2361988524dca24af35e5"
+            },
+            {
+              "ref": "execution/native/diagnostic.go",
+              "digest": "44118dd43b709deba14bba8bc6441a70034976aa3cf6f724d9498888c43a912e"
+            },
+            {
+              "ref": "execution/native/direct_guest.go",
+              "digest": "2c5c81554381368e61e6547ff91f078e54847e327a386e06bca66fbb84eb5f53"
+            },
+            {
+              "ref": "execution/native/direct_guest_test.go",
+              "digest": "41e54cfceabba8bdb791bdcc4a7b9b0eb8bb52ecddfc16e755bd647cba0e55f3"
+            },
+            {
+              "ref": "execution/native/guest.go",
+              "digest": "c56a1ee910d00649b30b3c9ac39fe7df2941b576ebeae5a8e99ee9f2cb25030b"
+            },
+            {
+              "ref": "execution/native/health.go",
+              "digest": "8e56a4aa91a5d972b5d9eda810bd14c8be12ced49ab196c4a53a5813e9af9948"
+            },
+            {
+              "ref": "execution/native/health_test.go",
+              "digest": "2651babea862a2886e0099d54f3cbd2566f0cc40625a198d6d36e85d8f39412b"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "88b56f549019b357c76c6aad48b530491da916de68f0cda3a125852a3f904651"
+            },
+            {
+              "ref": "execution/settings/settings.go",
+              "digest": "c40b3309971c63e7591f085a85b10e5916afded4f4d3182d022557cb7652e85c"
+            },
+            {
+              "ref": "execution/settings/settings_test.go",
+              "digest": "06a99d65d13098129b3f5eafaeb62de17dc829c9c090546011731eefab0b4484"
+            }
+          ],
+          "version": "8fa2f56d1fa832d25022f726e7bdebe5407f959f913ca33e8b7ea3036271537b"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-portable-api/execution.md",
+            "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+          }
+        ],
+        "reason": "",
+        "method": "担当の30試験/race/vet/buildとnative実装を照合し、親が実AX offlineで回収・deny・停止まで確認",
+        "environment": "macOS Go1.27.1、kind-ax-local ARM64、固定AX/Substrate",
+        "observedAt": "2026-10-06T12:31:05.749Z",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-06T12:31:05.867Z"
+      },
+      "at": "2026-10-06T12:31:05.867Z"
+    },
+    {
+      "id": "final-1791289879994-a079b19d8a331",
+      "hash": "e405e407b68f182fcb70e55196225e2bcd8e82a1ead1039a5ea729affb7542e9",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "ax-portable-adapter",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289879994-a079b19d8a331",
+        "input": {
+          "checks": [
+            "c49d1835-3eeb-4a47-8a82-14a3c2d8a103"
+          ],
+          "report": "native adapter・常駐controllerと30試験を引渡し。親の実Task offlineと停止読戻しも成功。",
+          "refs": [
+            ".space/tasks/ax-portable-api/execution.md"
+          ]
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-adapter"
+      ],
+      "evidence": [],
+      "revision": 16,
+      "data": {
+        "id": "b6959dab-6677-43fd-9319-4d33656becd4",
+        "unit": "ax-portable-adapter",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "c49d1835-3eeb-4a47-8a82-14a3c2d8a103"
+        ],
+        "outputs": [
+          {
+            "id": "adapter",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "execution/Dockerfile",
+                "digest": "1e99cd41af2b18fae50e7869b78e057cd4ca00c6b0e55e0e3ef40fe0235558d6"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "ef851cc9939d7f1d0c2f1f2b0974f30d87c470d719f71154258ec797bebff522"
+              },
+              {
+                "ref": "execution/cmd/inspect/main.go",
+                "digest": "9e47445993e90be5bad0a07ce1fe2bd4f642d532780961f4d7688cbcb631af04"
+              },
+              {
+                "ref": "execution/cmd/offline-probe/main.go",
+                "digest": "3eb7cf145f8ef02cb5ab8e842b5a8740f6da835eb4a5897d396a905b0f5e983d"
+              },
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "c232c4ac79a0b0d9c4f62bf416a6e5c1062fdd4a208ae465ada88ae9404f6dce"
+              },
+              {
+                "ref": "execution/controller/controller_test.go",
+                "digest": "3b6098ff65069d8bdf7c5935d16ca35e35f9a4e413f088d03b864ab3ce899d00"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "90447247791635cbc75bb1e86d094fe063ad71acf2f1375fcd62e022151460cd"
+              },
+              {
+                "ref": "execution/go.mod",
+                "digest": "6550aa0fbc9046444ed3ab94e909b777a5f64726c3dafb18c089178870e63292"
+              },
+              {
+                "ref": "execution/go.sum",
+                "digest": "9cb180751a862515f01dd6cc8715b7493a0dc862e69dedbf05569bfe0cee1042"
+              },
+              {
+                "ref": "execution/native/adapter.go",
+                "digest": "eae33ad88afb0177678dee65921c987f8c4d8b5c4e47cff12d7455731bf31610"
+              },
+              {
+                "ref": "execution/native/adapter_test.go",
+                "digest": "93186618aa7c81934846549003346ff48412e1aec4c2361988524dca24af35e5"
+              },
+              {
+                "ref": "execution/native/diagnostic.go",
+                "digest": "44118dd43b709deba14bba8bc6441a70034976aa3cf6f724d9498888c43a912e"
+              },
+              {
+                "ref": "execution/native/direct_guest.go",
+                "digest": "2c5c81554381368e61e6547ff91f078e54847e327a386e06bca66fbb84eb5f53"
+              },
+              {
+                "ref": "execution/native/direct_guest_test.go",
+                "digest": "41e54cfceabba8bdb791bdcc4a7b9b0eb8bb52ecddfc16e755bd647cba0e55f3"
+              },
+              {
+                "ref": "execution/native/guest.go",
+                "digest": "c56a1ee910d00649b30b3c9ac39fe7df2941b576ebeae5a8e99ee9f2cb25030b"
+              },
+              {
+                "ref": "execution/native/health.go",
+                "digest": "8e56a4aa91a5d972b5d9eda810bd14c8be12ced49ab196c4a53a5813e9af9948"
+              },
+              {
+                "ref": "execution/native/health_test.go",
+                "digest": "2651babea862a2886e0099d54f3cbd2566f0cc40625a198d6d36e85d8f39412b"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "88b56f549019b357c76c6aad48b530491da916de68f0cda3a125852a3f904651"
+              },
+              {
+                "ref": "execution/settings/settings.go",
+                "digest": "c40b3309971c63e7591f085a85b10e5916afded4f4d3182d022557cb7652e85c"
+              },
+              {
+                "ref": "execution/settings/settings_test.go",
+                "digest": "06a99d65d13098129b3f5eafaeb62de17dc829c9c090546011731eefab0b4484"
+              }
+            ],
+            "version": "8fa2f56d1fa832d25022f726e7bdebe5407f959f913ca33e8b7ea3036271537b"
+          }
+        ],
+        "report": "native adapter・常駐controllerと30試験を引渡し。親の実Task offlineと停止読戻しも成功。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-portable-api/execution.md",
+            "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "at": "2026-10-06T12:31:20.057Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-06T12:31:20.057Z"
+    },
+    {
+      "id": "final-1791289903330-cfecb650ae3d78",
+      "hash": "916360ab698b391a03b3d5a5e902dacf63064d223f6813e21a3ad8f0a8be9117",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "ax-portable-adapter",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289903330-cfecb650ae3d78",
+        "input": {
+          "submission": "b6959dab-6677-43fd-9319-4d33656becd4",
+          "reason": "担当結果と対象版、親による実AX offline回収・deny・実停止を照合した"
+        },
+        "ifVersion": 6,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-adapter"
+      ],
+      "evidence": [],
+      "revision": 17,
+      "data": {
+        "id": "b6959dab-6677-43fd-9319-4d33656becd4",
+        "unit": "ax-portable-adapter",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "c49d1835-3eeb-4a47-8a82-14a3c2d8a103"
+        ],
+        "outputs": [
+          {
+            "id": "adapter",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "execution/Dockerfile",
+                "digest": "1e99cd41af2b18fae50e7869b78e057cd4ca00c6b0e55e0e3ef40fe0235558d6"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "ef851cc9939d7f1d0c2f1f2b0974f30d87c470d719f71154258ec797bebff522"
+              },
+              {
+                "ref": "execution/cmd/inspect/main.go",
+                "digest": "9e47445993e90be5bad0a07ce1fe2bd4f642d532780961f4d7688cbcb631af04"
+              },
+              {
+                "ref": "execution/cmd/offline-probe/main.go",
+                "digest": "3eb7cf145f8ef02cb5ab8e842b5a8740f6da835eb4a5897d396a905b0f5e983d"
+              },
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "c232c4ac79a0b0d9c4f62bf416a6e5c1062fdd4a208ae465ada88ae9404f6dce"
+              },
+              {
+                "ref": "execution/controller/controller_test.go",
+                "digest": "3b6098ff65069d8bdf7c5935d16ca35e35f9a4e413f088d03b864ab3ce899d00"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "90447247791635cbc75bb1e86d094fe063ad71acf2f1375fcd62e022151460cd"
+              },
+              {
+                "ref": "execution/go.mod",
+                "digest": "6550aa0fbc9046444ed3ab94e909b777a5f64726c3dafb18c089178870e63292"
+              },
+              {
+                "ref": "execution/go.sum",
+                "digest": "9cb180751a862515f01dd6cc8715b7493a0dc862e69dedbf05569bfe0cee1042"
+              },
+              {
+                "ref": "execution/native/adapter.go",
+                "digest": "eae33ad88afb0177678dee65921c987f8c4d8b5c4e47cff12d7455731bf31610"
+              },
+              {
+                "ref": "execution/native/adapter_test.go",
+                "digest": "93186618aa7c81934846549003346ff48412e1aec4c2361988524dca24af35e5"
+              },
+              {
+                "ref": "execution/native/diagnostic.go",
+                "digest": "44118dd43b709deba14bba8bc6441a70034976aa3cf6f724d9498888c43a912e"
+              },
+              {
+                "ref": "execution/native/direct_guest.go",
+                "digest": "2c5c81554381368e61e6547ff91f078e54847e327a386e06bca66fbb84eb5f53"
+              },
+              {
+                "ref": "execution/native/direct_guest_test.go",
+                "digest": "41e54cfceabba8bdb791bdcc4a7b9b0eb8bb52ecddfc16e755bd647cba0e55f3"
+              },
+              {
+                "ref": "execution/native/guest.go",
+                "digest": "c56a1ee910d00649b30b3c9ac39fe7df2941b576ebeae5a8e99ee9f2cb25030b"
+              },
+              {
+                "ref": "execution/native/health.go",
+                "digest": "8e56a4aa91a5d972b5d9eda810bd14c8be12ced49ab196c4a53a5813e9af9948"
+              },
+              {
+                "ref": "execution/native/health_test.go",
+                "digest": "2651babea862a2886e0099d54f3cbd2566f0cc40625a198d6d36e85d8f39412b"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "88b56f549019b357c76c6aad48b530491da916de68f0cda3a125852a3f904651"
+              },
+              {
+                "ref": "execution/settings/settings.go",
+                "digest": "c40b3309971c63e7591f085a85b10e5916afded4f4d3182d022557cb7652e85c"
+              },
+              {
+                "ref": "execution/settings/settings_test.go",
+                "digest": "06a99d65d13098129b3f5eafaeb62de17dc829c9c090546011731eefab0b4484"
+              }
+            ],
+            "version": "8fa2f56d1fa832d25022f726e7bdebe5407f959f913ca33e8b7ea3036271537b"
+          }
+        ],
+        "report": "native adapter・常駐controllerと30試験を引渡し。親の実Task offlineと停止読戻しも成功。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-portable-api/execution.md",
+            "digest": "08e7497e217f043ee9fdede261a93d8798ce373677ff2b2155d8c081acec9128"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "at": "2026-10-06T12:31:20.057Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "portable-api-20261006"
+          },
+          "reason": "担当結果と対象版、親による実AX offline回収・deny・実停止を照合した",
+          "at": "2026-10-06T12:31:43.396Z"
+        }
+      },
+      "at": "2026-10-06T12:31:43.396Z"
+    },
+    {
+      "id": "final-1791289903518-7706ca995dad9",
+      "hash": "53a523680ac4ac54fccc5db6efcdb8a1b43c85f084146c9e55c4e8dcfe1df75b",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-portable-api",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289903518-7706ca995dad9",
+        "input": {
+          "selection": "execute",
+          "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-portable-api/verification.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 18,
+      "data": {
+        "id": "ax-portable-api",
+        "parent": null,
+        "size": "large",
+        "purpose": "共通APIとPostgreSQL保存への構成変更を実装・検証して一つのPRで納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "共通API、実行管理、履歴と成果物のDB保存・移行、互換性、PR方針"
+        ],
+        "taskRef": ".space/tasks/ax-portable-api/task.md",
+        "planRef": ".space/tasks/ax-portable-api/plan.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "C1",
+            "description": "Pythonを要しないTypeScript API",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C1"
+          },
+          {
+            "id": "C2",
+            "description": "PG保存と既存記録の保全",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C2"
+          },
+          {
+            "id": "C3",
+            "description": "独立実行管理と費用・排他・復旧",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C3"
+          },
+          {
+            "id": "C4",
+            "description": "WorkersとNodeの互換性",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C4"
+          },
+          {
+            "id": "C5",
+            "description": "所有者隔離と安全な切替",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C5"
+          },
+          {
+            "id": "C6",
+            "description": "独立レビューと一つのPR納品",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C6"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/verification.md",
+                    "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実データ・外部副作用を扱う",
+                "state": "pending",
+                "refs": []
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "認可・費用・移行の独立レビュー",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "関連変更を一つのPRで納品",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:16:39.186Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T12:31:43.577Z"
+    },
+    {
+      "id": "final-1791289903702-8ec24189e72e38",
+      "hash": "115d5fcba86e4119f8d3732bd79cb80cb5541fae8e2afa0fcc95ca20961ce381",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-portable-api",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289903702-8ec24189e72e38",
+        "input": {
+          "selection": "execute",
+          "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-portable-api/verification.md"
+          ]
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 19,
+      "data": {
+        "id": "ax-portable-api",
+        "parent": null,
+        "size": "large",
+        "purpose": "共通APIとPostgreSQL保存への構成変更を実装・検証して一つのPRで納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "共通API、実行管理、履歴と成果物のDB保存・移行、互換性、PR方針"
+        ],
+        "taskRef": ".space/tasks/ax-portable-api/task.md",
+        "planRef": ".space/tasks/ax-portable-api/plan.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "C1",
+            "description": "Pythonを要しないTypeScript API",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C1"
+          },
+          {
+            "id": "C2",
+            "description": "PG保存と既存記録の保全",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C2"
+          },
+          {
+            "id": "C3",
+            "description": "独立実行管理と費用・排他・復旧",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C3"
+          },
+          {
+            "id": "C4",
+            "description": "WorkersとNodeの互換性",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C4"
+          },
+          {
+            "id": "C5",
+            "description": "所有者隔離と安全な切替",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C5"
+          },
+          {
+            "id": "C6",
+            "description": "独立レビューと一つのPR納品",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C6"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 4,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/verification.md",
+                    "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/verification.md",
+                    "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "認可・費用・移行の独立レビュー",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "関連変更を一つのPRで納品",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:16:39.186Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T12:31:43.749Z"
+    },
+    {
+      "id": "final-1791289903874-a90c616700dec",
+      "hash": "74d1e53d1141db3911e93cc3aa12a54a45daf96048e921393360475a1a595608",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ax-portable-api",
+        "stage": "review",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289903874-a90c616700dec",
+        "input": {
+          "selection": "execute",
+          "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-portable-api/verification.md"
+          ]
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 20,
+      "data": {
+        "id": "ax-portable-api",
+        "parent": null,
+        "size": "large",
+        "purpose": "共通APIとPostgreSQL保存への構成変更を実装・検証して一つのPRで納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "共通API、実行管理、履歴と成果物のDB保存・移行、互換性、PR方針"
+        ],
+        "taskRef": ".space/tasks/ax-portable-api/task.md",
+        "planRef": ".space/tasks/ax-portable-api/plan.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "C1",
+            "description": "Pythonを要しないTypeScript API",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C1"
+          },
+          {
+            "id": "C2",
+            "description": "PG保存と既存記録の保全",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C2"
+          },
+          {
+            "id": "C3",
+            "description": "独立実行管理と費用・排他・復旧",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C3"
+          },
+          {
+            "id": "C4",
+            "description": "WorkersとNodeの互換性",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C4"
+          },
+          {
+            "id": "C5",
+            "description": "所有者隔離と安全な切替",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C5"
+          },
+          {
+            "id": "C6",
+            "description": "独立レビューと一つのPR納品",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "C6"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 5,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/verification.md",
+                    "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/verification.md",
+                    "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "実装、保存移行と実経路、独立担当の修正読戻しを完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-portable-api/verification.md",
+                    "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "関連変更を一つのPRで納品",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T11:16:39.186Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T12:31:43.925Z"
+    },
+    {
+      "id": "final-1791289935132-8fd52b908ecbe8",
+      "hash": "d29cdc9379cf44c9b89b55555284908fb36a3e4dfe06b9a37ba3dbaea89696da",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ax-portable-api",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289935132-8fd52b908ecbe8",
+        "input": {
+          "condition": "C1",
+          "verdict": "pass",
+          "target": {
+            "id": "C1",
+            "kind": "files",
+            "files": [
+              "web/api/app.ts",
+              "web/api/config.ts",
+              "web/api/runtime.ts",
+              "web/api/settings.ts",
+              "web/api/run-service.ts",
+              "web/api/chat-service.ts",
+              "web/shared/access-token.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-portable-api/verification.md"
+          ],
+          "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+          "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+          "observedAt": "2026-10-06T12:32:14.977Z"
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 21,
+      "data": {
+        "id": "fbf744a5-70ef-4147-a499-3f04371a9206",
+        "unit": "ax-portable-api",
+        "attempt": 1,
+        "condition": "C1",
+        "target": {
+          "id": "C1",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/api/app.ts",
+              "digest": "184c34c18f881b731c41a866cc0289fd341763e914cd89731a0279071aff9fdf"
+            },
+            {
+              "ref": "web/api/chat-service.ts",
+              "digest": "86aede771096d92fa7c00441cf65744757b32f4649e68903ba23eaab0ec2a54a"
+            },
+            {
+              "ref": "web/api/config.ts",
+              "digest": "38b9422436ba643005d0e7ac4e6d28b9180de014d3fb287f7e0a1cf02ce54ab6"
+            },
+            {
+              "ref": "web/api/run-service.ts",
+              "digest": "41cbdbac355ee07366e37f80579139f0f070db14f3007001474ea3ba5b92419a"
+            },
+            {
+              "ref": "web/api/runtime.ts",
+              "digest": "1841aa1947d04d06a751f84a82497e73281cf4550a871c4cfbf0fdeae9a38abc"
+            },
+            {
+              "ref": "web/api/settings.ts",
+              "digest": "f34b2c72e8a18022fc012cd5c5391a388d932a5722fd9a55a856f53ba463b835"
+            },
+            {
+              "ref": "web/shared/access-token.ts",
+              "digest": "d5bfe3108d82183c6043cf5720d393e10d5b1dc88c3c24dffd5c9bb57e42e988"
+            }
+          ],
+          "version": "9ad8d4bb2eb5a36001b7ad56e2566edaea373076a60c973608d88a3b5290cc30"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-portable-api/verification.md",
+            "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+          }
+        ],
+        "reason": "",
+        "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+        "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+        "observedAt": "2026-10-06T12:32:14.977Z",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-06T12:32:15.186Z"
+      },
+      "at": "2026-10-06T12:32:15.186Z"
+    },
+    {
+      "id": "final-1791289935277-7d70103d9e8d48",
+      "hash": "285499907f50adc8d1f04877e731cadd32518d6ba9e18a604c8f49ceefaadfaf",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ax-portable-api",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289935277-7d70103d9e8d48",
+        "input": {
+          "condition": "C2",
+          "verdict": "pass",
+          "target": {
+            "id": "C2",
+            "kind": "files",
+            "files": [
+              "web/data/schema.sql",
+              "web/data/repository.ts",
+              "web/data/canonical.ts",
+              "web/server/legacy-import.ts",
+              "web/scripts/import-legacy.ts",
+              "ax-local/scripts/import-legacy.sh",
+              "web/tests/data.test.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-portable-api/verification.md"
+          ],
+          "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+          "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+          "observedAt": "2026-10-06T12:32:15.218Z"
+        },
+        "ifVersion": 6,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 22,
+      "data": {
+        "id": "f28cac37-78d6-49ca-a154-5a8a13b55be1",
+        "unit": "ax-portable-api",
+        "attempt": 1,
+        "condition": "C2",
+        "target": {
+          "id": "C2",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/scripts/import-legacy.sh",
+              "digest": "08152790be0963f939260722578eb9709b84c7e9be317a05e30ddc2db9a91632"
+            },
+            {
+              "ref": "web/data/canonical.ts",
+              "digest": "1dd93685825cd489c8e220752532545fdbc5217d17fee34b6f07051baf74314b"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "7308cea613b610d19e5ea6dc33a5281cb94bf4028d8864122087692d1d2a891b"
+            },
+            {
+              "ref": "web/data/schema.sql",
+              "digest": "6c1474540fb3e0b33f9b029c569030991ea3aea8bb155eb1e32e99dc716e17ca"
+            },
+            {
+              "ref": "web/scripts/import-legacy.ts",
+              "digest": "542921a9ccc51e1b31b4f4cba22370a840ad5b449cd6735be73c733201e3d1dd"
+            },
+            {
+              "ref": "web/server/legacy-import.ts",
+              "digest": "0d2cc81939c9ac68525c9d506cd6759219222b23cd24ccfa45c251c13cfe5125"
+            },
+            {
+              "ref": "web/tests/data.test.ts",
+              "digest": "c39f0719810d432f84695d21e814222b6ab71f0699edd33147d3295f650ae696"
+            }
+          ],
+          "version": "652b803469e40063ff445e744efb83f23d544452cee9bf9dae8f138ff15b11d8"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-portable-api/verification.md",
+            "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+          }
+        ],
+        "reason": "",
+        "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+        "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+        "observedAt": "2026-10-06T12:32:15.218Z",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-06T12:32:15.321Z"
+      },
+      "at": "2026-10-06T12:32:15.321Z"
+    },
+    {
+      "id": "final-1791289935425-35f43aeadf1c1",
+      "hash": "73e1cd7c0e2f0af3f11d9c93f2db483ed1f2339d343489fed4dea3a3383199df",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ax-portable-api",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289935425-35f43aeadf1c1",
+        "input": {
+          "condition": "C3",
+          "verdict": "pass",
+          "target": {
+            "id": "C3",
+            "kind": "files",
+            "files": [
+              "execution/controller/controller.go",
+              "execution/controller/postgres.go",
+              "execution/native/adapter.go",
+              "execution/native/guest.go",
+              "execution/native/direct_guest.go",
+              "execution/native/protocol.go",
+              "execution/controller/controller_test.go"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-portable-api/verification.md"
+          ],
+          "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+          "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+          "observedAt": "2026-10-06T12:32:15.353Z"
+        },
+        "ifVersion": 7,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 23,
+      "data": {
+        "id": "93c5dc97-474d-43eb-9f98-f62e717621ce",
+        "unit": "ax-portable-api",
+        "attempt": 1,
+        "condition": "C3",
+        "target": {
+          "id": "C3",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "c232c4ac79a0b0d9c4f62bf416a6e5c1062fdd4a208ae465ada88ae9404f6dce"
+            },
+            {
+              "ref": "execution/controller/controller_test.go",
+              "digest": "3b6098ff65069d8bdf7c5935d16ca35e35f9a4e413f088d03b864ab3ce899d00"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "90447247791635cbc75bb1e86d094fe063ad71acf2f1375fcd62e022151460cd"
+            },
+            {
+              "ref": "execution/native/adapter.go",
+              "digest": "eae33ad88afb0177678dee65921c987f8c4d8b5c4e47cff12d7455731bf31610"
+            },
+            {
+              "ref": "execution/native/direct_guest.go",
+              "digest": "2c5c81554381368e61e6547ff91f078e54847e327a386e06bca66fbb84eb5f53"
+            },
+            {
+              "ref": "execution/native/guest.go",
+              "digest": "c56a1ee910d00649b30b3c9ac39fe7df2941b576ebeae5a8e99ee9f2cb25030b"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "88b56f549019b357c76c6aad48b530491da916de68f0cda3a125852a3f904651"
+            }
+          ],
+          "version": "37d12f5f1b3c17dee4bb945387c0f4176d9b0b37b87eea0fcd430d5d9398d6f4"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-portable-api/verification.md",
+            "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+          }
+        ],
+        "reason": "",
+        "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+        "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+        "observedAt": "2026-10-06T12:32:15.353Z",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-06T12:32:15.459Z"
+      },
+      "at": "2026-10-06T12:32:15.459Z"
+    },
+    {
+      "id": "final-1791289935549-d9557b3feb705",
+      "hash": "c0817d505890e5e0b5bbf806eefc519d1a8b0e7eca1da0b1205419ec0a450a12",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ax-portable-api",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289935549-d9557b3feb705",
+        "input": {
+          "condition": "C4",
+          "verdict": "pass",
+          "target": {
+            "id": "C4",
+            "kind": "files",
+            "files": [
+              "web/api/index.ts",
+              "web/api/worker.ts",
+              "web/api/postgres.ts",
+              "web/server/api-settings.ts",
+              "web/tests/runtime.test.ts",
+              "web/package.json",
+              "web/package-lock.json"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-portable-api/verification.md"
+          ],
+          "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+          "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+          "observedAt": "2026-10-06T12:32:15.486Z"
+        },
+        "ifVersion": 8,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 24,
+      "data": {
+        "id": "0dedb7bf-b033-4519-b4ae-48f7d78cc103",
+        "unit": "ax-portable-api",
+        "attempt": 1,
+        "condition": "C4",
+        "target": {
+          "id": "C4",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/api/index.ts",
+              "digest": "8b9bb7803b48b71067490d96c8698c634803a814cf24edfe2240194ca66fdba3"
+            },
+            {
+              "ref": "web/api/postgres.ts",
+              "digest": "8f45eb2f26d95c169fb281b2aa3e413a668067bb201c7b8fcd3e060519b1fed1"
+            },
+            {
+              "ref": "web/api/worker.ts",
+              "digest": "52fef5ec2e0d06e1570555a3e279ecbec5b6fffcae7bc5eace39fb28d851925f"
+            },
+            {
+              "ref": "web/package-lock.json",
+              "digest": "8d38f64e6ee31f58ab0c61f6897e8482f393fb529cf4a40b47873bda3b47c73b"
+            },
+            {
+              "ref": "web/package.json",
+              "digest": "fc7b0fe3ff8d3f7300dc69e51b40bcdf12e3fc9804b08902ba597ef9cd87f028"
+            },
+            {
+              "ref": "web/server/api-settings.ts",
+              "digest": "1ca4f410b3ea5cfd8d7f6a11eaadf6a940d25e521f4e230701b65bf8fcdb1026"
+            },
+            {
+              "ref": "web/tests/runtime.test.ts",
+              "digest": "2ca12262e50931eda0b20be8ea44a4c5617a9857b3b1cf204bec7add2929e38f"
+            }
+          ],
+          "version": "4100a6ffaf4f300953899bae981a5fc4827c42e6faa0c56c1a16ac23eacc6584"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-portable-api/verification.md",
+            "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+          }
+        ],
+        "reason": "",
+        "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+        "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+        "observedAt": "2026-10-06T12:32:15.486Z",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-06T12:32:15.598Z"
+      },
+      "at": "2026-10-06T12:32:15.598Z"
+    },
+    {
+      "id": "final-1791289935687-3d10a01899227",
+      "hash": "5dc25cdc64e072b40328f8a7bee4f20a28660ac1e7150908b587b7d6843a9134",
+      "actor": {
+        "actor": "parent",
+        "session": "portable-api-20261006"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ax-portable-api",
+        "actor": "parent",
+        "session": "portable-api-20261006",
+        "operationId": "final-1791289935687-3d10a01899227",
+        "input": {
+          "condition": "C5",
+          "verdict": "pass",
+          "target": {
+            "id": "C5",
+            "kind": "files",
+            "files": [
+              "web/scripts/deploy-execution.ts",
+              "web/scripts/prepare-execution.ts",
+              "ax-local/worker-controller.Dockerfile",
+              "ax-local/versions.json",
+              "ax-local/task_cli.py",
+              "ax-local/web_bridge.py",
+              "ax-local/ax",
+              "ax-local/scripts/set-egress.sh",
+              "web/tests/browser/auth.spec.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-portable-api/verification.md"
+          ],
+          "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+          "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+          "observedAt": "2026-10-06T12:32:15.627Z"
+        },
+        "ifVersion": 9,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ax-portable-api"
+      ],
+      "evidence": [],
+      "revision": 25,
+      "data": {
+        "id": "921af920-741b-4239-b87e-f9dc0c526717",
+        "unit": "ax-portable-api",
+        "attempt": 1,
+        "condition": "C5",
+        "target": {
+          "id": "C5",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/ax",
+              "digest": "753bf01e5deb0ee31520f9b50631f7520d31df41c9123fa5bb7cb7124ea9cfc4"
+            },
+            {
+              "ref": "ax-local/scripts/set-egress.sh",
+              "digest": "0e6402dfdded766d849dd77245ff5fba100edb9fdb9dcb693262d10e5086c238"
+            },
+            {
+              "ref": "ax-local/task_cli.py",
+              "digest": "339268be53a3b8e2b8b1838e3573343f2f065fbd829e87599154346c0c58af73"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "f436a6a211375cbbd52d812383bd616be89a98fd7d338767495e975694b60a82"
+            },
+            {
+              "ref": "ax-local/web_bridge.py",
+              "digest": "8eb284618bd7e84f1f0934a83981332e62b9e059888dac5c9268e468a86c2465"
+            },
+            {
+              "ref": "ax-local/worker-controller.Dockerfile",
+              "digest": "cf86739e8eb46ad796701bba32a3834c100f8602be7d7824a64eec0cf28fdcd7"
+            },
+            {
+              "ref": "web/scripts/deploy-execution.ts",
+              "digest": "cac61a6abd27aa66ccbc8cc83a4a1cc3afdf960150df3c2f5757bb1e912713e7"
+            },
+            {
+              "ref": "web/scripts/prepare-execution.ts",
+              "digest": "db0a8ecabc98d163af2a3e44270f2e2103749d8b4d4caf1d7764ac1d0a9dfd0d"
+            },
+            {
+              "ref": "web/tests/browser/auth.spec.ts",
+              "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+            }
+          ],
+          "version": "25bba5bf8d17a45ebdce78f587651f942abaa46d288915e21acb2038a78b6fe6"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-portable-api/verification.md",
+            "digest": "b61cfb872914cbeed690d226d47f6fe54b818818c8946c9d129affd246f469ad"
+          }
+        ],
+        "reason": "",
+        "method": "対象の独立レビュー、局所/結合試験、全件移行と実Keycloak・実AX offline・再起動・owner隔離の証拠を照合",
+        "environment": "macOS Node24.15.0 / workerd / Docker PostgreSQL18.4 / kind-ax-local、外部モデル要求0",
+        "observedAt": "2026-10-06T12:32:15.627Z",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "portable-api-20261006"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-06T12:32:15.721Z"
+      },
+      "at": "2026-10-06T12:32:15.721Z"
+    }
+  ]
+}

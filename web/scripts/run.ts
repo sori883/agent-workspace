@@ -11,8 +11,8 @@ if (mode !== "dev" && mode !== "start") throw new Error("Choose dev or start.");
 const cwd = fileURLToPath(new URL("../", import.meta.url));
 const env = {
   ...process.env,
-  INTERNAL_API_TOKEN: randomBytes(32).toString("base64url"),
-  LOCAL_SESSION_SECRET: randomBytes(32).toString("base64url"),
+  INTERNAL_API_TOKEN: process.env.INTERNAL_API_TOKEN ?? (process.env.API_ORIGIN ? "" : randomBytes(32).toString("base64url")),
+  LOCAL_SESSION_SECRET: process.env.LOCAL_SESSION_SECRET ?? randomBytes(32).toString("base64url"),
 };
 const config = readConfig(env);
 const children: ChildProcess[] = [];
@@ -44,10 +44,10 @@ function start(args: string[], extraEnv: NodeJS.ProcessEnv = {}) {
   child.on("error", () => { console.error("A local service could not start."); shutdown(1); });
   return child;
 }
-async function waitFor(url: string, child: ChildProcess, headers?: HeadersInit, isOwnResponse: (response: Response) => Promise<boolean> = async () => true) {
+async function waitFor(url: string, child: ChildProcess | undefined, headers?: HeadersInit, isOwnResponse: (response: Response) => Promise<boolean> = async () => true) {
   const deadline = Date.now() + 30000;
   while (Date.now() < deadline) {
-    if (stopping || child.exitCode !== null || child.signalCode !== null) throw new Error("A local service stopped during startup.");
+    if (stopping || (child && (child.exitCode !== null || child.signalCode !== null))) throw new Error("A local service stopped during startup.");
     try {
       const response = await fetch(url, { headers, signal: AbortSignal.timeout(1000) });
       await response.body?.cancel();
@@ -60,8 +60,8 @@ async function waitFor(url: string, child: ChildProcess, headers?: HeadersInit, 
 for (const signal of ["SIGINT", "SIGTERM"] as const) process.on(signal, () => shutdown(0));
 
 try {
-  const api = start(["--import", "tsx", "api/index.ts"]);
-  api.on("exit", () => {
+  const api = process.env.API_ORIGIN ? undefined : start(["--import", "tsx", "api/index.ts"]);
+  api?.on("exit", () => {
     if (stopping) return;
     if (!ready) shutdown(1);
     else console.error("API stopped. The web page remains available and will show a connection error. Restart the command to reconnect.");
