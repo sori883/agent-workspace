@@ -1,3 +1,4 @@
+import { requireAuth } from "../lib/auth.server";
 import { randomUUID } from "node:crypto";
 import { useEffect, useRef } from "react";
 import { data, Form, redirect, useNavigation } from "react-router";
@@ -11,6 +12,7 @@ import { Notice, RunHistory, TextField, useRunRefresh, Workspace } from "../comp
 
 export function meta() { return [{ title: "エージェントを実行する | AX ワークスペース" }]; }
 export async function loader({ request }: Route.LoaderArgs) {
+  const user = await requireAuth(request);
   const session = await loadSession(request);
   const headers = pageHeaders();
   if (session.cookie) headers.set("Set-Cookie", session.cookie);
@@ -21,12 +23,13 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
   let runs: RunSummary[] = [];
   let error: string | null = null;
-  try { runs = (await runsClient().list()).runs; }
+  try { runs = (await runsClient(user.accessToken).list()).runs; }
   catch (cause) { error = cause instanceof RunApiError ? runErrorMessage(cause.code) : "実行一覧を取得できませんでした。接続を確認してから更新してください。"; }
   return data({ csrf: session.csrf, key: draft, runs, error }, { headers });
 }
 
 export async function action({ request }: Route.ActionArgs) {
+  const user = await requireAuth(request);
   let submitted = { key: "", mode: "offline", instruction: "", input_text: "", output_name: "result.txt", allow_model: false };
   const failure = (error: string, status: number, fields: string[] = []) => data({ error, fields, submitted }, { status, headers: pageHeaders() });
   try {
@@ -35,7 +38,7 @@ export async function action({ request }: Route.ActionArgs) {
     await verifySubmission(request, form.get("csrf"));
     const parsed = runInputSchema.safeParse(submitted);
     if (!parsed.success) return failure("入力の長さ、成果物の名前、モデル利用の確認を見直してください。", 400, parsed.error.issues.map((issue) => String(issue.path[0])));
-    const accepted = await runsClient().submit(parsed.data);
+    const accepted = await runsClient(user.accessToken).submit(parsed.data);
     return redirect(`/runs/${accepted.run_id}`, { status: 303, headers: pageHeaders() });
   } catch (cause) {
     if (cause instanceof Response) return failure(await cause.text(), cause.status);

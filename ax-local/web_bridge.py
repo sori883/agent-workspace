@@ -10,7 +10,7 @@ import time
 import uuid
 from pathlib import Path
 
-from task_cli import ROOT, RUN_ID, TaskCLI, TaskError, read_file, read_json
+from task_cli import ROOT, RUN_ID, TaskCLI, TaskError, read_file, read_json, submission_key, validate_owner
 from task_runtime.protocol import MAX_ARTIFACT_BYTES, ProtocolError, validate_request, validate_result
 
 
@@ -31,7 +31,7 @@ def error_response(error):
     if isinstance(error, ProtocolError):
         code = "invalid_request"
     status = 503
-    if code in {"invalid_request", "model_not_allowed", "invalid_run_id", "invalid_conversation_id"}:
+    if code in {"invalid_request", "model_not_allowed", "invalid_run_id", "invalid_conversation_id", "invalid_owner_user_id"}:
         status = 400
     elif code in {"run_not_found", "artifact_unavailable", "conversation_not_found"}:
         status = 404
@@ -51,7 +51,7 @@ def object_fields(value, fields):
         raise TaskError("invalid_request")
 
 
-def parse_submission(value):
+def parse_submission(value, owner_user_id):
     object_fields(value, ("key", "mode", "instruction", "input_text", "output_name", "allow_model"))
     if not isinstance(value["key"], str) or not re.fullmatch(r"[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", value["key"]):
         raise TaskError("invalid_request")
@@ -71,11 +71,12 @@ def parse_submission(value):
     })
     payload = {name: item for name, item in value.items() if name != "key"}
     digest = hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
-    return request, hashlib.sha256(key.encode("ascii")).hexdigest(), digest
+    return request, submission_key(owner_user_id, key), digest
 
 
 class WebBridge:
-    def __init__(self, cli=None, launch=None):
+    def __init__(self, cli=None, launch=None, *, owner_user_id):
+        self.owner_user_id = validate_owner(owner_user_id)
         self.cli = cli or TaskCLI()
         self.launch = launch or self.start_worker
 
@@ -111,13 +112,13 @@ class WebBridge:
         return receipt, replayed
 
     def submit(self, value):
-        request, key_hash, payload_hash = parse_submission(value)
-        receipt, replayed = self.admit(lambda: self.cli.accept(request, key_hash, payload_hash))
+        request, key_hash, payload_hash = parse_submission(value, self.owner_user_id)
+        receipt, replayed = self.admit(lambda: self.cli.accept(request, key_hash, payload_hash, self.owner_user_id))
         return {"run_id": receipt["run_id"], "replayed": replayed}
 
     def chat_service(self):
         from chat import ChatService
-        return ChatService(self.cli, self.summary)
+        return ChatService(self.cli, self.summary, owner_user_id=self.owner_user_id)
 
     def conversations(self, value):
         object_fields(value, ())
@@ -158,10 +159,17 @@ class WebBridge:
             if not self.cli.runs.exists():
                 return {"runs": []}
             rows = []
+            conversation_groups = None
             for directory in self.cli.runs.iterdir():
                 if directory.name.startswith("."):
                     continue
                 receipt = self.cli.inspect(directory.name)
+                if receipt.get("owner_user_id") != self.owner_user_id:
+                    continue
+                if "conversation" in receipt:
+                    if conversation_groups is None:
+                        conversation_groups = self.chat_service().groups()
+                    self.require_owner(receipt, conversation_groups)
                 summary = self.summary(receipt, active)
                 created_at = datetime.fromisoformat(summary["accepted_at"].replace("Z", "+00:00")).timestamp() if summary["accepted_at"] else directory.stat().st_mtime
                 rows.append((created_at, summary))
@@ -172,6 +180,7 @@ class WebBridge:
         object_fields(value, ("run_id",))
         with self.cli.observing() as active:
             receipt = self.cli.inspect(value["run_id"])
+            self.require_owner(receipt)
             directory = self.cli.directory(value["run_id"])
             request = validate_request(read_json(directory / "request.json"))
             result = receipt.get("result")
@@ -200,8 +209,10 @@ class WebBridge:
 
     def recover(self, value):
         object_fields(value, ("run_id",))
+        self.require_owner(self.cli.inspect(value["run_id"]))
         with self.cli.locked():
             receipt = self.cli.inspect(value["run_id"])
+            self.require_owner(receipt)
             resolved = receipt.get("resolved") is True
         if not resolved:
             try:
@@ -210,10 +221,27 @@ class WebBridge:
                 self.record_spawn_failure(value["run_id"])
         return {"run_id": value["run_id"]}
 
-    def dispatch(self, operation, value):
+    def require_owner(self, receipt, conversation_groups=None):
+        if receipt.get("owner_user_id") != self.owner_user_id:
+            raise TaskError("run_not_found")
+        if "conversation" in receipt:
+            link = receipt["conversation"]
+            if not isinstance(link, dict) or not isinstance(link.get("id"), str):
+                raise TaskError("invalid_conversation_state")
+            self.chat_service().authorize(link["id"], conversation_groups)
+
+    @classmethod
+    def dispatch(cls, operation, value, *, cli=None, launch=None):
         if operation not in {"submit", "list", "get", "artifact", "recover"} | CHAT_OPERATIONS:
             raise TaskError("invalid_request")
-        return {"ok": True, "data": getattr(self, operation)(value)}
+        if not isinstance(value, dict):
+            raise TaskError("invalid_request")
+        owner = validate_owner(value.get("owner_user_id"))
+        object_fields(value, ("owner_user_id", "input"))
+        if not isinstance(value["input"], dict):
+            raise TaskError("invalid_request")
+        scoped = cls(cli, launch, owner_user_id=owner)
+        return {"ok": True, "data": getattr(scoped, operation)(value["input"])}
 
 
 def unique_object(pairs):
@@ -249,7 +277,7 @@ def main(argv=None):
             value = json.loads(raw.decode("utf-8"), object_pairs_hook=unique_object)
         except (ValueError, UnicodeError, RecursionError):
             raise TaskError("invalid_request") from None
-        response = WebBridge().dispatch(args[0], value)
+        response = WebBridge.dispatch(args[0], value)
     except (Exception, KeyboardInterrupt) as error:
         if args and args[0].startswith("_"):
             return 1

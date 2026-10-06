@@ -310,3 +310,12 @@ input { font: inherit; }
   .composer-actions { flex-direction: column-reverse; gap: 10px; }
   .chat-footnote { text-align: left; }
 }
+
+.auth-page { max-width: 52rem; margin: 5rem auto; padding: 0 1.5rem; }
+.auth-page h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.5; }
+.auth-card { background: white; border: 1px solid var(--line); border-radius: 1rem; padding: clamp(1.5rem, 4vw, 2.5rem); margin: 2rem 0; max-width: 48rem; }
+.auth-card h2 { font-size: 1.25rem; margin: 0 0 1rem; }
+.auth-card p { line-height: 1.8; overflow-wrap: anywhere; }
+.auth-card form { margin: 1.5rem 0; }
+.auth-card hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
+@media (max-width: 640px) { .auth-page { margin-top: 2.5rem; } }

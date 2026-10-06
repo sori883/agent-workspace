@@ -1,4 +1,7 @@
 import { defineConfig } from "@playwright/test";
+import { testConfigPath } from "./tests/prepare-auth";
+
+process.env.AUTH_CONFIG_FILE ??= testConfigPath;
 
 export default defineConfig({
   testDir: "./tests/browser",

@@ -13,7 +13,7 @@ title: AXローカル実行基盤の構成と確認方法
 description: Kubernetes外のDocker上PostgreSQLへ移行したAXローカル基盤の構成・費用制御・保存と復旧の検証結果
 generated: 
   by: agent:codex
-  at: 2026-10-06T07:52:08.309Z
+  at: 2026-10-06T09:26:05.936Z
 sources: 
   - title: 検証対象AXソース
     resource: https://github.com/google/ax/tree/ac2332829f22360ff97b0ba34d94dd0dd782f17e
@@ -24,6 +24,7 @@ sources:
   - resource: https://github.com/sori883/agent-workspace/pull/2
   - resource: ax-local/verification.md
   - resource: ax-local/postgres/README.md
+  - resource: .space/tasks/ax-auth/verification.md
 ---
 # AXのローカル実行基盤
 
@@ -33,7 +34,7 @@ sources:
 
 利用者の承認で、ローカルDockerのPostgreSQL 18.4へSubstrateの既存atepgを移した。旧Podと同一image digestをComposeに固定し、専用Docker volume ax-local-postgres-dataの/var/lib/postgresql/18/dockerへ保存する。ホストは127.0.0.1:55432、kindのPodはhost.docker.internal:55432を使う。接続先はローカル環境の設定であり、本番のDB配置・提供元は未選定。
 
-substrate/ax_substrate、keycloak/ax_keycloak、app/ax_appの3組に分離した。用途別loginは非superuserで他DB接続を拒否し、TLSのCA・ホスト名をverify-fullで確認する。Keycloakとアプリ用DBは空、認証機能は未実装。既存会話・receiptは.state/runsに維持する。固定Substrateは起動ログへDSNを出すためパスワードをDSNへ含めず、SecretのPGPASSWORDで渡す。秘密ファイル・dumpは.state/postgres配下に限定しGitへ入れない。
+substrate/ax_substrate、keycloak/ax_keycloak、app/ax_appの3組に分離した。用途別loginは非superuserで他DB接続を拒否し、TLSのCA・ホスト名をverify-fullで確認する。このDB移行時点ではKeycloakとアプリ用DBは空だった。同日の認証実装でKeycloak 26.8.0とBFF/APIを接続し、両DBに認証情報・内部ID対応・sessionを保存するようになった。詳しくは[認証基盤](../decisions/systems/ax/auth-foundation.md)を参照する。既存会話・receiptは.state/runsに維持する。固定Substrateは起動ログへDSNを出すためパスワードをDSNへ含めず、SecretのPGPASSWORDで渡す。PostgreSQLの秘密・dumpは.state/postgres、認証サービスとアプリsessionの秘密・dumpは.state/authに保持し、Gitへ入れない。
 
 全API停止・Pod消滅・旧client接続0の後、最終dump前後と復元先の16表全行hash/件数とsequence1件が一致した。worker_outbox全partitionとworker_outbox_trimは旧cluster固有のXIDを持つ派生通知なので、一致を記録した後に復元先だけ同一transactionで初期化し、一次表の不変を再照合した。全APIのcold起動で現在状態を読み直す。新APIの起動自体が書き込むため、起動前に永続markerを作り、以降は古いDBへ自動rollbackしない。
 

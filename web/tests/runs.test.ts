@@ -1,3 +1,4 @@
+import { TEST_OWNER, TEST_ACCESS_TOKEN, testAuthenticate } from "./helpers/api-auth";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
@@ -22,11 +23,11 @@ const detail: RunDetail = {
 };
 function fakeService(calls: string[] = []): RunService {
   return {
-    async list() { calls.push("list"); return { runs: [detail.summary] }; },
-    async get(id) { calls.push(`get:${id}`); return detail; },
-    async submit(value) { calls.push(`submit:${value.key}`); return { run_id: runId, replayed: false }; },
-    async artifact(id) { calls.push(`artifact:${id}`); return { name: "answer.txt", content: "a".repeat(32768) }; },
-    async recover(id) { calls.push(`recover:${id}`); return { run_id: id }; },
+    async list(owner) { assert.equal(owner, TEST_OWNER); calls.push("list"); return { runs: [detail.summary] }; },
+    async get(owner, id) { assert.equal(owner, TEST_OWNER); calls.push(`get:${id}`); return detail; },
+    async submit(owner, value) { assert.equal(owner, TEST_OWNER); calls.push(`submit:${value.key}`); return { run_id: runId, replayed: false }; },
+    async artifact(owner, id) { assert.equal(owner, TEST_OWNER); calls.push(`artifact:${id}`); return { name: "answer.txt", content: "a".repeat(32768) }; },
+    async recover(owner, id) { assert.equal(owner, TEST_OWNER); calls.push(`recover:${id}`); return { run_id: id }; },
   };
 }
 const isServiceError = (code: string, status = 503) => (error: unknown) => error instanceof RunServiceError && error.code === code && error.status === status;
@@ -49,8 +50,8 @@ test("run schemas retain exact UTF-8 limits, model consent and response identity
 
 test("API validates authentication and all run operations before reaching the service", async () => {
   const calls: string[] = [];
-  const app = createApi(config, undefined, fakeService(calls));
-  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json" };
+  const app = createApi(config, undefined, fakeService(calls), undefined, testAuthenticate);
+  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-access-token": TEST_ACCESS_TOKEN, "x-ax-owner-id": "attacker-selected-owner" };
   const call = (path: string, method = "GET", body?: string, extra = {}) => app.request(`${config.apiOrigin}${path}`, { method, headers: { ...headers, ...extra }, body });
   assert.equal((await call("/v1/runs")).status, 200);
   assert.equal((await call(`/v1/runs/${runId}`)).status, 200);
@@ -60,10 +61,10 @@ test("API validates authentication and all run operations before reaching the se
   assert.equal((await call("/v1/runs", "POST", JSON.stringify(input))).status, 202);
   assert.equal((await call(`/v1/runs/${runId}/recover`, "POST", "{}")).status, 202);
   const accepted = calls.length;
-  for (const [extra, expected] of [[{ authorization: "Bearer wrong" }, 401], [{ origin: config.webOrigin }, 403], [{ host: "attacker.example" }, 403]] as const) {
+  for (const [extra, expected] of [[{ authorization: "Bearer wrong" }, 401], [{ "x-ax-access-token": "" }, 401], [{ "x-ax-access-token": "invalid" }, 401], [{ origin: config.webOrigin }, 403], [{ host: "attacker.example" }, 403]] as const) {
     assert.equal((await call("/v1/runs", "POST", JSON.stringify(input), extra)).status, expected);
   }
-  for (const changes of [{ mode: "model" }, { output_name: "../../secret" }, { instruction: "a".repeat(2049) }, { command: "rm" }]) {
+  for (const changes of [{ mode: "model" }, { output_name: "../../secret" }, { instruction: "a".repeat(2049) }, { command: "rm" }, { owner_user_id: "attacker-selected-owner" }]) {
     assert.equal((await call("/v1/runs", "POST", JSON.stringify({ ...input, ...changes }))).status, 400);
   }
   assert.equal((await call("/v1/runs", "POST", "{")).status, 400);
@@ -79,8 +80,8 @@ test("API rejects malformed service responses and never publishes unexpected err
   service.list = async () => ({ runs: [{ ...detail.summary, private_key: "do-not-publish" }] });
   service.submit = async () => { throw new RunServiceError("idempotency_conflict", 409); };
   service.get = async () => { throw new Error("SECRET from stderr"); };
-  const app = createApi(config, undefined, service);
-  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json" };
+  const app = createApi(config, undefined, service, undefined, testAuthenticate);
+  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-access-token": TEST_ACCESS_TOKEN };
   const invalid = await app.request(`${config.apiOrigin}/v1/runs`, { headers });
   assert.equal(invalid.status, 503);
   assert.deepEqual(await invalid.json(), { error: "invalid_bridge_response" });
@@ -98,11 +99,11 @@ test("Python service validates envelopes and does not dispatch retries", async (
     calls.push({ operation, value });
     return { ok: true, data: { run_id: runId, replayed: true } };
   });
-  assert.deepEqual(await service.submit(input), { run_id: runId, replayed: true });
-  assert.deepEqual(calls, [{ operation: "submit", value: input }]);
-  await assert.rejects(pythonRunService(async () => ({ ok: false, error: { code: "unresolved_run", status: 409 } })).list(), isServiceError("unresolved_run", 409));
+  assert.deepEqual(await service.submit(TEST_OWNER, input), { run_id: runId, replayed: true });
+  assert.deepEqual(calls, [{ operation: "submit", value: { owner_user_id: TEST_OWNER, input } }]);
+  await assert.rejects(pythonRunService(async () => ({ ok: false, error: { code: "unresolved_run", status: 409 } })).list(TEST_OWNER), isServiceError("unresolved_run", 409));
   for (const value of [{ ok: true, data: {} }, { ok: false, error: { code: "secret token", status: 503 } }, { ok: true, data: { runs: [] }, extra: "secret" }]) {
-    await assert.rejects(pythonRunService(async () => value).list(), isServiceError("invalid_bridge_response"));
+    await assert.rejects(pythonRunService(async () => value).list(TEST_OWNER), isServiceError("invalid_bridge_response"));
   }
 });
 
@@ -131,18 +132,20 @@ test("bridge subprocess uses fixed arguments, bounded output and a deadline with
 test("BFF client traverses real HTTP and preserves typed operations, status and artifacts above 16 KiB", async (t) => {
   const calls: string[] = [];
   const service = fakeService(calls);
-  const server = serve({ fetch: (request) => createApi({ ...config, apiOrigin: new URL(request.url).origin }, undefined, service).fetch(request), hostname: "127.0.0.1", port: 0 });
+  const server = serve({ fetch: (request) => createApi({ ...config, apiOrigin: new URL(request.url).origin }, undefined, service, undefined, testAuthenticate).fetch(request), hostname: "127.0.0.1", port: 0 });
   if (!server.listening) await once(server, "listening");
   t.after(() => { if ("closeAllConnections" in server) server.closeAllConnections(); server.close(); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
-  const client = runsClient({ ...config, apiOrigin: `http://127.0.0.1:${address.port}` });
+  const client = runsClient(TEST_ACCESS_TOKEN, { ...config, apiOrigin: `http://127.0.0.1:${address.port}` });
   assert.deepEqual(await client.list(), { runs: [detail.summary] });
   assert.deepEqual(await client.get(runId), detail);
   assert.deepEqual(await client.submit(input), { run_id: runId, replayed: false });
   assert.equal((await client.artifact(runId)).content.length, 32768);
   assert.deepEqual(await client.recover(runId), { run_id: runId });
   assert.deepEqual(calls, ["list", `get:${runId}`, `submit:${input.key}`, `artifact:${runId}`, `recover:${runId}`]);
+  await assert.rejects(runsClient("invalid-token", { ...config, apiOrigin: `http://127.0.0.1:${address.port}` }).list(), isApiError("unauthorized", 401));
+  assert.equal(calls.length, 5);
   service.submit = async () => { calls.push("conflict"); throw new RunServiceError("idempotency_conflict", 409); };
   await assert.rejects(client.submit(input), isApiError("idempotency_conflict", 409));
   assert.equal(calls.filter((value) => value === "conflict").length, 1);
@@ -164,7 +167,7 @@ test("BFF rejects invalid bodies, redirects and body stalls without retries", as
   t.after(() => { server.closeAllConnections(); server.close(); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
-  const client = runsClient({ ...config, apiOrigin: `http://127.0.0.1:${address.port}` }, 100);
+  const client = runsClient(TEST_ACCESS_TOKEN, { ...config, apiOrigin: `http://127.0.0.1:${address.port}` }, 100);
   for (const next of ["shape", "redirect", "oversize", "stalled-body"]) {
     mode = next;
     const before = requests;

@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: AXエージェント実行基盤の構想と検討事項
-description: チャット実装後に認証基盤を優先し、メール・パスキーと将来IdP連携を設計する現在地と、製品拡張の保留方針
+description: チャットへメール・パスキー認証と利用者別アクセスを接続した現在地、本番配置と将来IdP連携の未実施範囲、製品拡張の保留方針
 status: draft
 tags: 
   - ax
@@ -10,7 +10,7 @@ tags:
   - egress
 generated: 
   by: agent:codex
-  at: 2026-10-06T07:50:05.409Z
+  at: 2026-10-06T09:24:45.922Z
 sources: 
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: ax-local/task-cli.md
@@ -24,16 +24,19 @@ sources:
   - resource: .space/tasks/ax-web-runs/design.md
   - resource: .space/tasks/ax-web-runs/verification.md
   - resource: ax-local/postgres/README.md
+  - resource: docs/auth-foundation.md
+  - resource: .space/tasks/ax-auth/verification.md
+  - resource: ax-local/keycloak/README.md
 ---
 # AXを中心とするエージェント実行基盤の構想
 
-## 現在の優先事項：チャットから認証基盤へ（2026-10-06）
+## 現在地：チャットへ認証基盤を接続（2026-10-06）
 
-会話履歴を踏まえるチャットをPR #8で実装し、利用者は動作を確認した。その後、Webからのエージェント操作や定期実行の製品拡張は、用途を決め切れていないため一旦保留するよう指示した。既存のチャットを土台に、次は認証基盤を整える。
+会話履歴を踏まえるチャットをPR #8で実装し、利用者は動作を確認した。その後、Webからのエージェント操作や定期実行の製品拡張は、用途を決め切れていないため一旦保留するよう指示した。既存のチャットを土台に認証基盤を整えた。製品拡張の用途は引き続き保留する。
 
 利用者はログイン・ログアウト、未ログイン時のチャット利用拒否、自分の会話だけを扱う3点を了承した。初期のログイン方式はメールアドレス＋パスワードとパスキー。将来はMicrosoft Entra IDやAmazon Cognitoの利用も想定する。
 
-今回の構成調整ではKeycloak＋PostgreSQLを初期の設計とし、認証用DBとアプリ用DBの権限を分離する。同日、利用者はPostgreSQLの採用を了承した一方で、EKS/Kubernetes内にDBを置く前提にしないよう明示した。本番DBの配置先・運用サービスは未選定で、AWSのマネージドDBや別のPostgreSQLホスティング、自己管理も候補に残す。アプリの配置先とは別の判断とし、ローカル開発構成を本番の前提にしない。アプリの内部利用者IDで会話の所有者を表し、会話本文・費用・実行状態は既存receiptに維持する。詳細は[認証基盤の設計](../decisions/systems/ax/auth-foundation.md)と `docs/auth-foundation.md`。認証機能は未実装。同日、利用者の承認でローカルDockerにPostgreSQLを作成し、実行基盤の既存データを移行、認証用・アプリ用DBと別loginを準備した。全件照合・TLS/権限・offline実行・コンテナ再作成後の保持を確認し、旧DBは停止してPVCとbackupを残した。モデル呼び出しは追加していない。次はこのDBを使った認証サービスの導入とWebへの接続。具体的な保存・復旧はax-local/postgres/README.mdを参照する。以下は当時の経緯として読む。
+今回の構成調整ではKeycloak＋PostgreSQLを初期の設計とし、認証用DBとアプリ用DBの権限を分離する。同日、利用者はPostgreSQLの採用を了承した一方で、EKS/Kubernetes内にDBを置く前提にしないよう明示した。本番DBの配置先・運用サービスは未選定で、AWSのマネージドDBや別のPostgreSQLホスティング、自己管理も候補に残す。アプリの配置先とは別の判断とし、ローカル開発構成を本番の前提にしない。アプリの内部利用者IDで会話の所有者を表し、会話本文・費用・実行状態は既存receiptに維持する。詳細は[認証基盤の設計](../decisions/systems/ax/auth-foundation.md)と `docs/auth-foundation.md`。当初の設計時点では認証は未実装だった。同日、利用者の承認でローカルDockerにPostgreSQLを作成し、実行基盤の既存データを移行、認証用・アプリ用DBと別loginを準備した。全件照合・TLS/権限・offline実行・コンテナ再作成後の保持を確認し、旧DBは停止してPVCとbackupを残した。モデル呼び出しは追加していない。続けて認証実装の依頼を受け、このDBを使うKeycloakのメール・パスキー認証をWebへ接続した。BFFのログアウト、APIのJWT検証、Pythonの内部owner照合により本人の記録だけを公開する。実Keycloak、2利用者の実AX offline、旧記録保持、DB隔離復元と再起動後のsessionを確認した。有料モデル送信は0件。物理認証器のパスキー、本番公開、メール送信・自己登録、Entra/Cognito接続は未確認・未実装である。具体的な運用はax-local/postgres/README.mdとax-local/keycloak/README.md、今回の確認は .space/tasks/ax-auth/verification.md を参照する。以下は当時の経緯として読む。
 
 ## ローカルWebから実AXへ接続（2026-10-06）
 

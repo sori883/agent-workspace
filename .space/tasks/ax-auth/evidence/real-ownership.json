@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-06T09:13:12.770Z",
+  "aliceRun": "ax-run-c787f426caee1db3",
+  "bobRun": "ax-run-0aea715619a143ed",
+  "mode": "offline",
+  "artifactChecks": true,
+  "foreignReadDownloadRecoverDenied": true,
+  "filteredLists": true,
+  "replayedRun": "ax-run-c787f426caee1db3",
+  "sharedKeySeparatesUsers": true,
+  "ownerlessDenied": true
+}

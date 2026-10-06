@@ -67,13 +67,13 @@ try {
     else console.error("API stopped. The web page remains available and will show a connection error. Restart the command to reconnect.");
   });
   await waitFor(`${config.apiOrigin}/v1/status`, api, { Authorization: `Bearer ${config.apiToken}` });
-  const bin = realpathSync(`${cwd}/node_modules/.bin/${mode === "dev" ? "react-router" : "react-router-serve"}`);
-  const web = start(mode === "dev" ? [bin, "dev"] : [bin, "./build/server/index.js"], {
+  const bin = realpathSync(`${cwd}/node_modules/.bin/react-router`);
+  const web = start(mode === "dev" ? [bin, "dev"] : ["--import", "tsx", "server/serve.ts"], {
     HOST: "127.0.0.1", PORT: String(config.webPort), NODE_ENV: mode === "dev" ? "development" : "production",
   });
   web.on("exit", (code) => { if (!stopping) shutdown(code ?? 1); });
   const cookie = createCookie(config.sessionCookieName, { secrets: [config.sessionSecret] });
-  await waitFor(config.webOrigin, web, undefined, async (response) => {
+  await waitFor(`${config.webOrigin}/login`, web, undefined, async (response) => {
     const session = await cookie.parse(response.headers.get("set-cookie"));
     return typeof session?.csrf === "string";
   });

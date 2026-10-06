@@ -18,6 +18,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import uuid
 
 from task_runtime.protocol import (
     MAX_ARTIFACT_BYTES,
@@ -34,6 +35,16 @@ PILOT_ESTIMATE_LIMIT_USD = 0.01
 
 class TaskError(Exception):
     pass
+
+
+def validate_owner(value):
+    if not isinstance(value, str) or not re.fullmatch(r"[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", value):
+        raise TaskError("invalid_owner_user_id")
+    return str(uuid.UUID(value))
+
+
+def submission_key(owner_user_id, key):
+    return hashlib.sha256(json.dumps([owner_user_id, key], separators=(",", ":")).encode("ascii")).hexdigest()
 
 
 def error_code(error):
@@ -431,7 +442,9 @@ class TaskCLI:
         self.store(directory, receipt, resolved=resolved, phase="finished" if resolved else "needs_recovery",
                    outcome="succeeded" if succeeded else "failed", cleanup=cleanup, cleanup_errors=errors)
 
-    def prepare(self, request, image, known_total, dry_run=False, submission=None, conversation=None):
+    def prepare(self, request, image, known_total, dry_run=False, submission=None, conversation=None, owner_user_id=None):
+        if owner_user_id is not None:
+            owner_user_id = validate_owner(owner_user_id)
         manifest = make_manifest(request, image)
         directory = self.runs / request["run_id"]
         if directory.exists() or directory.is_symlink():
@@ -449,6 +462,8 @@ class TaskCLI:
         }
         if submission is not None:
             receipt["submission"] = submission
+        if owner_user_id is not None:
+            receipt["owner_user_id"] = owner_user_id
         if conversation is not None:
             receipt["conversation"] = conversation
         if dry_run:
@@ -505,13 +520,15 @@ class TaskCLI:
                 return self.execute(directory, request, receipt)
             return receipt
 
-    def find_submission(self, key_hash, payload_hash):
+    def find_submission(self, key_hash, payload_hash, owner_user_id=None):
         if not self.runs.exists():
             return None
         for directory in self.runs.iterdir():
             if directory.name.startswith("."):
                 continue
             receipt = self.inspect(directory.name)
+            if receipt.get("owner_user_id") != owner_user_id:
+                continue
             submission = receipt.get("submission")
             if isinstance(submission, dict) and submission.get("key_hash") == key_hash:
                 if submission.get("payload_hash") != payload_hash:
@@ -519,13 +536,15 @@ class TaskCLI:
                 return receipt
         return None
 
-    def accept(self, request, key_hash, payload_hash):
+    def accept(self, request, key_hash, payload_hash, owner_user_id=None):
         request = validate_request(request)
-        existing = self.find_submission(key_hash, payload_hash)
+        if owner_user_id is not None:
+            owner_user_id = validate_owner(owner_user_id)
+        existing = self.find_submission(key_hash, payload_hash, owner_user_id)
         if existing is not None:
             return existing, True
         with self.locked():
-            existing = self.find_submission(key_hash, payload_hash)
+            existing = self.find_submission(key_hash, payload_hash, owner_user_id)
             if existing is not None:
                 return existing, True
             image = read_json(self.root / "versions.json").get("runner_task", "")
@@ -533,7 +552,7 @@ class TaskCLI:
             known_total = self.guard(request, image)
             submission = {"key_hash": key_hash, "payload_hash": payload_hash,
                           "accepted_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")}
-            _, receipt = self.prepare(request, image, known_total, submission=submission)
+            _, receipt = self.prepare(request, image, known_total, submission=submission, owner_user_id=owner_user_id)
             return receipt, False
 
     def execute_accepted(self, run_id):
@@ -551,7 +570,7 @@ class TaskCLI:
                 raise TaskError("request_receipt_mismatch")
             if "conversation" in receipt:
                 from chat import ChatService
-                ChatService(self).load(receipt["conversation"].get("id"))
+                ChatService.for_worker(self, receipt).load(receipt["conversation"].get("id"))
             return self.execute(directory, request, receipt)
 
     def recover(self, run_id, wait_seconds=0):

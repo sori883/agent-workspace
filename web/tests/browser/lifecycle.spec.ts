@@ -1,6 +1,7 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { createServer } from "node:http";
 import { once } from "node:events";
+import { login } from "./auth-helper";
 import { test, expect } from "@playwright/test";
 
 function launch(mode: "dev" | "start", port: number) {
@@ -30,6 +31,7 @@ test("development startup, API failure display, no automatic resend, and owned-c
   const { child, output } = launch("dev", 3230);
   try {
     await expect.poll(output, { timeout: 20000 }).toContain("AX workspace ready:");
+    await login(page, "alice", "http://127.0.0.1:3230");
     await page.goto("http://127.0.0.1:3230/connection");
     await page.getByLabel("確認用のメッセージ").fill("停止後にも保持する入力");
     await expect(page.locator("#message-count")).toHaveText("11 / 200");

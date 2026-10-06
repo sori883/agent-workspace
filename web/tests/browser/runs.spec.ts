@@ -1,4 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { login } from "./auth-helper";
+
+test.beforeEach(async ({ page }) => { await login(page); });
+
 import AxeBuilder from "@axe-core/playwright";
 
 test("submit through the BFF and HTTP API, poll, preserve idempotency and download an escaped artifact", async ({ page }) => {
@@ -58,6 +62,7 @@ test("a native form can submit and manually refresh without JavaScript", async (
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
     const page = await context.newPage();
+    await login(page);
     await page.goto("http://127.0.0.1:3210/tasks");
     const draftUrl = page.url();
     const content = "JavaScriptなしの作業\n2行目";
@@ -82,6 +87,7 @@ test("native history refresh fetches the page and preserves the draft key", asyn
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
     const page = await context.newPage();
+    await login(page);
     await page.goto("http://127.0.0.1:3210/tasks");
     const key = new URL(page.url()).searchParams.get("draft");
     let requests = 0;
