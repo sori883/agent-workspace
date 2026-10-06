@@ -1,10 +1,10 @@
 # AXのWeb入口とAWSへの仮配置
 
-2026-10-06時点の概略設計。現在の実装はローカルのkind上で動くAXと[タスクCLI](../ax-local/task-cli.md)であり、Web・共通バックエンド・共通認証は未実装。概略設計はここで区切り、次の作業を[ローカルWeb版の概算](web-mvp-estimate.md)にまとめる。
+2026-10-06時点の概略設計。ローカルのkind上で動くAXと[タスクCLI](../ax-local/task-cli.md)に加え、[Webと共通APIの土台（W1）](../web/README.md)を実装した。現在のWebはメッセージを往復する模擬応答であり、AX操作と共通認証は未接続。[ローカルWeb版の概算](web-mvp-estimate.md)に残る作業をまとめる。
 
 WebはReact RouterのFramework ModeでSSR（サーバー側での画面生成）とBFF（ブラウザ向けのサーバー処理）を提供する。共通バックエンドにAX操作をまとめ、AX内のエージェントはPythonを使う。別のPython操作サービスは必須とせず、既存Python処理を共通バックエンドから再利用する方式を次の見積もりの前提とする。
 
-共通バックエンドのHono/TypeScript、認証のKeycloak、AWS各サービス、RAGの製品は候補であり、配置先は確定していない。認証基盤はOIDCを接続の基本とし、Amazon Cognitoの利用やMicrosoft Entra IDとの連携も選択肢に残す。以下はKeycloakを使った配置例で、AWSへの配置・動作確認・費用見積もりは行っていない。
+共通バックエンドはW1でHono/TypeScriptを採用した。認証のKeycloak、AWS各サービス、RAGの製品は候補であり、配置先は確定していない。認証基盤はOIDCを接続の基本とし、Amazon Cognitoの利用やMicrosoft Entra IDとの連携も選択肢に残す。以下はKeycloakを使った配置例で、AWSへの配置・動作確認・費用見積もりは行っていない。
 
 ## 仮配置
 

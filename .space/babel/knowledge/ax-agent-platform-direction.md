@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: AXエージェント実行基盤の構想と検討事項
-description: AX単発CLIまでの現在地、React RouterによるSSR・BFFの選定、共通API・認証・RAGとクラウド配置の構想
+description: AX単発CLIとWeb土台W1までの現在地、SSR/BFFと共通APIの採用、認証・RAG・クラウド配置の構想
 status: draft
 tags: 
   - ax
@@ -10,7 +10,7 @@ tags:
   - egress
 generated: 
   by: agent:codex
-  at: 2026-10-05T15:40:54.128Z
+  at: 2026-10-06T01:49:14.065Z
 sources: 
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: ax-local/task-cli.md
@@ -19,8 +19,18 @@ sources:
   - resource: docs/web-architecture.md
   - resource: docs/web-mvp-estimate.md
   - resource: https://github.com/sori883/agent-workspace/pull/3
+  - resource: web/README.md
+  - resource: .space/tasks/ax-web-foundation/task.md
 ---
 # AXを中心とするエージェント実行基盤の構想
+
+## Webの土台W1を実装（2026-10-06）
+
+利用者が「次の作業を確認して進める」と指示したため、前回checkpointと概算の最初の単位W1を再開した。`web/` にReact Router 8のSSR/BFFとHonoの共通APIを追加し、別プロセス・別loopbackポートの実HTTPで模擬メッセージを往復できる。起動、Host/Origin・session/CSRF・API資格情報・入力境界、API停止時の表示、狭い画面とJavaScriptなしの操作を確認した。
+
+今回のAX操作・モデルAPI送信・クラウド作成は0件。W1は接続確認であり、AX Taskの開始や成果物の取得にはまだ接続しない。次の単位はW2（既存Pythonを共通API内部から呼び出す非同期受付・状態照会・永続記録・費用/排他制御）。詳細は[Web土台の契約と理由](ax-web-foundation.md)、`web/README.md` と `.space/tasks/ax-web-foundation/task.md` に記録する。
+
+以下のWeb選定・配置図の節はW1着手前の経緯であり、当時の未実装・次回候補の記述を現在の状態と混同しない。
 
 ## Web入口の選定と配置図（2026-10-06）
 
@@ -36,7 +46,7 @@ sources:
 
 利用者の依頼に基づくAWSへの仮配置と認証・RAG連携図を `.space/tasks/ax-web-architecture/design.md` に保存した。Web・API・認証・将来RAGをECS Fargate、AX・SubstrateをEKSのEC2ノード領域へ置く例であり、配置先の採用やクラウド導入の承認ではない。認証基盤は本人確認・トークン発行、共通APIはタスクの認可、RAGは利用者とTaskの許可範囲に基づく文書ACLの判定を担う案として示した。
 
-現在動作しているのはローカルkind上のAXと単発CLIであり、Web・共通API・Keycloak・RAGは未実装。EKS適合・本番運用・費用は未検証である。
+この概略設計の時点で動作していたのはローカルkind上のAXと単発CLIであり、Web・共通API・Keycloak・RAGは未実装だった。EKS適合・本番運用・費用は未検証である。
 
 ## 利用者が示した方向性
 
