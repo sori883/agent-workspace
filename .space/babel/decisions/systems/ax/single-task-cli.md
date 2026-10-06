@@ -2,6 +2,7 @@
 governance: context
 code_refs: 
   - ax-local/task_cli.py
+  - ax-local/web_bridge.py
   - ax-local/task_runtime/
   - ax-local/tests/
 tags: 
@@ -15,12 +16,15 @@ sources:
   - resource: ax-local/tests/verify_task_sdk.py
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: https://github.com/sori883/agent-workspace/pull/2
+  - resource: .space/tasks/ax-web-runs/design.md
+  - resource: .space/tasks/ax-web-runs/verification.md
+  - resource: ax-local/web_bridge.py
 type: decision
 title: AXの単発CLIで開始・成果物・使用量を分離して管理する
-description: 1実行1Taskと固定出力アダプターを採用し、再送・不明な使用量・失敗後の無調査送信を止める設計と検証結果
+description: 1実行1Task、WebとCLI共通の永続受付・排他、再送・未知使用量・未確認の再開始を止める設計と検証結果
 generated: 
   by: agent:codex
-  at: 2026-10-05T12:36:22.659Z
+  at: 2026-10-06T03:06:21.211Z
 ---
 # AXの単発タスクと費用不明時の停止設計
 
@@ -30,7 +34,7 @@ generated:
 
 ホストCLIが実行IDとローカル台帳を持ち、1実行ごとに新しいAX Taskを作る。常駐ワーカーへジョブを渡す案と独立に比較し、課金開始・成果物・失敗の対応を追いやすいこの形を採用した。起動の遅延を許容し、ジョブキューは導入しない。
 
-共通処理はtask_cli.py、task_runtime/protocol.pyとrunner.py、SDK依存はadapters/antigravity.pyへ分ける。offlineアダプターはモデルなしのインフラ試験用である。他のサービスやWeb接続は未実装。
+共通処理はtask_cli.py、task_runtime/protocol.pyとrunner.py、SDK依存はadapters/antigravity.pyへ分ける。offlineアダプターはモデルなしのインフラ試験用である。2026-10-06にWebから同じ実行系を呼ぶ接続を追加した。他のモデルサービスは未実装。
 
 AXはgolden snapshot作成時もTask commandを起動するため、commandは開始合図を待つだけにする。ホストが通常Actorと通信設定を確認し、startを一度だけ送る。ゲストとホストの両方で開始済み状態を保存し、曖昧な返答でも再送しない。
 
@@ -67,6 +71,16 @@ SDK0.1.20にはbuiltinのArtifactMetadataだけを除く公開設定がないた
 2026-10-05、65テスト、ネットワークなしの実SDK12ケース、最終イメージと7sourceのSHA256一致、独立レビュー指摘0を確認した。実AXのoffline2件とstart後のCLI強制終了からの回収を確認し、修正後の実モデル試験ax-run-42a5505a34e292abも通常終了した。成果物はAX_INPUT_OK改行の12bytes。使用量1403input/34output/0thought、2要求、概算0.00040175 USD。最初の失敗を含む今回の実試験2件の概算合計は0.00126475 USD。全Taskは通信deny・Suspended。
 
 実装は[PR #2](https://github.com/sori883/agent-workspace/pull/2)、head be96ad79e8f94412dbcf17fd2b6e5f65a889f5ea。公開検証はax-local/verification.mdにあり、詳細な根拠は前掲タスク記録へ戻れる。
+
+## Web受付を同じreceiptへ統合（2026-10-06）
+
+Webの短命Python bridgeから受付を永続化し、有限workerで既存CLIと同じ実行を行う。Web専用台帳案と独立に比較し、二つの状態の整合とCLI/Web間の排他を単純にするため、既存receiptへ統合する案を採用した。代わりにCLI内部のprepare/executeを分離し、従来の同期runをその合成として維持する。
+
+request・manifest・receiptを隠れた一時ディレクトリへ書き、fsyncとrenameで完成した受付を公開する。キーとpayloadのhashを保存し、同じキー・内容の再送は既存IDへ、内容の変更は競合へ返す。acceptedも未解決扱いで新規CLI/Web実行を止める。workerはacceptedで未開始のものだけを全体flock下で実行する。
+
+ロックFDはAX用の外部コマンドにも継承する。workerが強制終了されてもコマンドが残る間の二重操作を防ぐためで、実with-env.sh経由のFD継承も確認した。参照は観測用contextで状態とロックを整合させる。GETはTaskやworkerを起動しない。外部操作前の受付をrecoverした場合はnot_startedで解決し、deny/suspendを行ったとは記録しない。
+
+Python85件とWeb統合試験が成功。実AX offline2件で成果物・使用量0・通信遮断・Task停止と同一キー再送を確認した。Web/APIの完了後再起動で結果は保持された。実行途中の実AX/API停止は未確認で、プロセス分離と強制終了は隔離した子プロセス試験による。今回のモデル送信は0件。Web入口の契約・操作は[ローカルWeb](../../../knowledge/ax-web-foundation.md)と `.space/tasks/ax-web-runs/verification.md` に記録する。
 
 # Related Concepts
 - [AXのモデル利用費を2,000円以内に抑え、成果のない大量送信を禁止する](../../../rules/ax-model-spending.md): 使用量不明や成果のない反復送信を止める設計の制約

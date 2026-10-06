@@ -1,14 +1,16 @@
-name: Web foundation
+name: Web workspace
 
 on:
   pull_request:
     paths:
       - web/**
+      - ax-local/**
       - .github/workflows/web.yml
   push:
     branches: [main]
     paths:
       - web/**
+      - ax-local/**
       - .github/workflows/web.yml
 
 permissions:

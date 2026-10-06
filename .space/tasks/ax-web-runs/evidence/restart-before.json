@@ -1,0 +1,17 @@
+{
+  "run_id": "ax-run-c6eb4df778149a38",
+  "outcome": "succeeded",
+  "resolved": true,
+  "cleanup": {
+    "egress_denied": true,
+    "suspended": true
+  },
+  "usage": {
+    "candidates_token_count": 0,
+    "prompt_token_count": 0,
+    "thoughts_token_count": 0,
+    "total_token_count": 0
+  },
+  "estimated_usd": 0,
+  "restart_timing": "run_finished_before_api_stop"
+}

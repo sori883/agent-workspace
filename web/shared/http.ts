@@ -1,8 +1,8 @@
 import { MAX_BODY_BYTES } from "./contracts";
 
-export async function readLimitedText(body: Request | Response): Promise<string> {
+export async function readLimitedText(body: Request | Response, maxBytes = MAX_BODY_BYTES): Promise<string> {
   const length = body.headers.get("content-length");
-  if (length !== null && (!/^\d+$/.test(length) || Number(length) > MAX_BODY_BYTES)) {
+  if (length !== null && (!/^\d+$/.test(length) || Number(length) > maxBytes)) {
     throw new Response("本文が大きすぎます。", { status: 413 });
   }
   if (!body.body) return "";
@@ -14,7 +14,7 @@ export async function readLimitedText(body: Request | Response): Promise<string>
       const { done, value } = await reader.read();
       if (done) break;
       size += value.byteLength;
-      if (size > MAX_BODY_BYTES) {
+      if (size > maxBytes) {
         await reader.cancel();
         throw new Response("本文が大きすぎます。", { status: 413 });
       }

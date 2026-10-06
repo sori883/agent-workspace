@@ -2,14 +2,14 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 test("SSR, a real API round trip, keyboard navigation and accessibility", async ({ page, request }) => {
-  const html = await request.get("/");
+  const html = await request.get("/connection");
   expect(await html.text()).toContain("接続を確かめる");
   expect(html.headers()["cache-control"]).toBe("no-store");
   const origins = new Set<string>();
   const errors: string[] = [];
   page.on("request", (req) => origins.add(new URL(req.url()).origin));
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
+  await page.goto("/connection");
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "本文へ移動" })).toBeFocused();
   await page.keyboard.press("Enter");
@@ -25,13 +25,13 @@ test("SSR, a real API round trip, keyboard navigation and accessibility", async 
 });
 
 test("invalid input is explained and forged submissions are rejected", async ({ page, request }) => {
-  await page.goto("/");
+  await page.goto("/connection");
   await page.getByLabel("確認用のメッセージ").fill("   ");
   await page.getByRole("button", { name: "送信して接続を確認" }).click();
   await expect(page.locator("#message-error")).toHaveText("メッセージを1〜200文字で入力してください。");
   await expect(page.getByLabel("確認用のメッセージ")).toHaveValue("   ");
   const csrf = await page.locator('input[name="csrf"]').inputValue();
-  const url = "http://127.0.0.1:3210/?index";
+  const url = "http://127.0.0.1:3210/connection";
   const forged = await page.request.post(url, { headers: { origin: "http://127.0.0.1:3210" }, form: { csrf: "wrong", message: "x" } });
   expect(forged.status()).toBe(403);
   const missingOrigin = await page.request.post(url, { form: { csrf, message: "x" } });
@@ -43,7 +43,7 @@ test("invalid input is explained and forged submissions are rejected", async ({ 
 test("forms work without JavaScript", async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
-  await page.goto("http://127.0.0.1:3210/");
+  await page.goto("http://127.0.0.1:3210/connection");
   await page.getByLabel("確認用のメッセージ").fill("JavaScriptなしで確認");
   await page.getByRole("button", { name: "送信して接続を確認" }).click();
   await expect(page.locator(".returned-message")).toHaveText("JavaScriptなしで確認");
@@ -64,7 +64,7 @@ test("input typed before hydration survives and is submitted unchanged", async (
   const loaded = new Promise<void>((resolve) => { release = resolve; });
   await page.route("**/*.js", async (route) => { await loaded; await route.continue(); });
   try {
-    await page.goto("/", { waitUntil: "commit" });
+    await page.goto("/connection", { waitUntil: "commit" });
     await page.getByLabel("確認用のメッセージ").fill("読み込み中の入力");
   } finally {
     release();
@@ -78,7 +78,7 @@ test("input typed before hydration survives and is submitted unchanged", async (
 
 test("the 320px layout has no horizontal scrolling and retains usable controls", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 740 });
-  await page.goto("/");
+  await page.goto("/connection");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   const button = await page.getByRole("button", { name: "送信して接続を確認" }).boundingBox();
   expect(button!.height).toBeGreaterThanOrEqual(44);
