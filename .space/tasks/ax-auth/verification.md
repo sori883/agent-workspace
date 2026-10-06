@@ -70,3 +70,9 @@ Keycloakの検証では、実OIDC・TLSの14条件、再作成後の2利用者�
 OKFの既存4文書をCLIで更新し、本文の読み返しとstrict/driftでエラー・警告0件を確認した。公開文書・コードの空白検査も成功した。OKFのYAMLマッピング行末の空白はCLI出力を維持する。
 
 コード・ローカル検証とGitHub上の納品状態は分けて扱う。PR・CIの結果はタスク記録へ追記する。
+
+## GitHub上の確認
+
+PR [#12](https://github.com/sori883/agent-workspace/pull/12)を作成した。実装コミット `bd3f02ec9b8bbc30d7ce6e25caac2012d387f71e` に対するGitHub Actionsは、[offline-tests](https://github.com/sori883/agent-workspace/actions/runs/37443708623)と[web-tests](https://github.com/sori883/agent-workspace/actions/runs/37443708618)の両方が成功した。新規環境の専用PostgreSQL準備・型・Node・build・全ブラウザ試験を含む。
+
+この後の記録追記はコードを変更しない。最終コミットの検証とマージ結果はPRのチェック・マージ状態を正本として確認する。
