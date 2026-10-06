@@ -1,0 +1,94 @@
+{
+  "observed_at": "2026-10-06T05:29:39.309509+00:00",
+  "conversation_id": "62824fbc-8843-41ad-8891-196cb2ec9f37",
+  "purpose": "再読込後の2往復目が最初に伝えた合言葉を参照できること",
+  "limits": "最大2turn、既存3modelcall/6000input/512output/90sec/0APIretry/.01USD停止を維持",
+  "estimated_usd": 0.00076925,
+  "turns": [
+    {
+      "run_id": "ax-run-169fa22d8b488714",
+      "sequence": 1,
+      "accepted_at": "2026-10-06T05:26:54.644550Z",
+      "resolved": true,
+      "phase": "finished",
+      "input": "この会話の合言葉は「青い灯台」です。覚えたとだけ答えてください。",
+      "history": [],
+      "reply": "覚えました。",
+      "result": {
+        "adapter": "antigravity",
+        "artifact": {
+          "name": "reply.txt",
+          "sha256": "5d50eab7b59c0bbb68390717bd392010fa82e07742a7b8ae30bf0f1f5b266038",
+          "size_bytes": 18
+        },
+        "error_type": null,
+        "estimated_usd": 0.000375,
+        "exit_code": 0,
+        "run_id": "ax-run-169fa22d8b488714",
+        "schema_version": 1,
+        "status": "succeeded",
+        "stop_reason": "UNSPECIFIED",
+        "usage": {
+          "cached_content_token_count": 0,
+          "candidates_token_count": 21,
+          "model_call_count": 2,
+          "prompt_token_count": 1374,
+          "thoughts_token_count": 0,
+          "total_token_count": 1395
+        }
+      },
+      "cleanup": {
+        "egress_denied": true,
+        "suspended": true
+      },
+      "cleanup_errors": []
+    },
+    {
+      "run_id": "ax-run-02da68daad1271fe",
+      "sequence": 2,
+      "accepted_at": "2026-10-06T05:27:53.944174Z",
+      "resolved": true,
+      "phase": "finished",
+      "input": "さっき伝えた合言葉は何ですか？ 合言葉だけ答えてください。",
+      "history": [
+        {
+          "role": "user",
+          "content": "この会話の合言葉は「青い灯台」です。覚えたとだけ答えてください。"
+        },
+        {
+          "role": "assistant",
+          "content": "覚えました。"
+        }
+      ],
+      "reply": "青い灯台",
+      "result": {
+        "adapter": "antigravity",
+        "artifact": {
+          "name": "reply.txt",
+          "sha256": "8cc39d3b61c010e49586db2f2cd3e902cb1a3a319e1a14a720a35fca96a0a7eb",
+          "size_bytes": 12
+        },
+        "error_type": null,
+        "estimated_usd": 0.00039425,
+        "exit_code": 0,
+        "run_id": "ax-run-02da68daad1271fe",
+        "schema_version": 1,
+        "status": "succeeded",
+        "stop_reason": "UNSPECIFIED",
+        "usage": {
+          "cached_content_token_count": 0,
+          "candidates_token_count": 23,
+          "model_call_count": 2,
+          "prompt_token_count": 1439,
+          "thoughts_token_count": 0,
+          "total_token_count": 1462
+        }
+      },
+      "cleanup": {
+        "egress_denied": true,
+        "suspended": true
+      },
+      "cleanup_errors": []
+    }
+  ]
+}

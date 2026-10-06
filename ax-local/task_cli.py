@@ -431,7 +431,7 @@ class TaskCLI:
         self.store(directory, receipt, resolved=resolved, phase="finished" if resolved else "needs_recovery",
                    outcome="succeeded" if succeeded else "failed", cleanup=cleanup, cleanup_errors=errors)
 
-    def prepare(self, request, image, known_total, dry_run=False, submission=None):
+    def prepare(self, request, image, known_total, dry_run=False, submission=None, conversation=None):
         manifest = make_manifest(request, image)
         directory = self.runs / request["run_id"]
         if directory.exists() or directory.is_symlink():
@@ -449,6 +449,8 @@ class TaskCLI:
         }
         if submission is not None:
             receipt["submission"] = submission
+        if conversation is not None:
+            receipt["conversation"] = conversation
         if dry_run:
             receipt["phase"] = "dry_run"
         try:
@@ -547,6 +549,9 @@ class TaskCLI:
                     or fingerprint(request, receipt["image"]) != receipt.get("fingerprint")
                     or read_json(directory / "manifest.json") != make_manifest(request, receipt["image"])):
                 raise TaskError("request_receipt_mismatch")
+            if "conversation" in receipt:
+                from chat import ChatService
+                ChatService(self).load(receipt["conversation"].get("id"))
             return self.execute(directory, request, receipt)
 
     def recover(self, run_id, wait_seconds=0):

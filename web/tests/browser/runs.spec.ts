@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 test("submit through the BFF and HTTP API, poll, preserve idempotency and download an escaped artifact", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
+  await page.goto("/tasks");
   const draftUrl = page.url();
   const key = await page.locator('input[name="key"]').inputValue();
   await page.reload();
@@ -23,9 +23,9 @@ test("submit through the BFF and HTTP API, poll, preserve idempotency and downlo
   expect(downloaded.headers()["content-disposition"]).toBe('attachment; filename="result.txt"');
   expect(await downloaded.text()).toBe(content);
   const form = { key, csrf, mode: "offline", instruction: "テキストを保存", input_text: content, output_name: "result.txt" };
-  const repeat = await page.request.post(`${draftUrl}&index`, { headers: { origin: "http://127.0.0.1:3210" }, form });
+  const repeat = await page.request.post(`${draftUrl}`, { headers: { origin: "http://127.0.0.1:3210" }, form });
   expect(repeat.url()).toBe(detailUrl);
-  const changed = await page.request.post(`${draftUrl}&index`, { headers: { origin: "http://127.0.0.1:3210" }, form: { ...form, instruction: "内容を変更" } });
+  const changed = await page.request.post(`${draftUrl}`, { headers: { origin: "http://127.0.0.1:3210" }, form: { ...form, instruction: "内容を変更" } });
   expect(changed.status()).toBe(409);
   expect(await changed.text()).toContain("この送信はすでに受け付けています");
   await page.goto(draftUrl);
@@ -35,7 +35,7 @@ test("submit through the BFF and HTTP API, poll, preserve idempotency and downlo
 
 test("model consent, UTF-8 limits, CSRF, keyboard and mobile form", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 740 });
-  await page.goto("/");
+  await page.goto("/tasks");
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "本文へ移動" })).toBeFocused();
   await page.getByLabel("モデルを使う", { exact: false }).check();
@@ -49,7 +49,7 @@ test("model consent, UTF-8 limits, CSRF, keyboard and mobile form", async ({ pag
   await expect(page.locator("#instruction")).toHaveValue("あ".repeat(700));
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   const key = await page.locator('input[name="key"]').inputValue();
-  const forged = await page.request.post(`${page.url()}&index`, { headers: { origin: "http://127.0.0.1:3210" }, form: { key, csrf: "wrong", mode: "offline", instruction: "x", input_text: "", output_name: "result.txt" } });
+  const forged = await page.request.post(`${page.url()}`, { headers: { origin: "http://127.0.0.1:3210" }, form: { key, csrf: "wrong", mode: "offline", instruction: "x", input_text: "", output_name: "result.txt" } });
   expect(forged.status()).toBe(403);
   expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
 });
@@ -58,7 +58,7 @@ test("a native form can submit and manually refresh without JavaScript", async (
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
     const page = await context.newPage();
-    await page.goto("http://127.0.0.1:3210/");
+    await page.goto("http://127.0.0.1:3210/tasks");
     const draftUrl = page.url();
     const content = "JavaScriptなしの作業\n2行目";
     await page.getByLabel("作業用テキスト", { exact: true }).fill(content);
@@ -82,7 +82,7 @@ test("native history refresh fetches the page and preserves the draft key", asyn
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
     const page = await context.newPage();
-    await page.goto("http://127.0.0.1:3210/");
+    await page.goto("http://127.0.0.1:3210/tasks");
     const key = new URL(page.url()).searchParams.get("draft");
     let requests = 0;
     page.on("request", (request) => { if (request.isNavigationRequest() && request.method() === "GET") requests += 1; });

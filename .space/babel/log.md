@@ -1,4 +1,6 @@
 ## 2026-10-06
+* **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).
+* **Creation**: [会話の各往復を既存receipt付きAX実行として保存する](decisions/systems/ax/chat-turns.md).
 * **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
 * **Update**: [AXの単発CLIで開始・成果物・使用量を分離して管理する](decisions/systems/ax/single-task-cli.md).
 * **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).
