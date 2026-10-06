@@ -1,5 +1,6 @@
 ## 2026-10-06
 * **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
 * **Update**: [AXローカル実行基盤の構成と確認方法](knowledge/ax-local-kind-environment.md).
 * **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
 * **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).
