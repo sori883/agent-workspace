@@ -1,4 +1,6 @@
 ## 2026-10-06
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Creation**: [ローカルWeb土台W1の契約と理由](knowledge/ax-web-foundation.md).
 * **Creation**: [デジタル庁デザインスキルをプロジェクト内で参照する](knowledge/project-design-skill.md).
 * **Update**: [通常の変更はPR作成・マージまで進め、危険な操作だけ人間に確認する](rules/pr-delivery.md).
 
