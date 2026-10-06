@@ -368,6 +368,7 @@ class ChatTests(unittest.TestCase):
             with self.subTest(operation=operation, size=size):
                 output = io.BytesIO()
                 with patch("web_bridge.WebBridge.dispatch", return_value={"ok": True, "data": "x" * size}), \
+                     patch("web_bridge.ROOT", self.root), \
                      patch("web_bridge.sys.stdin", SimpleNamespace(buffer=io.BytesIO(b"{}"))), \
                      patch("web_bridge.sys.stdout", SimpleNamespace(buffer=output)):
                     exit_code = main([operation])

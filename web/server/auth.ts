@@ -1,6 +1,7 @@
 import { readAuthConfig } from "./auth-config";
 import { AuthStore, createPool, AuthenticationError } from "./auth-store";
 import { IdentityProvider } from "./oidc";
+import type { Authenticate } from "../shared/authentication";
 
 let runtime: { store: AuthStore; idp: IdentityProvider } | undefined;
 export function authRuntime() {
@@ -10,7 +11,7 @@ export function authRuntime() {
   }
   return runtime;
 }
-export type Authenticate = (token: string) => Promise<string>;
+export type { Authenticate } from "../shared/authentication";
 export const authenticate: Authenticate = async (token) => {
   if (!token) throw new AuthenticationError("missing_token");
   const { store, idp } = authRuntime();

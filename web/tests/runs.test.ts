@@ -1,12 +1,11 @@
 import { TEST_OWNER, TEST_ACCESS_TOKEN, testAuthenticate } from "./helpers/api-auth";
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
 import { createServer } from "node:http";
 import { once } from "node:events";
 import { test } from "node:test";
 import { serve } from "@hono/node-server";
 import { createApi } from "../api/app";
-import { invokeBridge, pythonRunService, RunServiceError, type RunService } from "../api/run-service";
+import { RunServiceError, type RunService } from "../api/run-service";
 import { runsClient, RunApiError } from "../app/lib/runs.server";
 import { readConfig } from "../server/config";
 import { artifactResultSchema, MAX_RUN_REQUEST_BYTES, MAX_RUN_RESPONSE_BYTES, runDetailSchema, runInputSchema, type RunDetail, type RunInput } from "../shared/run-contracts";
@@ -91,42 +90,6 @@ test("API rejects malformed service responses and never publishes unexpected err
   const failure = await app.request(`${config.apiOrigin}/v1/runs/${runId}`, { headers });
   assert.equal(failure.status, 503);
   assert.deepEqual(await failure.json(), { error: "bridge_unavailable" });
-});
-
-test("Python service validates envelopes and does not dispatch retries", async () => {
-  const calls: unknown[] = [];
-  const service = pythonRunService(async (operation, value) => {
-    calls.push({ operation, value });
-    return { ok: true, data: { run_id: runId, replayed: true } };
-  });
-  assert.deepEqual(await service.submit(TEST_OWNER, input), { run_id: runId, replayed: true });
-  assert.deepEqual(calls, [{ operation: "submit", value: { owner_user_id: TEST_OWNER, input } }]);
-  await assert.rejects(pythonRunService(async () => ({ ok: false, error: { code: "unresolved_run", status: 409 } })).list(TEST_OWNER), isServiceError("unresolved_run", 409));
-  for (const value of [{ ok: true, data: {} }, { ok: false, error: { code: "secret token", status: 503 } }, { ok: true, data: { runs: [] }, extra: "secret" }]) {
-    await assert.rejects(pythonRunService(async () => value).list(TEST_OWNER), isServiceError("invalid_bridge_response"));
-  }
-});
-
-test("bridge subprocess uses fixed arguments, bounded output and a deadline without leaking stderr", async () => {
-  const children: ReturnType<typeof spawn>[] = [];
-  const launchWith = (source: string) => (command: string, args: string[], options: Parameters<typeof spawn>[2]) => {
-    assert.equal(command, "python3");
-    assert.ok(args[0].endsWith("/ax-local/web_bridge.py"));
-    assert.equal(args[1], "list");
-    assert.equal(options?.shell, undefined);
-    const child = spawn(process.execPath, ["-e", source], options);
-    children.push(child);
-    return child;
-  };
-  const result = await invokeBridge("list", {}, launchWith('let text="";process.stdin.on("data",c=>text+=c);process.stdin.on("end",()=>{process.stdout.write(JSON.stringify({ok:true,data:{runs:[],input:JSON.parse(text)}}));});'));
-  assert.deepEqual(result, { ok: true, data: { runs: [], input: {} } });
-  assert.deepEqual(await invokeBridge("list", {}, launchWith('process.stdin.resume();process.stdout.write(JSON.stringify({ok:false,error:{code:"unresolved_run",status:409}}));process.exitCode=1;')), { ok: false, error: { code: "unresolved_run", status: 409 } });
-  await assert.rejects(invokeBridge("list", {}, launchWith('process.stderr.write("PRIVATE CREDENTIAL");process.stdout.write("invalid");')), isServiceError("invalid_bridge_response"));
-  await assert.rejects(invokeBridge("list", {}, launchWith(`process.stdout.write("x".repeat(${MAX_RUN_RESPONSE_BYTES + 1}));`)), isServiceError("invalid_bridge_response"));
-  const started = Date.now();
-  await assert.rejects(invokeBridge("list", {}, launchWith('setInterval(()=>{},1000);'), 100), isServiceError("bridge_timeout"));
-  assert.ok(Date.now() - started < 1500);
-  for (const child of children) if (child.exitCode === null && child.signalCode === null) await once(child, "close");
 });
 
 test("BFF client traverses real HTTP and preserves typed operations, status and artifacts above 16 KiB", async (t) => {

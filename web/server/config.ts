@@ -1,3 +1,5 @@
+import { validateApiConfig } from "../api/config.ts";
+
 export function parsePort(value: string | undefined, fallback: number): number {
   if (value === undefined) return fallback;
   if (!/^\d+$/.test(value)) throw new Error("Port must be an integer.");
@@ -15,11 +17,13 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env) {
   if (!apiToken || !sessionSecret || apiToken.length < 32 || sessionSecret.length < 32) {
     throw new Error("Start both services with npm run dev or npm start.");
   }
+  const apiOrigin = env.API_ORIGIN ?? `http://127.0.0.1:${apiPort}`;
+  validateApiConfig({ apiToken, apiOrigin });
   return {
     webPort,
     apiPort,
     webOrigin: `http://127.0.0.1:${webPort}`,
-    apiOrigin: `http://127.0.0.1:${apiPort}`,
+    apiOrigin,
     sessionCookieName: `ax_local_session_${webPort}`,
     apiToken,
     sessionSecret,

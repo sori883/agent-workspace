@@ -1,13 +1,12 @@
 import { TEST_OWNER, TEST_ACCESS_TOKEN, testAuthenticate } from "./helpers/api-auth";
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { createServer } from "node:http";
 import { test } from "node:test";
 import { serve } from "@hono/node-server";
 import { createApi } from "../api/app";
-import { pythonChatService, type ChatService } from "../api/chat-service";
-import { invokeBridge, RunServiceError } from "../api/run-service";
+import { type ChatService } from "../api/chat-service";
+import { RunServiceError } from "../api/run-service";
 import { chatsClient, RunApiError } from "../app/lib/chats.server";
 import { readConfig } from "../server/config";
 import { chatInputSchema, conversationDetailSchema, conversationListSchema, MAX_CHAT_RESPONSE_BYTES, type ChatInput, type ConversationDetail } from "../shared/chat-contracts";
@@ -107,40 +106,6 @@ test("chat API validates response identity, safe errors and strict response fiel
   const full = await app.request(`${config.apiOrigin}/v1/conversations/${id}/turns`, { method: "POST", headers, body: JSON.stringify(input) });
   assert.equal(full.status, 422);
   assert.deepEqual(await full.json(), { error: "conversation_context_full" });
-});
-
-test("Python chat bridge sends fixed commands once and validates envelopes and identities", async () => {
-  const calls: unknown[] = [];
-  const service = pythonChatService(async (operation, value) => {
-    calls.push([operation, value]);
-    return { ok: true, data: operation === "conversations" ? { conversations: [detail.conversation] } : operation === "conversation" ? detail : accepted };
-  });
-  assert.deepEqual(await service.list(TEST_OWNER), { conversations: [detail.conversation] });
-  assert.deepEqual(await service.get(TEST_OWNER, id.toUpperCase()), detail);
-  assert.deepEqual(await service.submit(TEST_OWNER, id.toUpperCase(), { ...input, key: input.key.toUpperCase() }), accepted);
-  assert.deepEqual(calls, [["conversations", { owner_user_id: TEST_OWNER, input: {} }], ["conversation", { owner_user_id: TEST_OWNER, input: { id } }], ["chat", { owner_user_id: TEST_OWNER, input: { id, ...input } }]]);
-  for (const value of [{ ok: true, data: {} }, { ok: true, data: { ...accepted, conversation_id: otherId } }, { ok: false, error: { code: "SECRET key", status: 409 } }, { ok: true, data: accepted, extra: "PRIVATE" }]) await assert.rejects(pythonChatService(async () => value).submit(TEST_OWNER, id, input), isServiceError("invalid_bridge_response"));
-  await assert.rejects(pythonChatService(async () => ({ ok: false, error: { code: "conversation_conflict", status: 409 } })).submit(TEST_OWNER, id, input), isServiceError("conversation_conflict", 409));
-  await assert.rejects(service.get(TEST_OWNER, "bad"), isServiceError("invalid_conversation_id", 400));
-  assert.equal(calls.length, 3);
-});
-
-test("chat response transport permits 1 MiB while legacy operations retain 512 KiB", async () => {
-  const children: ReturnType<typeof spawn>[] = [];
-  const launch = (source: string) => (command: string, args: string[], options: Parameters<typeof spawn>[2]) => {
-    assert.equal(command, "python3");
-    assert.ok(args[0].endsWith("/ax-local/web_bridge.py"));
-    assert.equal(options?.shell, undefined);
-    const child = spawn(process.execPath, ["-e", source], options);
-    children.push(child);
-    return child;
-  };
-  const source = `process.stdin.resume();process.stdout.write(JSON.stringify({content:"x".repeat(${MAX_RUN_RESPONSE_BYTES})}));`;
-  const result = await invokeBridge("conversation", { id }, launch(source));
-  assert.equal((result as { content: string }).content.length, MAX_RUN_RESPONSE_BYTES);
-  await assert.rejects(invokeBridge("get", { run_id: runId }, launch(source)), isServiceError("invalid_bridge_response"));
-  await assert.rejects(invokeBridge("conversation", { id }, launch(`process.stdout.write("x".repeat(${MAX_CHAT_RESPONSE_BYTES + 1}));`)), isServiceError("invalid_bridge_response"));
-  for (const child of children) if (child.exitCode === null && child.signalCode === null) await once(child, "close");
 });
 
 test("BFF chat client traverses real HTTP, including maximum escaped history above 512 KiB", async (t) => {

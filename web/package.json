@@ -9,7 +9,9 @@
     "typecheck": "react-router typegen && tsc",
     "test": "tsx --test tests/*.test.ts",
     "test:e2e": "playwright test",
-    "auth:migrate": "node --import tsx scripts/auth-migrate.ts"
+    "auth:migrate": "node --import tsx scripts/auth-migrate.ts",
+    "data:migrate": "node --import tsx scripts/data-migrate.ts",
+    "api": "node --import tsx api/index.ts"
   },
   "dependencies": {
     "@hono/node-server": "2.1.3",
@@ -33,6 +35,8 @@
     "@types/pg": "8.23.1",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.7",
+    "esbuild": "0.28.2",
+    "miniflare": "5.20261001.0-alpha",
     "tsx": "4.23.15",
     "typescript": "5.9.3",
     "vite": "8.3.2"

@@ -1,0 +1,9 @@
+revision	updated_at	id	unit	attempt	condition	target	target_version	verdict	supersedes	evidence
+29	2026-10-06T12:35:54.425Z	5398cc3a-2c23-4053-9ad0-19c29a5fb1b6	ax-portable-data	1	data	data	f7c60764f21885851242b4e840fcb2940ca2bebb8d91eec47125ae8761056c88	pass		.space/tasks/ax-portable-api/data-verification.md
+29	2026-10-06T12:35:54.425Z	c49d1835-3eeb-4a47-8a82-14a3c2d8a103	ax-portable-adapter	1	adapter	adapter	8fa2f56d1fa832d25022f726e7bdebe5407f959f913ca33e8b7ea3036271537b	pass		.space/tasks/ax-portable-api/execution.md
+29	2026-10-06T12:35:54.425Z	fbf744a5-70ef-4147-a499-3f04371a9206	ax-portable-api	1	C1	C1	9ad8d4bb2eb5a36001b7ad56e2566edaea373076a60c973608d88a3b5290cc30	pass		.space/tasks/ax-portable-api/verification.md
+29	2026-10-06T12:35:54.425Z	f28cac37-78d6-49ca-a154-5a8a13b55be1	ax-portable-api	1	C2	C2	652b803469e40063ff445e744efb83f23d544452cee9bf9dae8f138ff15b11d8	pass		.space/tasks/ax-portable-api/verification.md
+29	2026-10-06T12:35:54.425Z	93c5dc97-474d-43eb-9f98-f62e717621ce	ax-portable-api	1	C3	C3	37d12f5f1b3c17dee4bb945387c0f4176d9b0b37b87eea0fcd430d5d9398d6f4	pass		.space/tasks/ax-portable-api/verification.md
+29	2026-10-06T12:35:54.425Z	0dedb7bf-b033-4519-b4ae-48f7d78cc103	ax-portable-api	1	C4	C4	4100a6ffaf4f300953899bae981a5fc4827c42e6faa0c56c1a16ac23eacc6584	pass		.space/tasks/ax-portable-api/verification.md
+29	2026-10-06T12:35:54.425Z	921af920-741b-4239-b87e-f9dc0c526717	ax-portable-api	1	C5	C5	25bba5bf8d17a45ebdce78f587651f942abaa46d288915e21acb2038a78b6fe6	pass		.space/tasks/ax-portable-api/verification.md
+29	2026-10-06T12:35:54.425Z	9644edf0-7742-4fda-9539-3a2cc23c42dc	ax-portable-api	1	C6	C6	implementation bd5a5ecba019ff58f10f181873578129beb13a7c; workflow runs 37464038428,37464038343,37464038491	pass		.space/tasks/ax-portable-api/task.md; .space/tasks/ax-portable-api/verification.md

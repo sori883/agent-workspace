@@ -10,10 +10,10 @@ code_refs:
   - ax-local/
 type: knowledge
 title: AXローカル実行基盤の構成と確認方法
-description: Kubernetes外のDocker上PostgreSQLへ移行したAXローカル基盤の構成・費用制御・保存と復旧の検証結果
+description: 外部Docker PostgreSQLと独立実行管理を使うAXローカル基盤の構成・保存・検証と導入履歴
 generated: 
   by: agent:codex
-  at: 2026-10-06T09:26:05.936Z
+  at: 2026-10-06T12:27:50.086Z
 sources: 
   - title: 検証対象AXソース
     resource: https://github.com/google/ax/tree/ac2332829f22360ff97b0ba34d94dd0dd782f17e
@@ -30,11 +30,17 @@ sources:
 
 2026-10-03にkindを構築し、2026-10-05に既存クラスタを再作成せずローカルレジストリ・Substrate・AXを追加した。AXからARM64のgVisor Taskを起動して出力と正常終了、削除・再作成、停止・再開時のファイル保持を確認済み。Geminiを使ったエージェントのファイル作成・正常終了・使用量を確認し、最初のマイルストーンを達成した。2,000円の費用ルールを維持し、試験後の外部通信は閉じている。
 
+## 共通APIの実行管理への切替（2026-10-06）
+
+app DBへ既存15 runを移行し、新規の会話・実行・成果物の正本をPostgreSQLへ切り替えた。旧 `.state/runs` は保全した移行元で、新規記録の保存先ではない。AX PodへGo controllerを追加し、AX gRPCをloopbackへ限定して旧Serviceを削除。Task内Pythonは継続し、controllerはworkerへのmTLSで直接開始・回収する。追加NetworkPolicyはcontroller Podからworker443だけを許可する。APIとcontrollerには別の最小DB roleを用意した。
+
+原本の全件照合、独立したActor停止確認、実AX offline、実Keycloak→Web→API→DB→controllerの無償実行が成功した。追加paid送信は0。現在の構成・制約は[Web構成](ax-web-foundation.md)と[移行の決定](../decisions/systems/ax/portable-api-postgres.md)、証拠は `.space/tasks/ax-portable-api/verification.md`。以下の日付付き節の操作・構成は各導入時点の記録として読む。
+
 ## PostgreSQLをKubernetesの外へ移行（2026-10-06）
 
 利用者の承認で、ローカルDockerのPostgreSQL 18.4へSubstrateの既存atepgを移した。旧Podと同一image digestをComposeに固定し、専用Docker volume ax-local-postgres-dataの/var/lib/postgresql/18/dockerへ保存する。ホストは127.0.0.1:55432、kindのPodはhost.docker.internal:55432を使う。接続先はローカル環境の設定であり、本番のDB配置・提供元は未選定。
 
-substrate/ax_substrate、keycloak/ax_keycloak、app/ax_appの3組に分離した。用途別loginは非superuserで他DB接続を拒否し、TLSのCA・ホスト名をverify-fullで確認する。このDB移行時点ではKeycloakとアプリ用DBは空だった。同日の認証実装でKeycloak 26.8.0とBFF/APIを接続し、両DBに認証情報・内部ID対応・sessionを保存するようになった。詳しくは[認証基盤](../decisions/systems/ax/auth-foundation.md)を参照する。既存会話・receiptは.state/runsに維持する。固定Substrateは起動ログへDSNを出すためパスワードをDSNへ含めず、SecretのPGPASSWORDで渡す。PostgreSQLの秘密・dumpは.state/postgres、認証サービスとアプリsessionの秘密・dumpは.state/authに保持し、Gitへ入れない。
+substrate/ax_substrate、keycloak/ax_keycloak、app/ax_appの3組に分離した。用途別loginは非superuserで他DB接続を拒否し、TLSのCA・ホスト名をverify-fullで確認する。このDB移行時点ではKeycloakとアプリ用DBは空だった。同日の認証実装でKeycloak 26.8.0とBFF/APIを接続し、両DBに認証情報・内部ID対応・sessionを保存するようになった。詳しくは[認証基盤](../decisions/systems/ax/auth-foundation.md)を参照する。この認証導入時点では既存会話・receiptを.state/runsに維持していたが、その後上記のapp DB移行で正本を切り替えた。固定Substrateは起動ログへDSNを出すためパスワードをDSNへ含めず、SecretのPGPASSWORDで渡す。PostgreSQLの秘密・dumpは.state/postgres、認証サービスとアプリsessionの秘密・dumpは.state/authに保持し、Gitへ入れない。
 
 全API停止・Pod消滅・旧client接続0の後、最終dump前後と復元先の16表全行hash/件数とsequence1件が一致した。worker_outbox全partitionとworker_outbox_trimは旧cluster固有のXIDを持つ派生通知なので、一致を記録した後に復元先だけ同一transactionで初期化し、一次表の不変を再照合した。全APIのcold起動で現在状態を読み直す。新APIの起動自体が書き込むため、起動前に永続markerを作り、以降は古いDBへ自動rollbackしない。
 

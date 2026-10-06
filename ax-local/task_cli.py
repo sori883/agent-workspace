@@ -231,6 +231,8 @@ class TaskCLI:
     @contextlib.contextmanager
     def locked(self, wait_seconds=0):
         os.umask(0o077)
+        if (self.root / ".state/execution/managed").exists():
+            raise TaskError("legacy_writer_retired")
         if any(part.is_symlink() for part in (self.runs, *self.runs.parents)):
             raise TaskError("symlink_rejected")
         self.runs.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -246,6 +248,8 @@ class TaskCLI:
                     if time.monotonic() >= deadline:
                         raise TaskError("another_cli_running") from exc
                     time.sleep(0.01)
+            if (self.root / ".state/execution/managed").exists():
+                raise TaskError("legacy_writer_retired")
             previous = getattr(self.transport, "lock_fd", None)
             self.transport.lock_fd = stream.fileno()
             try:
@@ -629,6 +633,9 @@ def parser():
 
 def main(argv=None):
     os.umask(0o077)
+    if (ROOT / ".state/execution/managed").exists():
+        print('{"error_type":"legacy_writer_retired"}', file=sys.stderr)
+        return 1
     args = parser().parse_args(argv)
 
     def interrupted(*_):

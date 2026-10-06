@@ -2,8 +2,10 @@ import { randomBytes, randomUUID, createHash } from "node:crypto";
 import { spawn } from "node:child_process";
 import { serve } from "@hono/node-server";
 import { createApi } from "../../api/app";
+import { authenticate } from "../../server/auth";
 import { createPool } from "../../server/auth-store";
 import { migrateAuth } from "../../server/auth-migrate";
+import { migrateData } from "../../server/data-migrate";
 import { prepareTestAuth } from "../prepare-auth";
 import { startOidcFixture } from "../helpers/oidc-fixture";
 import { RunServiceError, type RunService } from "../../api/run-service";
@@ -20,6 +22,7 @@ const fixture = await startOidcFixture(auth.clientSecret, Number(new URL(auth.is
 if (fixture.issuer !== auth.issuer) throw new Error("Unexpected fixture issuer");
 const pool = createPool(auth);
 await migrateAuth(pool);
+await migrateData(pool);
 await pool.end();
 const entries = new Map<string, { owner: string; payload: string; detail: RunDetail; content: string }>();
 function entry(owner: string, runId: string) {
@@ -94,7 +97,7 @@ const chats: ChatService = {
   },
   async list(owner) { return { conversations: await Promise.all([...conversations.keys()].filter((id) => conversationOwners.get(id) === owner).reverse().map(async (id) => (await chats.get(owner, id)).conversation)) }; },
 };
-const api = serve({ fetch: createApi(config, undefined, runs, chats).fetch, hostname: "127.0.0.1", port: config.apiPort });
+const api = serve({ fetch: createApi(config, undefined, runs, chats, authenticate).fetch, hostname: "127.0.0.1", port: config.apiPort });
 const child = spawn(process.execPath, ["--import", "tsx", "server/serve.ts"], {
   env: { ...process.env, HOST: "127.0.0.1", PORT: String(config.webPort), NODE_ENV: "production" }, stdio: "inherit",
 });

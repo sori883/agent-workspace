@@ -1,0 +1,174 @@
+package controller
+
+import (
+	"bytes"
+	"context"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/json"
+	"errors"
+	"regexp"
+	"time"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sori883/agent-workspace/execution/native"
+)
+
+type DatabaseConfig struct {
+	Host       string
+	Port       uint16
+	Database   string
+	User       string
+	Password   string
+	ServerName string
+	CAPEM      []byte
+	Schema     string
+}
+
+type Postgres struct {
+	pool         *pgxpool.Pool
+	controllerID string
+	schema       string
+}
+
+var dbIdentifier = regexp.MustCompile(`^[a-z_][a-z0-9_]{0,62}$`)
+var controllerIdentifier = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9_.-]{0,95}$`)
+
+func OpenPostgres(ctx context.Context, config DatabaseConfig, controllerID string) (*Postgres, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+	if config.Host == "" || config.Port == 0 || config.Database == "" || config.User == "" || config.Password == "" || config.ServerName == "" || !dbIdentifier.MatchString(config.Schema) || !controllerIdentifier.MatchString(controllerID) {
+		return nil, errors.New("invalid_database_config")
+	}
+	poolConfig, err := pgxpool.ParseConfig("")
+	if err != nil {
+		return nil, errors.New("invalid_database_config")
+	}
+	ca := x509.NewCertPool()
+	if !ca.AppendCertsFromPEM(config.CAPEM) {
+		return nil, errors.New("invalid_database_ca")
+	}
+	connection := poolConfig.ConnConfig
+	connection.Host = config.Host
+	connection.Port = config.Port
+	connection.Database = config.Database
+	connection.User = config.User
+	connection.Password = config.Password
+	connection.TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12, ServerName: config.ServerName, RootCAs: ca}
+	connection.Fallbacks = nil
+	connection.ConnectTimeout = 5 * time.Second
+	connection.RuntimeParams = map[string]string{"application_name": "ax-execution-controller", "search_path": pgx.Identifier{config.Schema}.Sanitize() + ",pg_catalog", "statement_timeout": "5000"}
+	poolConfig.MinConns = 0
+	poolConfig.MaxConns = 3
+	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
+	if err != nil {
+		return nil, errors.New("database_connect_failed")
+	}
+	if err = pool.Ping(ctx); err != nil {
+		pool.Close()
+		return nil, errors.New("database_connect_failed")
+	}
+	return &Postgres{pool: pool, controllerID: controllerID, schema: config.Schema}, nil
+}
+
+func (p *Postgres) Close() { p.pool.Close() }
+func (p *Postgres) query(name string) string {
+	return "select " + pgx.Identifier{p.schema, name}.Sanitize()
+}
+func (p *Postgres) Claim(ctx context.Context) (*Claim, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	var data []byte
+	if err := p.pool.QueryRow(ctx, p.query("ax_claim")+"($1,$2)", p.controllerID, 30).Scan(&data); err != nil {
+		return nil, errors.New("database_claim_failed")
+	}
+	if len(data) == 0 || bytes.Equal(data, []byte("null")) {
+		return nil, nil
+	}
+	if len(data) > 1024*1024 {
+		return nil, errors.New("invalid_database_claim")
+	}
+	var claim Claim
+	if json.Unmarshal(data, &claim) != nil || claim.Request.Validate() != nil {
+		return nil, errors.New("invalid_database_claim")
+	}
+	var requestWire struct {
+		Request json.RawMessage `json:"request"`
+	}
+	if json.Unmarshal(data, &requestWire) != nil {
+		return nil, errors.New("invalid_database_claim")
+	}
+	request, err := native.ParseRequest(requestWire.Request)
+	if err != nil {
+		return nil, errors.New("invalid_database_claim")
+	}
+	claim.Request = request
+	return &claim, nil
+}
+func (p *Postgres) Heartbeat(ctx context.Context, c *Claim) error {
+	return p.exec(ctx, "ax_heartbeat", "($1,$2,$3,$4)", c.RunID, c.Generation, p.controllerID, 30)
+}
+func (p *Postgres) Intent(ctx context.Context, c *Claim, operation native.Operation) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	var data []byte
+	if err := p.pool.QueryRow(ctx, p.query("ax_intent")+"($1,$2,$3,$4)", c.RunID, c.Generation, p.controllerID, string(operation)).Scan(&data); err != nil {
+		return "", errors.New("database_intent_unconfirmed")
+	}
+	var result struct {
+		OperationID string `json:"operation_id"`
+	}
+	if json.Unmarshal(data, &result) != nil || result.OperationID == "" {
+		return "", errors.New("invalid_database_intent")
+	}
+	return result.OperationID, nil
+}
+func (p *Postgres) Evidence(ctx context.Context, c *Claim, operationID string, evidence map[string]any) error {
+	data, err := json.Marshal(evidence)
+	if err != nil {
+		return errors.New("invalid_evidence")
+	}
+	return p.exec(ctx, "ax_evidence", "($1,$2,$3,$4,$5::jsonb)", c.RunID, c.Generation, p.controllerID, operationID, string(data))
+}
+func (p *Postgres) Collect(ctx context.Context, c *Claim, collection native.Collection) error {
+	if collection.Result.Validate(c.Request) != nil {
+		return errors.New("invalid_result")
+	}
+	data, err := json.Marshal(collection.Result)
+	if err != nil {
+		return errors.New("invalid_result")
+	}
+	return p.exec(ctx, "ax_collect", "($1,$2,$3,$4::jsonb,$5::bytea)", c.RunID, c.Generation, p.controllerID, string(data), collection.Bytes)
+}
+func (p *Postgres) Finish(ctx context.Context, c *Claim) error {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	var data []byte
+	if err := p.pool.QueryRow(ctx, p.query("ax_finish")+"($1,$2,$3)", c.RunID, c.Generation, p.controllerID).Scan(&data); err != nil {
+		return errors.New("database_finish_unconfirmed")
+	}
+	var result struct {
+		Resolved *bool  `json:"resolved"`
+		Outcome  string `json:"outcome"`
+	}
+	if json.Unmarshal(data, &result) != nil || result.Resolved == nil || (result.Outcome != "succeeded" && result.Outcome != "failed") {
+		return errors.New("invalid_finish_result")
+	}
+	if !*result.Resolved {
+		return ErrHeld
+	}
+	return nil
+}
+func (p *Postgres) Fail(ctx context.Context, c *Claim, code string) error {
+	return p.exec(ctx, "ax_fail", "($1,$2,$3,$4)", c.RunID, c.Generation, p.controllerID, code)
+}
+func (p *Postgres) exec(ctx context.Context, name, args string, values ...any) error {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	_, err := p.pool.Exec(ctx, p.query(name)+args, values...)
+	if err != nil {
+		return errors.New("database_operation_unconfirmed")
+	}
+	return nil
+}

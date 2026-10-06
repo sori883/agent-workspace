@@ -18,12 +18,18 @@ sources:
   - resource: web/app/routes/chat.tsx
 type: decision
 title: 会話の各往復を既存receipt付きAX実行として保存する
-description: 短い会話をreceipt連鎖と成功成果物から復元し、再送・費用・履歴上限を既存CLIで守る設計
+description: 旧ファイル構成での設計理由を保持し、現在の共通API・PostgreSQL移行と維持する契約を示す
 generated: 
   by: agent:codex
-  at: 2026-10-06T05:33:01.492Z
+  at: 2026-10-06T12:27:49.928Z
 ---
 # 会話の各往復を有限AX実行へ対応させる
+
+## 現在の適用範囲（2026-10-06）
+
+受付・所有権・会話・費用と実行記録の正本はapp PostgreSQLへ移り、共通APIとGo実行管理が担当する。旧ホストCLI/bridgeは通常操作を拒否する。Task内部Python、1実行1Task、同一キー再送、成功文脈だけの継続、未知usageと再開始禁止の条件は維持する。[移行の決定](portable-api-postgres.md)を現在の配置と保存方式の正本とする。以下は旧ファイル構成を採用した時点の理由・検証の記録である。
+
+## 当時の設計
 
 2026-10-06採用・実装。利用者は本番配置より先に、前の会話を踏まえて質問・相談を続けられる画面を希望した。短いテキスト会話を対象とし、各往復を[既存の有限Task](single-task-cli.md)として動かす。
 

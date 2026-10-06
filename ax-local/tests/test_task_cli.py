@@ -130,6 +130,20 @@ class CLITests(unittest.TestCase):
     def advance(self, seconds):
         self.now += seconds
 
+    def test_managed_cutover_refuses_every_legacy_writer_before_external_effects(self):
+        marker = self.root / ".state/execution/managed"
+        marker.parent.mkdir(parents=True)
+        marker.write_text("postgresql")
+        for operation in (
+            lambda: self.cli.run(request()),
+            lambda: self.cli.execute_accepted(request()["run_id"]),
+            lambda: self.cli.recover(request()["run_id"]),
+            lambda: self.cli.acknowledge_failure(request()["run_id"], "reviewed"),
+        ):
+            with self.assertRaisesRegex(TaskError, "legacy_writer_retired"):
+                operation()
+        self.assertEqual(self.transport.calls, [])
+
     def test_two_offline_runs_have_separate_artifacts_and_no_allow(self):
         for number in (1, 2):
             data = request(number)

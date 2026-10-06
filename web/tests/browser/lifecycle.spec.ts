@@ -6,7 +6,7 @@ import { test, expect } from "@playwright/test";
 
 function launch(mode: "dev" | "start", port: number) {
   const child = spawn(process.execPath, ["--import", "tsx", "scripts/run.ts", mode], {
-    env: { ...process.env, WEB_PORT: String(port), API_PORT: String(port + 1) },
+    env: { ...process.env, WEB_PORT: String(port), API_PORT: String(port + 1), API_CONFIG_FILE: process.env.AUTH_CONFIG_FILE },
     stdio: ["ignore", "pipe", "pipe"],
   });
   let output = "";

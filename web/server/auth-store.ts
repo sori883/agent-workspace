@@ -3,8 +3,9 @@ import { readFileSync } from "node:fs";
 import pg from "pg";
 import { z } from "zod";
 import type { AuthConfig } from "./auth-config";
+import { AuthenticationError } from "../shared/authentication";
 
-export class AuthenticationError extends Error {}
+export { AuthenticationError } from "../shared/authentication";
 export const opaqueId = () => randomBytes(32).toString("base64url");
 const hash = (value: string) => createHash("sha256").update(value).digest("hex");
 const tokensSchema = z.object({ accessToken: z.string().min(1), idToken: z.string().min(1) }).strict();

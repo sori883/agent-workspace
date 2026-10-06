@@ -255,6 +255,9 @@ def unique_object(pairs):
 
 def main(argv=None):
     args = sys.argv[1:] if argv is None else argv
+    if (ROOT / ".state/execution/managed").exists():
+        sys.stdout.buffer.write(b'{"ok":false,"error":{"code":"legacy_writer_retired","status":503}}\n')
+        return 1
     try:
         if len(args) == 2 and args[0] in {"_execute", "_recover"}:
             if not RUN_ID.fullmatch(args[1]):
