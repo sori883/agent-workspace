@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 60,
+  "revision": 72,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "parent",
     "session": "auth-20261006"
   },
   "createdAt": "2026-10-06T08:44:13.553Z",
-  "updatedAt": "2026-10-06T09:35:59.416Z",
+  "updatedAt": "2026-10-06T09:36:40.006Z",
   "units": [
     {
       "id": "auth",
@@ -48,43 +48,43 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 7,
+      "version": 12,
       "contractVersion": 1,
       "attempts": [
         {
           "number": 1,
-          "state": "running",
+          "state": "completed",
           "stages": {
             "implement": {
               "selection": "execute",
-              "reason": "全担当の成果物、実統合検証、独立レビュー3件を親が照合",
+              "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
               "state": "completed",
               "refs": [
                 {
                   "ref": ".space/tasks/ax-auth/verification.md",
-                  "digest": "53d4b536820d056346146f4559805fcc6316698bb14c6bc0c8995c48ce21d932"
+                  "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
                 }
               ]
             },
             "verify": {
               "selection": "execute",
-              "reason": "全担当の成果物、実統合検証、独立レビュー3件を親が照合",
+              "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
               "state": "completed",
               "refs": [
                 {
                   "ref": ".space/tasks/ax-auth/verification.md",
-                  "digest": "53d4b536820d056346146f4559805fcc6316698bb14c6bc0c8995c48ce21d932"
+                  "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
                 }
               ]
             },
             "review": {
               "selection": "execute",
-              "reason": "全担当の成果物、実統合検証、独立レビュー3件を親が照合",
+              "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
               "state": "completed",
               "refs": [
                 {
                   "ref": ".space/tasks/ax-auth/verification.md",
-                  "digest": "53d4b536820d056346146f4559805fcc6316698bb14c6bc0c8995c48ce21d932"
+                  "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
                 }
               ]
             },
@@ -116,7 +116,7 @@
         }
       ],
       "currentAttempt": 1,
-      "currentSubmission": null,
+      "currentSubmission": "20504dd2-4c72-453d-8f0c-a9f383bdb074",
       "contractHistory": []
     },
     {
@@ -384,7 +384,7 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 14,
+      "version": 21,
       "contractVersion": 1,
       "attempts": [
         {
@@ -440,10 +440,37 @@
           "next": "",
           "resumeRef": null,
           "createdAt": "2026-10-06T09:31:45.031Z"
+        },
+        {
+          "number": 3,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "実装変更なし、既存29単体/24browserとCI全件成功の記録を照合",
+              "state": "completed",
+              "refs": []
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "実装変更なし、既存29単体/24browserとCI全件成功の記録を照合",
+              "state": "completed",
+              "refs": []
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "親の統合検証記録へCI結果を追記したため提出参照を再照合。製品と試験は同一版",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-06T09:36:39.412Z"
         }
       ],
-      "currentAttempt": 2,
-      "currentSubmission": "f0ad5590-1e87-43e8-a27e-e8a61110b0e7",
+      "currentAttempt": 3,
+      "currentSubmission": "4ad9f5da-16e2-4f05-a2c2-4fc2667fefd6",
       "contractHistory": []
     },
     {
@@ -1505,6 +1532,107 @@
       "reusedFrom": null,
       "reuseReason": "",
       "at": "2026-10-06T09:35:59.416Z"
+    },
+    {
+      "id": "e34e2dad-6ddb-4b9d-8b9d-30e4bb304fe7",
+      "unit": "web-tests",
+      "attempt": 3,
+      "condition": "verified",
+      "target": {
+        "id": "implementation",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": ".github/workflows/web.yml",
+            "digest": "a983a46224698ee27aa9732bedf06b603620e5703cc7975a79e35cd5db10680f"
+          },
+          {
+            "ref": "web/playwright.config.ts",
+            "digest": "179d2f640462510f7e5f64324303d0ede569a84cc0fd3cb6f404f1051bf105bf"
+          },
+          {
+            "ref": "web/tests/auth.test.ts",
+            "digest": "a770955685e4b0f84835e4933e851f105cadec8c2f903f7e6c0ff63d490fb393"
+          },
+          {
+            "ref": "web/tests/boundaries.test.ts",
+            "digest": "827109965bd9451785c675ea293c2bb5e24d4ccdf42e64248acbd56c940f1d7c"
+          },
+          {
+            "ref": "web/tests/browser/auth-helper.ts",
+            "digest": "e3b6a8c0e36d497b0a19de6fb2ba0ed2caac8002491462a61a81853ca1fc931f"
+          },
+          {
+            "ref": "web/tests/browser/auth.spec.ts",
+            "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+          },
+          {
+            "ref": "web/tests/browser/chat.spec.ts",
+            "digest": "8b22f23c2e2d2e64c5429d3b37dcd2fc5d017c0c636c7617bcba2cf774d8f8bf"
+          },
+          {
+            "ref": "web/tests/browser/lifecycle.spec.ts",
+            "digest": "b8a5c436944c21605f20090acbf8d0cda2e0bc6a3447efc55b5fc3724a63cb10"
+          },
+          {
+            "ref": "web/tests/browser/runs.spec.ts",
+            "digest": "08a88bd2191f2f5a07ed7f6f4c64c2f86a46386f9d8234b4fa353810149a36dc"
+          },
+          {
+            "ref": "web/tests/browser/serve.ts",
+            "digest": "5f443f5877579aa6c0e31ce09dbb4cc0c3e3d8235aa639838deeab21d76679b4"
+          },
+          {
+            "ref": "web/tests/browser/workspace.spec.ts",
+            "digest": "33ed61a2995f1a466a5917651ae0541bb191df3bd349d2fd4657af7eb085cc49"
+          },
+          {
+            "ref": "web/tests/chats.test.ts",
+            "digest": "60a9cf86b0b1065a838b0d53f4d62033708e8c0ded1604255559f83e4d1c537f"
+          },
+          {
+            "ref": "web/tests/helpers/api-auth.ts",
+            "digest": "76a5fb464cb57b56ff7cc64b2b54865bf058501bf1a302336b005a2deb2772ab"
+          },
+          {
+            "ref": "web/tests/helpers/oidc-fixture.ts",
+            "digest": "cd1a6a71bbd8da9637444b851b9346e91015142669810a3851fefd378bce328c"
+          },
+          {
+            "ref": "web/tests/prepare-auth.ts",
+            "digest": "b4b99db6aee96c3ccfa6298d42c5e841ef074b6acbd47eaf019a021aaa35e259"
+          },
+          {
+            "ref": "web/tests/runs.test.ts",
+            "digest": "c6cd70ee3b55d5b9d801a29bd0a5ca6f8750b1c2bf37591bc1ab7b52ea2a2768"
+          }
+        ],
+        "version": "0bc393accb64bd660ea27b7869a38cee89a91f668053f4fd2184ea726b6c004b"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-auth/web-tests-verification.md",
+          "digest": "1472398d10f61ed879d9659a4a482a4fd1479410d4b8e4ef269d40fa9ff64776"
+        },
+        {
+          "ref": ".space/tasks/ax-auth/review-config.md",
+          "digest": "1ac0b1fc37c2139a2e5d48378d1e148aa1e2f6b89abd31b9d4745995039df896"
+        }
+      ],
+      "reason": "",
+      "method": "既存確認記録の対象・証拠が同一であることを照合。変更は親の納品記録のみで試験の前提は不変",
+      "environment": "Node 24.15.0 / PostgreSQL 18.4 / Chromium",
+      "observedAt": "2026-10-06T09:36:39.571543+00:00",
+      "performer": "/root",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "supersedes": null,
+      "reusedFrom": "84c41b12-474a-4e31-9144-2bee07faba1a",
+      "reuseReason": "確認対象と証拠に変更なし。親の統合文書へのCI追記で提出参照だけが古くなったため",
+      "at": "2026-10-06T09:36:39.621Z"
     }
   ],
   "submissions": [
@@ -2080,9 +2208,9 @@
         }
       ],
       "children": [],
-      "active": true,
-      "obsoleteReason": "",
-      "successor": null,
+      "active": false,
+      "obsoleteReason": "親の統合検証記録へCI結果を追記したため提出参照を再照合。製品と試験は同一版",
+      "successor": "4ad9f5da-16e2-4f05-a2c2-4fc2667fefd6",
       "createdBy": {
         "actor": "parent",
         "session": "auth-20261006"
@@ -2096,6 +2224,547 @@
         },
         "reason": "独立構成レビューと親実行の結果により変更後版を受け入れ",
         "at": "2026-10-06T09:31:45.357Z"
+      }
+    },
+    {
+      "id": "4ad9f5da-16e2-4f05-a2c2-4fc2667fefd6",
+      "unit": "web-tests",
+      "attempt": 3,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "e34e2dad-6ddb-4b9d-8b9d-30e4bb304fe7"
+      ],
+      "outputs": [
+        {
+          "id": "implementation",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".github/workflows/web.yml",
+              "digest": "a983a46224698ee27aa9732bedf06b603620e5703cc7975a79e35cd5db10680f"
+            },
+            {
+              "ref": "web/playwright.config.ts",
+              "digest": "179d2f640462510f7e5f64324303d0ede569a84cc0fd3cb6f404f1051bf105bf"
+            },
+            {
+              "ref": "web/tests/auth.test.ts",
+              "digest": "a770955685e4b0f84835e4933e851f105cadec8c2f903f7e6c0ff63d490fb393"
+            },
+            {
+              "ref": "web/tests/boundaries.test.ts",
+              "digest": "827109965bd9451785c675ea293c2bb5e24d4ccdf42e64248acbd56c940f1d7c"
+            },
+            {
+              "ref": "web/tests/browser/auth-helper.ts",
+              "digest": "e3b6a8c0e36d497b0a19de6fb2ba0ed2caac8002491462a61a81853ca1fc931f"
+            },
+            {
+              "ref": "web/tests/browser/auth.spec.ts",
+              "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+            },
+            {
+              "ref": "web/tests/browser/chat.spec.ts",
+              "digest": "8b22f23c2e2d2e64c5429d3b37dcd2fc5d017c0c636c7617bcba2cf774d8f8bf"
+            },
+            {
+              "ref": "web/tests/browser/lifecycle.spec.ts",
+              "digest": "b8a5c436944c21605f20090acbf8d0cda2e0bc6a3447efc55b5fc3724a63cb10"
+            },
+            {
+              "ref": "web/tests/browser/runs.spec.ts",
+              "digest": "08a88bd2191f2f5a07ed7f6f4c64c2f86a46386f9d8234b4fa353810149a36dc"
+            },
+            {
+              "ref": "web/tests/browser/serve.ts",
+              "digest": "5f443f5877579aa6c0e31ce09dbb4cc0c3e3d8235aa639838deeab21d76679b4"
+            },
+            {
+              "ref": "web/tests/browser/workspace.spec.ts",
+              "digest": "33ed61a2995f1a466a5917651ae0541bb191df3bd349d2fd4657af7eb085cc49"
+            },
+            {
+              "ref": "web/tests/chats.test.ts",
+              "digest": "60a9cf86b0b1065a838b0d53f4d62033708e8c0ded1604255559f83e4d1c537f"
+            },
+            {
+              "ref": "web/tests/helpers/api-auth.ts",
+              "digest": "76a5fb464cb57b56ff7cc64b2b54865bf058501bf1a302336b005a2deb2772ab"
+            },
+            {
+              "ref": "web/tests/helpers/oidc-fixture.ts",
+              "digest": "cd1a6a71bbd8da9637444b851b9346e91015142669810a3851fefd378bce328c"
+            },
+            {
+              "ref": "web/tests/prepare-auth.ts",
+              "digest": "b4b99db6aee96c3ccfa6298d42c5e841ef074b6acbd47eaf019a021aaa35e259"
+            },
+            {
+              "ref": "web/tests/runs.test.ts",
+              "digest": "c6cd70ee3b55d5b9d801a29bd0a5ca6f8750b1c2bf37591bc1ab7b52ea2a2768"
+            }
+          ],
+          "version": "0bc393accb64bd660ea27b7869a38cee89a91f668053f4fd2184ea726b6c004b"
+        }
+      ],
+      "report": "試験対象は変わらず確認記録も有効。提出参照を確定した担当報告へ更新",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-auth/web-tests-verification.md",
+          "digest": "1472398d10f61ed879d9659a4a482a4fd1479410d4b8e4ef269d40fa9ff64776"
+        },
+        {
+          "ref": ".space/tasks/ax-auth/review-config.md",
+          "digest": "1ac0b1fc37c2139a2e5d48378d1e148aa1e2f6b89abd31b9d4745995039df896"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "at": "2026-10-06T09:36:39.673Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "reason": "対象の同一性、証拠とCI成功に照合して受け入れ",
+        "at": "2026-10-06T09:36:39.727Z"
+      }
+    },
+    {
+      "id": "20504dd2-4c72-453d-8f0c-a9f383bdb074",
+      "unit": "auth",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "c9ec0fca-4b30-4e32-aeef-a6296d950404"
+      ],
+      "outputs": [
+        {
+          "id": "implementation",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".github/workflows/ax-local.yml",
+              "digest": "3955a14c4ec95013b956cecab32c251d737dec5092265a94334747cf9bdfb806"
+            },
+            {
+              "ref": ".github/workflows/web.yml",
+              "digest": "a983a46224698ee27aa9732bedf06b603620e5703cc7975a79e35cd5db10680f"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/auth-foundation.md",
+              "digest": "f85cfd87bcefd20e56e5d37fc7ccf63eceee43b153f9f66cc99c27e7839c0bfe"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/index.md",
+              "digest": "7c56ce1a067edc1bffd2a6ec17694b016c6f7be3a1a034086e39d8cc3c44841f"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+              "digest": "442788ddab0458827018a76031e1d40d1c643f8f634076c5d46cc6c843a4a440"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-local-kind-environment.md",
+              "digest": "414c3d60d0d80daf32ecbf39c9ab928a254a7affffd669bb54b9ab0765ce3853"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-web-foundation.md",
+              "digest": "ee7497e4152bdc612b9fc54f8c907e50fb71c6317a82647b691abfca98008730"
+            },
+            {
+              "ref": ".space/babel/knowledge/index.md",
+              "digest": "5e9915344fae4b374117f77d3ec36970490961de08464a7ba883c71e5daf09a0"
+            },
+            {
+              "ref": ".space/babel/log.md",
+              "digest": "24b62d29622880c83dacf1d14520a760e62cb7d57c51e5d6a47aea1683c7fa8c"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/boundary-review.md",
+              "digest": "e9551c31d46c9ae7f3497ae0c1e9f0ca45e584d4ec81ab0a8fe04aa6fa13f5e2"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/evidence/account.png",
+              "digest": "68705cc1516aff6efc525e7fcfd7254dcf745c250681ab2b3cec21a4f298b403"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/evidence/app-restore.json",
+              "digest": "00187908485e4d6120f30bf6d2d8a3783ecdd7f52591e7a66080bd954c30d9c6"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/evidence/login.png",
+              "digest": "7c759f9e8fab0f0833dba96e0de2c3bdefba448e5c4c7703344257e4c9402255"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/evidence/passkey-and-logout.json",
+              "digest": "90c4d714ccdcf54d998c90d7b07fcec9a36bc3c694de4ae4844994b74d628004"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/evidence/real-ownership.json",
+              "digest": "83705b2548e9ddc554f1a945e0483dad53c4515930c01088de7caa145132f221"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/evidence/web-restart.json",
+              "digest": "f2d02474b90664be17782afc518d487dc33a9f41819cd3ab47fde0ec25bad067"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/implementation-plan.md",
+              "digest": "c0160ad827eb3ed7fc5a4d9699f60d2b65d4b47207989b1af90b34b9e9a16dd8"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/keycloak-verification.md",
+              "digest": "34a6fdbf6e0d8aab53224519cc9c9fc85f1889e17977c39ab902b6d505d886e5"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/python-verification.md",
+              "digest": "4beeb4560128c24007a2985def3aa48563709a70953d77309ab45710558d823a"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/review-bff.md",
+              "digest": "dc8e738af8fb7438939f9db09e12df03ef006babbcbfdb9069b9c4cbabadab48"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/review-config.md",
+              "digest": "1ac0b1fc37c2139a2e5d48378d1e148aa1e2f6b89abd31b9d4745995039df896"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/review-ownership.md",
+              "digest": "708623faab2729d0c48a751e6e8499de982849189931558359fc2b79a04009ce"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/verification.md",
+              "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+            },
+            {
+              "ref": ".space/tasks/ax-auth/web-tests-verification.md",
+              "digest": "1472398d10f61ed879d9659a4a482a4fd1479410d4b8e4ef269d40fa9ff64776"
+            },
+            {
+              "ref": "ax-local/chat.py",
+              "digest": "d58e11b9873fe6df6814e0a3fa3d17d32a128d597dfe27ff5f923ca9106cec19"
+            },
+            {
+              "ref": "ax-local/keycloak/README.md",
+              "digest": "28a0270e9083d9198071cc760f6abe7210f9c141723af28c052e7891cdace3dc"
+            },
+            {
+              "ref": "ax-local/keycloak/compose.yaml",
+              "digest": "c6480e9145831d3bfdde12fb795383f4baf21a8d314f6a08a8a959cb91a0e26a"
+            },
+            {
+              "ref": "ax-local/keycloak/manage.py",
+              "digest": "e74748f127e542db61c2ffa2baeeab6d4d716a57bec6509fc433cfc3109484dc"
+            },
+            {
+              "ref": "ax-local/keycloak/start.sh",
+              "digest": "25a0035c4462ab1df5456c2483c82f9165e5e3d6782b8c272dd6320b4461d37f"
+            },
+            {
+              "ref": "ax-local/keycloak/test_manage.py",
+              "digest": "0ec7416329c2703205f33e468897d8d1784e749fc6d9b34cfdab1919ab22deac"
+            },
+            {
+              "ref": "ax-local/keycloak/verify.py",
+              "digest": "98a4e6a69f9ed0fe3d8f3ab57762af41c9fd0a15892f198eea5059977b22ef7d"
+            },
+            {
+              "ref": "ax-local/keycloak/verify_storage.py",
+              "digest": "f65032d5594422d036bb9132c3e41794335a9d415c775759f2bb09f9943f3027"
+            },
+            {
+              "ref": "ax-local/task_cli.py",
+              "digest": "79c917078fd2d868bee543ddc919497ae485227e1a0f69c52d0f7f4195f7375e"
+            },
+            {
+              "ref": "ax-local/tests/test_chat.py",
+              "digest": "42775a691c3777b2a16b8297497cb3b9500379306f047ade15811444a38af0ce"
+            },
+            {
+              "ref": "ax-local/tests/test_ownership.py",
+              "digest": "2b7fd016d2f78870258c6fb93c2d1eb1ab8ce4361f579159b229cde78c369b9e"
+            },
+            {
+              "ref": "ax-local/tests/test_web_bridge.py",
+              "digest": "f68a021c3977a82482ea76e85062c0c5f3a224868dfdb2e2f8f624d8c7fa9884"
+            },
+            {
+              "ref": "ax-local/web_bridge.py",
+              "digest": "46580f0f1a1804d8c297830d4b15766d8aa4c7ddc1aa1b83614029221c014c95"
+            },
+            {
+              "ref": "docs/auth-foundation.md",
+              "digest": "1f2e3405249915f59f0468f81d98b91fa7408e7cb624f878cc41288d334fa4c4"
+            },
+            {
+              "ref": "docs/web-architecture.md",
+              "digest": "deb45ada7a4063e800a2f609339716f00e9d35fc3127b124d68bd202b240656e"
+            },
+            {
+              "ref": "web/README.md",
+              "digest": "3cf600432d7e50e36135e7d4168f1c1cda80449e1cab7d5f790ba8870bfb7855"
+            },
+            {
+              "ref": "web/api/app.ts",
+              "digest": "920aab86f9dee8868a7ecb05481e5d1b5f0d980aedf8f70db866ff58fa58b347"
+            },
+            {
+              "ref": "web/api/chat-service.ts",
+              "digest": "80e9585201af060678672ab193e1e939bce7d629f93cfcb68da586d1c7aa7b17"
+            },
+            {
+              "ref": "web/api/run-service.ts",
+              "digest": "8f04be41bfa9a8f434f09c4f68106aa43b028e5133d67d78bd935c6bf29d7e82"
+            },
+            {
+              "ref": "web/app/app.css",
+              "digest": "c32d540136727ac736237086c649538469576e9efcb9e692196887097712ffd0"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "9f371733d4ea8c958ce69cc46aa297af95d310171d6e05ccd42f9f60b189d6ea"
+            },
+            {
+              "ref": "web/app/lib/api.server.ts",
+              "digest": "2b7cad109dc8db1d2cb727b91a25eaa50cb07edcb75c18db66cea60ec2f8f733"
+            },
+            {
+              "ref": "web/app/lib/auth.server.ts",
+              "digest": "c9015afe845161a4d5415363875eddbc3b032df69ec4910746ba0164a0147000"
+            },
+            {
+              "ref": "web/app/lib/chats.server.ts",
+              "digest": "fd26a5674ac51b7cbf55717f33246744163d7d6ebe9db1d0c5dc65a153616551"
+            },
+            {
+              "ref": "web/app/lib/run-copy.ts",
+              "digest": "6b54ac0f4b3a023c1aa03957de4b796029ea1b60c255a00bf582dd4ddc3d623c"
+            },
+            {
+              "ref": "web/app/lib/runs.server.ts",
+              "digest": "ab53f178e1ad8c18f4c5924bbf1e578745d2578abed2ec3c4deade58bc136a78"
+            },
+            {
+              "ref": "web/app/routes.ts",
+              "digest": "aa816788614a0fc10d98bb67962ff1218c3d7b917b796be733193f979ea89726"
+            },
+            {
+              "ref": "web/app/routes/account.tsx",
+              "digest": "9896d51fa254594f8f43b0956265934955b701973e1beaa4e7642075a30642a5"
+            },
+            {
+              "ref": "web/app/routes/auth-callback.ts",
+              "digest": "ce3eb63b668f41ebb6c553af92a7ab9bbbaa76053911eb4f1865e69bc394b281"
+            },
+            {
+              "ref": "web/app/routes/chat.tsx",
+              "digest": "9a3e59d6f7bc1362afd797a56f02e32fa1598fd68f49172fa334d8650c08bede"
+            },
+            {
+              "ref": "web/app/routes/home.tsx",
+              "digest": "f366a02b402691bdea7f721897b080ff8096631478d856c23f5cdee7b5e7933d"
+            },
+            {
+              "ref": "web/app/routes/login.tsx",
+              "digest": "17ea8893e79dbd2a19b6816a1d97f758bda7d2795943eb78053eb7f98331a972"
+            },
+            {
+              "ref": "web/app/routes/run-artifact.ts",
+              "digest": "1c6df7650e85b1268df193bc3edb6dd05c6ccb8231a579a336469041fb3d38c7"
+            },
+            {
+              "ref": "web/app/routes/run-detail.tsx",
+              "digest": "d5a5cb47dce6026f5135e590bd03f0aaf97f3a41072222da26bf4fd47e34afea"
+            },
+            {
+              "ref": "web/app/routes/workspace.tsx",
+              "digest": "c77907a992b856a87de1cc4754f5aa744eeea038759ccd2bf4aaee6bf59b5599"
+            },
+            {
+              "ref": "web/package-lock.json",
+              "digest": "c46b6c7ff8cab197ad6950aa5dbc5711f357b92f54387eceae985ec7a354a3ca"
+            },
+            {
+              "ref": "web/package.json",
+              "digest": "8577d1a61ca927765a62be846afd0c9e293d870e77b9fdb193578491b05d7919"
+            },
+            {
+              "ref": "web/playwright.config.ts",
+              "digest": "179d2f640462510f7e5f64324303d0ede569a84cc0fd3cb6f404f1051bf105bf"
+            },
+            {
+              "ref": "web/scripts/auth-migrate.ts",
+              "digest": "d9850c0880eee66337a6483d566198577834cbc7e78548dbf1e286cf472bf1b9"
+            },
+            {
+              "ref": "web/scripts/run.ts",
+              "digest": "86562c89ac50153e1e92f5f6779f92cfaee8244d03599fd61462fde0517503e3"
+            },
+            {
+              "ref": "web/server/auth-config.ts",
+              "digest": "599c70fcd81abbbfe2c18770817d4bbd763d98b4fe1b3fd816f3600a85a309e9"
+            },
+            {
+              "ref": "web/server/auth-migrate.ts",
+              "digest": "7eee6499ecfdbd67c8edc9115258761bd0baa06d1c61b44627e56fe898c11d08"
+            },
+            {
+              "ref": "web/server/auth-schema.sql",
+              "digest": "1a967afdacb1db6ddde591db388aad1a3deb845ec1d376bb58ed870e7e41f2bf"
+            },
+            {
+              "ref": "web/server/auth-store.ts",
+              "digest": "6148ee2381e7cc4dfc5eff18019d9b3e9ee3d5d08b289053e57568c8e093ba16"
+            },
+            {
+              "ref": "web/server/auth.ts",
+              "digest": "44fd145e2164502c5504176b28fec562d2235a61018a8303923cacd41dba8a93"
+            },
+            {
+              "ref": "web/server/oidc.ts",
+              "digest": "a5848a2ea05b42499103975de22ad0242ac69167d6bb029aacb29997ce5e7598"
+            },
+            {
+              "ref": "web/server/serve.ts",
+              "digest": "d1d756b9deeae2c58b777ddc3d0e395ee9d110df7139b539b311d75e0b81adbc"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "fc11dd80d469fab2e5072a4d644b0490645bfdc0ad8a4db1ac31a16024fd56e7"
+            },
+            {
+              "ref": "web/tests/auth.test.ts",
+              "digest": "a770955685e4b0f84835e4933e851f105cadec8c2f903f7e6c0ff63d490fb393"
+            },
+            {
+              "ref": "web/tests/boundaries.test.ts",
+              "digest": "827109965bd9451785c675ea293c2bb5e24d4ccdf42e64248acbd56c940f1d7c"
+            },
+            {
+              "ref": "web/tests/browser/auth-helper.ts",
+              "digest": "e3b6a8c0e36d497b0a19de6fb2ba0ed2caac8002491462a61a81853ca1fc931f"
+            },
+            {
+              "ref": "web/tests/browser/auth.spec.ts",
+              "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+            },
+            {
+              "ref": "web/tests/browser/chat.spec.ts",
+              "digest": "8b22f23c2e2d2e64c5429d3b37dcd2fc5d017c0c636c7617bcba2cf774d8f8bf"
+            },
+            {
+              "ref": "web/tests/browser/lifecycle.spec.ts",
+              "digest": "b8a5c436944c21605f20090acbf8d0cda2e0bc6a3447efc55b5fc3724a63cb10"
+            },
+            {
+              "ref": "web/tests/browser/runs.spec.ts",
+              "digest": "08a88bd2191f2f5a07ed7f6f4c64c2f86a46386f9d8234b4fa353810149a36dc"
+            },
+            {
+              "ref": "web/tests/browser/serve.ts",
+              "digest": "5f443f5877579aa6c0e31ce09dbb4cc0c3e3d8235aa639838deeab21d76679b4"
+            },
+            {
+              "ref": "web/tests/browser/workspace.spec.ts",
+              "digest": "33ed61a2995f1a466a5917651ae0541bb191df3bd349d2fd4657af7eb085cc49"
+            },
+            {
+              "ref": "web/tests/chats.test.ts",
+              "digest": "60a9cf86b0b1065a838b0d53f4d62033708e8c0ded1604255559f83e4d1c537f"
+            },
+            {
+              "ref": "web/tests/helpers/api-auth.ts",
+              "digest": "76a5fb464cb57b56ff7cc64b2b54865bf058501bf1a302336b005a2deb2772ab"
+            },
+            {
+              "ref": "web/tests/helpers/oidc-fixture.ts",
+              "digest": "cd1a6a71bbd8da9637444b851b9346e91015142669810a3851fefd378bce328c"
+            },
+            {
+              "ref": "web/tests/prepare-auth.ts",
+              "digest": "b4b99db6aee96c3ccfa6298d42c5e841ef074b6acbd47eaf019a021aaa35e259"
+            },
+            {
+              "ref": "web/tests/runs.test.ts",
+              "digest": "c6cd70ee3b55d5b9d801a29bd0a5ca6f8750b1c2bf37591bc1ab7b52ea2a2768"
+            }
+          ],
+          "version": "0b49927952a21e8a43594dc9d3547dbdac0c0f2d19c6490d4731fa142a097d4a"
+        }
+      ],
+      "report": "認証実装・所有権・統合試験・独立レビューを完了しPR #12へ納品。実装コミットの全CI成功。物理認証器・本番公開・Entra/Cognitoは対象外。有料送信0。最終マージ状態はPRを参照",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-auth/verification.md",
+          "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/12",
+          "digest": null
+        }
+      ],
+      "children": [
+        {
+          "unit": "boundary",
+          "submission": "a577f8bd-4478-4854-badf-510e00086bce"
+        },
+        {
+          "unit": "python",
+          "submission": "f76ee860-c3dc-4002-aab0-fbda724f0a6e"
+        },
+        {
+          "unit": "keycloak",
+          "submission": "af6d802a-c566-400d-9332-b0cc7efa10e7"
+        },
+        {
+          "unit": "web-tests",
+          "submission": "4ad9f5da-16e2-4f05-a2c2-4fc2667fefd6"
+        },
+        {
+          "unit": "review-bff",
+          "submission": "e937ecf9-85e7-4e9a-aa70-25e02ebd611f"
+        },
+        {
+          "unit": "review-ownership",
+          "submission": "39bc51bb-1165-445f-bdcc-602eefd8d5e1"
+        },
+        {
+          "unit": "review-config",
+          "submission": "2d997541-f6ba-4ead-be12-eafd01863d90"
+        }
+      ],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "at": "2026-10-06T09:36:39.940Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "reason": "全子成果と統合条件を満たした実装のPR納品を受け入れ。最終記録のチェック後に承認済みマージを実施",
+        "at": "2026-10-06T09:36:40.006Z"
       }
     }
   ],
@@ -2275,6 +2944,58 @@
       "state": "processed",
       "resolution": "accepted: 独立構成レビューと親実行の結果により変更後版を受け入れ",
       "at": "2026-10-06T09:31:45.296Z"
+    },
+    {
+      "id": "fd224850-1e58-4d3c-9c7e-1b2caf87fdd7",
+      "unit": "web-tests",
+      "attempt": 3,
+      "from": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "試験対象は変わらず確認記録も有効。提出参照を確定した担当報告へ更新",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-auth/web-tests-verification.md",
+          "digest": "1472398d10f61ed879d9659a4a482a4fd1479410d4b8e4ef269d40fa9ff64776"
+        },
+        {
+          "ref": ".space/tasks/ax-auth/review-config.md",
+          "digest": "1ac0b1fc37c2139a2e5d48378d1e148aa1e2f6b89abd31b9d4745995039df896"
+        }
+      ],
+      "submission": "4ad9f5da-16e2-4f05-a2c2-4fc2667fefd6",
+      "state": "processed",
+      "resolution": "accepted: 対象の同一性、証拠とCI成功に照合して受け入れ",
+      "at": "2026-10-06T09:36:39.673Z"
+    },
+    {
+      "id": "63b46acd-00af-43df-a8dd-179fe2860b3f",
+      "unit": "auth",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "認証実装・所有権・統合試験・独立レビューを完了しPR #12へ納品。実装コミットの全CI成功。物理認証器・本番公開・Entra/Cognitoは対象外。有料送信0。最終マージ状態はPRを参照",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-auth/verification.md",
+          "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/12",
+          "digest": null
+        }
+      ],
+      "submission": "20504dd2-4c72-453d-8f0c-a9f383bdb074",
+      "state": "processed",
+      "resolution": "accepted: 全子成果と統合条件を満たした実装のPR納品を受け入れ。最終記録のチェック後に承認済みマージを実施",
+      "at": "2026-10-06T09:36:39.940Z"
     }
   ],
   "gates": [],
@@ -9189,6 +9910,2404 @@
         "at": "2026-10-06T09:35:59.416Z"
       },
       "at": "2026-10-06T09:35:59.416Z"
+    },
+    {
+      "id": "5938c45b-6b56-4f5d-9d58-fc899ec9a625",
+      "hash": "758e8be1f3d554e5f4035fb346afe4a4af0b253bbe25fbd0e7a0b6d343939e16",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit reopen",
+      "request": {
+        "command": "unit reopen",
+        "id": "web-tests",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "5938c45b-6b56-4f5d-9d58-fc899ec9a625",
+        "input": {
+          "reason": "親の統合検証記録へCI結果を追記したため提出参照を再照合。製品と試験は同一版"
+        },
+        "ifVersion": 14,
+        "attempt": 2
+      },
+      "affectedUnits": [
+        "web-tests"
+      ],
+      "evidence": [],
+      "revision": 61,
+      "data": {
+        "id": "web-tests",
+        "parent": "auth",
+        "size": "standard",
+        "purpose": "実PostgreSQLとfixture OIDCによるWeb認証の回帰検証",
+        "track": "",
+        "owner": {
+          "actor": "web-tests",
+          "session": "tests-auth"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/tests/",
+          ".github/workflows/web.yml"
+        ],
+        "taskRef": ".space/tasks/ax-auth/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "verified",
+            "description": "既存回帰と認証境界テストを実装・実行した",
+            "purpose": "assessment",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 15,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実PGとfixture OIDCを通した29単体/24browser及び修正後7browser確認",
+                "state": "completed",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実PGとfixture OIDCを通した29単体/24browser及び修正後7browser確認",
+                "state": "completed",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T08:49:22.130Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "completed",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "completed",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "構成レビューで試験設定保存先をauth-testへ分離したため再検証",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T09:31:45.031Z"
+          },
+          {
+            "number": 3,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "親の統合検証記録へCI結果を追記したため提出参照を再照合。製品と試験は同一版",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T09:36:39.412Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T09:36:39.412Z"
+    },
+    {
+      "id": "285e3249-e245-44a6-9c70-b4981a3a08e4",
+      "hash": "923a70eeabc5419aecb6981e409795d7e57e23eee95d8fa101c50d6268bceb91",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "web-tests",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "285e3249-e245-44a6-9c70-b4981a3a08e4",
+        "input": {},
+        "ifVersion": 15,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "web-tests"
+      ],
+      "evidence": [],
+      "revision": 62,
+      "data": {
+        "id": "web-tests",
+        "parent": "auth",
+        "size": "standard",
+        "purpose": "実PostgreSQLとfixture OIDCによるWeb認証の回帰検証",
+        "track": "",
+        "owner": {
+          "actor": "web-tests",
+          "session": "tests-auth"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/tests/",
+          ".github/workflows/web.yml"
+        ],
+        "taskRef": ".space/tasks/ax-auth/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "verified",
+            "description": "既存回帰と認証境界テストを実装・実行した",
+            "purpose": "assessment",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 16,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実PGとfixture OIDCを通した29単体/24browser及び修正後7browser確認",
+                "state": "completed",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実PGとfixture OIDCを通した29単体/24browser及び修正後7browser確認",
+                "state": "completed",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T08:49:22.130Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "completed",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "completed",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "構成レビューで試験設定保存先をauth-testへ分離したため再検証",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T09:31:45.031Z"
+          },
+          {
+            "number": 3,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "親の統合検証記録へCI結果を追記したため提出参照を再照合。製品と試験は同一版",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T09:36:39.412Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T09:36:39.464Z"
+    },
+    {
+      "id": "3400cfe1-2341-46c7-910c-8e517c17da83",
+      "hash": "c7df3c814197399a9510cce73c8505a5bd7dd06ec188947d3ac795801fd0110f",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "web-tests",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "3400cfe1-2341-46c7-910c-8e517c17da83",
+        "input": {
+          "selection": "execute",
+          "reason": "実装変更なし、既存29単体/24browserとCI全件成功の記録を照合",
+          "state": "completed"
+        },
+        "ifVersion": 16,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "web-tests"
+      ],
+      "evidence": [],
+      "revision": 63,
+      "data": {
+        "id": "web-tests",
+        "parent": "auth",
+        "size": "standard",
+        "purpose": "実PostgreSQLとfixture OIDCによるWeb認証の回帰検証",
+        "track": "",
+        "owner": {
+          "actor": "web-tests",
+          "session": "tests-auth"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/tests/",
+          ".github/workflows/web.yml"
+        ],
+        "taskRef": ".space/tasks/ax-auth/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "verified",
+            "description": "既存回帰と認証境界テストを実装・実行した",
+            "purpose": "assessment",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 17,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実PGとfixture OIDCを通した29単体/24browser及び修正後7browser確認",
+                "state": "completed",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実PGとfixture OIDCを通した29単体/24browser及び修正後7browser確認",
+                "state": "completed",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T08:49:22.130Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "completed",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "completed",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "構成レビューで試験設定保存先をauth-testへ分離したため再検証",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T09:31:45.031Z"
+          },
+          {
+            "number": 3,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装変更なし、既存29単体/24browserとCI全件成功の記録を照合",
+                "state": "completed",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "親の統合検証記録へCI結果を追記したため提出参照を再照合。製品と試験は同一版",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T09:36:39.412Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T09:36:39.514Z"
+    },
+    {
+      "id": "c976c477-bc24-41f6-a595-e26bcbb6990c",
+      "hash": "b11736b6186f863dcc724606e52e2f823db491a1546497360a13d952bc9566dc",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "web-tests",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "c976c477-bc24-41f6-a595-e26bcbb6990c",
+        "input": {
+          "selection": "execute",
+          "reason": "実装変更なし、既存29単体/24browserとCI全件成功の記録を照合",
+          "state": "completed"
+        },
+        "ifVersion": 17,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "web-tests"
+      ],
+      "evidence": [],
+      "revision": 64,
+      "data": {
+        "id": "web-tests",
+        "parent": "auth",
+        "size": "standard",
+        "purpose": "実PostgreSQLとfixture OIDCによるWeb認証の回帰検証",
+        "track": "",
+        "owner": {
+          "actor": "web-tests",
+          "session": "tests-auth"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/tests/",
+          ".github/workflows/web.yml"
+        ],
+        "taskRef": ".space/tasks/ax-auth/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "verified",
+            "description": "既存回帰と認証境界テストを実装・実行した",
+            "purpose": "assessment",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 18,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実PGとfixture OIDCを通した29単体/24browser及び修正後7browser確認",
+                "state": "completed",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実PGとfixture OIDCを通した29単体/24browser及び修正後7browser確認",
+                "state": "completed",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T08:49:22.130Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "completed",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "保存先2行修正。新規test configでNode29件/認証browser7件成功、既存24browser成功も変更影響を照合",
+                "state": "completed",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "構成レビューで試験設定保存先をauth-testへ分離したため再検証",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T09:31:45.031Z"
+          },
+          {
+            "number": 3,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装変更なし、既存29単体/24browserとCI全件成功の記録を照合",
+                "state": "completed",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実装変更なし、既存29単体/24browserとCI全件成功の記録を照合",
+                "state": "completed",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "親の統合検証記録へCI結果を追記したため提出参照を再照合。製品と試験は同一版",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T09:36:39.412Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T09:36:39.565Z"
+    },
+    {
+      "id": "02cb16b9-ff8b-4151-b1dc-a28d552a7d3d",
+      "hash": "828de22ffc7d5d47a108c0df725de653232ff9ee56bcb905959504c93119631a",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "web-tests",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "02cb16b9-ff8b-4151-b1dc-a28d552a7d3d",
+        "input": {
+          "condition": "verified",
+          "verdict": "pass",
+          "target": {
+            "id": "implementation",
+            "kind": "files",
+            "files": [
+              "web/tests/auth.test.ts",
+              "web/tests/runs.test.ts",
+              "web/tests/prepare-auth.ts",
+              "web/tests/boundaries.test.ts",
+              "web/tests/chats.test.ts",
+              "web/tests/browser/auth-helper.ts",
+              "web/tests/browser/auth.spec.ts",
+              "web/tests/browser/runs.spec.ts",
+              "web/tests/browser/workspace.spec.ts",
+              "web/tests/browser/serve.ts",
+              "web/tests/browser/chat.spec.ts",
+              "web/tests/browser/lifecycle.spec.ts",
+              "web/tests/helpers/api-auth.ts",
+              "web/tests/helpers/oidc-fixture.ts",
+              "web/playwright.config.ts",
+              ".github/workflows/web.yml"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-auth/web-tests-verification.md",
+            ".space/tasks/ax-auth/review-config.md"
+          ],
+          "method": "既存確認記録の対象・証拠が同一であることを照合。変更は親の納品記録のみで試験の前提は不変",
+          "environment": "Node 24.15.0 / PostgreSQL 18.4 / Chromium",
+          "observedAt": "2026-10-06T09:36:39.571543+00:00",
+          "performer": "/root",
+          "reusedFrom": "84c41b12-474a-4e31-9144-2bee07faba1a",
+          "reuseReason": "確認対象と証拠に変更なし。親の統合文書へのCI追記で提出参照だけが古くなったため"
+        },
+        "ifVersion": 18,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "web-tests"
+      ],
+      "evidence": [],
+      "revision": 65,
+      "data": {
+        "id": "e34e2dad-6ddb-4b9d-8b9d-30e4bb304fe7",
+        "unit": "web-tests",
+        "attempt": 3,
+        "condition": "verified",
+        "target": {
+          "id": "implementation",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".github/workflows/web.yml",
+              "digest": "a983a46224698ee27aa9732bedf06b603620e5703cc7975a79e35cd5db10680f"
+            },
+            {
+              "ref": "web/playwright.config.ts",
+              "digest": "179d2f640462510f7e5f64324303d0ede569a84cc0fd3cb6f404f1051bf105bf"
+            },
+            {
+              "ref": "web/tests/auth.test.ts",
+              "digest": "a770955685e4b0f84835e4933e851f105cadec8c2f903f7e6c0ff63d490fb393"
+            },
+            {
+              "ref": "web/tests/boundaries.test.ts",
+              "digest": "827109965bd9451785c675ea293c2bb5e24d4ccdf42e64248acbd56c940f1d7c"
+            },
+            {
+              "ref": "web/tests/browser/auth-helper.ts",
+              "digest": "e3b6a8c0e36d497b0a19de6fb2ba0ed2caac8002491462a61a81853ca1fc931f"
+            },
+            {
+              "ref": "web/tests/browser/auth.spec.ts",
+              "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+            },
+            {
+              "ref": "web/tests/browser/chat.spec.ts",
+              "digest": "8b22f23c2e2d2e64c5429d3b37dcd2fc5d017c0c636c7617bcba2cf774d8f8bf"
+            },
+            {
+              "ref": "web/tests/browser/lifecycle.spec.ts",
+              "digest": "b8a5c436944c21605f20090acbf8d0cda2e0bc6a3447efc55b5fc3724a63cb10"
+            },
+            {
+              "ref": "web/tests/browser/runs.spec.ts",
+              "digest": "08a88bd2191f2f5a07ed7f6f4c64c2f86a46386f9d8234b4fa353810149a36dc"
+            },
+            {
+              "ref": "web/tests/browser/serve.ts",
+              "digest": "5f443f5877579aa6c0e31ce09dbb4cc0c3e3d8235aa639838deeab21d76679b4"
+            },
+            {
+              "ref": "web/tests/browser/workspace.spec.ts",
+              "digest": "33ed61a2995f1a466a5917651ae0541bb191df3bd349d2fd4657af7eb085cc49"
+            },
+            {
+              "ref": "web/tests/chats.test.ts",
+              "digest": "60a9cf86b0b1065a838b0d53f4d62033708e8c0ded1604255559f83e4d1c537f"
+            },
+            {
+              "ref": "web/tests/helpers/api-auth.ts",
+              "digest": "76a5fb464cb57b56ff7cc64b2b54865bf058501bf1a302336b005a2deb2772ab"
+            },
+            {
+              "ref": "web/tests/helpers/oidc-fixture.ts",
+              "digest": "cd1a6a71bbd8da9637444b851b9346e91015142669810a3851fefd378bce328c"
+            },
+            {
+              "ref": "web/tests/prepare-auth.ts",
+              "digest": "b4b99db6aee96c3ccfa6298d42c5e841ef074b6acbd47eaf019a021aaa35e259"
+            },
+            {
+              "ref": "web/tests/runs.test.ts",
+              "digest": "c6cd70ee3b55d5b9d801a29bd0a5ca6f8750b1c2bf37591bc1ab7b52ea2a2768"
+            }
+          ],
+          "version": "0bc393accb64bd660ea27b7869a38cee89a91f668053f4fd2184ea726b6c004b"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-auth/web-tests-verification.md",
+            "digest": "1472398d10f61ed879d9659a4a482a4fd1479410d4b8e4ef269d40fa9ff64776"
+          },
+          {
+            "ref": ".space/tasks/ax-auth/review-config.md",
+            "digest": "1ac0b1fc37c2139a2e5d48378d1e148aa1e2f6b89abd31b9d4745995039df896"
+          }
+        ],
+        "reason": "",
+        "method": "既存確認記録の対象・証拠が同一であることを照合。変更は親の納品記録のみで試験の前提は不変",
+        "environment": "Node 24.15.0 / PostgreSQL 18.4 / Chromium",
+        "observedAt": "2026-10-06T09:36:39.571543+00:00",
+        "performer": "/root",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "supersedes": null,
+        "reusedFrom": "84c41b12-474a-4e31-9144-2bee07faba1a",
+        "reuseReason": "確認対象と証拠に変更なし。親の統合文書へのCI追記で提出参照だけが古くなったため",
+        "at": "2026-10-06T09:36:39.621Z"
+      },
+      "at": "2026-10-06T09:36:39.621Z"
+    },
+    {
+      "id": "4b9852bb-ffb5-43ec-8d9e-4990ae5440a9",
+      "hash": "ead42ae8a67ec003b67d722e24d3aa1d600adce988f1f675fcfa8d71e4f8ec08",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "web-tests",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "4b9852bb-ffb5-43ec-8d9e-4990ae5440a9",
+        "input": {
+          "checks": [
+            "e34e2dad-6ddb-4b9d-8b9d-30e4bb304fe7"
+          ],
+          "report": "試験対象は変わらず確認記録も有効。提出参照を確定した担当報告へ更新",
+          "refs": [
+            ".space/tasks/ax-auth/web-tests-verification.md",
+            ".space/tasks/ax-auth/review-config.md"
+          ]
+        },
+        "ifVersion": 19,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "web-tests"
+      ],
+      "evidence": [],
+      "revision": 66,
+      "data": {
+        "id": "4ad9f5da-16e2-4f05-a2c2-4fc2667fefd6",
+        "unit": "web-tests",
+        "attempt": 3,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "e34e2dad-6ddb-4b9d-8b9d-30e4bb304fe7"
+        ],
+        "outputs": [
+          {
+            "id": "implementation",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".github/workflows/web.yml",
+                "digest": "a983a46224698ee27aa9732bedf06b603620e5703cc7975a79e35cd5db10680f"
+              },
+              {
+                "ref": "web/playwright.config.ts",
+                "digest": "179d2f640462510f7e5f64324303d0ede569a84cc0fd3cb6f404f1051bf105bf"
+              },
+              {
+                "ref": "web/tests/auth.test.ts",
+                "digest": "a770955685e4b0f84835e4933e851f105cadec8c2f903f7e6c0ff63d490fb393"
+              },
+              {
+                "ref": "web/tests/boundaries.test.ts",
+                "digest": "827109965bd9451785c675ea293c2bb5e24d4ccdf42e64248acbd56c940f1d7c"
+              },
+              {
+                "ref": "web/tests/browser/auth-helper.ts",
+                "digest": "e3b6a8c0e36d497b0a19de6fb2ba0ed2caac8002491462a61a81853ca1fc931f"
+              },
+              {
+                "ref": "web/tests/browser/auth.spec.ts",
+                "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+              },
+              {
+                "ref": "web/tests/browser/chat.spec.ts",
+                "digest": "8b22f23c2e2d2e64c5429d3b37dcd2fc5d017c0c636c7617bcba2cf774d8f8bf"
+              },
+              {
+                "ref": "web/tests/browser/lifecycle.spec.ts",
+                "digest": "b8a5c436944c21605f20090acbf8d0cda2e0bc6a3447efc55b5fc3724a63cb10"
+              },
+              {
+                "ref": "web/tests/browser/runs.spec.ts",
+                "digest": "08a88bd2191f2f5a07ed7f6f4c64c2f86a46386f9d8234b4fa353810149a36dc"
+              },
+              {
+                "ref": "web/tests/browser/serve.ts",
+                "digest": "5f443f5877579aa6c0e31ce09dbb4cc0c3e3d8235aa639838deeab21d76679b4"
+              },
+              {
+                "ref": "web/tests/browser/workspace.spec.ts",
+                "digest": "33ed61a2995f1a466a5917651ae0541bb191df3bd349d2fd4657af7eb085cc49"
+              },
+              {
+                "ref": "web/tests/chats.test.ts",
+                "digest": "60a9cf86b0b1065a838b0d53f4d62033708e8c0ded1604255559f83e4d1c537f"
+              },
+              {
+                "ref": "web/tests/helpers/api-auth.ts",
+                "digest": "76a5fb464cb57b56ff7cc64b2b54865bf058501bf1a302336b005a2deb2772ab"
+              },
+              {
+                "ref": "web/tests/helpers/oidc-fixture.ts",
+                "digest": "cd1a6a71bbd8da9637444b851b9346e91015142669810a3851fefd378bce328c"
+              },
+              {
+                "ref": "web/tests/prepare-auth.ts",
+                "digest": "b4b99db6aee96c3ccfa6298d42c5e841ef074b6acbd47eaf019a021aaa35e259"
+              },
+              {
+                "ref": "web/tests/runs.test.ts",
+                "digest": "c6cd70ee3b55d5b9d801a29bd0a5ca6f8750b1c2bf37591bc1ab7b52ea2a2768"
+              }
+            ],
+            "version": "0bc393accb64bd660ea27b7869a38cee89a91f668053f4fd2184ea726b6c004b"
+          }
+        ],
+        "report": "試験対象は変わらず確認記録も有効。提出参照を確定した担当報告へ更新",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-auth/web-tests-verification.md",
+            "digest": "1472398d10f61ed879d9659a4a482a4fd1479410d4b8e4ef269d40fa9ff64776"
+          },
+          {
+            "ref": ".space/tasks/ax-auth/review-config.md",
+            "digest": "1ac0b1fc37c2139a2e5d48378d1e148aa1e2f6b89abd31b9d4745995039df896"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "at": "2026-10-06T09:36:39.673Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-06T09:36:39.673Z"
+    },
+    {
+      "id": "462fdaa2-a68b-4dbe-ac67-d992e7862c54",
+      "hash": "8d6e44bf5eb48cdc11633d81dbcb90463b24b437e03afe44069e5a4e9ac58c67",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "web-tests",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "462fdaa2-a68b-4dbe-ac67-d992e7862c54",
+        "input": {
+          "submission": "4ad9f5da-16e2-4f05-a2c2-4fc2667fefd6",
+          "reason": "対象の同一性、証拠とCI成功に照合して受け入れ"
+        },
+        "ifVersion": 20,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "web-tests"
+      ],
+      "evidence": [],
+      "revision": 67,
+      "data": {
+        "id": "4ad9f5da-16e2-4f05-a2c2-4fc2667fefd6",
+        "unit": "web-tests",
+        "attempt": 3,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "e34e2dad-6ddb-4b9d-8b9d-30e4bb304fe7"
+        ],
+        "outputs": [
+          {
+            "id": "implementation",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".github/workflows/web.yml",
+                "digest": "a983a46224698ee27aa9732bedf06b603620e5703cc7975a79e35cd5db10680f"
+              },
+              {
+                "ref": "web/playwright.config.ts",
+                "digest": "179d2f640462510f7e5f64324303d0ede569a84cc0fd3cb6f404f1051bf105bf"
+              },
+              {
+                "ref": "web/tests/auth.test.ts",
+                "digest": "a770955685e4b0f84835e4933e851f105cadec8c2f903f7e6c0ff63d490fb393"
+              },
+              {
+                "ref": "web/tests/boundaries.test.ts",
+                "digest": "827109965bd9451785c675ea293c2bb5e24d4ccdf42e64248acbd56c940f1d7c"
+              },
+              {
+                "ref": "web/tests/browser/auth-helper.ts",
+                "digest": "e3b6a8c0e36d497b0a19de6fb2ba0ed2caac8002491462a61a81853ca1fc931f"
+              },
+              {
+                "ref": "web/tests/browser/auth.spec.ts",
+                "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+              },
+              {
+                "ref": "web/tests/browser/chat.spec.ts",
+                "digest": "8b22f23c2e2d2e64c5429d3b37dcd2fc5d017c0c636c7617bcba2cf774d8f8bf"
+              },
+              {
+                "ref": "web/tests/browser/lifecycle.spec.ts",
+                "digest": "b8a5c436944c21605f20090acbf8d0cda2e0bc6a3447efc55b5fc3724a63cb10"
+              },
+              {
+                "ref": "web/tests/browser/runs.spec.ts",
+                "digest": "08a88bd2191f2f5a07ed7f6f4c64c2f86a46386f9d8234b4fa353810149a36dc"
+              },
+              {
+                "ref": "web/tests/browser/serve.ts",
+                "digest": "5f443f5877579aa6c0e31ce09dbb4cc0c3e3d8235aa639838deeab21d76679b4"
+              },
+              {
+                "ref": "web/tests/browser/workspace.spec.ts",
+                "digest": "33ed61a2995f1a466a5917651ae0541bb191df3bd349d2fd4657af7eb085cc49"
+              },
+              {
+                "ref": "web/tests/chats.test.ts",
+                "digest": "60a9cf86b0b1065a838b0d53f4d62033708e8c0ded1604255559f83e4d1c537f"
+              },
+              {
+                "ref": "web/tests/helpers/api-auth.ts",
+                "digest": "76a5fb464cb57b56ff7cc64b2b54865bf058501bf1a302336b005a2deb2772ab"
+              },
+              {
+                "ref": "web/tests/helpers/oidc-fixture.ts",
+                "digest": "cd1a6a71bbd8da9637444b851b9346e91015142669810a3851fefd378bce328c"
+              },
+              {
+                "ref": "web/tests/prepare-auth.ts",
+                "digest": "b4b99db6aee96c3ccfa6298d42c5e841ef074b6acbd47eaf019a021aaa35e259"
+              },
+              {
+                "ref": "web/tests/runs.test.ts",
+                "digest": "c6cd70ee3b55d5b9d801a29bd0a5ca6f8750b1c2bf37591bc1ab7b52ea2a2768"
+              }
+            ],
+            "version": "0bc393accb64bd660ea27b7869a38cee89a91f668053f4fd2184ea726b6c004b"
+          }
+        ],
+        "report": "試験対象は変わらず確認記録も有効。提出参照を確定した担当報告へ更新",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-auth/web-tests-verification.md",
+            "digest": "1472398d10f61ed879d9659a4a482a4fd1479410d4b8e4ef269d40fa9ff64776"
+          },
+          {
+            "ref": ".space/tasks/ax-auth/review-config.md",
+            "digest": "1ac0b1fc37c2139a2e5d48378d1e148aa1e2f6b89abd31b9d4745995039df896"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "at": "2026-10-06T09:36:39.673Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "auth-20261006"
+          },
+          "reason": "対象の同一性、証拠とCI成功に照合して受け入れ",
+          "at": "2026-10-06T09:36:39.727Z"
+        }
+      },
+      "at": "2026-10-06T09:36:39.727Z"
+    },
+    {
+      "id": "5b9c1d71-2397-481d-a999-e9e5998a732d",
+      "hash": "1649e52c025f1737f27cf54e9b7eb2bdc92201b1a82ee1bc36fee5d345be0c78",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "auth",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "5b9c1d71-2397-481d-a999-e9e5998a732d",
+        "input": {
+          "selection": "execute",
+          "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-auth/verification.md"
+          ]
+        },
+        "ifVersion": 7,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "auth"
+      ],
+      "evidence": [],
+      "revision": 68,
+      "data": {
+        "id": "auth",
+        "parent": null,
+        "size": "large",
+        "purpose": "メール・パスワードとパスキーの認証および会話所有者分離を実装して納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/",
+          "ax-local/",
+          "docs/",
+          ".space/tasks/ax-auth/",
+          ".space/babel/"
+        ],
+        "taskRef": ".space/tasks/ax-auth/task.md",
+        "planRef": ".space/tasks/ax-auth/implementation-plan.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "integrated",
+            "description": "実装・統合検証・独立レビュー・納品が成立した",
+            "purpose": "assessment",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 8,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "全担当の成果物、実統合検証、独立レビュー3件を親が照合",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "53d4b536820d056346146f4559805fcc6316698bb14c6bc0c8995c48ce21d932"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "全担当の成果物、実統合検証、独立レビュー3件を親が照合",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "53d4b536820d056346146f4559805fcc6316698bb14c6bc0c8995c48ce21d932"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "成果物をPR #12として納品し実装コミットのGitHub全検証成功。最終記録後のマージ結果はPR状態を正本とする",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+                  },
+                  {
+                    "ref": "https://github.com/sori883/agent-workspace/pull/12",
+                    "digest": null
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T08:44:13.684Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T09:36:39.782Z"
+    },
+    {
+      "id": "44197bdd-9c32-4db3-83b5-abb0300189d2",
+      "hash": "ee20776be44d1f72fc0552c055c432ce629da68a435c9ef942e1ee8ba32d453b",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "auth",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "44197bdd-9c32-4db3-83b5-abb0300189d2",
+        "input": {
+          "selection": "execute",
+          "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-auth/verification.md"
+          ]
+        },
+        "ifVersion": 8,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "auth"
+      ],
+      "evidence": [],
+      "revision": 69,
+      "data": {
+        "id": "auth",
+        "parent": null,
+        "size": "large",
+        "purpose": "メール・パスワードとパスキーの認証および会話所有者分離を実装して納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/",
+          "ax-local/",
+          "docs/",
+          ".space/tasks/ax-auth/",
+          ".space/babel/"
+        ],
+        "taskRef": ".space/tasks/ax-auth/task.md",
+        "planRef": ".space/tasks/ax-auth/implementation-plan.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "integrated",
+            "description": "実装・統合検証・独立レビュー・納品が成立した",
+            "purpose": "assessment",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 9,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "全担当の成果物、実統合検証、独立レビュー3件を親が照合",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "53d4b536820d056346146f4559805fcc6316698bb14c6bc0c8995c48ce21d932"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "成果物をPR #12として納品し実装コミットのGitHub全検証成功。最終記録後のマージ結果はPR状態を正本とする",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+                  },
+                  {
+                    "ref": "https://github.com/sori883/agent-workspace/pull/12",
+                    "digest": null
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T08:44:13.684Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T09:36:39.833Z"
+    },
+    {
+      "id": "234e39ac-7759-47a2-af48-0dbdaaafe328",
+      "hash": "44dcb19163c0b872e50f45a6daec57c50d2c9d80b26d6c1e5454095facff14db",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "auth",
+        "stage": "review",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "234e39ac-7759-47a2-af48-0dbdaaafe328",
+        "input": {
+          "selection": "execute",
+          "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-auth/verification.md"
+          ]
+        },
+        "ifVersion": 9,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "auth"
+      ],
+      "evidence": [],
+      "revision": 70,
+      "data": {
+        "id": "auth",
+        "parent": null,
+        "size": "large",
+        "purpose": "メール・パスワードとパスキーの認証および会話所有者分離を実装して納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/",
+          "ax-local/",
+          "docs/",
+          ".space/tasks/ax-auth/",
+          ".space/babel/"
+        ],
+        "taskRef": ".space/tasks/ax-auth/task.md",
+        "planRef": ".space/tasks/ax-auth/implementation-plan.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "integrated",
+            "description": "実装・統合検証・独立レビュー・納品が成立した",
+            "purpose": "assessment",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 10,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "実装・試験・レビュー結果は不変。CI追記済み統合記録へ参照を更新",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "成果物をPR #12として納品し実装コミットのGitHub全検証成功。最終記録後のマージ結果はPR状態を正本とする",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-auth/verification.md",
+                    "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+                  },
+                  {
+                    "ref": "https://github.com/sori883/agent-workspace/pull/12",
+                    "digest": null
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-06T08:44:13.684Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-06T09:36:39.884Z"
+    },
+    {
+      "id": "cb81f0af-09c2-4985-a57b-3238fc89f28f",
+      "hash": "d68453278a4bca72979f615fcae31cd7b5c7e35c576829e4adb004b0de9fbd74",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "auth",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "cb81f0af-09c2-4985-a57b-3238fc89f28f",
+        "input": {
+          "checks": [
+            "c9ec0fca-4b30-4e32-aeef-a6296d950404"
+          ],
+          "report": "認証実装・所有権・統合試験・独立レビューを完了しPR #12へ納品。実装コミットの全CI成功。物理認証器・本番公開・Entra/Cognitoは対象外。有料送信0。最終マージ状態はPRを参照",
+          "refs": [
+            ".space/tasks/ax-auth/verification.md",
+            "https://github.com/sori883/agent-workspace/pull/12"
+          ]
+        },
+        "ifVersion": 10,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "auth"
+      ],
+      "evidence": [],
+      "revision": 71,
+      "data": {
+        "id": "20504dd2-4c72-453d-8f0c-a9f383bdb074",
+        "unit": "auth",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "c9ec0fca-4b30-4e32-aeef-a6296d950404"
+        ],
+        "outputs": [
+          {
+            "id": "implementation",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".github/workflows/ax-local.yml",
+                "digest": "3955a14c4ec95013b956cecab32c251d737dec5092265a94334747cf9bdfb806"
+              },
+              {
+                "ref": ".github/workflows/web.yml",
+                "digest": "a983a46224698ee27aa9732bedf06b603620e5703cc7975a79e35cd5db10680f"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/auth-foundation.md",
+                "digest": "f85cfd87bcefd20e56e5d37fc7ccf63eceee43b153f9f66cc99c27e7839c0bfe"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/index.md",
+                "digest": "7c56ce1a067edc1bffd2a6ec17694b016c6f7be3a1a034086e39d8cc3c44841f"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+                "digest": "442788ddab0458827018a76031e1d40d1c643f8f634076c5d46cc6c843a4a440"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-local-kind-environment.md",
+                "digest": "414c3d60d0d80daf32ecbf39c9ab928a254a7affffd669bb54b9ab0765ce3853"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-web-foundation.md",
+                "digest": "ee7497e4152bdc612b9fc54f8c907e50fb71c6317a82647b691abfca98008730"
+              },
+              {
+                "ref": ".space/babel/knowledge/index.md",
+                "digest": "5e9915344fae4b374117f77d3ec36970490961de08464a7ba883c71e5daf09a0"
+              },
+              {
+                "ref": ".space/babel/log.md",
+                "digest": "24b62d29622880c83dacf1d14520a760e62cb7d57c51e5d6a47aea1683c7fa8c"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/boundary-review.md",
+                "digest": "e9551c31d46c9ae7f3497ae0c1e9f0ca45e584d4ec81ab0a8fe04aa6fa13f5e2"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/account.png",
+                "digest": "68705cc1516aff6efc525e7fcfd7254dcf745c250681ab2b3cec21a4f298b403"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/app-restore.json",
+                "digest": "00187908485e4d6120f30bf6d2d8a3783ecdd7f52591e7a66080bd954c30d9c6"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/login.png",
+                "digest": "7c759f9e8fab0f0833dba96e0de2c3bdefba448e5c4c7703344257e4c9402255"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/passkey-and-logout.json",
+                "digest": "90c4d714ccdcf54d998c90d7b07fcec9a36bc3c694de4ae4844994b74d628004"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/real-ownership.json",
+                "digest": "83705b2548e9ddc554f1a945e0483dad53c4515930c01088de7caa145132f221"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/web-restart.json",
+                "digest": "f2d02474b90664be17782afc518d487dc33a9f41819cd3ab47fde0ec25bad067"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/implementation-plan.md",
+                "digest": "c0160ad827eb3ed7fc5a4d9699f60d2b65d4b47207989b1af90b34b9e9a16dd8"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/keycloak-verification.md",
+                "digest": "34a6fdbf6e0d8aab53224519cc9c9fc85f1889e17977c39ab902b6d505d886e5"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/python-verification.md",
+                "digest": "4beeb4560128c24007a2985def3aa48563709a70953d77309ab45710558d823a"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/review-bff.md",
+                "digest": "dc8e738af8fb7438939f9db09e12df03ef006babbcbfdb9069b9c4cbabadab48"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/review-config.md",
+                "digest": "1ac0b1fc37c2139a2e5d48378d1e148aa1e2f6b89abd31b9d4745995039df896"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/review-ownership.md",
+                "digest": "708623faab2729d0c48a751e6e8499de982849189931558359fc2b79a04009ce"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/verification.md",
+                "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/web-tests-verification.md",
+                "digest": "1472398d10f61ed879d9659a4a482a4fd1479410d4b8e4ef269d40fa9ff64776"
+              },
+              {
+                "ref": "ax-local/chat.py",
+                "digest": "d58e11b9873fe6df6814e0a3fa3d17d32a128d597dfe27ff5f923ca9106cec19"
+              },
+              {
+                "ref": "ax-local/keycloak/README.md",
+                "digest": "28a0270e9083d9198071cc760f6abe7210f9c141723af28c052e7891cdace3dc"
+              },
+              {
+                "ref": "ax-local/keycloak/compose.yaml",
+                "digest": "c6480e9145831d3bfdde12fb795383f4baf21a8d314f6a08a8a959cb91a0e26a"
+              },
+              {
+                "ref": "ax-local/keycloak/manage.py",
+                "digest": "e74748f127e542db61c2ffa2baeeab6d4d716a57bec6509fc433cfc3109484dc"
+              },
+              {
+                "ref": "ax-local/keycloak/start.sh",
+                "digest": "25a0035c4462ab1df5456c2483c82f9165e5e3d6782b8c272dd6320b4461d37f"
+              },
+              {
+                "ref": "ax-local/keycloak/test_manage.py",
+                "digest": "0ec7416329c2703205f33e468897d8d1784e749fc6d9b34cfdab1919ab22deac"
+              },
+              {
+                "ref": "ax-local/keycloak/verify.py",
+                "digest": "98a4e6a69f9ed0fe3d8f3ab57762af41c9fd0a15892f198eea5059977b22ef7d"
+              },
+              {
+                "ref": "ax-local/keycloak/verify_storage.py",
+                "digest": "f65032d5594422d036bb9132c3e41794335a9d415c775759f2bb09f9943f3027"
+              },
+              {
+                "ref": "ax-local/task_cli.py",
+                "digest": "79c917078fd2d868bee543ddc919497ae485227e1a0f69c52d0f7f4195f7375e"
+              },
+              {
+                "ref": "ax-local/tests/test_chat.py",
+                "digest": "42775a691c3777b2a16b8297497cb3b9500379306f047ade15811444a38af0ce"
+              },
+              {
+                "ref": "ax-local/tests/test_ownership.py",
+                "digest": "2b7fd016d2f78870258c6fb93c2d1eb1ab8ce4361f579159b229cde78c369b9e"
+              },
+              {
+                "ref": "ax-local/tests/test_web_bridge.py",
+                "digest": "f68a021c3977a82482ea76e85062c0c5f3a224868dfdb2e2f8f624d8c7fa9884"
+              },
+              {
+                "ref": "ax-local/web_bridge.py",
+                "digest": "46580f0f1a1804d8c297830d4b15766d8aa4c7ddc1aa1b83614029221c014c95"
+              },
+              {
+                "ref": "docs/auth-foundation.md",
+                "digest": "1f2e3405249915f59f0468f81d98b91fa7408e7cb624f878cc41288d334fa4c4"
+              },
+              {
+                "ref": "docs/web-architecture.md",
+                "digest": "deb45ada7a4063e800a2f609339716f00e9d35fc3127b124d68bd202b240656e"
+              },
+              {
+                "ref": "web/README.md",
+                "digest": "3cf600432d7e50e36135e7d4168f1c1cda80449e1cab7d5f790ba8870bfb7855"
+              },
+              {
+                "ref": "web/api/app.ts",
+                "digest": "920aab86f9dee8868a7ecb05481e5d1b5f0d980aedf8f70db866ff58fa58b347"
+              },
+              {
+                "ref": "web/api/chat-service.ts",
+                "digest": "80e9585201af060678672ab193e1e939bce7d629f93cfcb68da586d1c7aa7b17"
+              },
+              {
+                "ref": "web/api/run-service.ts",
+                "digest": "8f04be41bfa9a8f434f09c4f68106aa43b028e5133d67d78bd935c6bf29d7e82"
+              },
+              {
+                "ref": "web/app/app.css",
+                "digest": "c32d540136727ac736237086c649538469576e9efcb9e692196887097712ffd0"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "9f371733d4ea8c958ce69cc46aa297af95d310171d6e05ccd42f9f60b189d6ea"
+              },
+              {
+                "ref": "web/app/lib/api.server.ts",
+                "digest": "2b7cad109dc8db1d2cb727b91a25eaa50cb07edcb75c18db66cea60ec2f8f733"
+              },
+              {
+                "ref": "web/app/lib/auth.server.ts",
+                "digest": "c9015afe845161a4d5415363875eddbc3b032df69ec4910746ba0164a0147000"
+              },
+              {
+                "ref": "web/app/lib/chats.server.ts",
+                "digest": "fd26a5674ac51b7cbf55717f33246744163d7d6ebe9db1d0c5dc65a153616551"
+              },
+              {
+                "ref": "web/app/lib/run-copy.ts",
+                "digest": "6b54ac0f4b3a023c1aa03957de4b796029ea1b60c255a00bf582dd4ddc3d623c"
+              },
+              {
+                "ref": "web/app/lib/runs.server.ts",
+                "digest": "ab53f178e1ad8c18f4c5924bbf1e578745d2578abed2ec3c4deade58bc136a78"
+              },
+              {
+                "ref": "web/app/routes.ts",
+                "digest": "aa816788614a0fc10d98bb67962ff1218c3d7b917b796be733193f979ea89726"
+              },
+              {
+                "ref": "web/app/routes/account.tsx",
+                "digest": "9896d51fa254594f8f43b0956265934955b701973e1beaa4e7642075a30642a5"
+              },
+              {
+                "ref": "web/app/routes/auth-callback.ts",
+                "digest": "ce3eb63b668f41ebb6c553af92a7ab9bbbaa76053911eb4f1865e69bc394b281"
+              },
+              {
+                "ref": "web/app/routes/chat.tsx",
+                "digest": "9a3e59d6f7bc1362afd797a56f02e32fa1598fd68f49172fa334d8650c08bede"
+              },
+              {
+                "ref": "web/app/routes/home.tsx",
+                "digest": "f366a02b402691bdea7f721897b080ff8096631478d856c23f5cdee7b5e7933d"
+              },
+              {
+                "ref": "web/app/routes/login.tsx",
+                "digest": "17ea8893e79dbd2a19b6816a1d97f758bda7d2795943eb78053eb7f98331a972"
+              },
+              {
+                "ref": "web/app/routes/run-artifact.ts",
+                "digest": "1c6df7650e85b1268df193bc3edb6dd05c6ccb8231a579a336469041fb3d38c7"
+              },
+              {
+                "ref": "web/app/routes/run-detail.tsx",
+                "digest": "d5a5cb47dce6026f5135e590bd03f0aaf97f3a41072222da26bf4fd47e34afea"
+              },
+              {
+                "ref": "web/app/routes/workspace.tsx",
+                "digest": "c77907a992b856a87de1cc4754f5aa744eeea038759ccd2bf4aaee6bf59b5599"
+              },
+              {
+                "ref": "web/package-lock.json",
+                "digest": "c46b6c7ff8cab197ad6950aa5dbc5711f357b92f54387eceae985ec7a354a3ca"
+              },
+              {
+                "ref": "web/package.json",
+                "digest": "8577d1a61ca927765a62be846afd0c9e293d870e77b9fdb193578491b05d7919"
+              },
+              {
+                "ref": "web/playwright.config.ts",
+                "digest": "179d2f640462510f7e5f64324303d0ede569a84cc0fd3cb6f404f1051bf105bf"
+              },
+              {
+                "ref": "web/scripts/auth-migrate.ts",
+                "digest": "d9850c0880eee66337a6483d566198577834cbc7e78548dbf1e286cf472bf1b9"
+              },
+              {
+                "ref": "web/scripts/run.ts",
+                "digest": "86562c89ac50153e1e92f5f6779f92cfaee8244d03599fd61462fde0517503e3"
+              },
+              {
+                "ref": "web/server/auth-config.ts",
+                "digest": "599c70fcd81abbbfe2c18770817d4bbd763d98b4fe1b3fd816f3600a85a309e9"
+              },
+              {
+                "ref": "web/server/auth-migrate.ts",
+                "digest": "7eee6499ecfdbd67c8edc9115258761bd0baa06d1c61b44627e56fe898c11d08"
+              },
+              {
+                "ref": "web/server/auth-schema.sql",
+                "digest": "1a967afdacb1db6ddde591db388aad1a3deb845ec1d376bb58ed870e7e41f2bf"
+              },
+              {
+                "ref": "web/server/auth-store.ts",
+                "digest": "6148ee2381e7cc4dfc5eff18019d9b3e9ee3d5d08b289053e57568c8e093ba16"
+              },
+              {
+                "ref": "web/server/auth.ts",
+                "digest": "44fd145e2164502c5504176b28fec562d2235a61018a8303923cacd41dba8a93"
+              },
+              {
+                "ref": "web/server/oidc.ts",
+                "digest": "a5848a2ea05b42499103975de22ad0242ac69167d6bb029aacb29997ce5e7598"
+              },
+              {
+                "ref": "web/server/serve.ts",
+                "digest": "d1d756b9deeae2c58b777ddc3d0e395ee9d110df7139b539b311d75e0b81adbc"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "fc11dd80d469fab2e5072a4d644b0490645bfdc0ad8a4db1ac31a16024fd56e7"
+              },
+              {
+                "ref": "web/tests/auth.test.ts",
+                "digest": "a770955685e4b0f84835e4933e851f105cadec8c2f903f7e6c0ff63d490fb393"
+              },
+              {
+                "ref": "web/tests/boundaries.test.ts",
+                "digest": "827109965bd9451785c675ea293c2bb5e24d4ccdf42e64248acbd56c940f1d7c"
+              },
+              {
+                "ref": "web/tests/browser/auth-helper.ts",
+                "digest": "e3b6a8c0e36d497b0a19de6fb2ba0ed2caac8002491462a61a81853ca1fc931f"
+              },
+              {
+                "ref": "web/tests/browser/auth.spec.ts",
+                "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+              },
+              {
+                "ref": "web/tests/browser/chat.spec.ts",
+                "digest": "8b22f23c2e2d2e64c5429d3b37dcd2fc5d017c0c636c7617bcba2cf774d8f8bf"
+              },
+              {
+                "ref": "web/tests/browser/lifecycle.spec.ts",
+                "digest": "b8a5c436944c21605f20090acbf8d0cda2e0bc6a3447efc55b5fc3724a63cb10"
+              },
+              {
+                "ref": "web/tests/browser/runs.spec.ts",
+                "digest": "08a88bd2191f2f5a07ed7f6f4c64c2f86a46386f9d8234b4fa353810149a36dc"
+              },
+              {
+                "ref": "web/tests/browser/serve.ts",
+                "digest": "5f443f5877579aa6c0e31ce09dbb4cc0c3e3d8235aa639838deeab21d76679b4"
+              },
+              {
+                "ref": "web/tests/browser/workspace.spec.ts",
+                "digest": "33ed61a2995f1a466a5917651ae0541bb191df3bd349d2fd4657af7eb085cc49"
+              },
+              {
+                "ref": "web/tests/chats.test.ts",
+                "digest": "60a9cf86b0b1065a838b0d53f4d62033708e8c0ded1604255559f83e4d1c537f"
+              },
+              {
+                "ref": "web/tests/helpers/api-auth.ts",
+                "digest": "76a5fb464cb57b56ff7cc64b2b54865bf058501bf1a302336b005a2deb2772ab"
+              },
+              {
+                "ref": "web/tests/helpers/oidc-fixture.ts",
+                "digest": "cd1a6a71bbd8da9637444b851b9346e91015142669810a3851fefd378bce328c"
+              },
+              {
+                "ref": "web/tests/prepare-auth.ts",
+                "digest": "b4b99db6aee96c3ccfa6298d42c5e841ef074b6acbd47eaf019a021aaa35e259"
+              },
+              {
+                "ref": "web/tests/runs.test.ts",
+                "digest": "c6cd70ee3b55d5b9d801a29bd0a5ca6f8750b1c2bf37591bc1ab7b52ea2a2768"
+              }
+            ],
+            "version": "0b49927952a21e8a43594dc9d3547dbdac0c0f2d19c6490d4731fa142a097d4a"
+          }
+        ],
+        "report": "認証実装・所有権・統合試験・独立レビューを完了しPR #12へ納品。実装コミットの全CI成功。物理認証器・本番公開・Entra/Cognitoは対象外。有料送信0。最終マージ状態はPRを参照",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-auth/verification.md",
+            "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/12",
+            "digest": null
+          }
+        ],
+        "children": [
+          {
+            "unit": "boundary",
+            "submission": "a577f8bd-4478-4854-badf-510e00086bce"
+          },
+          {
+            "unit": "python",
+            "submission": "f76ee860-c3dc-4002-aab0-fbda724f0a6e"
+          },
+          {
+            "unit": "keycloak",
+            "submission": "af6d802a-c566-400d-9332-b0cc7efa10e7"
+          },
+          {
+            "unit": "web-tests",
+            "submission": "4ad9f5da-16e2-4f05-a2c2-4fc2667fefd6"
+          },
+          {
+            "unit": "review-bff",
+            "submission": "e937ecf9-85e7-4e9a-aa70-25e02ebd611f"
+          },
+          {
+            "unit": "review-ownership",
+            "submission": "39bc51bb-1165-445f-bdcc-602eefd8d5e1"
+          },
+          {
+            "unit": "review-config",
+            "submission": "2d997541-f6ba-4ead-be12-eafd01863d90"
+          }
+        ],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "at": "2026-10-06T09:36:39.940Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-06T09:36:39.940Z"
+    },
+    {
+      "id": "a61f2e31-3d03-4070-9299-525d773638a7",
+      "hash": "11c5f36a2206e88b14ee33f250678215ee3b8c15bb156a2322fbe520643720bb",
+      "actor": {
+        "actor": "parent",
+        "session": "auth-20261006"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "auth",
+        "actor": "parent",
+        "session": "auth-20261006",
+        "operationId": "a61f2e31-3d03-4070-9299-525d773638a7",
+        "input": {
+          "submission": "20504dd2-4c72-453d-8f0c-a9f383bdb074",
+          "reason": "全子成果と統合条件を満たした実装のPR納品を受け入れ。最終記録のチェック後に承認済みマージを実施"
+        },
+        "ifVersion": 11,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "auth"
+      ],
+      "evidence": [],
+      "revision": 72,
+      "data": {
+        "id": "20504dd2-4c72-453d-8f0c-a9f383bdb074",
+        "unit": "auth",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "c9ec0fca-4b30-4e32-aeef-a6296d950404"
+        ],
+        "outputs": [
+          {
+            "id": "implementation",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".github/workflows/ax-local.yml",
+                "digest": "3955a14c4ec95013b956cecab32c251d737dec5092265a94334747cf9bdfb806"
+              },
+              {
+                "ref": ".github/workflows/web.yml",
+                "digest": "a983a46224698ee27aa9732bedf06b603620e5703cc7975a79e35cd5db10680f"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/auth-foundation.md",
+                "digest": "f85cfd87bcefd20e56e5d37fc7ccf63eceee43b153f9f66cc99c27e7839c0bfe"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/index.md",
+                "digest": "7c56ce1a067edc1bffd2a6ec17694b016c6f7be3a1a034086e39d8cc3c44841f"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+                "digest": "442788ddab0458827018a76031e1d40d1c643f8f634076c5d46cc6c843a4a440"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-local-kind-environment.md",
+                "digest": "414c3d60d0d80daf32ecbf39c9ab928a254a7affffd669bb54b9ab0765ce3853"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-web-foundation.md",
+                "digest": "ee7497e4152bdc612b9fc54f8c907e50fb71c6317a82647b691abfca98008730"
+              },
+              {
+                "ref": ".space/babel/knowledge/index.md",
+                "digest": "5e9915344fae4b374117f77d3ec36970490961de08464a7ba883c71e5daf09a0"
+              },
+              {
+                "ref": ".space/babel/log.md",
+                "digest": "24b62d29622880c83dacf1d14520a760e62cb7d57c51e5d6a47aea1683c7fa8c"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/boundary-review.md",
+                "digest": "e9551c31d46c9ae7f3497ae0c1e9f0ca45e584d4ec81ab0a8fe04aa6fa13f5e2"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/account.png",
+                "digest": "68705cc1516aff6efc525e7fcfd7254dcf745c250681ab2b3cec21a4f298b403"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/app-restore.json",
+                "digest": "00187908485e4d6120f30bf6d2d8a3783ecdd7f52591e7a66080bd954c30d9c6"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/login.png",
+                "digest": "7c759f9e8fab0f0833dba96e0de2c3bdefba448e5c4c7703344257e4c9402255"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/passkey-and-logout.json",
+                "digest": "90c4d714ccdcf54d998c90d7b07fcec9a36bc3c694de4ae4844994b74d628004"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/real-ownership.json",
+                "digest": "83705b2548e9ddc554f1a945e0483dad53c4515930c01088de7caa145132f221"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/evidence/web-restart.json",
+                "digest": "f2d02474b90664be17782afc518d487dc33a9f41819cd3ab47fde0ec25bad067"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/implementation-plan.md",
+                "digest": "c0160ad827eb3ed7fc5a4d9699f60d2b65d4b47207989b1af90b34b9e9a16dd8"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/keycloak-verification.md",
+                "digest": "34a6fdbf6e0d8aab53224519cc9c9fc85f1889e17977c39ab902b6d505d886e5"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/python-verification.md",
+                "digest": "4beeb4560128c24007a2985def3aa48563709a70953d77309ab45710558d823a"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/review-bff.md",
+                "digest": "dc8e738af8fb7438939f9db09e12df03ef006babbcbfdb9069b9c4cbabadab48"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/review-config.md",
+                "digest": "1ac0b1fc37c2139a2e5d48378d1e148aa1e2f6b89abd31b9d4745995039df896"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/review-ownership.md",
+                "digest": "708623faab2729d0c48a751e6e8499de982849189931558359fc2b79a04009ce"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/verification.md",
+                "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+              },
+              {
+                "ref": ".space/tasks/ax-auth/web-tests-verification.md",
+                "digest": "1472398d10f61ed879d9659a4a482a4fd1479410d4b8e4ef269d40fa9ff64776"
+              },
+              {
+                "ref": "ax-local/chat.py",
+                "digest": "d58e11b9873fe6df6814e0a3fa3d17d32a128d597dfe27ff5f923ca9106cec19"
+              },
+              {
+                "ref": "ax-local/keycloak/README.md",
+                "digest": "28a0270e9083d9198071cc760f6abe7210f9c141723af28c052e7891cdace3dc"
+              },
+              {
+                "ref": "ax-local/keycloak/compose.yaml",
+                "digest": "c6480e9145831d3bfdde12fb795383f4baf21a8d314f6a08a8a959cb91a0e26a"
+              },
+              {
+                "ref": "ax-local/keycloak/manage.py",
+                "digest": "e74748f127e542db61c2ffa2baeeab6d4d716a57bec6509fc433cfc3109484dc"
+              },
+              {
+                "ref": "ax-local/keycloak/start.sh",
+                "digest": "25a0035c4462ab1df5456c2483c82f9165e5e3d6782b8c272dd6320b4461d37f"
+              },
+              {
+                "ref": "ax-local/keycloak/test_manage.py",
+                "digest": "0ec7416329c2703205f33e468897d8d1784e749fc6d9b34cfdab1919ab22deac"
+              },
+              {
+                "ref": "ax-local/keycloak/verify.py",
+                "digest": "98a4e6a69f9ed0fe3d8f3ab57762af41c9fd0a15892f198eea5059977b22ef7d"
+              },
+              {
+                "ref": "ax-local/keycloak/verify_storage.py",
+                "digest": "f65032d5594422d036bb9132c3e41794335a9d415c775759f2bb09f9943f3027"
+              },
+              {
+                "ref": "ax-local/task_cli.py",
+                "digest": "79c917078fd2d868bee543ddc919497ae485227e1a0f69c52d0f7f4195f7375e"
+              },
+              {
+                "ref": "ax-local/tests/test_chat.py",
+                "digest": "42775a691c3777b2a16b8297497cb3b9500379306f047ade15811444a38af0ce"
+              },
+              {
+                "ref": "ax-local/tests/test_ownership.py",
+                "digest": "2b7fd016d2f78870258c6fb93c2d1eb1ab8ce4361f579159b229cde78c369b9e"
+              },
+              {
+                "ref": "ax-local/tests/test_web_bridge.py",
+                "digest": "f68a021c3977a82482ea76e85062c0c5f3a224868dfdb2e2f8f624d8c7fa9884"
+              },
+              {
+                "ref": "ax-local/web_bridge.py",
+                "digest": "46580f0f1a1804d8c297830d4b15766d8aa4c7ddc1aa1b83614029221c014c95"
+              },
+              {
+                "ref": "docs/auth-foundation.md",
+                "digest": "1f2e3405249915f59f0468f81d98b91fa7408e7cb624f878cc41288d334fa4c4"
+              },
+              {
+                "ref": "docs/web-architecture.md",
+                "digest": "deb45ada7a4063e800a2f609339716f00e9d35fc3127b124d68bd202b240656e"
+              },
+              {
+                "ref": "web/README.md",
+                "digest": "3cf600432d7e50e36135e7d4168f1c1cda80449e1cab7d5f790ba8870bfb7855"
+              },
+              {
+                "ref": "web/api/app.ts",
+                "digest": "920aab86f9dee8868a7ecb05481e5d1b5f0d980aedf8f70db866ff58fa58b347"
+              },
+              {
+                "ref": "web/api/chat-service.ts",
+                "digest": "80e9585201af060678672ab193e1e939bce7d629f93cfcb68da586d1c7aa7b17"
+              },
+              {
+                "ref": "web/api/run-service.ts",
+                "digest": "8f04be41bfa9a8f434f09c4f68106aa43b028e5133d67d78bd935c6bf29d7e82"
+              },
+              {
+                "ref": "web/app/app.css",
+                "digest": "c32d540136727ac736237086c649538469576e9efcb9e692196887097712ffd0"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "9f371733d4ea8c958ce69cc46aa297af95d310171d6e05ccd42f9f60b189d6ea"
+              },
+              {
+                "ref": "web/app/lib/api.server.ts",
+                "digest": "2b7cad109dc8db1d2cb727b91a25eaa50cb07edcb75c18db66cea60ec2f8f733"
+              },
+              {
+                "ref": "web/app/lib/auth.server.ts",
+                "digest": "c9015afe845161a4d5415363875eddbc3b032df69ec4910746ba0164a0147000"
+              },
+              {
+                "ref": "web/app/lib/chats.server.ts",
+                "digest": "fd26a5674ac51b7cbf55717f33246744163d7d6ebe9db1d0c5dc65a153616551"
+              },
+              {
+                "ref": "web/app/lib/run-copy.ts",
+                "digest": "6b54ac0f4b3a023c1aa03957de4b796029ea1b60c255a00bf582dd4ddc3d623c"
+              },
+              {
+                "ref": "web/app/lib/runs.server.ts",
+                "digest": "ab53f178e1ad8c18f4c5924bbf1e578745d2578abed2ec3c4deade58bc136a78"
+              },
+              {
+                "ref": "web/app/routes.ts",
+                "digest": "aa816788614a0fc10d98bb67962ff1218c3d7b917b796be733193f979ea89726"
+              },
+              {
+                "ref": "web/app/routes/account.tsx",
+                "digest": "9896d51fa254594f8f43b0956265934955b701973e1beaa4e7642075a30642a5"
+              },
+              {
+                "ref": "web/app/routes/auth-callback.ts",
+                "digest": "ce3eb63b668f41ebb6c553af92a7ab9bbbaa76053911eb4f1865e69bc394b281"
+              },
+              {
+                "ref": "web/app/routes/chat.tsx",
+                "digest": "9a3e59d6f7bc1362afd797a56f02e32fa1598fd68f49172fa334d8650c08bede"
+              },
+              {
+                "ref": "web/app/routes/home.tsx",
+                "digest": "f366a02b402691bdea7f721897b080ff8096631478d856c23f5cdee7b5e7933d"
+              },
+              {
+                "ref": "web/app/routes/login.tsx",
+                "digest": "17ea8893e79dbd2a19b6816a1d97f758bda7d2795943eb78053eb7f98331a972"
+              },
+              {
+                "ref": "web/app/routes/run-artifact.ts",
+                "digest": "1c6df7650e85b1268df193bc3edb6dd05c6ccb8231a579a336469041fb3d38c7"
+              },
+              {
+                "ref": "web/app/routes/run-detail.tsx",
+                "digest": "d5a5cb47dce6026f5135e590bd03f0aaf97f3a41072222da26bf4fd47e34afea"
+              },
+              {
+                "ref": "web/app/routes/workspace.tsx",
+                "digest": "c77907a992b856a87de1cc4754f5aa744eeea038759ccd2bf4aaee6bf59b5599"
+              },
+              {
+                "ref": "web/package-lock.json",
+                "digest": "c46b6c7ff8cab197ad6950aa5dbc5711f357b92f54387eceae985ec7a354a3ca"
+              },
+              {
+                "ref": "web/package.json",
+                "digest": "8577d1a61ca927765a62be846afd0c9e293d870e77b9fdb193578491b05d7919"
+              },
+              {
+                "ref": "web/playwright.config.ts",
+                "digest": "179d2f640462510f7e5f64324303d0ede569a84cc0fd3cb6f404f1051bf105bf"
+              },
+              {
+                "ref": "web/scripts/auth-migrate.ts",
+                "digest": "d9850c0880eee66337a6483d566198577834cbc7e78548dbf1e286cf472bf1b9"
+              },
+              {
+                "ref": "web/scripts/run.ts",
+                "digest": "86562c89ac50153e1e92f5f6779f92cfaee8244d03599fd61462fde0517503e3"
+              },
+              {
+                "ref": "web/server/auth-config.ts",
+                "digest": "599c70fcd81abbbfe2c18770817d4bbd763d98b4fe1b3fd816f3600a85a309e9"
+              },
+              {
+                "ref": "web/server/auth-migrate.ts",
+                "digest": "7eee6499ecfdbd67c8edc9115258761bd0baa06d1c61b44627e56fe898c11d08"
+              },
+              {
+                "ref": "web/server/auth-schema.sql",
+                "digest": "1a967afdacb1db6ddde591db388aad1a3deb845ec1d376bb58ed870e7e41f2bf"
+              },
+              {
+                "ref": "web/server/auth-store.ts",
+                "digest": "6148ee2381e7cc4dfc5eff18019d9b3e9ee3d5d08b289053e57568c8e093ba16"
+              },
+              {
+                "ref": "web/server/auth.ts",
+                "digest": "44fd145e2164502c5504176b28fec562d2235a61018a8303923cacd41dba8a93"
+              },
+              {
+                "ref": "web/server/oidc.ts",
+                "digest": "a5848a2ea05b42499103975de22ad0242ac69167d6bb029aacb29997ce5e7598"
+              },
+              {
+                "ref": "web/server/serve.ts",
+                "digest": "d1d756b9deeae2c58b777ddc3d0e395ee9d110df7139b539b311d75e0b81adbc"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "fc11dd80d469fab2e5072a4d644b0490645bfdc0ad8a4db1ac31a16024fd56e7"
+              },
+              {
+                "ref": "web/tests/auth.test.ts",
+                "digest": "a770955685e4b0f84835e4933e851f105cadec8c2f903f7e6c0ff63d490fb393"
+              },
+              {
+                "ref": "web/tests/boundaries.test.ts",
+                "digest": "827109965bd9451785c675ea293c2bb5e24d4ccdf42e64248acbd56c940f1d7c"
+              },
+              {
+                "ref": "web/tests/browser/auth-helper.ts",
+                "digest": "e3b6a8c0e36d497b0a19de6fb2ba0ed2caac8002491462a61a81853ca1fc931f"
+              },
+              {
+                "ref": "web/tests/browser/auth.spec.ts",
+                "digest": "52d99d4321244b8dd2ab1e3361cf5a0a0d9cee938a87ad61e6d2d5aea08b878f"
+              },
+              {
+                "ref": "web/tests/browser/chat.spec.ts",
+                "digest": "8b22f23c2e2d2e64c5429d3b37dcd2fc5d017c0c636c7617bcba2cf774d8f8bf"
+              },
+              {
+                "ref": "web/tests/browser/lifecycle.spec.ts",
+                "digest": "b8a5c436944c21605f20090acbf8d0cda2e0bc6a3447efc55b5fc3724a63cb10"
+              },
+              {
+                "ref": "web/tests/browser/runs.spec.ts",
+                "digest": "08a88bd2191f2f5a07ed7f6f4c64c2f86a46386f9d8234b4fa353810149a36dc"
+              },
+              {
+                "ref": "web/tests/browser/serve.ts",
+                "digest": "5f443f5877579aa6c0e31ce09dbb4cc0c3e3d8235aa639838deeab21d76679b4"
+              },
+              {
+                "ref": "web/tests/browser/workspace.spec.ts",
+                "digest": "33ed61a2995f1a466a5917651ae0541bb191df3bd349d2fd4657af7eb085cc49"
+              },
+              {
+                "ref": "web/tests/chats.test.ts",
+                "digest": "60a9cf86b0b1065a838b0d53f4d62033708e8c0ded1604255559f83e4d1c537f"
+              },
+              {
+                "ref": "web/tests/helpers/api-auth.ts",
+                "digest": "76a5fb464cb57b56ff7cc64b2b54865bf058501bf1a302336b005a2deb2772ab"
+              },
+              {
+                "ref": "web/tests/helpers/oidc-fixture.ts",
+                "digest": "cd1a6a71bbd8da9637444b851b9346e91015142669810a3851fefd378bce328c"
+              },
+              {
+                "ref": "web/tests/prepare-auth.ts",
+                "digest": "b4b99db6aee96c3ccfa6298d42c5e841ef074b6acbd47eaf019a021aaa35e259"
+              },
+              {
+                "ref": "web/tests/runs.test.ts",
+                "digest": "c6cd70ee3b55d5b9d801a29bd0a5ca6f8750b1c2bf37591bc1ab7b52ea2a2768"
+              }
+            ],
+            "version": "0b49927952a21e8a43594dc9d3547dbdac0c0f2d19c6490d4731fa142a097d4a"
+          }
+        ],
+        "report": "認証実装・所有権・統合試験・独立レビューを完了しPR #12へ納品。実装コミットの全CI成功。物理認証器・本番公開・Entra/Cognitoは対象外。有料送信0。最終マージ状態はPRを参照",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-auth/verification.md",
+            "digest": "12792dfae455a9e1165acc105bad1b027caeb8b0fbafdbc1f9a8252c8015191c"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/12",
+            "digest": null
+          }
+        ],
+        "children": [
+          {
+            "unit": "boundary",
+            "submission": "a577f8bd-4478-4854-badf-510e00086bce"
+          },
+          {
+            "unit": "python",
+            "submission": "f76ee860-c3dc-4002-aab0-fbda724f0a6e"
+          },
+          {
+            "unit": "keycloak",
+            "submission": "af6d802a-c566-400d-9332-b0cc7efa10e7"
+          },
+          {
+            "unit": "web-tests",
+            "submission": "4ad9f5da-16e2-4f05-a2c2-4fc2667fefd6"
+          },
+          {
+            "unit": "review-bff",
+            "submission": "e937ecf9-85e7-4e9a-aa70-25e02ebd611f"
+          },
+          {
+            "unit": "review-ownership",
+            "submission": "39bc51bb-1165-445f-bdcc-602eefd8d5e1"
+          },
+          {
+            "unit": "review-config",
+            "submission": "2d997541-f6ba-4ead-be12-eafd01863d90"
+          }
+        ],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "auth-20261006"
+        },
+        "at": "2026-10-06T09:36:39.940Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "auth-20261006"
+          },
+          "reason": "全子成果と統合条件を満たした実装のPR納品を受け入れ。最終記録のチェック後に承認済みマージを実施",
+          "at": "2026-10-06T09:36:40.006Z"
+        }
+      },
+      "at": "2026-10-06T09:36:40.006Z"
     }
   ]
 }
