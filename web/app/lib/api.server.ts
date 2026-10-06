@@ -4,12 +4,12 @@ import { readConfig, type LocalConfig } from "../../server/config";
 
 export class ApiUnavailable extends Error {}
 
-export function apiClient(config: LocalConfig = readConfig(), timeoutMs = 3000) {
+export function apiClient(accessToken: string, config: LocalConfig = readConfig(), timeoutMs = 3000) {
   async function request(path: string, input?: CheckInput): Promise<unknown> {
     try {
       const response = await fetch(new URL(path, config.apiOrigin), {
         method: input ? "POST" : "GET",
-        headers: { authorization: `Bearer ${config.apiToken}`, "Content-Type": "application/json" },
+        headers: { authorization: `Bearer ${config.apiToken}`, "Content-Type": "application/json", "X-AX-Access-Token": accessToken },
         body: input ? JSON.stringify(input) : undefined,
         signal: AbortSignal.timeout(timeoutMs),
         redirect: "error",

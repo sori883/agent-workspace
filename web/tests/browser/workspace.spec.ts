@@ -1,8 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { login } from "./auth-helper";
+
+test.beforeEach(async ({ page }) => { await login(page); });
+
 import AxeBuilder from "@axe-core/playwright";
 
 test("SSR, a real API round trip, keyboard navigation and accessibility", async ({ page, request }) => {
-  const html = await request.get("/connection");
+  const html = await page.request.get("/connection");
   expect(await html.text()).toContain("接続を確かめる");
   expect(html.headers()["cache-control"]).toBe("no-store");
   const origins = new Set<string>();
@@ -43,6 +47,7 @@ test("invalid input is explained and forged submissions are rejected", async ({ 
 test("forms work without JavaScript", async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
+    await login(page);
   await page.goto("http://127.0.0.1:3210/connection");
   await page.getByLabel("確認用のメッセージ").fill("JavaScriptなしで確認");
   await page.getByRole("button", { name: "送信して接続を確認" }).click();
@@ -51,8 +56,8 @@ test("forms work without JavaScript", async ({ browser }) => {
   await page.getByLabel("確認用のメッセージ").fill("セッションが切れても残す入力");
   await context.clearCookies();
   await page.getByRole("button", { name: "送信して接続を確認" }).click();
-  await expect(page.getByRole("heading", { name: "送信を完了できませんでした" })).toBeVisible();
-  await expect(page.getByLabel("確認用のメッセージ")).toHaveValue("セッションが切れても残す入力");
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole("button", { name: "ログインへ進む" })).toBeVisible();
   await context.close();
 });
 

@@ -8,9 +8,11 @@ import { artifactResultSchema, emptyRunBodySchema, MAX_RUN_REQUEST_BYTES, MAX_RU
 import { chatInputSchema, chatSubmitResultSchema, conversationDetailSchema, conversationIdSchema, conversationListSchema, MAX_CHAT_RESPONSE_BYTES } from "../shared/chat-contracts";
 import { RunServiceError, type RunService } from "./run-service";
 import type { ChatService } from "./chat-service";
+import { authenticate as authenticateUser, type Authenticate } from "../server/auth";
+import { AuthenticationError } from "../server/auth-store";
 
-export function createApi(config: LocalConfig, onCheck: (id: string) => void = () => {}, runs?: RunService, chats?: ChatService) {
-  const app = new Hono();
+export function createApi(config: LocalConfig, onCheck: (id: string) => void = () => {}, runs?: RunService, chats?: ChatService, authenticate: Authenticate = authenticateUser) {
+  const app = new Hono<{ Variables: { ownerUserId: string } }>();
   app.use("*", async (context, next) => {
     const authorization = Buffer.from(context.req.header("authorization") ?? "");
     const expected = Buffer.from(`Bearer ${config.apiToken}`);
@@ -22,6 +24,12 @@ export function createApi(config: LocalConfig, onCheck: (id: string) => void = (
     }
     context.header("Cache-Control", "no-store");
     context.header("X-Content-Type-Options", "nosniff");
+    if (context.req.path !== "/v1/status") {
+      try { context.set("ownerUserId", await authenticate(context.req.header("X-AX-Access-Token") ?? "")); }
+      catch (error) {
+        return context.json({ error: error instanceof AuthenticationError ? "unauthorized" : "authentication_unavailable" }, error instanceof AuthenticationError ? 401 : 503);
+      }
+    }
     await next();
   });
   app.get("/v1/status", (context) => context.json({ service: "ax-common-api", mode: "mock" }));
@@ -88,32 +96,32 @@ export function createApi(config: LocalConfig, onCheck: (id: string) => void = (
       return context.json({ error: "bridge_unavailable" }, 503);
     }
   }
-  app.get("/v1/runs", (context) => runResponse(context, runListSchema, () => runService().list()));
-  app.post("/v1/runs", (context) => runResponse(context, submitResultSchema, async () => runService().submit(await runBody(context.req.raw, runInputSchema)), 202));
+  app.get("/v1/runs", (context) => runResponse(context, runListSchema, () => runService().list(context.get("ownerUserId"))));
+  app.post("/v1/runs", (context) => runResponse(context, submitResultSchema, async () => runService().submit(context.get("ownerUserId"), await runBody(context.req.raw, runInputSchema)), 202));
   app.get("/v1/runs/:runId", (context) => runResponse(context, runDetailSchema, async () => {
     const id = runId(context);
-    const detail = await runService().get(id);
+    const detail = await runService().get(context.get("ownerUserId"), id);
     if (detail.summary.run_id !== id) throw new RunServiceError("invalid_bridge_response");
     return detail;
   }));
-  app.get("/v1/runs/:runId/artifact", (context) => runResponse(context, artifactResultSchema, () => runService().artifact(runId(context))));
+  app.get("/v1/runs/:runId/artifact", (context) => runResponse(context, artifactResultSchema, () => runService().artifact(context.get("ownerUserId"), runId(context))));
   app.post("/v1/runs/:runId/recover", (context) => runResponse(context, recoverResultSchema, async () => {
     const id = runId(context);
     await runBody(context.req.raw, emptyRunBodySchema);
-    const result = await runService().recover(id);
+    const result = await runService().recover(context.get("ownerUserId"), id);
     if (result.run_id !== id) throw new RunServiceError("invalid_bridge_response");
     return result;
   }, 202));
-  app.get("/v1/conversations", (context) => runResponse(context, conversationListSchema, () => chatService().list(), 200, MAX_CHAT_RESPONSE_BYTES));
+  app.get("/v1/conversations", (context) => runResponse(context, conversationListSchema, () => chatService().list(context.get("ownerUserId")), 200, MAX_CHAT_RESPONSE_BYTES));
   app.get("/v1/conversations/:id", (context) => runResponse(context, conversationDetailSchema, async () => {
     const id = conversationId(context);
-    const detail = await chatService().get(id);
+    const detail = await chatService().get(context.get("ownerUserId"), id);
     if (detail.conversation.id !== id) throw new RunServiceError("invalid_bridge_response");
     return detail;
   }, 200, MAX_CHAT_RESPONSE_BYTES));
   app.post("/v1/conversations/:id/turns", (context) => runResponse(context, chatSubmitResultSchema, async () => {
     const id = conversationId(context);
-    const result = await chatService().submit(id, await runBody(context.req.raw, chatInputSchema));
+    const result = await chatService().submit(context.get("ownerUserId"), id, await runBody(context.req.raw, chatInputSchema));
     if (result.conversation_id !== id) throw new RunServiceError("invalid_bridge_response");
     return result;
   }, 202, MAX_CHAT_RESPONSE_BYTES));

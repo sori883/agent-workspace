@@ -1,6 +1,6 @@
 # チャットの認証基盤
 
-2026-10-06の要件に合わせた概略設計。現在のチャットには本人確認と所有者によるアクセス制限がなく、認証機能は未実装。ローカルDockerのPostgreSQLには認証用・アプリ用の空DBと用途別ユーザーを準備した。[DBの構成と運用手順](../ax-local/postgres/README.md)を参照。既存の[Web構成](web-architecture.md)に、共通認証と利用者の管理を加える。
+2026-10-06の要件に合わせたローカル認証基盤。Keycloak 26.8.0によるメールアドレス・パスワードとパスキー、BFFのログイン・ログアウト、APIとreceiptの所有者照合を実装した。PostgreSQLはKubernetesの外のローカルDockerで動かし、認証用・アプリ用・実行基盤用にDBと接続ユーザーを分ける。[DBの構成と運用手順](../ax-local/postgres/README.md)を参照。既存の[Web構成](web-architecture.md)に、共通認証と利用者の管理を加える。
 
 ## 今回の範囲
 
@@ -10,7 +10,7 @@
 
 ## 構成と追加するDB
 
-初期の認証サービスはKeycloakを使う設計とする。メールアドレス＋パスワード、パスキーの登録・検証はKeycloakが担当する。Keycloakはパスキーと外部の認証サービスとの連携に対応している。[Keycloakの管理ガイド](https://www.keycloak.org/docs/latest/server_admin/index.html)
+初期の認証サービスはKeycloakを使う。メールアドレス＋パスワード、パスキーの登録・検証はKeycloakが担当する。Keycloakはパスキーと外部の認証サービスとの連携に対応している。[Keycloakの管理ガイド](https://www.keycloak.org/docs/latest/server_admin/index.html)
 
 既存のHono共通バックエンドに利用者の識別・会話の認可を加える。別の独自認証APIを作ってパスワードやパスキーを検証する構成にはしない。
 
@@ -32,7 +32,7 @@ flowchart LR
   Python --> Receipt[("既存の永続ファイル<br/>会話・実行・成果物・所有者")]
 ```
 
-図は導入後の論理構成であり、DBの配置先や台数を指定するものではない。採用するDBはPostgreSQLとし、本番の配置先・運用サービスは別に選定する。認証用とアプリ用の2用途に分けるが、この分離も配置先とは独立した方針である。ローカルはKubernetes外のDockerに1インスタンスを置き、実行基盤の `substrate`、認証用 `keycloak`、アプリ用 `app` の3DBと別々の接続ユーザーを用意した。この開発構成を本番の配置・台数の前提にはしない。[PostgreSQLのDB分離とアクセス管理](https://www.postgresql.org/docs/16/manage-ag-overview.html)
+図は導入後の論理構成であり、DBの配置先や台数を指定するものではない。採用するDBはPostgreSQLとし、本番の配置先・運用サービスは別に選定する。認証用とアプリ用の2用途に分けるが、この分離も配置先とは独立した方針である。ローカルはKubernetes外のDockerに1インスタンスを置き、実行基盤の `substrate`、認証用 `keycloak`、アプリ用 `app` の3DBと別々の接続ユーザーを使う。この開発構成を本番の配置・台数の前提にはしない。[PostgreSQLのDB分離とアクセス管理](https://www.postgresql.org/docs/16/manage-ag-overview.html)
 
 | 保存先 | 保存するもの | 読み書きの責務 |
 | --- | --- | --- |
@@ -42,7 +42,7 @@ flowchart LR
 
 Keycloakはユーザーや認証設定の永続保存にDBを使い、PostgreSQLを公式にサポートする。内蔵の開発用DBもあるが、この設計では初期からPostgreSQLへ保存する。[KeycloakのDB設定](https://www.keycloak.org/server/db)
 
-アプリ用DBは利用者とログイン状態を管理するために導入する設計上の選択で、認証の追加に会話本文のDB移行が必須という意味ではない。パスキーの秘密鍵や生体情報はアプリのDBへ保存しない。サーバーは公開鍵などの登録情報で本人確認を行う。[WebAuthnの仕様](https://www.w3.org/TR/webauthn-2/)
+アプリ用DBは利用者とログイン状態の管理に使い、認証の追加に会話本文のDB移行が必須という意味ではない。パスキーの秘密鍵や生体情報はアプリのDBへ保存しない。サーバーは公開鍵などの登録情報で本人確認を行う。[WebAuthnの仕様](https://www.w3.org/TR/webauthn-2/)
 
 本番DBの配置先は、次の候補を残して未選定とする。アプリがEKSや別のKubernetes上で動く場合も、DBを同じクラスタへ置くことを要件にしない。
 
@@ -58,17 +58,20 @@ Keycloakはユーザーや認証設定の永続保存にDBを使い、PostgreSQL
 
 ## 利用者とログイン状態
 
-利用者を表す内部IDは、メールアドレスや認証サービスの名前から独立させる。アプリ用DBに以下を持つ骨組みとし、具体的なスキーマ・暗号化・期限は実装時の設計で固定する。
+利用者を表す内部IDは、メールアドレスや認証サービスの名前から独立させる。アプリ用DBに以下を持つ。スキーマは `web/server/auth-schema.sql`、初期作成は `npm --prefix web run auth:migrate`。マイグレーションはトランザクションと排他で一度だけ適用する。
 
-- `users(id, status)`：再利用しない内部利用者ID。
+- `users(id, status, display_name)`：再利用しない内部利用者UUID、有効・無効、表示名。
 - `identities(issuer, subject, user_id)`：検証済みの発行元とsubjectの組を内部IDへ対応させる。組に一意制約を置く。
-- `sessions`：ブラウザに渡す不透明なIDの照合情報、利用者・期限・失効状態、サーバー側で保護するトークン。BFF以外へトークンを露出しない。
+- `sessions`：256ビットのランダムIDのSHA-256、利用者・絶対期限、AES-256-GCMで暗号化したトークン。ログアウト時は行を削除する。
+- `login_flows`：stateのSHA-256とブラウザCookieのIDのSHA-256、暗号化したPKCE verifier・nonce・戻り先。5分で失効し、callbackで一度だけ消費する。
 
-APIは許可された発行元・署名・用途・宛先・期限を検証したアクセストークンから利用者を確定する。ブラウザのフォーム・URL・任意のヘッダーに書かれた利用者IDを信用しない。`issuer + subject` を識別の元とし、メールアドレスの一致だけで既存利用者へ統合しない。[OIDCの識別子の安定性](https://openid.net/specs/openid-connect-core-1_0.html#ClaimStability)
+APIは既存の内部Bearerに加え、`X-AX-Access-Token` の発行元・RS256署名・`typ=Bearer`・`aud=ax-api`・`azp=ax-web`・発行時刻・期限・subjectを検証してから、DB上の有効な利用者対応を引く。起動確認用 `/v1/status` だけは内部Bearerのみで応答する。ブラウザのフォーム・URL・任意のヘッダーに書かれた利用者IDを信用しない。`issuer + subject` を識別の元とし、メールアドレスの一致だけで既存利用者へ統合しない。[OIDCの識別子の安定性](https://openid.net/specs/openid-connect-core-1_0.html#ClaimStability)
 
-ログインはBFFをOIDCクライアントとし、認可コード＋PKCE、state・nonce・redirect URIの確認を使う。Cookieにはトークンを入れず、ログイン成功時にセッションを作り直す。現在の匿名Cookie設定をそのまま認証済みセッションへ転用せず、コールバックに適合するSameSite、公開環境のSecure、CSRF対策をまとめて確認する。
+ログインはBFFをOIDCクライアントとし、認可コード＋PKCE S256、state・nonce・redirect URIの完全一致を確認する。認証Cookieとlogin flow CookieはHttpOnly・SameSite=Lax、フォーム用の署名済みCSRF CookieはSameSite=Strictとする。ログイン成功時に新しい認証セッションを発行し、以前のセッションを失効させる。ローカルHTTPで動作するためSecure属性は付けない。本番のHTTPS・公開origin設定は別工程である。
 
-ログアウトはBFFセッションを先に失効させ、Cookieを破棄したうえでKeycloakの終了処理へ接続する。Keycloakへ到達できなくても同じCookieではアプリを利用できない。発行済みAPIトークンの失効・有効期間と、将来の外部IdP側のログアウトは別に扱い、全サービスから即時にログアウトできるとはしない。
+認証セッションはログインから30分以内、かつaccess tokenの期限以内とする。自動refreshは実装せず、期限後は再ログインする。暗号化鍵は `.state/auth/encryption.key` と `app.json` に保持し、Web/API再起動時に作り直さない。Cookieに生のトークンを入れず、暗号化のAADに保存レコードIDを含め、暗号文の別レコードへの移植を拒否する。
+
+ログアウトはBFFセッションを先に失効させ、Cookieを破棄したうえでKeycloakの終了確認画面へ接続する。URLにはclient IDと登録済みの戻り先だけを含め、ID tokenを載せない。Keycloakへ到達できなくても同じCookieではアプリを利用できない。発行済みAPIトークンの失効・有効期間と、将来の外部IdP側のログアウトは別に扱い、全サービスから即時にログアウトできるとはしない。
 
 ## 会話と既存データの扱い
 
@@ -104,4 +107,12 @@ ownerのない既存データは削除せず、認証導入後の通常のWeb利
 
 アカウントの発行は初期ローカルでは管理者が作るテスト利用者で確認する。利用者自身による登録、メール確認・パスワード再設定の送信には、登録方針とメール送信手段を決める必要がある。本番のドメイン・復旧方法・利用者招待の方針は公開前に確定する。これらの未決事項は、ローカル基盤の構築を妨げない。
 
-現段階は認証の構成調整とローカルPostgreSQLの準備まで。製品の固定版、マイグレーション、API/保存形式の詳細契約、障害復旧手順は各実装単位で確定して検証する。[当初見積もり](web-mvp-estimate.md)の認証工数には今回のパスキー・DB運用・移行条件の具体化が入っていないため、そのまま新しい範囲の工数として使わない。
+ローカルの起動・アカウント操作は[Web README](../web/README.md)、Keycloakの固定版・秘密ファイル・復元試験は[Keycloak README](../ax-local/keycloak/README.md)、検証の対象と結果は[実装検証記録](../.space/tasks/ax-auth/verification.md)を参照する。[当初見積もり](web-mvp-estimate.md)の認証工数には今回のパスキー・DB運用・移行条件の具体化が入っていないため、そのまま新しい範囲の工数として使わない。
+
+## 障害・復元と公開前の残件
+
+app DBへ接続できない場合、ログイン・認証済みページ・APIは利用を拒否する。IdP停止中は新規ログインできない。取得済みの公開鍵を持つAPIは、署名と期限が有効な既存tokenをDBの有効な利用者対応と照合して扱える。IdPを停止しただけで、全ての発行済みtokenが即失効する方式ではない。BFFのlogoutはIdPの応答と別にapp sessionを失効させる。
+
+DBの復元は既存DBを上書きする前に別DBで試す。Keycloak DB、app DB、暗号化鍵とclient secret、receiptを一組としてバックアップし、issuer/subjectから内部IDへの対応が一致することを確認する。紛失したIDや鍵を再生成して既存会話へ付け替えない。ログイン済みセッションの復元が不要なら、運用判断でsessions/login_flowsを失効させて全員を再ログインさせる。
+
+この実装の公開入口はloopbackに限定する。公開前にはWeb/IdPのHTTPSとorigin、安定したパスキーRP ID、招待・本人確認・パスワード復旧メール、DBと秘密のバックアップ運用、外部IdP側の失効・連携を確定して追加検証する。Entra ID/Cognitoとの相互運用と実機の生体認証は今回の自動検証に含めない。

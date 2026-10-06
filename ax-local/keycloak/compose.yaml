@@ -1,0 +1,30 @@
+name: ax-local-keycloak
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.0@sha256:b0f60d489d51c5d113390bdf5461d4c06e6051be026c05549f2e1e10ec352bcc
+    container_name: ax-local-keycloak
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8180:8080"
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://host.docker.internal:55432/keycloak?sslmode=verify-full&sslrootcert=/run/postgres/ca.crt
+      KC_DB_USERNAME: ax_keycloak
+      KC_HOSTNAME: http://localhost:8180
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: ax-admin
+    entrypoint: ["/bin/bash", "/opt/local/start.sh"]
+    volumes:
+      - ./start.sh:/opt/local/start.sh:ro
+      - ../.state/auth/admin.password:/run/auth/admin.password:ro
+      - ../.state/postgres/secrets/keycloak.password:/run/postgres/db.password:ro
+      - ../.state/postgres/secrets/ca.crt:/run/postgres/ca.crt:ro
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/9000; printf 'GET /health/ready HTTP/1.0\r\n\r\n' >&3; read -r status <&3; [[ $$status == *' 200 '* ]]"]
+      interval: 5s
+      timeout: 3s
+      retries: 36
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]

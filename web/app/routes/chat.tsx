@@ -1,3 +1,4 @@
+import { requireAuth } from "../lib/auth.server";
 import { createHash, randomUUID } from "node:crypto";
 import { useEffect, useRef, useState } from "react";
 import { data, Form, redirect, useNavigation } from "react-router";
@@ -33,6 +34,7 @@ function chatError(code: string) {
 }
 export function meta() { return [{ title: "チャット | AX ワークスペース" }]; }
 export async function loader({ request }: Route.LoaderArgs) {
+  const user = await requireAuth(request);
   const session = await loadSession(request);
   const headers = pageHeaders();
   if (session.cookie) headers.set("Set-Cookie", session.cookie);
@@ -42,7 +44,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   let conversations: ConversationSummary[] = [];
   let conversation: ConversationDetail | null = null;
   let error: string | null = null;
-  const client = chatsClient();
+  const client = chatsClient(user.accessToken);
   const results = await Promise.allSettled([client.list(), client.get(id)]);
   if (results[0].status === "fulfilled") conversations = results[0].value.conversations;
   else error = "会話一覧を取得できませんでした。接続を確認してから更新してください。";
@@ -52,6 +54,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   return data({ csrf: session.csrf, id, key: draftKey(id, head), conversation, conversations, error }, { headers });
 }
 export async function action({ request }: Route.ActionArgs) {
+  const user = await requireAuth(request);
   let submitted = { id: "", key: "", parent_run_id: null as string | null, text: "", allow_model: false };
   const failure = (error: string, status: number) => data({ error, submitted, uncertain: status === 503 }, { status, headers: pageHeaders() });
   try {
@@ -60,15 +63,15 @@ export async function action({ request }: Route.ActionArgs) {
     await verifySubmission(request, form.get("csrf"));
     if (!uuidPattern.test(submitted.id)) return failure("会話を読み直してから送信してください。", 400);
     if (form.get("intent") === "recover") {
-      const detail = await chatsClient().get(submitted.id);
+      const detail = await chatsClient(user.accessToken).get(submitted.id);
       const last = detail.turns.at(-1)?.summary;
       if (!last || last.run_id !== form.get("run_id") || !last.can_recover) return failure("現在の状態を更新してから確認してください。", 409);
-      await runsClient().recover(last.run_id);
+      await runsClient(user.accessToken).recover(last.run_id);
     } else {
       const { id, ...input } = submitted;
       const parsed = chatInputSchema.safeParse(input);
       if (!parsed.success) return failure("メッセージの長さと、モデル利用の確認を見直してください。", 400);
-      await chatsClient().submit(id, parsed.data);
+      await chatsClient(user.accessToken).submit(id, parsed.data);
     }
     return redirect(`/?conversation=${submitted.id.toLowerCase()}`, { status: 303, headers: pageHeaders() });
   } catch (cause) {

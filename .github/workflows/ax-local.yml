@@ -26,7 +26,8 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m unittest discover -s ax-local/tests -p 'test_*.py' -v
+      - run: python -m unittest discover -s ax-local/keycloak -p 'test_*.py' -v
       - run: |
-          for script in ax-local/task ax-local/ax ax-local/with-env.sh ax-local/scripts/*.sh; do
+          for script in ax-local/task ax-local/ax ax-local/with-env.sh ax-local/scripts/*.sh ax-local/keycloak/start.sh; do
             bash -n "$script"
           done

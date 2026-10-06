@@ -1,3 +1,4 @@
+import { TEST_ACCESS_TOKEN, testAuthenticate } from "./helpers/api-auth";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { once } from "node:events";
@@ -25,8 +26,8 @@ test("local configuration rejects invalid ports and missing credentials", () => 
 
 test("API authenticates before processing and only POST accepts messages", async () => {
   const accepted: string[] = [];
-  const app = createApi(config, (id) => accepted.push(id));
-  const headers = { host: "127.0.0.1:3311", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json" };
+  const app = createApi(config, (id) => accepted.push(id), undefined, undefined, testAuthenticate);
+  const headers = { host: "127.0.0.1:3311", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-access-token": TEST_ACCESS_TOKEN };
   const call = (path: string, method = "GET", body?: string, extra = {}) => app.request(`${config.apiOrigin}${path}`, { method, headers: { ...headers, ...extra }, body });
   assert.equal((await call("/v1/status")).status, 200);
   assert.equal((await call("/v1/connection-check")).status, 404);
@@ -38,7 +39,7 @@ test("API authenticates before processing and only POST accepts messages", async
   assert.equal(result.mode, "mock");
   assert.deepEqual(accepted, [result.requestId]);
   assert.equal(response.headers.get("cache-control"), "no-store");
-  for (const extra of [{ authorization: "" }, { authorization: "Bearer wrong" }]) {
+  for (const extra of [{ authorization: "" }, { authorization: "Bearer wrong" }, { "x-ax-access-token": "" }, { "x-ax-access-token": "invalid" }]) {
     assert.equal((await call("/v1/connection-check", "POST", '{"message":"x"}', extra)).status, 401);
   }
   for (const extra of [{ host: "attacker.example:3311" }, { origin: config.webOrigin }, { origin: "null" }]) {
@@ -77,6 +78,19 @@ test("session, CSRF, Origin and Host must agree, including expiry and restart", 
   process.env.LOCAL_SESSION_SECRET = config.sessionSecret;
 });
 
+test("authentication dependency failure blocks protected operations without leaking errors or breaking readiness", async () => {
+  let calls = 0;
+  const app = createApi(config, () => { calls++; }, undefined, undefined, async () => { throw new Error("PRIVATE database or token verification failure"); });
+  const headers = { host: "127.0.0.1:3311", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-access-token": TEST_ACCESS_TOKEN };
+  const readiness = await app.request(`${config.apiOrigin}/v1/status`, { headers });
+  assert.equal(readiness.status, 200);
+  const response = await app.request(`${config.apiOrigin}/v1/connection-check`, { method: "POST", headers, body: '{"message":"must not execute"}' });
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), { error: "authentication_unavailable" });
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.equal(calls, 0);
+});
+
 test("body limits apply without Content-Length and invalid UTF-8 is rejected", async () => {
   const streamed = new Response(new ReadableStream({ start(controller) { controller.enqueue(new Uint8Array(10000)); controller.enqueue(new Uint8Array(10000)); controller.close(); } }));
   await assert.rejects(readLimitedText(streamed), (error: unknown) => error instanceof Response && error.status === 413);
@@ -90,6 +104,7 @@ test("HTTP client checks responses, never retries, and times out while reading t
     requests++;
     assert.equal(request.headers.authorization, `Bearer ${config.apiToken}`);
     assert.equal(request.headers.origin, undefined);
+    assert.equal(request.headers["x-ax-access-token"], TEST_ACCESS_TOKEN);
     response.setHeader("Content-Type", "application/json");
     if (mode === "success") response.end(JSON.stringify({ service: "ax-common-api", mode: "mock" }));
     else if (mode === "shape") response.end('{}');
@@ -103,7 +118,7 @@ test("HTTP client checks responses, never retries, and times out while reading t
   t.after(() => { server.closeAllConnections(); server.close(); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
-  const client = apiClient({ ...config, apiOrigin: `http://127.0.0.1:${address.port}` }, 150);
+  const client = apiClient(TEST_ACCESS_TOKEN, { ...config, apiOrigin: `http://127.0.0.1:${address.port}` }, 150);
   assert.equal((await client.status()).mode, "mock");
   for (const next of ["shape", "oversize", "redirect", "status", "stalled-body"]) {
     mode = next;

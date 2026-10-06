@@ -1,3 +1,4 @@
+import { TEST_OWNER, TEST_ACCESS_TOKEN, testAuthenticate } from "./helpers/api-auth";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
@@ -27,9 +28,9 @@ const isServiceError = (code: string, status = 503) => (error: unknown) => error
 const isApiError = (code: string, status = 503) => (error: unknown) => error instanceof RunApiError && error.code === code && error.status === status;
 function fakeService(calls: unknown[] = []): ChatService {
   return {
-    async list() { calls.push("list"); return { conversations: [detail.conversation] }; },
-    async get(value) { calls.push(["get", value]); return detail; },
-    async submit(value, body) { calls.push(["submit", value, body]); return accepted; },
+    async list(owner) { assert.equal(owner, TEST_OWNER); calls.push("list"); return { conversations: [detail.conversation] }; },
+    async get(owner, value) { assert.equal(owner, TEST_OWNER); calls.push(["get", value]); return detail; },
+    async submit(owner, value, body) { assert.equal(owner, TEST_OWNER); calls.push(["submit", value, body]); return accepted; },
   };
 }
 function maximumDetail(): ConversationDetail {
@@ -71,8 +72,8 @@ test("chat schemas normalize UUIDs and reject unsafe input and inconsistent conv
 
 test("chat HTTP authentication, methods and input validation precede any service operation", async () => {
   const calls: unknown[] = [];
-  const app = createApi(config, undefined, undefined, fakeService(calls));
-  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json" };
+  const app = createApi(config, undefined, undefined, fakeService(calls), testAuthenticate);
+  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-access-token": TEST_ACCESS_TOKEN, "x-ax-owner-id": "attacker-selected-owner" };
   const call = (path: string, method = "GET", body?: string, extra = {}) => app.request(`${config.apiOrigin}${path}`, { method, headers: { ...headers, ...extra }, body });
   assert.equal((await call("/v1/conversations")).status, 200);
   assert.equal((await call(`/v1/conversations/${id.toUpperCase()}`)).status, 200);
@@ -81,10 +82,10 @@ test("chat HTTP authentication, methods and input validation precede any service
   assert.equal((await call(`/v1/conversations/${id.toUpperCase()}/turns`, "POST", JSON.stringify({ ...input, key: input.key.toUpperCase() }))).status, 202);
   assert.deepEqual(calls.at(-1), ["submit", id, input]);
   const count = calls.length;
-  for (const [extra, expected] of [[{ authorization: "Bearer invalid" }, 401], [{ origin: config.webOrigin }, 403], [{ host: "hostile.test" }, 403]] as const) {
+  for (const [extra, expected] of [[{ authorization: "Bearer invalid" }, 401], [{ "x-ax-access-token": "" }, 401], [{ "x-ax-access-token": "invalid" }, 401], [{ origin: config.webOrigin }, 403], [{ host: "hostile.test" }, 403]] as const) {
     assert.equal((await call(`/v1/conversations/${id}/turns`, "POST", JSON.stringify(input), extra)).status, expected);
   }
-  for (const change of [{ allow_model: false }, { text: "a".repeat(2049) }, { role: "system" }, { parent_run_id: "bad" }]) assert.equal((await call(`/v1/conversations/${id}/turns`, "POST", JSON.stringify({ ...input, ...change }))).status, 400);
+  for (const change of [{ allow_model: false }, { text: "a".repeat(2049) }, { role: "system" }, { parent_run_id: "bad" }, { owner_user_id: "attacker-selected-owner" }]) assert.equal((await call(`/v1/conversations/${id}/turns`, "POST", JSON.stringify({ ...input, ...change }))).status, 400);
   assert.equal((await call("/v1/conversations/invalid")).status, 400);
   assert.equal((await call(`/v1/conversations/${id}/turns`, "POST", "{")).status, 400);
   assert.equal((await call(`/v1/conversations/${id}/turns`, "POST", "{}", { "content-type": "text/plain" })).status, 415);
@@ -94,8 +95,8 @@ test("chat HTTP authentication, methods and input validation precede any service
 
 test("chat API validates response identity, safe errors and strict response fields", async () => {
   const service = fakeService();
-  const app = createApi(config, undefined, undefined, service);
-  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json" };
+  const app = createApi(config, undefined, undefined, service, testAuthenticate);
+  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-access-token": TEST_ACCESS_TOKEN };
   service.get = async () => ({ ...detail, conversation: { ...detail.conversation, id: otherId } });
   assert.deepEqual(await (await app.request(`${config.apiOrigin}/v1/conversations/${id}`, { headers })).json(), { error: "invalid_bridge_response" });
   service.get = async () => ({ ...detail, secret: "PRIVATE" });
@@ -114,13 +115,13 @@ test("Python chat bridge sends fixed commands once and validates envelopes and i
     calls.push([operation, value]);
     return { ok: true, data: operation === "conversations" ? { conversations: [detail.conversation] } : operation === "conversation" ? detail : accepted };
   });
-  assert.deepEqual(await service.list(), { conversations: [detail.conversation] });
-  assert.deepEqual(await service.get(id.toUpperCase()), detail);
-  assert.deepEqual(await service.submit(id.toUpperCase(), { ...input, key: input.key.toUpperCase() }), accepted);
-  assert.deepEqual(calls, [["conversations", {}], ["conversation", { id }], ["chat", { id, ...input }]]);
-  for (const value of [{ ok: true, data: {} }, { ok: true, data: { ...accepted, conversation_id: otherId } }, { ok: false, error: { code: "SECRET key", status: 409 } }, { ok: true, data: accepted, extra: "PRIVATE" }]) await assert.rejects(pythonChatService(async () => value).submit(id, input), isServiceError("invalid_bridge_response"));
-  await assert.rejects(pythonChatService(async () => ({ ok: false, error: { code: "conversation_conflict", status: 409 } })).submit(id, input), isServiceError("conversation_conflict", 409));
-  await assert.rejects(service.get("bad"), isServiceError("invalid_conversation_id", 400));
+  assert.deepEqual(await service.list(TEST_OWNER), { conversations: [detail.conversation] });
+  assert.deepEqual(await service.get(TEST_OWNER, id.toUpperCase()), detail);
+  assert.deepEqual(await service.submit(TEST_OWNER, id.toUpperCase(), { ...input, key: input.key.toUpperCase() }), accepted);
+  assert.deepEqual(calls, [["conversations", { owner_user_id: TEST_OWNER, input: {} }], ["conversation", { owner_user_id: TEST_OWNER, input: { id } }], ["chat", { owner_user_id: TEST_OWNER, input: { id, ...input } }]]);
+  for (const value of [{ ok: true, data: {} }, { ok: true, data: { ...accepted, conversation_id: otherId } }, { ok: false, error: { code: "SECRET key", status: 409 } }, { ok: true, data: accepted, extra: "PRIVATE" }]) await assert.rejects(pythonChatService(async () => value).submit(TEST_OWNER, id, input), isServiceError("invalid_bridge_response"));
+  await assert.rejects(pythonChatService(async () => ({ ok: false, error: { code: "conversation_conflict", status: 409 } })).submit(TEST_OWNER, id, input), isServiceError("conversation_conflict", 409));
+  await assert.rejects(service.get(TEST_OWNER, "bad"), isServiceError("invalid_conversation_id", 400));
   assert.equal(calls.length, 3);
 });
 
@@ -145,16 +146,18 @@ test("chat response transport permits 1 MiB while legacy operations retain 512 K
 test("BFF chat client traverses real HTTP, including maximum escaped history above 512 KiB", async (t) => {
   const calls: unknown[] = [];
   const service = fakeService(calls);
-  const server = serve({ fetch: (request) => createApi({ ...config, apiOrigin: new URL(request.url).origin }, undefined, undefined, service).fetch(request), hostname: "127.0.0.1", port: 0 });
+  const server = serve({ fetch: (request) => createApi({ ...config, apiOrigin: new URL(request.url).origin }, undefined, undefined, service, testAuthenticate).fetch(request), hostname: "127.0.0.1", port: 0 });
   if (!server.listening) await once(server, "listening");
   t.after(() => { if ("closeAllConnections" in server) server.closeAllConnections(); server.close(); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
-  const client = chatsClient({ ...config, apiOrigin: `http://127.0.0.1:${address.port}` });
+  const client = chatsClient(TEST_ACCESS_TOKEN, { ...config, apiOrigin: `http://127.0.0.1:${address.port}` });
   assert.deepEqual(await client.list(), { conversations: [detail.conversation] });
   assert.deepEqual(await client.get(id.toUpperCase()), detail);
   assert.deepEqual(await client.submit(id, input), accepted);
   assert.deepEqual(calls, ["list", ["get", id], ["submit", id, input]]);
+  await assert.rejects(chatsClient("invalid-token", { ...config, apiOrigin: `http://127.0.0.1:${address.port}` }).list(), isApiError("unauthorized", 401));
+  assert.equal(calls.length, 3);
   const maximum = maximumDetail();
   const size = Buffer.byteLength(JSON.stringify(maximum));
   assert.ok(size > MAX_RUN_RESPONSE_BYTES && size < MAX_CHAT_RESPONSE_BYTES);
@@ -183,7 +186,7 @@ test("BFF chat client rejects malformed responses, redirects and body timeout wi
   t.after(() => { server.closeAllConnections(); server.close(); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
-  const client = chatsClient({ ...config, apiOrigin: `http://127.0.0.1:${address.port}` }, 100);
+  const client = chatsClient(TEST_ACCESS_TOKEN, { ...config, apiOrigin: `http://127.0.0.1:${address.port}` }, 100);
   for (const next of ["identity", "shape", "redirect", "oversize", "stalled-body"]) {
     mode = next;
     const before = requests;

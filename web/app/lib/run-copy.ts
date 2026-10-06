@@ -9,6 +9,8 @@ export const runStateLabels = {
 
 export function runErrorMessage(code: string) {
   const messages: Record<string, string> = {
+    unauthorized: "ログインを確認できませんでした。アカウントからログアウトして、もう一度ログインしてください。",
+    authentication_unavailable: "ログインサービスに接続できません。しばらくしてから更新してください。",
     idempotency_conflict: "この送信はすでに受け付けています。内容を変えて実行する場合は「新しい実行」から始めてください。",
     another_cli_running: "別の処理が動いています。実行一覧で状態を確認してください。",
     unresolved_run: "確認が終わっていない実行があります。一覧から開いて、復旧の操作を行ってください。",

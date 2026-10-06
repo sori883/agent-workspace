@@ -9,11 +9,11 @@ export class RunServiceError extends Error {
 }
 
 export interface RunService {
-  submit(input: RunInput): Promise<SubmitResult>;
-  list(): Promise<RunList>;
-  get(runId: string): Promise<RunDetail>;
-  artifact(runId: string): Promise<ArtifactResult>;
-  recover(runId: string): Promise<RecoverResult>;
+  submit(ownerUserId: string, input: RunInput): Promise<SubmitResult>;
+  list(ownerUserId: string): Promise<RunList>;
+  get(ownerUserId: string, runId: string): Promise<RunDetail>;
+  artifact(ownerUserId: string, runId: string): Promise<ArtifactResult>;
+  recover(ownerUserId: string, runId: string): Promise<RecoverResult>;
 }
 
 type Operation = "submit" | "list" | "get" | "artifact" | "recover" | "conversations" | "conversation" | "chat";
@@ -81,24 +81,28 @@ export async function bridgeRequest<T>(operation: Operation, input: unknown, sch
 }
 
 export function pythonRunService(invoke: BridgeInvoke = invokeBridge): RunService {
-  const command = <T>(operation: Operation, input: unknown, schema: z.ZodType<T>) => bridgeRequest(operation, input, schema, invoke);
+  const command = <T>(ownerUserId: string, operation: Operation, input: unknown, schema: z.ZodType<T>) => {
+    const owner = z.uuid().safeParse(ownerUserId);
+    if (!owner.success) throw new RunServiceError("invalid_owner_user_id", 400);
+    return bridgeRequest(operation, { owner_user_id: owner.data.toLowerCase(), input }, schema, invoke);
+  };
   function validId(runId: string) {
     if (!runIdSchema.safeParse(runId).success) throw new RunServiceError("invalid_run_id", 400);
     return { run_id: runId };
   }
   return {
-    submit(input) {
+    submit(ownerUserId, input) {
       const parsed = runInputSchema.safeParse(input);
       if (!parsed.success) throw new RunServiceError("invalid_request", 400);
-      return command("submit", parsed.data, submitResultSchema);
+      return command(ownerUserId, "submit", parsed.data, submitResultSchema);
     },
-    list: () => command("list", {}, runListSchema),
-    get: (runId) => command("get", validId(runId), runDetailSchema).then((detail) => {
+    list: (ownerUserId) => command(ownerUserId, "list", {}, runListSchema),
+    get: (ownerUserId, runId) => command(ownerUserId, "get", validId(runId), runDetailSchema).then((detail) => {
       if (detail.summary.run_id !== runId) throw new RunServiceError("invalid_bridge_response");
       return detail;
     }),
-    artifact: (runId) => command("artifact", validId(runId), artifactResultSchema),
-    recover: (runId) => command("recover", validId(runId), recoverResultSchema).then((result) => {
+    artifact: (ownerUserId, runId) => command(ownerUserId, "artifact", validId(runId), artifactResultSchema),
+    recover: (ownerUserId, runId) => command(ownerUserId, "recover", validId(runId), recoverResultSchema).then((result) => {
       if (result.run_id !== runId) throw new RunServiceError("invalid_bridge_response");
       return result;
     }),

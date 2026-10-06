@@ -1,3 +1,4 @@
+import { requireAuth } from "../lib/auth.server";
 import { useEffect, useRef, useState } from "react";
 import { data, Form, useNavigation } from "react-router";
 import type { Route } from "./+types/home";
@@ -10,9 +11,10 @@ export function meta() {
   return [{ title: "接続を確かめる | AX ワークスペース" }, { name: "description", content: "AXワークスペースのローカル接続テスト。" }];
 }
 export async function loader({ request }: Route.LoaderArgs) {
+  const user = await requireAuth(request);
   const session = await loadSession(request);
   let connected = false;
-  try { await apiClient().status(); connected = true; }
+  try { await apiClient(user.accessToken).status(); connected = true; }
   catch (error) { if (!(error instanceof ApiUnavailable)) throw error; }
   const headers = pageHeaders();
   if (session.cookie) headers.set("Set-Cookie", session.cookie);
@@ -20,6 +22,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 type Submission = { ok: true; result: CheckResult; submitted: string } | { ok: false; error: string; fieldError: boolean; submitted: string; connectionFailed: boolean };
 export async function action({ request }: Route.ActionArgs) {
+  const user = await requireAuth(request);
   let submitted = "";
   const failure = (error: string, status: number, fieldError = false, connectionFailed = false) => data<Submission>({ ok: false, error, fieldError, submitted, connectionFailed }, { status, headers: pageHeaders() });
   try {
@@ -32,7 +35,7 @@ export async function action({ request }: Route.ActionArgs) {
     await verifySubmission(request, form.get("csrf"));
     const parsed = checkInputSchema.safeParse({ message: submitted });
     if (!parsed.success) return failure("メッセージを1〜200文字で入力してください。", 400, true);
-    const result = await apiClient().check(parsed.data);
+    const result = await apiClient(user.accessToken).check(parsed.data);
     return data<Submission>({ ok: true, result, submitted }, { headers: pageHeaders() });
   } catch (error) {
     if (error instanceof Response) return failure(await error.text(), error.status);

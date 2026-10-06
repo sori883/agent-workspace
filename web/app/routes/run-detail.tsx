@@ -1,3 +1,4 @@
+import { requireAuth } from "../lib/auth.server";
 import { data, Form, redirect, useNavigation } from "react-router";
 import type { Route } from "./+types/run-detail";
 import { runIdSchema, type ArtifactResult, type RunDetail } from "../../shared/run-contracts";
@@ -9,6 +10,7 @@ import { Notice, useRunRefresh, Workspace } from "../components/workspace";
 
 export function meta() { return [{ title: "実行の結果 | AX ワークスペース" }]; }
 export async function loader({ request, params }: Route.LoaderArgs) {
+  const user = await requireAuth(request);
   const session = await loadSession(request);
   const headers = pageHeaders();
   if (session.cookie) headers.set("Set-Cookie", session.cookie);
@@ -19,7 +21,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   let status = 200;
   try {
     if (!runIdSchema.safeParse(params.runId).success) throw new RunApiError("run_not_found", 404);
-    const api = runsClient();
+    const api = runsClient(user.accessToken);
     detail = await api.get(params.runId);
     if (detail.result?.artifact) {
       try { artifact = await api.artifact(params.runId); }
@@ -32,11 +34,12 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   return data({ csrf: session.csrf, detail, artifact, artifactError, error }, { status, headers });
 }
 export async function action({ request, params }: Route.ActionArgs) {
+  const user = await requireAuth(request);
   try {
     const form = await readLocalForm(request, ["csrf", "intent"]);
     await verifySubmission(request, form.get("csrf"));
     if (form.get("intent") !== "recover" || !runIdSchema.safeParse(params.runId).success) throw new Response("操作を確認してください。", { status: 400 });
-    await runsClient().recover(params.runId);
+    await runsClient(user.accessToken).recover(params.runId);
     return redirect(`/runs/${params.runId}`, { status: 303, headers: pageHeaders() });
   } catch (cause) {
     const status = cause instanceof Response || cause instanceof RunApiError ? cause.status : 503;

@@ -78,7 +78,7 @@ export const recoverResultSchema = z.object({ run_id: runIdSchema }).strict();
 export const artifactResultSchema = z.object({ name: outputNameSchema, content: textSchema(MAX_ARTIFACT_BYTES, true) }).strict();
 export const emptyRunBodySchema = z.object({}).strict();
 export const runHttpErrorSchema = z.object({ error: safeIdentifier }).strict();
-export const runErrorStatusSchema = z.union([z.literal(400), z.literal(403), z.literal(404), z.literal(409), z.literal(413), z.literal(415), z.literal(422), z.literal(503)]);
+export const runErrorStatusSchema = z.union([z.literal(400), z.literal(401), z.literal(403), z.literal(404), z.literal(409), z.literal(413), z.literal(415), z.literal(422), z.literal(503)]);
 export const bridgeErrorSchema = z.object({ ok: z.literal(false), error: z.object({ code: safeIdentifier, status: runErrorStatusSchema }).strict() }).strict();
 
 export type RunInput = z.infer<typeof runInputSchema>;

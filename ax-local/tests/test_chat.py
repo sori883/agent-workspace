@@ -22,6 +22,9 @@ from web_bridge import MAX_CHAT_RESPONSE_BYTES, WebBridge, error_response, main
 from test_task_cli import FakeTransport, IMAGE, request
 
 
+OWNER = "10000000-0000-4000-8000-000000000001"
+
+
 def turn(cid=None, **changes):
     return {"id": cid or str(uuid.uuid4()), "key": str(uuid.uuid4()), "parent_run_id": None,
             "text": "合言葉は白い猫です。", "allow_model": True, **changes}
@@ -48,7 +51,7 @@ class ChatTransport(FakeTransport):
 
 
 def concurrent_chat(root, value, gate, queue):
-    bridge = WebBridge(TaskCLI(root, ChatTransport()), launch=lambda *_: None)
+    bridge = WebBridge(TaskCLI(root, ChatTransport()), launch=lambda *_: None, owner_user_id=OWNER)
     gate.wait(5)
     try:
         queue.put(bridge.chat(value))
@@ -57,9 +60,10 @@ def concurrent_chat(root, value, gate, queue):
 
 
 def crash_chat(root, value, after):
-    bridge = WebBridge(TaskCLI(root, ChatTransport()), launch=lambda *_: None)
+    bridge = WebBridge(TaskCLI(root, ChatTransport()), launch=lambda *_: None, owner_user_id=OWNER)
     original = os.rename
     def rename(source, target):
+        assert read_json(Path(source) / "receipt.json")["owner_user_id"] == OWNER
         if after:
             original(source, target)
         os.kill(os.getpid(), signal.SIGKILL)
@@ -75,7 +79,7 @@ class ChatTests(unittest.TestCase):
         self.transport = ChatTransport()
         self.cli = TaskCLI(self.root, self.transport)
         self.launches = []
-        self.bridge = WebBridge(self.cli, launch=lambda *args: self.launches.append(args))
+        self.bridge = WebBridge(self.cli, launch=lambda *args: self.launches.append(args), owner_user_id=OWNER)
         self.context = multiprocessing.get_context("spawn")
 
     def tearDown(self):
@@ -99,7 +103,7 @@ class ChatTests(unittest.TestCase):
         accepted = self.complete(first)
         first_run = accepted["run_id"]
         self.assertEqual(read_json(self.cli.directory(first_run) / "request.json")["inputs"], {"conversation.json": "[]"})
-        self.bridge = WebBridge(TaskCLI(self.root, self.transport), launch=lambda *args: self.launches.append(args))
+        self.bridge = WebBridge(TaskCLI(self.root, self.transport), launch=lambda *args: self.launches.append(args), owner_user_id=OWNER)
         details = self.bridge.conversation({"id": first["id"].upper()})
         self.assertTrue(details["can_send"])
         self.assertEqual(details["conversation"]["title"], first["text"].replace("\n", " "))
@@ -172,7 +176,7 @@ class ChatTests(unittest.TestCase):
 
     def test_failed_spawn_recovers_without_start_and_does_not_enter_context(self):
         value = turn()
-        bridge = WebBridge(self.cli, launch=lambda *_: (_ for _ in ()).throw(OSError("private")))
+        bridge = WebBridge(self.cli, launch=lambda *_: (_ for _ in ()).throw(OSError("private")), owner_user_id=OWNER)
         accepted = bridge.chat(value)
         self.assertEqual(self.cli.inspect(accepted["run_id"])["error_type"], "worker_spawn_failed")
         self.assertTrue(bridge.chat(value)["replayed"])
@@ -322,7 +326,7 @@ class ChatTests(unittest.TestCase):
                 child.start()
                 self.finish(child)
                 self.assertEqual(child.exitcode, -signal.SIGKILL)
-                bridge = WebBridge(TaskCLI(root, ChatTransport()), launch=lambda *_: None)
+                bridge = WebBridge(TaskCLI(root, ChatTransport()), launch=lambda *_: None, owner_user_id=OWNER)
                 accepted = bridge.chat(value)
                 self.assertEqual(accepted["replayed"], after)
                 bridge.cli.recover(accepted["run_id"])
@@ -351,7 +355,7 @@ class ChatTests(unittest.TestCase):
             shutil.copyfile(source / name, self.root / name)
         shutil.copytree(source / "task_runtime", self.root / "task_runtime", ignore=shutil.ignore_patterns("__pycache__"))
         completed = subprocess.run([sys.executable, str(self.root / "web_bridge.py"), "conversation"],
-                                   input=json.dumps({"id": cid}).encode(), capture_output=True, timeout=5)
+                                   input=json.dumps({"owner_user_id": OWNER, "input": {"id": cid}}).encode(), capture_output=True, timeout=5)
         self.assertEqual(completed.returncode, 0, completed.stdout[:200])
         self.assertEqual(json.loads(completed.stdout)["data"], detail)
         self.assertGreater(len(completed.stdout), 512 * 1024)

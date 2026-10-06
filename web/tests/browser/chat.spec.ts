@@ -1,4 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { login } from "./auth-helper";
+
+test.beforeEach(async ({ page }) => { await login(page); });
+
 import AxeBuilder from "@axe-core/playwright";
 
 async function start(page: import("@playwright/test").Page, text: string) {
@@ -70,6 +74,7 @@ test("native form and manual refresh keep a conversation usable without JavaScri
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
     const page = await context.newPage();
+    await login(page);
     await page.goto("http://127.0.0.1:3210/");
     const key = await page.locator('input[name="key"]').inputValue();
     await page.reload();

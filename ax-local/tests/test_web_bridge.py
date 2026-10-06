@@ -19,6 +19,9 @@ from web_bridge import WebBridge, error_response, parse_submission
 from test_task_cli import FakeTransport, IMAGE, request
 
 
+OWNER = "10000000-0000-4000-8000-000000000001"
+
+
 def submission(**changes):
     value = {"key": str(uuid.uuid4()), "mode": "offline", "instruction": "入力を成果物へ保存する",
              "input_text": "hello", "output_name": "answer.txt", "allow_model": False}
@@ -26,7 +29,7 @@ def submission(**changes):
 
 
 def concurrent_submit(root, value, gate, queue):
-    bridge = WebBridge(TaskCLI(Path(root), FakeTransport()), launch=lambda *_: None)
+    bridge = WebBridge(TaskCLI(Path(root), FakeTransport()), launch=lambda *_: None, owner_user_id=OWNER)
     gate.wait(5)
     try:
         queue.put(bridge.submit(value))
@@ -35,11 +38,12 @@ def concurrent_submit(root, value, gate, queue):
 
 
 def crash_publish(root, value, after):
-    bridge = WebBridge(TaskCLI(Path(root), FakeTransport()), launch=lambda *_: None)
+    bridge = WebBridge(TaskCLI(Path(root), FakeTransport()), launch=lambda *_: None, owner_user_id=OWNER)
     original = os.rename
     def rename(source, target):
         for name in ("request.json", "manifest.json", "receipt.json"):
             read_json(Path(source) / name)
+        assert read_json(Path(source) / "receipt.json")["owner_user_id"] == OWNER
         if after:
             original(source, target)
         os.kill(os.getpid(), signal.SIGKILL)
@@ -68,7 +72,7 @@ class BridgeTests(unittest.TestCase):
         self.transport = FakeTransport()
         self.cli = TaskCLI(self.root, self.transport)
         self.launches = []
-        self.bridge = WebBridge(self.cli, launch=lambda *args: self.launches.append(args))
+        self.bridge = WebBridge(self.cli, launch=lambda *args: self.launches.append(args), owner_user_id=OWNER)
         self.context = multiprocessing.get_context("spawn")
 
     def tearDown(self):
@@ -132,7 +136,7 @@ class BridgeTests(unittest.TestCase):
                 with self.assertRaises(UnicodeDecodeError):
                     self.bridge.artifact({"run_id": run_id})
             else:
-                response = self.bridge.dispatch("artifact", {"run_id": run_id})
+                response = WebBridge.dispatch("artifact", {"owner_user_id": OWNER, "input": {"run_id": run_id}}, cli=self.cli)
                 self.assertEqual(response["data"]["content"].encode(), content)
                 self.assertLess(len(json.dumps(response).encode()), 512 * 1024)
         output.unlink()
@@ -151,7 +155,7 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(synced[-1], self.cli.runs.stat().st_ino)
 
     def test_failed_spawn_and_delayed_worker_can_only_finish_unstarted(self):
-        bridge = WebBridge(self.cli, launch=lambda *_: (_ for _ in ()).throw(OSError("PRIVATE PATH")))
+        bridge = WebBridge(self.cli, launch=lambda *_: (_ for _ in ()).throw(OSError("PRIVATE PATH")), owner_user_id=OWNER)
         accepted = bridge.submit(submission())
         self.assertEqual(self.cli.inspect(accepted["run_id"])["error_type"], "worker_spawn_failed")
         self.cli.recover(accepted["run_id"])
@@ -198,8 +202,8 @@ class BridgeTests(unittest.TestCase):
         for value in invalid:
             with self.subTest(value=value):
                 with self.assertRaises(Exception):
-                    parse_submission(value)
-        parse_submission(submission(instruction="a" * 2048, input_text="b" * 4096))
+                    parse_submission(value, OWNER)
+        parse_submission(submission(instruction="a" * 2048, input_text="b" * 4096), OWNER)
         self.assertEqual(error_response(RuntimeError("SECRET /private/path")), {"ok": False, "error": {"code": "backend_unavailable", "status": 503}})
         self.assertEqual(error_response(TaskError("unresolved_run:ax-run-0000000000000001"))["error"], {"code": "unresolved_run", "status": 409})
         self.assertEqual(self.bridge.list({}), {"runs": []})
@@ -207,10 +211,8 @@ class BridgeTests(unittest.TestCase):
 
     def test_legacy_receipts_and_active_observation(self):
         receipt = self.cli.run(request(), dry_run=True)
-        summary = self.bridge.list({})["runs"][0]
-        self.assertEqual(summary["run_id"], receipt["run_id"])
-        self.assertIsNone(summary["accepted_at"])
-        self.assertEqual(summary["state"], "not_started")
+        self.assertEqual(self.bridge.list({}), {"runs": []})
+        self.assertEqual(self.cli.inspect(receipt["run_id"]), receipt)
         run_id = self.bridge.submit(submission())["run_id"]
         with self.cli.locked():
             details = self.bridge.get({"run_id": run_id})
@@ -303,7 +305,7 @@ class BridgeTests(unittest.TestCase):
                 child.start()
                 self.finish(child)
                 self.assertEqual(child.exitcode, -signal.SIGKILL)
-                bridge = WebBridge(TaskCLI(root, FakeTransport()), launch=lambda *_: None)
+                bridge = WebBridge(TaskCLI(root, FakeTransport()), launch=lambda *_: None, owner_user_id=OWNER)
                 rows = bridge.list({})["runs"]
                 self.assertEqual(len(rows), int(after))
                 replay = bridge.submit(value)
@@ -400,7 +402,7 @@ class BridgeTests(unittest.TestCase):
             completed = subprocess.run([sys.executable, str(self.root / "web_bridge.py"), "submit"], input=payload, capture_output=True, timeout=3)
             self.assertEqual(json.loads(completed.stdout)["error"]["code"], code)
             self.assertEqual(completed.stderr, b"")
-        completed = subprocess.run([sys.executable, str(self.root / "web_bridge.py"), "list"], input=b"{}", capture_output=True, timeout=3)
+        completed = subprocess.run([sys.executable, str(self.root / "web_bridge.py"), "list"], input=json.dumps({"owner_user_id": OWNER, "input": {}}).encode(), capture_output=True, timeout=3)
         self.assertEqual(json.loads(completed.stdout), {"ok": True, "data": {"runs": []}})
         self.assertFalse(self.cli.runs.exists())
 
@@ -412,7 +414,7 @@ class BridgeTests(unittest.TestCase):
         (self.root / "ax").write_text("exit 7\n")
         value = submission()
         completed = subprocess.run([sys.executable, str(self.root / "web_bridge.py"), "submit"],
-                                   input=json.dumps(value).encode(), capture_output=True, timeout=3)
+                                   input=json.dumps({"owner_user_id": OWNER, "input": value}).encode(), capture_output=True, timeout=3)
         self.assertEqual(completed.returncode, 0)
         accepted = json.loads(completed.stdout)
         self.assertTrue(accepted["ok"])

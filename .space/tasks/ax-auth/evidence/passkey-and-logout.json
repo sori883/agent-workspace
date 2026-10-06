@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-06T09:11:22.926Z",
+  "issuer": "http://localhost:8180/realms/ax",
+  "registeredWithVirtualAuthenticator": true,
+  "passkeyOnlyLogin": true,
+  "removedThroughAccountConsole": true,
+  "passwordRecovery": true,
+  "logoutUrlContainsTokens": false,
+  "copiedCookieRejectedBeforeIdpConfirmation": true,
+  "physicalAuthenticatorTested": false
+}

@@ -5,7 +5,7 @@ import re
 import secrets
 import uuid
 
-from task_cli import RUN_ID, TaskError, fingerprint, make_manifest, read_file, read_json
+from task_cli import RUN_ID, TaskError, fingerprint, make_manifest, read_file, read_json, submission_key, validate_owner
 from task_runtime.protocol import MAX_ARTIFACT_BYTES, MAX_INPUT_BYTES, ProtocolError, validate_request, validate_result
 
 
@@ -28,9 +28,17 @@ def invalid_state():
 
 
 class ChatService:
-    def __init__(self, cli, summary=None):
+    def __init__(self, cli, summary=None, *, owner_user_id):
         self.cli = cli
         self.summarize = summary
+        self.owner_user_id = validate_owner(owner_user_id) if owner_user_id is not None else None
+
+    @classmethod
+    def for_worker(cls, cli, receipt):
+        return cls(cli, owner_user_id=receipt.get("owner_user_id"))
+
+    def owns(self, receipt):
+        return receipt.get("owner_user_id") == self.owner_user_id
 
     def groups(self):
         groups = {}
@@ -57,11 +65,20 @@ class ChatService:
             invalid_state()
         return groups
 
-    def load(self, cid, groups=None):
+    def authorize(self, cid, groups=None):
         cid = identifier(cid)
         receipts = (self.groups() if groups is None else groups).get(cid)
         if not receipts:
             raise TaskError("conversation_not_found")
+        if not any(self.owns(receipt) for receipt in receipts):
+            raise TaskError("conversation_not_found")
+        if not all(self.owns(receipt) for receipt in receipts):
+            invalid_state()
+        return receipts
+
+    def load(self, cid, groups=None):
+        cid = identifier(cid)
+        receipts = self.authorize(cid, groups)
         receipts = sorted(receipts, key=lambda receipt: receipt["conversation"]["sequence"])
         if len(receipts) > MAX_TURNS:
             invalid_state()
@@ -134,7 +151,8 @@ class ChatService:
     def list(self):
         with self.cli.observing() as active:
             groups = self.groups()
-            rows = [self.view(self.load(cid, groups), active)["conversation"] for cid in groups]
+            rows = [self.view(self.load(cid, groups), active)["conversation"] for cid, receipts in groups.items()
+                    if any(self.owns(receipt) for receipt in receipts)]
         rows.sort(key=lambda row: (datetime.fromisoformat(row["updated_at"].replace("Z", "+00:00")), row["id"]), reverse=True)
         return {"conversations": rows[:50]}
 
@@ -155,13 +173,16 @@ class ChatService:
                                     "inputs": {"conversation.json": "[]"}, "output_name": "reply.txt"})
         payload = {**value, "id": cid}
         del payload["key"]
-        key_hash = hashlib.sha256(key.encode("ascii")).hexdigest()
+        key_hash = submission_key(self.owner_user_id, key)
         payload_hash = hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
-        existing = self.cli.find_submission(key_hash, payload_hash)
+        groups = self.groups()
+        if cid in groups:
+            self.authorize(cid, groups)
+        existing = self.cli.find_submission(key_hash, payload_hash, self.owner_user_id)
         if existing is not None:
             return self.replay(existing, cid)
         with self.cli.locked():
-            existing = self.cli.find_submission(key_hash, payload_hash)
+            existing = self.cli.find_submission(key_hash, payload_hash, self.owner_user_id)
             if existing is not None:
                 return self.replay(existing, cid)
             groups = self.groups()
@@ -182,10 +203,13 @@ class ChatService:
             submission = {"key_hash": key_hash, "payload_hash": payload_hash,
                           "accepted_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")}
             _, receipt = self.cli.prepare(request, image, total, submission=submission,
-                                          conversation={"id": cid, "parent_run_id": head, "sequence": len(entries) + 1})
+                                          conversation={"id": cid, "parent_run_id": head, "sequence": len(entries) + 1},
+                                          owner_user_id=self.owner_user_id)
             return receipt, False
 
     def replay(self, receipt, cid):
+        if not self.owns(receipt):
+            raise TaskError("conversation_not_found")
         link = receipt.get("conversation")
         if not isinstance(link, dict) or link.get("id") != cid or not RUN_ID.fullmatch(receipt["run_id"]):
             invalid_state()
