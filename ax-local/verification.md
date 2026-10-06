@@ -1,5 +1,27 @@
 # AXローカル実行の検証
 
+## PostgreSQLをKubernetesの外へ移行（2026-10-06）
+
+Docker DesktopにPostgreSQL 18.4を置き、実行基盤のDBを移行した。イメージは旧DBと同じdigestで [Compose設定](postgres/compose.yaml) に固定。操作と復旧条件は [DBの手順](postgres/README.md) を参照する。
+
+| 確認 | 結果 |
+| --- | --- |
+| 接続・権限 | TLS、CA・ホスト名検証、誤パスワード・平文拒否、3用途間の接続拒否、実Podからの接続を含む19項目が成功 |
+| 事前復元 | 旧DBのdumpを専用の一時DBへ復元し、16表を確認 |
+| 切替前の停止 | receipt12件が解決済み、Task/Actor15件停止、template16件にgolden tag、Worker2台の実行Actor0を確認。API全Pod終了・旧DBの他client接続0後に最終dump |
+| データ移行 | 停止中のdump前後と復元後で、16表の全行SHA-256・件数、sequence1件が一致 |
+| 通知の再開 | 旧cluster固有XIDを含むoutbox全partition・trimだけを初期化。一次表とsequenceの保持を再照合し、API2台を新DBで起動 |
+| 既存データ | 既存15 Taskの名前・所属・状態・Actor対応を保持 |
+| 新規実行 | offline Task `ax-run-c2f7488061946da9` が終了0。23バイトの成果物を回収し、egress拒否・Task停止・resolvedを確認。モデル呼び出し0 |
+| 再作成への耐久性 | API停止中にDBコンテナを作り直し、全16表・sequence1件の一致を確認。API復帰後に上記Taskのsnapshotを再開し、成果物hashの保持と再停止を確認 |
+| 移行後の復元 | 新DB側の3用途をdumpし、実行基盤用を空の検証DBへ復元。16表と復元成功を確認し検証DBを削除 |
+| 秘密の扱い | 接続パスワードは別のSecretから注入。APIログに生成したパスワードがないことを確認 |
+| 旧DB | StatefulSetは0台、`data-postgres-0` PVCはBoundのまま保持 |
+
+完全dump、元Secret、照合結果はGit対象外の `ax-local/.state/postgres/backups/`、コンテナ再作成の照合は同 `verification/` に権限を制限して保存した。認証用・アプリ用DBは空で、Keycloak・ログイン・所有者制限は未実装。RedisとRustFS、既存の会話ファイルは移行していない。全体をまとめた災害復旧の検証ではない。
+
+既存Python回帰試験100件と、新しいPython・shellの構文確認も成功。以下は初期基盤を確認した当時の記録。
+
 2026-10-05、Docker DesktopのARM64環境にあるkindクラスタで確認した。対象のコミットとイメージdigestは [versions.json](versions.json) に記録している。
 
 | 対象 | 確認した結果 |

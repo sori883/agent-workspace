@@ -10,7 +10,7 @@ tags:
   - egress
 generated: 
   by: agent:codex
-  at: 2026-10-06T06:29:33.015Z
+  at: 2026-10-06T07:50:05.409Z
 sources: 
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: ax-local/task-cli.md
@@ -23,6 +23,7 @@ sources:
   - resource: .space/tasks/ax-web-foundation/task.md
   - resource: .space/tasks/ax-web-runs/design.md
   - resource: .space/tasks/ax-web-runs/verification.md
+  - resource: ax-local/postgres/README.md
 ---
 # AXを中心とするエージェント実行基盤の構想
 
@@ -32,7 +33,7 @@ sources:
 
 利用者はログイン・ログアウト、未ログイン時のチャット利用拒否、自分の会話だけを扱う3点を了承した。初期のログイン方式はメールアドレス＋パスワードとパスキー。将来はMicrosoft Entra IDやAmazon Cognitoの利用も想定する。
 
-今回の構成調整ではKeycloak＋PostgreSQLを初期の設計とし、認証用DBとアプリ用DBの権限を分離する。同日、利用者はPostgreSQLの採用を了承した一方で、EKS/Kubernetes内にDBを置く前提にしないよう明示した。DBの配置先・運用サービスは未選定で、AWSのマネージドDBや別のPostgreSQLホスティング、自己管理も候補に残す。アプリの配置先とは別の判断とし、ローカル開発構成を本番の前提にしない。アプリの内部利用者IDで会話の所有者を表し、会話本文・費用・実行状態は既存receiptに維持する。詳細は[認証基盤の設計](../decisions/systems/ax/auth-foundation.md)と `docs/auth-foundation.md`。認証機能・DBの導入と実動作は未実施であり、概略設計の完了と混同しない。以下は当時の経緯として読む。
+今回の構成調整ではKeycloak＋PostgreSQLを初期の設計とし、認証用DBとアプリ用DBの権限を分離する。同日、利用者はPostgreSQLの採用を了承した一方で、EKS/Kubernetes内にDBを置く前提にしないよう明示した。本番DBの配置先・運用サービスは未選定で、AWSのマネージドDBや別のPostgreSQLホスティング、自己管理も候補に残す。アプリの配置先とは別の判断とし、ローカル開発構成を本番の前提にしない。アプリの内部利用者IDで会話の所有者を表し、会話本文・費用・実行状態は既存receiptに維持する。詳細は[認証基盤の設計](../decisions/systems/ax/auth-foundation.md)と `docs/auth-foundation.md`。認証機能は未実装。同日、利用者の承認でローカルDockerにPostgreSQLを作成し、実行基盤の既存データを移行、認証用・アプリ用DBと別loginを準備した。全件照合・TLS/権限・offline実行・コンテナ再作成後の保持を確認し、旧DBは停止してPVCとbackupを残した。モデル呼び出しは追加していない。次はこのDBを使った認証サービスの導入とWebへの接続。具体的な保存・復旧はax-local/postgres/README.mdを参照する。以下は当時の経緯として読む。
 
 ## ローカルWebから実AXへ接続（2026-10-06）
 

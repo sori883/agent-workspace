@@ -30,6 +30,8 @@ bash ax-local/with-env.sh bash ax-local/scripts/prepare-registry.sh
 
 ## SubstrateとHTTPSゲートウェイ
 
+以下は初期導入時の記録で、bundled PostgreSQLも導入する。2026-10-06以降の稼働DBはKubernetes外のDockerに移した。既存環境へこのインストーラーを無条件に再適用せず、[外部DBの手順](postgres/README.md)に従い接続用Secret・CA・データを保持する。DBの移行は `migrate.py`、日常の起動は `manage.py up` を使う。
+
 ```bash
 cd "$workspace_root/ax-local/.sources/substrate"
 bash ../../with-env.sh bash hack/install-ate-kind.sh --deploy-ate-system --rollout-timeout=600s

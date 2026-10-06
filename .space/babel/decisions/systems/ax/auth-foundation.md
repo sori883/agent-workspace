@@ -1,7 +1,7 @@
 ---
 type: decision
 title: 認証窓口をKeycloakへ集約し内部利用者IDで会話を所有する
-description: PostgreSQLの配置先を固定せず、メール・パスキー認証、用途別DBと既存receiptの所有権を分担する未実装の設計
+description: 本番DB配置を固定しないメール・パスキー認証の設計。ローカルDBは準備済み、認証コードは未実装
 status: draft
 governance: context
 code_refs: 
@@ -15,19 +15,20 @@ sources:
   - resource: https://www.keycloak.org/server/db
   - resource: https://www.keycloak.org/docs/latest/server_admin/index.html
   - resource: "https://openid.net/specs/openid-connect-core-1_0.html#ClaimStability"
+  - resource: ax-local/postgres/README.md
 generated: 
   by: agent:codex
-  at: 2026-10-06T06:29:32.921Z
+  at: 2026-10-06T07:50:05.296Z
 ---
 # チャットの認証基盤の構成
 
-2026-10-06の概略設計。利用者はログイン・ログアウト、未ログイン時の利用拒否、自分の会話だけを扱う範囲を了承した。初期方式はメールアドレス＋パスワードとパスキー、将来のMicrosoft Entra ID・Amazon Cognito利用を想定する。設計は採用済みだが、認証コードとDBは未実装である。詳細と実装前の残件は `docs/auth-foundation.md`、比較・確認の記録は `.space/tasks/ax-auth/task.md`。
+2026-10-06の概略設計。利用者はログイン・ログアウト、未ログイン時の利用拒否、自分の会話だけを扱う範囲を了承した。初期方式はメールアドレス＋パスワードとパスキー、将来のMicrosoft Entra ID・Amazon Cognito利用を想定する。設計は採用済みだが、認証コードは未実装である。ローカルDockerのPostgreSQLには認証用keycloakとアプリ用appの空DB・別loginを準備した。実行基盤用substrateも同じインスタンスの別DBへ移行済み。運用・実測はax-local/postgres/README.mdとax-local/verification.mdを参照する。詳細と実装前の残件は `docs/auth-foundation.md`、比較・確認の記録は `.space/tasks/ax-auth/task.md`。
 
 ## 責務と保存先
 
 初期はKeycloakを共通認証窓口とし、外部IdPはその背後へ接続する構造を土台にした。アプリが各IdPへ直接接続する別案から、内部利用者IDと `(issuer, subject)` の対応表を取り込む。複数IdPの直接接続は初期実装へ含めない。認証方式の追加を集約しつつ、Keycloak自体を将来置き換える際に会話所有権を直接書き換えずに済むようにするためである。
 
-同日、利用者はPostgreSQLの採用を了承し、DBをEKS/Kubernetes内に置く前提で記載しないよう指示した。DBの配置先・運用サービスは未選定で、AWSのマネージドDB、外部のPostgreSQLホスティング、Kubernetes内などでの自己管理を候補に残す。アプリの配置先とDBの配置先は別に決める。
+同日、利用者はPostgreSQLの採用を了承し、DBをEKS/Kubernetes内に置く前提で記載しないよう指示した。本番DBの配置先・運用サービスは未選定で、AWSのマネージドDB、外部のPostgreSQLホスティング、Kubernetes内などでの自己管理を候補に残す。アプリの配置先とDBの配置先は別に決める。
 
 認証用とアプリ用のDB・接続権限の分離は、配置先によらず維持する。1インスタンスにまとめるのはローカル開発・検証で可能な構成であり、本番の配置・台数を指定しない。Keycloak・BFF・共通APIは接続先・資格情報・TLSを外部設定で受け取り、クラスタ内サービス名や永続ボリュームを前提にしない。選定後に提供元ごとの接続条件・対応バージョン・運用分担を検証する。認証用DBはKeycloakだけが扱う。アプリ用DBは内部利用者・外部ID対応・BFFセッションを保存し、パスワードやパスキーの秘密鍵は保持しない。共通APIはトークンを検証して内部利用者を確定し、Pythonへ渡す。
 

@@ -1,0 +1,26 @@
+name: ax-local-postgres
+services:
+  postgres:
+    image: postgres:18-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    container_name: ax-local-postgres
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:55432:5432"
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/local-secrets/admin.password
+      PGDATA: /var/lib/postgresql/18/docker
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    entrypoint: ["/bin/sh", "/opt/postgres/server.sh"]
+    volumes:
+      - data:/var/lib/postgresql
+      - ../.state/postgres/secrets:/run/local-secrets:ro
+      - ./server.sh:/opt/postgres/server.sh:ro
+      - ./pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+volumes:
+  data:
+    name: ax-local-postgres-data
