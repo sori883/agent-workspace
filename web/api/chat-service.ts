@@ -3,18 +3,18 @@ import type { DataRepository } from "../data/repository";
 import { RunServiceError } from "./run-service";
 
 export interface ChatService {
-  list(ownerUserId: string): Promise<ConversationList>;
-  get(ownerUserId: string, id: string): Promise<ConversationDetail>;
-  submit(ownerUserId: string, id: string, input: ChatInput): Promise<ChatSubmitResult>;
+  list(ownerUserId: string, workspace?: string | null): Promise<ConversationList>;
+  get(ownerUserId: string, id: string, workspace?: string | null): Promise<ConversationDetail>;
+  submit(ownerUserId: string, id: string, input: ChatInput, workspace?: string | null): Promise<ChatSubmitResult>;
 }
 export function postgresChatService(repository: DataRepository): ChatService {
   return {
-    list: (owner) => repository.listConversations(owner),
-    get: (owner, id) => repository.getConversation(owner, id),
-    submit(owner, id, input) {
+    list: (owner, workspace) => repository.listConversations(owner, workspace),
+    get: (owner, id, workspace) => repository.getConversation(owner, id, workspace),
+    submit(owner, id, input, workspace) {
       const parsed = chatInputSchema.safeParse(input);
       if (!parsed.success) throw new RunServiceError("invalid_request", 400);
-      return repository.submitChat(owner, id, parsed.data);
+      return repository.submitChat(owner, id, parsed.data, workspace);
     },
   };
 }

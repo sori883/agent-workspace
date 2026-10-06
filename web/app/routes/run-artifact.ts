@@ -1,3 +1,4 @@
+import { requireWorkspaceScope } from "../lib/workspace-scope.server";
 import { requireAuth } from "../lib/auth.server";
 import type { Route } from "./+types/run-artifact";
 import { runIdSchema } from "../../shared/run-contracts";
@@ -6,11 +7,12 @@ import { loadSession, pageHeaders } from "../lib/security.server";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await requireAuth(request);
+  const scope = requireWorkspaceScope(request);
   await loadSession(request);
   const headers = pageHeaders();
   try {
     if (!runIdSchema.safeParse(params.runId).success) return new Response("成果物が見つかりません。", { status: 404, headers });
-    const artifact = await runsClient(user.accessToken).artifact(params.runId);
+    const artifact = await runsClient(user.accessToken, undefined, undefined, scope.workspaceId).artifact(params.runId);
     headers.set("Content-Type", "text/plain; charset=utf-8");
     headers.set("Content-Disposition", `attachment; filename="${artifact.name}"`);
     headers.set("Content-Security-Policy", "default-src 'none'; sandbox");

@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: ローカルWebの境界と非同期実行
-description: Hono共通APIとPostgreSQL、独立Go実行管理、Keycloak認証を接続した現在の構成とWebの境界
+description: Hono共通API・PostgreSQLとWorkspace所属、本人限定の会話、独立Go実行管理、Keycloak認証の現在の構成
 status: stable
 tags: 
   - ax
@@ -19,11 +19,11 @@ sources:
   - resource: .space/tasks/ax-portable-api/verification.md
 generated: 
   by: agent:codex
-  at: 2026-10-06T12:27:49.777Z
+  at: 2026-10-06T14:18:10.198Z
 ---
 # ローカルWebの境界と非同期実行
 
-2026-10-06、共通APIの受付・所有者確認・会話管理をHono/TypeScriptへ移し、会話・実行履歴・小さな成果物をapp PostgreSQLへ保存する構成へ切り替えた。PythonはTask内部で動く。対象はbase `0b6b4c8` からの `codex/portable-api-postgres` の変更とローカル実環境。Cloudflare等への公開は未実施。
+2026-10-06、共通APIの受付・所有者確認・会話管理をHono/TypeScriptへ移し、会話・実行履歴・小さな成果物をapp PostgreSQLへ保存する構成へ切り替えた。PythonはTask内部で動く。同日、Workspace・Group・所属ごとの管理権限と業務ロールを追加した。Cloudflare等への公開は未実施。
 
 ```mermaid
 flowchart LR
@@ -32,7 +32,7 @@ flowchart LR
   Keycloak --> AuthDB[認証用PostgreSQL]
   Web -->|認証付きHTTP| API[Hono 共通API]
   Web -->|session・内部ID| AppDB[app PostgreSQL]
-  API -->|会話・受付・履歴・成果物| AppDB
+  API -->|組織所属・会話・受付・履歴・成果物| AppDB
   Controller[Go 実行管理] -->|claim・操作記録・結果| AppDB
   Controller -->|同Pod loopback gRPC| AX[AX]
   AX --> Redis[AX内部Redis]
@@ -42,6 +42,14 @@ flowchart LR
 ```
 
 API/business layer、SQL、native adapter、配備設定に対応する図である。DBの設置先は接続設定で決め、Kubernetes内に固定しない。採用理由と外部操作の制約は[移行の決定](../decisions/systems/ax/portable-api-postgres.md)。
+
+## Workspaceによる利用先と本人限定
+
+ログイン後は `/workspaces` で作成・選択・招待参加する。Userの作成上限は3個で、招待所属とは別に数える。管理権限admin/memberと業務ロールgeneral/developerはWorkspaceごとの所属に保存する。Group参加は同じWorkspace内に限定する。所属と招待の正本はapp DBのorg_*領域で、Keycloakは本人確認を担当する。
+
+チャット・実行URLはworkspaceを明示し、APIのX-AX-Workspace-IDと現在所属、記録のownerで認可する。管理者でも他人の会話は閲覧できない。旧記録はNULL Workspaceのまま `legacy=1` から本人限定の参照・安全復旧に使い、新規送信は止める。招待は確認済みメール、7日期限、取消、招待元の現在権限を検査し、秘密のハッシュだけ保存する。
+
+開始側のintentでも所属を再確認する。確定した失効は新たな開始を止めて未開始終了またはcleanupへ進み、通信不明は保留する。開始済み処理の回収・停止まで所属解除で禁止しない。詳細は[組織所属の決定](../decisions/systems/ax/workspace-access.md)、最新の確認は `.space/tasks/ax-workspace-access/verification.md`。
 
 ## 責務と起動
 

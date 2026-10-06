@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { login } from "./auth-helper";
+import { login, workspacePath, artifactPath } from "./auth-helper";
 
 test.beforeEach(async ({ page }) => { await login(page); });
 
@@ -8,7 +8,7 @@ import AxeBuilder from "@axe-core/playwright";
 test("submit through the BFF and HTTP API, poll, preserve idempotency and download an escaped artifact", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/tasks");
+  await page.goto(workspacePath(page, "/tasks"));
   const draftUrl = page.url();
   const key = await page.locator('input[name="key"]').inputValue();
   await page.reload();
@@ -18,12 +18,12 @@ test("submit through the BFF and HTTP API, poll, preserve idempotency and downlo
   await page.getByLabel("作業用テキスト", { exact: true }).fill(content);
   const csrf = await page.locator('input[name="csrf"]').inputValue();
   await page.getByRole("button", { name: "実行する", exact: true }).click();
-  await expect(page).toHaveURL(/\/runs\/ax-run-[0-9a-f]{16}$/);
+  await expect(page).toHaveURL(/\/runs\/ax-run-[0-9a-f]{16}\?workspace=/);
   const detailUrl = page.url();
   await expect(page.getByRole("heading", { name: "完了", exact: true })).toBeVisible({ timeout: 10000 });
   await expect(page.getByTestId("artifact-content")).toHaveText(content);
   expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
-  const downloaded = await page.request.get(`${detailUrl}/artifact`);
+  const downloaded = await page.request.get(artifactPath(detailUrl));
   expect(downloaded.headers()["content-disposition"]).toBe('attachment; filename="result.txt"');
   expect(await downloaded.text()).toBe(content);
   const form = { key, csrf, mode: "offline", instruction: "テキストを保存", input_text: content, output_name: "result.txt" };
@@ -39,7 +39,7 @@ test("submit through the BFF and HTTP API, poll, preserve idempotency and downlo
 
 test("model consent, UTF-8 limits, CSRF, keyboard and mobile form", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 740 });
-  await page.goto("/tasks");
+  await page.goto(workspacePath(page, "/tasks"));
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "本文へ移動" })).toBeFocused();
   await page.getByLabel("モデルを使う", { exact: false }).check();
@@ -63,7 +63,7 @@ test("a native form can submit and manually refresh without JavaScript", async (
   try {
     const page = await context.newPage();
     await login(page);
-    await page.goto("http://127.0.0.1:3210/tasks");
+    await page.goto(workspacePath(page, "/tasks"));
     const draftUrl = page.url();
     const content = "JavaScriptなしの作業\n2行目";
     await page.getByLabel("作業用テキスト", { exact: true }).fill(content);
@@ -88,7 +88,7 @@ test("native history refresh fetches the page and preserves the draft key", asyn
   try {
     const page = await context.newPage();
     await login(page);
-    await page.goto("http://127.0.0.1:3210/tasks");
+    await page.goto(workspacePath(page, "/tasks"));
     const key = new URL(page.url()).searchParams.get("draft");
     let requests = 0;
     page.on("request", (request) => { if (request.isNavigationRequest() && request.method() === "GET") requests += 1; });

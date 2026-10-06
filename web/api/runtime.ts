@@ -1,3 +1,5 @@
+import { WorkspaceRepository } from "../data/workspaces";
+import { postgresWorkspaceService } from "./workspace-service";
 import { createApi } from "./app";
 import { postgresRunService } from "./run-service";
 import { postgresChatService } from "./chat-service";
@@ -14,5 +16,5 @@ export function createRuntime(settings: ApiApplicationSettings, database: Databa
     if (rows.length !== 1) throw new AuthenticationError("unknown_identity");
     return rows[0]!.id;
   });
-  return createApi(settings, undefined, postgresRunService(repository), postgresChatService(repository), authenticate);
+  return createApi(settings, undefined, postgresRunService(repository), postgresChatService(repository), authenticate, postgresWorkspaceService(new WorkspaceRepository(database)));
 }

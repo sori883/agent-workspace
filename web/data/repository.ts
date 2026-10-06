@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { workspaceIdSchema } from "../shared/workspace-contracts";
 import { conversationDetailSchema, type ChatInput, type ChatSubmitResult, type ConversationDetail, type ConversationList } from "../shared/chat-contracts";
 import { artifactResultSchema, protocolRequestSchema, protocolResultSchema, runDetailSchema, runIdSchema, runSummarySchema, type ArtifactResult, type RecoverResult, type RunDetail, type RunInput, type RunList, type RunSummary, type SubmitResult } from "../shared/run-contracts";
 import { RunServiceError } from "../api/run-service";
@@ -12,11 +13,11 @@ const snapshotSchema = z.object({
   result: protocolResultSchema.nullable(), cleanup: z.record(z.string(), z.unknown()), cleanup_errors: z.array(z.string()), invalid: z.boolean(), artifact_hex: z.string().nullable(),
 }).strict();
 type Snapshot = z.infer<typeof snapshotSchema>;
-const codes = new Map<string, 400 | 404 | 409 | 422 | 503>([
+const codes = new Map<string, 400 | 403 | 404 | 409 | 422 | 503>([
   ...["invalid_request", "invalid_owner_user_id", "invalid_run_id", "invalid_conversation_id", "model_not_allowed"].map((code) => [code, 400] as const),
   ...["run_not_found", "artifact_unavailable", "conversation_not_found"].map((code) => [code, 404] as const),
   ...["idempotency_conflict", "another_cli_running", "unresolved_run", "unknown_paid_usage", "paid_failure_requires_review", "failed_request_already_attempted", "pilot_estimate_limit_reached", "execution_already_claimed", "conversation_conflict", "conversation_busy", "invalid_conversation_state"].map((code) => [code, 409] as const),
-  ["conversation_context_full", 422], ["admission_closed", 503], ["invalid_run_ledger", 503], ["artifact_verification_failed", 503],
+  ["workspace_required", 400], ["workspace_not_found", 404], ["workspace_forbidden", 403], ["conversation_context_full", 422], ["admission_closed", 503], ["invalid_run_ledger", 503], ["artifact_verification_failed", 503],
 ]);
 const ownerId = (value: string) => {
   const parsed = z.uuid().safeParse(value);
@@ -31,6 +32,12 @@ const validConversation = (value: string) => {
   const parsed = z.uuid().safeParse(value);
   if (!parsed.success) throw new RunServiceError("invalid_conversation_id", 400);
   return parsed.data.toLowerCase();
+};
+const workspaceId = (value: string | null | undefined) => {
+  if (value == null) return null;
+  const parsed = workspaceIdSchema.safeParse(value);
+  if (!parsed.success) throw new RunServiceError("invalid_workspace_id", 400);
+  return parsed.data;
 };
 const invalid = () => new RunServiceError("invalid_bridge_response");
 
@@ -74,33 +81,33 @@ export class DataRepository {
       return artifactResultSchema.parse({ name: row.result.artifact.name, content: decodeUtf8(bytes) }).content;
     } catch { throw new RunServiceError("artifact_verification_failed"); }
   }
-  async submit(owner: string, input: RunInput): Promise<SubmitResult> {
+  async submit(owner: string, input: RunInput, workspace?: string | null): Promise<SubmitResult> {
     owner = ownerId(owner);
     const id = `ax-run-${hex(crypto.getRandomValues(new Uint8Array(8)))}`;
-    return z.object({ run_id: runIdSchema, replayed: z.boolean() }).strict().parse(await this.query("ax_accept", [owner, "run", null, JSON.stringify(input), this.options.image, id]));
+    return z.object({ run_id: runIdSchema, replayed: z.boolean() }).strict().parse(await this.query("ax_ws_accept", [owner, "run", null, JSON.stringify(input), this.options.image, id, workspaceId(workspace)]));
   }
-  async list(owner: string): Promise<RunList> {
+  async list(owner: string, workspace?: string | null): Promise<RunList> {
     owner = ownerId(owner);
-    const rows = z.array(z.unknown()).max(50).parse(await this.query("ax_list_runs", [owner]));
+    const rows = z.array(z.unknown()).max(50).parse(await this.query("ax_ws_list_runs", [owner, workspaceId(workspace)]));
     return { runs: await Promise.all(rows.map(async (row) => this.summary(await this.snapshot(row, owner)))) };
   }
-  async get(owner: string, id: string): Promise<RunDetail> {
+  async get(owner: string, id: string, workspace?: string | null): Promise<RunDetail> {
     owner = ownerId(owner);
-    const row = await this.snapshot(await this.query("ax_read_run", [owner, validRun(id)]), owner);
+    const row = await this.snapshot(await this.query("ax_ws_read_run", [owner, validRun(id), workspaceId(workspace)]), owner);
     return runDetailSchema.parse({ summary: this.summary(row), request: row.request, result: row.result, cleanup: { egress_denied: row.cleanup.egress_denied === true, suspended: row.cleanup.suspended === true }, cleanup_errors: row.cleanup_errors });
   }
-  async artifact(owner: string, id: string): Promise<ArtifactResult> {
+  async artifact(owner: string, id: string, workspace?: string | null): Promise<ArtifactResult> {
     owner = ownerId(owner);
-    const row = await this.snapshot(await this.query("ax_read_run", [owner, validRun(id)]), owner);
+    const row = await this.snapshot(await this.query("ax_ws_read_run", [owner, validRun(id), workspaceId(workspace)]), owner);
     return { name: row.request.output_name, content: await this.artifactContent(row) };
   }
-  async recover(owner: string, id: string): Promise<RecoverResult> {
-    return z.object({ run_id: z.literal(validRun(id)) }).strict().parse(await this.query("ax_request_recovery", [ownerId(owner), id]));
+  async recover(owner: string, id: string, workspace?: string | null): Promise<RecoverResult> {
+    return z.object({ run_id: z.literal(validRun(id)) }).strict().parse(await this.query("ax_ws_request_recovery", [ownerId(owner), id, workspaceId(workspace)]));
   }
-  async submitChat(owner: string, cid: string, input: ChatInput): Promise<ChatSubmitResult> {
+  async submitChat(owner: string, cid: string, input: ChatInput, workspace?: string | null): Promise<ChatSubmitResult> {
     owner = ownerId(owner); cid = validConversation(cid);
     const id = `ax-run-${hex(crypto.getRandomValues(new Uint8Array(8)))}`;
-    const result = z.object({ run_id: runIdSchema, replayed: z.boolean() }).strict().parse(await this.query("ax_accept", [owner, "chat", cid, JSON.stringify(input), this.options.image, id]));
+    const result = z.object({ run_id: runIdSchema, replayed: z.boolean() }).strict().parse(await this.query("ax_ws_accept", [owner, "chat", cid, JSON.stringify(input), this.options.image, id, workspaceId(workspace)]));
     return { ...result, conversation_id: cid };
   }
   private async conversation(value: unknown, owner: string): Promise<ConversationDetail> {
@@ -127,15 +134,16 @@ export class DataRepository {
       return conversationDetailSchema.parse({ conversation: { id: saved.id, title: Array.from(turns[0].user).slice(0, 60).join("").replace(/[\r\n]/g, " "), updated_at: head.accepted_at, head_run_id: head.run_id, turn_count: turns.length, state: head.state }, turns, can_send: !contextFull && turns.every((turn) => turn.summary.resolved), context_full: contextFull });
     } catch { throw new RunServiceError("invalid_conversation_state", 409); }
   }
-  async getConversation(owner: string, cid: string): Promise<ConversationDetail> {
+  async getConversation(owner: string, cid: string, workspace?: string | null): Promise<ConversationDetail> {
     owner = ownerId(owner); cid = validConversation(cid);
-    const value = await this.conversation(await this.query("ax_read_conversation", [owner, cid]), owner);
+    const value = await this.conversation(await this.query("ax_ws_read_conversation", [owner, cid, workspaceId(workspace)]), owner);
     if (value.conversation.id !== cid) throw invalid();
+    if (workspace == null) value.can_send = false;
     return value;
   }
-  async listConversations(owner: string): Promise<ConversationList> {
+  async listConversations(owner: string, workspace?: string | null): Promise<ConversationList> {
     owner = ownerId(owner);
-    const values = z.array(z.unknown()).max(50).parse(await this.query("ax_list_conversations", [owner]));
+    const values = z.array(z.unknown()).max(50).parse(await this.query("ax_ws_list_conversations", [owner, workspaceId(workspace)]));
     return { conversations: await Promise.all(values.map(async (value) => (await this.conversation(value, owner)).conversation)) };
   }
 }

@@ -56,7 +56,7 @@ test("forms work without JavaScript", async ({ browser }) => {
   await page.getByLabel("確認用のメッセージ").fill("セッションが切れても残す入力");
   await context.clearCookies();
   await page.getByRole("button", { name: "送信して接続を確認" }).click();
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/login\?returnTo=/);
   await expect(page.getByRole("button", { name: "ログインへ進む" })).toBeVisible();
   await context.close();
 });

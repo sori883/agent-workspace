@@ -9,6 +9,8 @@ export const runStateLabels = {
 
 export function runErrorMessage(code: string) {
   const messages: Record<string, string> = {
+    workspace_required: "ワークスペースを選んでから送信してください。",
+    workspace_not_found: "ワークスペースが見つからないか、現在は参加していません。一覧から選び直してください。",
     unauthorized: "ログインを確認できませんでした。アカウントからログアウトして、もう一度ログインしてください。",
     authentication_unavailable: "ログインサービスに接続できません。しばらくしてから更新してください。",
     idempotency_conflict: "この送信はすでに受け付けています。内容を変えて実行する場合は「新しい実行」から始めてください。",

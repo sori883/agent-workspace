@@ -1,4 +1,5 @@
 import * as oidc from "openid-client";
+import { z } from "zod";
 import { AccessTokenVerifier, type AccessClaims } from "../shared/access-token";
 import type { AuthConfig } from "./auth-config";
 import { AuthenticationError, type LoginFlow } from "./auth-store";
@@ -28,7 +29,9 @@ export class IdentityProvider {
     if (!claims || !tokens.id_token) throw new AuthenticationError("missing_id_token");
     const access = await this.accessClaims(tokens.access_token);
     if (access.sub !== claims.sub || access.iss !== claims.iss) throw new AuthenticationError("identity_mismatch");
+    const email = z.email().max(254).safeParse(claims.email);
     return { tokens: { accessToken: tokens.access_token, idToken: tokens.id_token }, subject: claims.sub, issuer: claims.iss,
+      verifiedEmail: claims.email_verified === true && email.success ? email.data.toLowerCase() : null,
       displayName: typeof claims.email === "string" ? claims.email : typeof claims.name === "string" ? claims.name : "利用者",
       expiresAt: access.exp! * 1000 };
   }

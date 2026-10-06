@@ -17,6 +17,7 @@ import { startOidcFixture } from "./helpers/oidc-fixture";
 import { AuthStore, createPool } from "../server/auth-store";
 import { migrateAuth } from "../server/auth-migrate";
 import { migrateData } from "../server/data-migrate";
+import { WorkspaceRepository } from "../data/workspaces";
 import { createRuntime } from "../api/runtime";
 import { parseApiSettings, type ApiSettings } from "../api/settings";
 import { postgresOptions } from "../api/postgres";
@@ -31,10 +32,12 @@ let fixture: Awaited<ReturnType<typeof startOidcFixture>>;
 let worker: Miniflare;
 let workerOptions: ConstructorParameters<typeof Miniflare>[0];
 let workerConnectionString: string;
+let workspace: string;
 let alice: string;
 let bob: string;
 let node: ReturnType<typeof createRuntime>;
 let workerErrors = 0;
+const pendingRequests = new Set<Promise<Response>>();
 
 before(async () => {
   const reservation = createServer();
@@ -56,8 +59,12 @@ before(async () => {
   await migrateData(pool);
   await pool.query("UPDATE ax_control SET accepting=true");
   const store = new AuthStore(pool, auth.encryptionKey);
-  await store.identify(fixture.issuer, "runtime-alice", "Alice");
-  await store.identify(fixture.issuer, "runtime-bob", "Bob");
+  await store.identify(fixture.issuer, "runtime-alice", "Alice", "alice@example.test");
+  await store.identify(fixture.issuer, "runtime-bob", "Bob", "bob@example.test");
+  const ownerId = (await pool.query("SELECT user_id FROM identities WHERE subject='runtime-alice'")).rows[0].user_id;
+  const otherId = (await pool.query("SELECT user_id FROM identities WHERE subject='runtime-bob'")).rows[0].user_id;
+  workspace = (await new WorkspaceRepository(pool).create(ownerId, {key:randomUUID(),name:"Runtime"})).workspace.id;
+  await pool.query("INSERT INTO org_memberships VALUES($1,$2,'member','general')", [workspace,otherId]);
   alice = await fixture.accessToken("runtime-alice");
   bob = await fixture.accessToken("runtime-bob");
   node = createRuntime(settings, pool);
@@ -92,20 +99,33 @@ async function startWorker() {
   catch { throw new Error("Worker runtime could not start."); }
 }
 
+async function stopWorker() {
+  try { await Promise.all([...pendingRequests]); }
+  finally { await worker.dispose(); }
+}
+
 after(async () => {
-  await worker?.dispose();
+  if (worker) await stopWorker();
   await fixture?.close();
   await pool?.end();
   if (admin) { await admin.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`); await admin.end(); }
   rmSync(directory, { recursive: true, force: true });
 });
 
-async function request(runtime: "node" | "worker", path: string, token: string, body?: unknown) {
+async function bufferedRequest(runtime: "node" | "worker", path: string, token: string, body?: unknown) {
   const headers = { host: new URL(settings.apiOrigin).host, authorization: `Bearer ${settings.apiToken}`,
-    "X-AX-Access-Token": token, "content-type": "application/json" };
+    "X-AX-Workspace-ID": workspace, "X-AX-Access-Token": token, "content-type": "application/json" };
   const url = `${settings.apiOrigin}${path}`;
   const init = { headers, method: body === undefined ? "GET" : "POST", ...(body === undefined ? {} : { body: JSON.stringify(body) }) };
-  return runtime === "node" ? node.fetch(new Request(url, init)) : worker.dispatchFetch(url, init);
+  const response = await (runtime === "node" ? node.fetch(new Request(url, init)) : worker.dispatchFetch(url, init));
+  const content = await response.arrayBuffer();
+  return new Response(content, {status:response.status,statusText:response.statusText,headers:Array.from(response.headers.entries())});
+}
+
+function request(runtime: "node" | "worker", path: string, token: string, body?: unknown): Promise<Response> {
+  const pending = bufferedRequest(runtime,path,token,body).finally(()=>pendingRequests.delete(pending));
+  pendingRequests.add(pending);
+  return pending;
 }
 
 test("Node and workerd share PostgreSQL acceptance, replay, ownership and restart persistence", async () => {
@@ -128,11 +148,19 @@ test("Node and workerd share PostgreSQL acceptance, replay, ownership and restar
   assert.equal((await request("worker", `/v1/runs/${first.run_id}/recover`, bob, {})).status, 404);
   node = createRuntime(settings, pool);
   assert.equal((await request("node", `/v1/runs/${first.run_id}`, alice)).status, 200);
-  await worker.dispose();
+  await stopWorker();
   await startWorker();
   assert.equal((await request("worker", `/v1/runs/${first.run_id}`, alice)).status, 200);
   assert.deepEqual(await (await request("worker", "/v1/runs", alice, input)).json(), { ...first, replayed: true });
   assert.equal((await pool.query("SELECT count(*)::int AS n FROM ax_jobs")).rows[0].n, 1);
+
+});
+
+test("Worker fixture drains outstanding responses before restart", async () => {
+  const reads = Promise.allSettled(Array.from({length:12},()=>request("worker","/v1/runs",alice)));
+  await stopWorker();
+  assert.ok((await reads).every(result=>result.status === "fulfilled" && result.value.status===200));
+  await startWorker();
 });
 
 for (const runtime of ["node", "workerd"] as const) test(`${runtime} Worker adapter refuses an interrupted PostgreSQL connection without retrying admission`, { timeout: 10_000 }, async () => {
@@ -142,7 +170,7 @@ for (const runtime of ["node", "workerd"] as const) test(`${runtime} Worker adap
   const encoded = new TextEncoder().encode(JSON.stringify(input));
   let body: ReadableStreamDefaultController<Uint8Array>;
   const init = {
-    method: "POST", headers: { authorization: `Bearer ${settings.apiToken}`, "X-AX-Access-Token": alice, "content-type": "application/json" },
+    method: "POST", headers: { authorization: `Bearer ${settings.apiToken}`, "X-AX-Workspace-ID": workspace, "X-AX-Access-Token": alice, "content-type": "application/json" },
     body: new ReadableStream<Uint8Array>({ start(controller) { body = controller; controller.enqueue(encoded.slice(0, 1)); } }),
     duplex: "half" as const,
   };
@@ -175,6 +203,22 @@ for (const runtime of ["node", "workerd"] as const) test(`${runtime} Worker adap
   assert.equal((await pool.query("SELECT count(*)::int AS n FROM ax_jobs")).rows[0].n, beforeCount);
   assert.equal((await request("worker", "/v1/runs", alice)).status, 200);
   assert.equal(workerErrors, beforeErrors, "A disconnected client must not emit an unhandled Worker error");
+});
+
+test("workerd and Node share workspace idempotency and one-time invitation tokens", async () => {
+  const body = { key: randomUUID(), name: "Worker会社" };
+  const first = await (await request("worker", "/v1/workspaces", alice, body)).json() as { workspace: {id:string}; replayed:boolean };
+  assert.equal(first.replayed, false);
+  assert.deepEqual(await (await request("node", "/v1/workspaces", alice, body)).json(), {...first,replayed:true});
+  const path = `/v1/workspaces/${first.workspace.id}/invitations`;
+  const inviteBody = {key:randomUUID(),email:"bob@example.test"};
+  const invite = await (await request("worker", path, alice, inviteBody)).json() as {id:string;token:string;expires_at:string;replayed:boolean};
+  assert.equal(invite.token.length,43);
+  assert.deepEqual(await (await request("node", path, alice, inviteBody)).json(), {...invite,token:null,replayed:true});
+  const accepted = await request("worker", "/v1/invitations/accept", bob, {token:invite.token});
+  assert.equal(accepted.status,200);
+  const detail = await (await request("node", `/v1/workspaces/${first.workspace.id}`, bob)).json() as {workspace:{access_level:string};invitations:unknown[]};
+  assert.equal(detail.workspace.access_level,"member"); assert.deepEqual(detail.invitations,[]);
 });
 
 test("disabled identities are refused by both runtimes", async () => {
