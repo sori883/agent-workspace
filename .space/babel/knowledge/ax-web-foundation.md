@@ -17,7 +17,7 @@ sources:
   - resource: web/tests/browser/
 generated: 
   by: agent:codex
-  at: 2026-10-06T01:49:13.982Z
+  at: 2026-10-06T02:03:07.128Z
 ---
 # ローカルWeb土台W1
 
@@ -37,8 +37,10 @@ Referrer-Policyはsame-origin。no-referrerではJavaScriptなしの通常フォ
 
 APIの全経路は固定Host・起動時Bearerを確認し、Origin付き要求を拒否する。秘密値や接続先URLをブラウザへ渡さない。要求・応答本文は16 KiB、メッセージはtrim後1〜200 UTF-16コード単位。BFFの通信は本文の受信まで3秒、redirectと自動再試行を禁止する。API不通時はactionの失敗を優先して、利用環境欄に古い接続成功を残さない。
 
+React DOM 19.2.8はtextareaのhydrationで非空の既定値をvalueへ代入する。読み込み完了前の入力を失わないよう、Homeの初回stateで既存DOMの値を取得し、defaultValueへ渡す。SSR側では既定のメッセージかactionの入力を使う。文字数はSSRと同じ値で初期化し、effectでDOM値へ同期して文字のhydration不一致を避ける。JavaScript取得を保留して入力後に解除する実ブラウザ試験で、文字数・内容・送信・console/pageerrorなしを確認する。
+
 ## 確認範囲と次の単位
 
-境界テスト5件とブラウザテスト7件で、正常往復、SSR、JavaScriptなし、Cookie消失時の入力保持、320px幅、キーボード、axe自動検査、実API停止、dev/startのポート競合と子回収を確認した。完全なアクセシビリティ適合や実AX接続の証明ではない。デザインはプロジェクト内の[参照スキル](project-design-skill.md)が保存したDADSの基本・フォーム・通知を参照した。
+境界テスト5件とブラウザテスト8件で、正常往復、SSR、JavaScriptなし、Cookie消失時の入力保持、320px幅、キーボード、axe自動検査、実API停止、dev/startのポート競合と子回収を確認した。完全なアクセシビリティ適合や実AX接続の証明ではない。デザインはプロジェクト内の[参照スキル](project-design-skill.md)が保存したDADSの基本・フォーム・通知を参照した。
 
 W2で既存Pythonを共通API内部から再利用し、非同期受付・実行ID・状態照会・永続台帳へ接続する。GET/SSRは実行を開始しない。費用不明時の停止、二重開始防止、外部通信遮断とTask停止の条件は[単発CLIの設計](../decisions/systems/ax/single-task-cli.md)と[費用ルール](../rules/ax-model-spending.md)を維持する。W1の200文字制限は疎通確認専用であり、既存Task入力の仕様は変えていない。

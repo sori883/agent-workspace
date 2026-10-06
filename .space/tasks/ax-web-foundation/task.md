@@ -57,7 +57,7 @@ Aのメモリsessionは取り込まず、署名付きCookieにCSRF値と絶対�
 | `npm --prefix web run typecheck` | 成功 |
 | `npm --prefix web test` | 境界テスト5件成功 |
 | `npm --prefix web run build` | client/SSR両方成功 |
-| `npm --prefix web run test:e2e` | ブラウザと起動管理の7件成功 |
+| `npm --prefix web run test:e2e` | ブラウザと起動管理の8件成功 |
 | `npm --prefix web audit --audit-level=high` | 脆弱性0件 |
 | OKF `validate --strict --drift` | 30 concepts、error/warning/broken/orphanなし |
 
@@ -74,7 +74,11 @@ Aのメモリsessionは取り込まず、署名付きCookieにCSRF値と絶対�
 | 親 | no-referrerによってJSなしのPOSTがOrigin:nullになる | same-originへ変更し、通常form送信が通ることを実測 |
 | 親 | 503後に接続状態欄が古い成功表示を残す | actionの接続失敗を表示に反映。API実停止でエラー・状態表示・入力保持を確認 |
 
-修正後にA/Bが該当コードと回帰試験を再確認し、担当範囲の指摘は解消した。最終7件のブラウザ試験は親が実行した証拠を共有しており、再確認担当自身の再実行とは区別する。
+修正後にA/Bが該当コードと回帰試験を再確認し、担当範囲の指摘は解消した。最終8件のブラウザ試験は親が実行した証拠を共有しており、再確認担当自身の再実行とは区別する。
+
+CIの初回実行（[run 37401351744](https://github.com/sori883/agent-workspace/actions/runs/37401351744)）では、開発画面のhydration前に入力すると文字数が初期値に戻る問題を検出した。React DOM 19.2.8のtextarea初期化が非空のdefaultValueをvalueに代入するため、単に非制御入力へ変えるだけでは解消しなかった。JavaScript取得を保留して入力後に解除する試験を追加し、この中間修正でも失敗することを確認した。
+
+最終修正はhydration前のDOM値を初回stateで取得してtextareaのdefaultValueへ渡し、文字数はSSRと同じ値で初期化してeffectでDOM値へ同期する。これによりHTMLの文字不一致を避けつつ先行入力を保持する。入力保持・文字数・実送信内容・console/pageerrorなしまで確認し、型検査・ビルド・ブラウザ8件が成功した。A担当がこの追加変更を独立して再確認し、コード上の懸念は解消・追加指摘なしと判定した。
 
 ## 引き渡しと次の作業
 

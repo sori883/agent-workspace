@@ -56,6 +56,26 @@ test("forms work without JavaScript", async ({ browser }) => {
   await context.close();
 });
 
+test("input typed before hydration survives and is submitted unchanged", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  let release!: () => void;
+  const loaded = new Promise<void>((resolve) => { release = resolve; });
+  await page.route("**/*.js", async (route) => { await loaded; await route.continue(); });
+  try {
+    await page.goto("/", { waitUntil: "commit" });
+    await page.getByLabel("確認用のメッセージ").fill("読み込み中の入力");
+  } finally {
+    release();
+  }
+  await expect(page.locator("#message-count")).toHaveText("8 / 200");
+  await expect(page.getByLabel("確認用のメッセージ")).toHaveValue("読み込み中の入力");
+  await page.getByRole("button", { name: "送信して接続を確認" }).click();
+  await expect(page.locator(".returned-message")).toHaveText("読み込み中の入力");
+  expect(errors).toEqual([]);
+});
+
 test("the 320px layout has no horizontal scrolling and retains usable controls", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 740 });
   await page.goto("/");

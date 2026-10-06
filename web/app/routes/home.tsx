@@ -53,7 +53,14 @@ export default function Home({ loaderData, actionData }: Route.ComponentProps) {
   const navigation = useNavigation();
   const pending = navigation.state !== "idle";
   const [message, setMessage] = useState(actionData?.submitted ?? "接続を確認します。");
+  const [initialMessage] = useState(() => {
+    if (typeof document === "undefined") return actionData?.submitted ?? "接続を確認します。";
+    const input = document.getElementById("message");
+    return input instanceof HTMLTextAreaElement ? input.value : actionData?.submitted ?? "接続を確認します。";
+  });
+  const messageRef = useRef<HTMLTextAreaElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (messageRef.current) setMessage(messageRef.current.value); }, []);
   useEffect(() => { if (actionData && !pending) resultRef.current?.focus(); }, [actionData, pending]);
   const error = actionData?.ok === false ? actionData : null;
   const connected = actionData?.ok ? true : error?.connectionFailed ? false : loaderData.connected;
@@ -84,7 +91,7 @@ export default function Home({ loaderData, actionData }: Route.ComponentProps) {
                 <input type="hidden" name="csrf" value={loaderData.csrf} />
                 <label htmlFor="message">確認用のメッセージ<span className="required-label">必須</span></label>
                 <p className="field-hint" id="message-hint">200文字以内で入力してください。</p>
-                <textarea id="message" name="message" rows={5} maxLength={MAX_MESSAGE_LENGTH} value={message} onChange={(event) => setMessage(event.target.value)} aria-invalid={error?.fieldError || undefined} aria-describedby={`message-hint message-count${error?.fieldError ? " message-error" : ""}`} />
+                <textarea ref={messageRef} id="message" name="message" rows={5} maxLength={MAX_MESSAGE_LENGTH} defaultValue={initialMessage} onChange={(event) => setMessage(event.target.value)} aria-invalid={error?.fieldError || undefined} aria-describedby={`message-hint message-count${error?.fieldError ? " message-error" : ""}`} />
                 <div className="field-bottom"><span>{error?.fieldError && <span id="message-error" className="field-error">{error.error}</span>}</span><span id="message-count" className="character-count">{message.length} / 200</span></div>
                 <button className="button button-primary" type="submit" disabled={pending}>{pending ? "接続を確認しています…" : "送信して接続を確認"}<Mark kind="arrow" /></button>
               </Form>
