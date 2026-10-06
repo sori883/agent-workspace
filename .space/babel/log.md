@@ -1,4 +1,5 @@
 ## 2026-10-06
+* **Creation**: [デジタル庁デザインスキルをプロジェクト内で参照する](knowledge/project-design-skill.md).
 * **Update**: [通常の変更はPR作成・マージまで進め、危険な操作だけ人間に確認する](rules/pr-delivery.md).
 
 ## 2026-10-05
