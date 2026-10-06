@@ -14,7 +14,7 @@
 | R4 | 再起動・途中停止・使用量不明・後片付け未確認で勝手に再実行しない | 子プロセス試験・既存guard・完了後の実サーバー再起動。実AX途中停止は未確認 | 確認済み |
 | R5 | Host/Origin/session/CSRF・入力/出力上限と情報境界を維持する | Python85件・Node12件・ブラウザ12件、型/build成功 | 確認済み |
 | R6 | テスト実行を既定とし、モデルを使う実行は料金と条件を明示して選べる | 既定offlineで実確認。model同意を試験、今回の有料送信0件 | 確認済み |
-| R7 | 起動手順・復旧方法・現在地を残し、独立レビュー・CI後に1つのPRを反映する | 文書・OKF・独立レビューを準備済み。PR/CIの結果待ち | 納品操作中 |
+| R7 | 起動手順・復旧方法・現在地を残し、独立レビュー・CI後に1つのPRを反映する | PR #7、独立レビュー、両CI成功。反映結果は納品先の状態を参照 | PR引き渡し済み |
 
 ## 工程・担当
 
@@ -38,3 +38,9 @@
 [検証](verification.md)・[レビュー](review.md)へ実結果と限界を記録した。実AX offlineの使用量は0。実行途中の実AX/API停止と、Webから有料モデルへの全経路は今回未検証。復旧直後の自動更新タイミングは手動更新で補う。
 
 OKFは既存の `knowledge/ax-web-foundation`、`decisions/systems/ax/single-task-cli`、`knowledge/ax-agent-platform-direction` をCLIで更新し、現在の非同期受付と経緯、設計理由、確認範囲を反映した。読み返し一致、strict/driftのエラー・警告0。新しい重複conceptは作成していない。
+
+## 納品先
+
+[PR #7](https://github.com/sori883/agent-workspace/pull/7)へW2〜W4をまとめた。実装コミット `2e7f84cd146ecdeb0cc76986ee29250f51c3071c` のGitHub Actionsは、AX local CLI/offline-testsとWeb workspace/web-testsの両方が成功した。[CIの観測](evidence/ci.json)。この記録への追記はコードを変更しない。
+
+このファイルは検証済みPRへの引き渡し時点の記録で、マージ操作前に保存する。反映の成功を先取りせず、マージコミットと最終チェックは上記PRの状態を正本とする。親は通常の承認方針に従い、PR最終版のチェック後にマージ・main反映を確認して利用者へ報告する。
