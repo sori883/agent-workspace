@@ -59,6 +59,7 @@ type Controller struct {
 }
 
 var ErrHeld = errors.New("execution_held")
+var ErrAuthorizationRevoked = errors.New("workspace_access_revoked")
 
 func New(store Store, executor Executor, image string) *Controller {
 	return &Controller{Store: store, Executor: executor, Image: image, PollInterval: time.Second, HeartbeatInterval: 10 * time.Second, ReadyTimeout: 45 * time.Second, ResultTimeout: 120 * time.Second, StopTimeout: 60 * time.Second}
@@ -93,6 +94,13 @@ func (c *Controller) RunOnce(ctx context.Context) (bool, error) {
 		}
 	}()
 	err = c.process(work, claim)
+	if errors.Is(err, ErrAuthorizationRevoked) && work.Err() == nil {
+		if len(claim.Effects) == 0 {
+			err = nil
+		} else {
+			err = c.cleanupAndFinish(work, claim)
+		}
+	}
 	cancel()
 	<-beatDone
 	select {

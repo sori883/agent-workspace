@@ -1,16 +1,19 @@
+import { scopeHref, type WorkspaceScope } from "../lib/workspace-scope";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useLocation, useRevalidator } from "react-router";
 import { runStateLabels } from "../lib/run-copy";
 import type { RunSummary } from "../../shared/run-contracts";
 
-export function Workspace({ title, intro, children, sidebar, chat = false }: { title: string; intro: string; children: ReactNode; sidebar?: ReactNode; chat?: boolean }) {
-  const { pathname } = useLocation();
+export function Workspace({ title, intro, children, sidebar, workspaceName, chat = false }: { title: string; intro: string; children: ReactNode; sidebar?: ReactNode; workspaceName?: string | null; chat?: boolean }) {
+  const { pathname, search } = useLocation();
+  const params = new URLSearchParams(search);
+  const scope = { workspaceId: params.get("workspace") ?? /^\/workspaces\/([0-9a-f-]{36})$/.exec(pathname)?.[1] ?? null, legacy: params.get("legacy") === "1" };
   return <>
     <a className="skip-link" href="#main">本文へ移動</a>
-    <header className="site-header"><a className="brand" href="/" aria-label="AX ワークスペース ホーム"><span className="brand-symbol" aria-hidden="true">ax<span>.</span></span><span className="brand-name">ワークスペース</span></a><span className="environment-chip"><span className="status-dot" />ローカル環境</span></header>
+    <header className="site-header"><a className="brand" href="/workspaces" aria-label="AX ワークスペース ホーム"><span className="brand-symbol" aria-hidden="true">ax<span>.</span></span><span className="brand-name">ワークスペース</span></a><span className="environment-chip"><span className="status-dot" />ローカル環境</span></header>
     <div className={`page-frame ${chat ? "chat-frame" : ""}`}>
-      <aside className="sidebar run-sidebar"><p className="sidebar-label">WORKSPACE</p><nav aria-label="メインナビゲーション"><a className={pathname === "/" ? "nav-current" : undefined} aria-current={pathname === "/" ? "page" : undefined} href="/">チャット</a><a className={pathname === "/tasks" || pathname.startsWith("/runs") ? "nav-current" : undefined} href="/tasks">エージェントの実行</a><a href="/connection">接続確認</a><a href="/account" aria-current={pathname === "/account" ? "page" : undefined}>アカウント</a></nav>{sidebar ?? <div className="sidebar-foot"><span className="sidebar-rule" /><strong>依頼して、<br />結果を確かめる。</strong><p>一度に1件ずつ、<br />作業を進められます。</p></div>}</aside>
-      <main id="main" tabIndex={-1}><div className="page-heading"><p className="eyebrow">AGENT WORKSPACE</p><h1>{title}</h1><p className="lead">{intro}</p></div>{children}<footer className="page-footer"><span>AX WORKSPACE</span><span>ローカルプレビュー</span></footer></main>
+      <aside className="sidebar run-sidebar"><p className="sidebar-label">WORKSPACE</p><nav aria-label="メインナビゲーション"><a href="/workspaces" aria-current={pathname.startsWith("/workspaces") ? "page" : undefined}>ワークスペース一覧</a><a className={pathname === "/" ? "nav-current" : undefined} aria-current={pathname === "/" ? "page" : undefined} href={scope.workspaceId || scope.legacy ? scopeHref("/", scope) : "/workspaces"}>チャット</a><a className={pathname === "/tasks" || pathname.startsWith("/runs") ? "nav-current" : undefined} href={scope.workspaceId || scope.legacy ? scopeHref("/tasks", scope) : "/workspaces"}>エージェントの実行</a><a href={scopeHref("/connection", scope)}>接続確認</a><a href={scopeHref("/account", scope)} aria-current={pathname === "/account" ? "page" : undefined}>アカウント</a>{scope.workspaceId && <a href={`/workspaces/${scope.workspaceId}`}>メンバー・設定</a>}</nav>{sidebar ?? <div className="sidebar-foot"><span className="sidebar-rule" /><strong>依頼して、<br />結果を確かめる。</strong><p>一度に1件ずつ、<br />作業を進められます。</p></div>}</aside>
+      <main id="main" tabIndex={-1}><div className="page-heading"><p className="eyebrow">AGENT WORKSPACE</p>{workspaceName && <p className="selected-workspace">選択中：{workspaceName}</p>}<h1>{title}</h1><p className="lead">{intro}</p></div>{children}<footer className="page-footer"><span>AX WORKSPACE</span><span>ローカルプレビュー</span></footer></main>
     </div>
   </>;
 }
@@ -42,6 +45,6 @@ export function useRunRefresh(enabled: boolean) {
   }, [enabled, revalidator]);
 }
 
-export function RunHistory({ runs, draftKey }: { runs: RunSummary[]; draftKey: string }) {
-  return <section className="history-section" id="history" aria-labelledby="history-title"><div className="history-heading"><div><p className="eyebrow">HISTORY</p><h2 id="history-title">実行一覧</h2></div><form method="get" action="/tasks"><input type="hidden" name="draft" value={draftKey} /><button className="text-button" type="submit">一覧を更新</button></form></div><p className="field-hint">最近の50件。画面を閉じた後も、ここから結果を確認できます。</p>{runs.length === 0 ? <p className="empty-result">まだ実行はありません。</p> : <ul className="run-list">{runs.map((run) => <li key={run.run_id}><div><span className={`run-badge state-${run.state}`}>{runStateLabels[run.state]}</span><span className="run-mode">{run.adapter === "offline" ? "動作テスト" : "モデル利用"}</span></div><a href={`/runs/${run.run_id}`} className="run-link">{run.run_id}<span aria-hidden="true"> →</span></a><p className="run-date">{run.accepted_at ? `${run.accepted_at.replace("T", " ").replace("Z", "")} UTC` : "以前の実行"}</p></li>)}</ul>}</section>;
+export function RunHistory({ runs, draftKey, scope }: { runs: RunSummary[]; draftKey: string; scope: WorkspaceScope }) {
+  return <section className="history-section" id="history" aria-labelledby="history-title"><div className="history-heading"><div><p className="eyebrow">HISTORY</p><h2 id="history-title">実行一覧</h2></div><form method="get" action="/tasks">{scope.workspaceId && <input type="hidden" name="workspace" value={scope.workspaceId} />}{scope.legacy && <input type="hidden" name="legacy" value="1" />}<input type="hidden" name="draft" value={draftKey} /><button className="text-button" type="submit">一覧を更新</button></form></div><p className="field-hint">最近の50件。画面を閉じた後も、ここから結果を確認できます。</p>{runs.length === 0 ? <p className="empty-result">まだ実行はありません。</p> : <ul className="run-list">{runs.map((run) => <li key={run.run_id}><div><span className={`run-badge state-${run.state}`}>{runStateLabels[run.state]}</span><span className="run-mode">{run.adapter === "offline" ? "動作テスト" : "モデル利用"}</span></div><a href={scopeHref(`/runs/${run.run_id}`, scope)} className="run-link">{run.run_id}<span aria-hidden="true"> →</span></a><p className="run-date">{run.accepted_at ? `${run.accepted_at.replace("T", " ").replace("Z", "")} UTC` : "以前の実行"}</p></li>)}</ul>}</section>;
 }

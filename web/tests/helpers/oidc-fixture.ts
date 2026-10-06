@@ -10,6 +10,7 @@ export async function startOidcFixture(clientSecret: string, port = 0) {
   let issuer = "";
   let unavailable = false;
   let exchanges = 0;
+  let emailVerified = true;
   const accessToken = (subject = "alice", claims: JWTPayload = {}) => new SignJWT({
     iss: issuer, sub: subject, aud: "ax-api", azp: "ax-web", typ: "Bearer",
     iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + 1800, ...claims,
@@ -58,7 +59,7 @@ export async function startOidcFixture(clientSecret: string, port = 0) {
         exchanges++;
         const now = Math.floor(Date.now() / 1000);
         const idToken = await new SignJWT({ iss: issuer, sub: entry.subject, aud: "ax-web", iat: now, exp: now + 1800, nonce: entry.nonce,
-          email: `${entry.subject}@example.test` }).setProtectedHeader({ alg: "RS256", kid: jwk.kid }).sign(keys.privateKey);
+          email: `${entry.subject}@example.test`, email_verified: emailVerified }).setProtectedHeader({ alg: "RS256", kid: jwk.kid }).sign(keys.privateKey);
         json({ access_token: await accessToken(entry.subject), token_type: "Bearer", expires_in: 1800, id_token: idToken }); return;
       }
       if (url.pathname === "/logout") {
@@ -77,6 +78,7 @@ export async function startOidcFixture(clientSecret: string, port = 0) {
   return {
     issuer, accessToken, keys,
     setUnavailable(value: boolean) { unavailable = value; },
+    setEmailVerified(value: boolean) { emailVerified = value; },
     get exchanges() { return exchanges; },
     async authorize(authorizationUrl: string, user = "alice") {
       const params = new URL(authorizationUrl).searchParams;

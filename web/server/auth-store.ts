@@ -9,10 +9,10 @@ export { AuthenticationError } from "../shared/authentication";
 export const opaqueId = () => randomBytes(32).toString("base64url");
 const hash = (value: string) => createHash("sha256").update(value).digest("hex");
 const tokensSchema = z.object({ accessToken: z.string().min(1), idToken: z.string().min(1) }).strict();
-const flowSchema = z.object({ state: z.string(), nonce: z.string(), verifier: z.string(), redirectUri: z.url() }).strict();
+const flowSchema = z.object({ state: z.string(), nonce: z.string(), verifier: z.string(), redirectUri: z.url(), returnTo: z.string().max(4096).optional() }).strict();
 export type Tokens = z.infer<typeof tokensSchema>;
 export type LoginFlow = z.infer<typeof flowSchema>;
-export type AuthSession = Tokens & { userId: string; displayName: string; expiresAt: number };
+export type AuthSession = Tokens & { userId: string; displayName: string; verifiedEmail: string | null; expiresAt: number };
 
 export function createPool(config: AuthConfig) {
   const { caPath, ...database } = config.database;
@@ -50,7 +50,8 @@ export class AuthStore {
     if (result.rowCount !== 1) throw new AuthenticationError("invalid_login_flow");
     return flowSchema.parse(this.open(result.rows[0].payload, `flow:${hash(state)}`));
   }
-  async identify(issuer: string, subject: string, displayName: string): Promise<string> {
+  async identify(issuer: string, subject: string, displayName: string, verifiedEmail: string | null = null): Promise<string> {
+    const email = verifiedEmail === null ? null : z.email().max(254).parse(verifiedEmail).toLowerCase();
     const client = await this.pool.connect();
     try {
       await client.query("BEGIN");
@@ -60,10 +61,10 @@ export class AuthStore {
       if (existing.rowCount) {
         if (existing.rows[0].status !== "active") throw new AuthenticationError("user_disabled");
         userId = existing.rows[0].id;
-        await client.query("UPDATE users SET display_name=$2 WHERE id=$1", [userId, displayName]);
+        await client.query("UPDATE users SET display_name=$2,verified_email=$3 WHERE id=$1", [userId, displayName, email]);
       } else {
         userId = randomUUID();
-        await client.query("INSERT INTO users(id,status,display_name) VALUES($1,'active',$2)", [userId, displayName]);
+        await client.query("INSERT INTO users(id,status,display_name,verified_email) VALUES($1,'active',$2,$3)", [userId, displayName, email]);
         await client.query("INSERT INTO identities(issuer,subject,user_id) VALUES($1,$2,$3)", [issuer, subject, userId]);
       }
       await client.query("COMMIT");
@@ -88,10 +89,10 @@ export class AuthStore {
   }
   async session(id: string): Promise<AuthSession | null> {
     if (!/^[A-Za-z0-9_-]{43}$/.test(id)) return null;
-    const result = await this.pool.query("SELECT s.tokens,s.expires_at,u.id,u.display_name FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.id_hash=$1 AND s.expires_at>now() AND u.status='active'", [hash(id)]);
+    const result = await this.pool.query("SELECT s.tokens,s.expires_at,u.id,u.display_name,u.verified_email FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.id_hash=$1 AND s.expires_at>now() AND u.status='active'", [hash(id)]);
     if (result.rowCount !== 1) return null;
     return { ...tokensSchema.parse(this.open(result.rows[0].tokens, `session:${hash(id)}`)), userId: result.rows[0].id,
-      displayName: result.rows[0].display_name, expiresAt: result.rows[0].expires_at.getTime() };
+      displayName: result.rows[0].display_name, verifiedEmail: result.rows[0].verified_email, expiresAt: result.rows[0].expires_at.getTime() };
   }
   async revoke(id: string) { await this.pool.query("DELETE FROM sessions WHERE id_hash=$1", [hash(id)]); }
 }

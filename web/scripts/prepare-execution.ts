@@ -1,3 +1,4 @@
+import { apiFunctions, executionFunctions } from "../data/permissions";
 import { randomBytes } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -29,8 +30,8 @@ async function run() {
       await pool.query(`GRANT USAGE ON SCHEMA public TO ${role}`);
     }
     await pool.query("GRANT SELECT ON users,identities TO ax_api");
-    const api = ["ax_accept", "ax_read_run", "ax_list_runs", "ax_read_conversation", "ax_list_conversations", "ax_request_recovery"];
-    const execution = ["ax_claim", "ax_heartbeat", "ax_intent", "ax_evidence", "ax_collect", "ax_finish", "ax_fail"];
+    const api = apiFunctions;
+    const execution = executionFunctions;
     const { rows } = await pool.query("SELECT p.proname,p.oid::regprocedure::text AS signature FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND p.proname=ANY($1)", [[...api, ...execution]]);
     if (rows.length !== api.length + execution.length) throw new Error("Runtime database contract is incomplete.");
     for (const row of rows) await pool.query(`GRANT EXECUTE ON FUNCTION ${row.signature} TO ${api.includes(row.proname) ? "ax_api" : "ax_execution"}`);

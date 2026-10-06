@@ -3,6 +3,7 @@ import { authRuntime } from "../../server/auth";
 import { AuthenticationError, opaqueId } from "../../server/auth-store";
 import { readConfig } from "../../server/config";
 import { assertLocalRequest, pageHeaders } from "./security.server";
+import { loginDestination } from "../../server/login-destination";
 
 function cookie(kind: "auth" | "login") {
   const config = readConfig();
@@ -19,21 +20,23 @@ function unavailable() {
 export async function requireAuth(request: Request) {
   assertLocalRequest(request);
   const id = await cookieValue(request, "auth");
-  if (!id) throw redirect("/login", { headers: pageHeaders() });
+  const url = new URL(request.url);
+  const login = `/login?returnTo=${encodeURIComponent(loginDestination(url.pathname + url.search))}`;
+  if (!id) throw redirect(login, { headers: pageHeaders() });
   try {
     const session = await authRuntime().store.session(id);
     if (session) return session;
   } catch { throw unavailable(); }
   const headers = pageHeaders();
   headers.append("Set-Cookie", await cookie("auth").serialize("", { maxAge: 0 }));
-  throw redirect("/login?expired=1", { headers });
+  throw redirect(`${login}&expired=1`, { headers });
 }
-export async function beginLogin(request: Request, registerPasskey = false) {
+export async function beginLogin(request: Request, registerPasskey = false, returnTo?: string) {
   assertLocalRequest(request);
   try {
     const { store, idp } = authRuntime();
     const browserId = opaqueId();
-    const flow = { state: opaqueId(), nonce: opaqueId(), verifier: opaqueId(), redirectUri: `${readConfig().webOrigin}/auth/callback` };
+    const flow = { state: opaqueId(), nonce: opaqueId(), verifier: opaqueId(), redirectUri: `${readConfig().webOrigin}/auth/callback`, returnTo: loginDestination(returnTo ?? (registerPasskey ? "/account" : undefined)) };
     const destination = await idp.authorization(flow, registerPasskey);
     await store.createFlow(browserId, flow);
     const headers = pageHeaders();
@@ -59,14 +62,14 @@ export async function finishLogin(request: Request) {
     step = "exchange";
     const identity = await idp.exchange(url, flow);
     step = "identity";
-    const userId = await store.identify(identity.issuer, identity.subject, identity.displayName);
+    const userId = await store.identify(identity.issuer, identity.subject, identity.displayName, identity.verifiedEmail);
     step = "session";
     const sessionId = await store.createSession(userId, identity.tokens, identity.expiresAt);
     const previous = await cookieValue(request, "auth");
     if (previous) await store.revoke(previous);
     headers.append("Set-Cookie", await cookie("auth").serialize(sessionId));
     headers.append("Set-Cookie", `${readConfig().sessionCookieName}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`);
-    return redirect("/", { status: 303, headers });
+    return redirect(loginDestination(flow.returnTo), { status: 303, headers });
   } catch (error) {
     const code = error && typeof error === "object" && "code" in error && typeof error.code === "string" && /^[A-Z_]{1,64}$/.test(error.code) ? error.code : "REJECTED";
     console.error(`Authentication callback rejected at ${step} (${code}).`);

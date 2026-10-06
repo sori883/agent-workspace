@@ -1,0 +1,5 @@
+revision	updated_at	id	unit	attempt	condition	target	target_version	verdict	supersedes	evidence
+26	2026-10-06T14:26:11.161Z	0a49f8be-b558-4bef-8f1c-0d0b70362378	U1	1	delivery	U1	46d716fec5a34ead4e0bf8978b4bce4afa9ff11101758bc0903a00c559d5ad07	pass		.space/tasks/ax-workspace-access/api-verification.md
+26	2026-10-06T14:26:11.161Z	24977010-d14b-48c0-8506-8f527503e8cd	U2	1	delivery	U2	17fd2e4fcac4a615543c915abfa7fe90b162e9f964e26d3c147e20b934876822	pass		.space/tasks/ax-workspace-access/ui-verification.md
+26	2026-10-06T14:26:11.161Z	3513bd42-ea6a-43ee-93ad-0673e11bf78a	U4	1	delivery	U4	cf995ef07556f17948c3d8554604c7b51726b75ad591ad76ab3947639e1cd047	pass		.space/tasks/ax-workspace-access/review.md
+26	2026-10-06T14:26:11.161Z	1ed89cbb-ec70-4a9e-b626-3b81bfdd462d	workspace-access	1	delivery	workspace-access	58cb856b83d89dd99bb67ff3568a3dac8fbdf4b15182dfb0ed17dd1d1f7c3464	pass		.space/tasks/ax-workspace-access/verification.md

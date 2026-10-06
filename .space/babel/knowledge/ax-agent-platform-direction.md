@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: AXエージェント実行基盤の構想と検討事項
-description: 共通API・PostgreSQLへの移行後の現在地と、配置先・製品拡張を保留する利用者の方針
+description: Workspace・Group・業務ロールを実装した現在地と、共通APIへの移行経緯・保留中の製品拡張
 status: draft
 tags: 
   - ax
@@ -10,7 +10,7 @@ tags:
   - egress
 generated: 
   by: agent:codex
-  at: 2026-10-06T12:27:50.005Z
+  at: 2026-10-06T14:18:10.138Z
 sources: 
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: ax-local/task-cli.md
@@ -28,10 +28,21 @@ sources:
   - resource: .space/tasks/ax-auth/verification.md
   - resource: ax-local/keycloak/README.md
   - resource: .space/tasks/ax-portable-api/design.md
+  - resource: .space/tasks/ax-workspace-access/task.md
 ---
 # AXを中心とするエージェント実行基盤の構想
 
-## 現在地：共通APIとPostgreSQLへ移行（2026-10-06）
+## 現在地：ワークスペース・グループ・業務ロール（2026-10-06）
+
+利用者は会社を最上位のWorkspace、部署やプロジェクト等をGroupとし、Userの複数Workspace・複数Group所属を整理した後、「それで作って」と実装を依頼した。既存共通APIとapp PostgreSQLを正本とする案を採用した。管理権限admin/memberと業務ロールgeneral/developerは各Workspace所属に持ち、別々に判定する。
+
+有効な利用者は最大3個作成でき、招待参加は作成数に含めない。作成者は固定し、初期版にはWorkspace削除・移譲・作成枠返却を設けない。所属0件を許して、明示的な作成かメール宛先を確認する招待参加を選ぶ。既定の業務ロールはgeneral、作成者はadmin、招待参加はmember。Groupは平坦な集まりで、解除後の再参加時に旧権限やGroupを復元しない。
+
+画面・API・DBと実行管理へこの境界を実装した。会話はWorkspace所属と本人ownerの両方を要求し、管理者も他人の会話を読めない。旧履歴は本人限定のNULL Workspaceのまま参照・復旧だけを許し、自動割当しない。詳細な理由・制約は[所属の決定](../decisions/systems/ax/workspace-access.md)、実装契約と結果は `.space/tasks/ax-workspace-access/` に残す。
+
+将来のスキル管理、社内システム、RAGの土台であり、それらへの接続、公開自己登録・確認メール配送、Entra/Cognito同期まで実装したものではない。Webからのエージェント操作・定期実行の製品拡張も用途未確定のため保留を維持する。PRは設計の補足ごとに増やさず、実装・文書・検証のまとまりで作成する。
+
+## 共通APIとPostgreSQLへ移行した時点（2026-10-06）
 
 利用者の依頼により、ホストPythonが持っていた受付・所有者確認・会話管理をHono/TypeScript共通APIへ移した。会話・受付・実行記録・小さな成果物は既存app PostgreSQLを正本とする。独立したGo実行管理がAXを操作し、PythonはTask内部で続ける。AX RedisはAX内部状態のために使う。
 

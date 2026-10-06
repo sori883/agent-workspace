@@ -50,7 +50,7 @@ test("run schemas retain exact UTF-8 limits, model consent and response identity
 test("API validates authentication and all run operations before reaching the service", async () => {
   const calls: string[] = [];
   const app = createApi(config, undefined, fakeService(calls), undefined, testAuthenticate);
-  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-access-token": TEST_ACCESS_TOKEN, "x-ax-owner-id": "attacker-selected-owner" };
+  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-workspace-id": TEST_OWNER, "x-ax-access-token": TEST_ACCESS_TOKEN, "x-ax-owner-id": "attacker-selected-owner" };
   const call = (path: string, method = "GET", body?: string, extra = {}) => app.request(`${config.apiOrigin}${path}`, { method, headers: { ...headers, ...extra }, body });
   assert.equal((await call("/v1/runs")).status, 200);
   assert.equal((await call(`/v1/runs/${runId}`)).status, 200);
@@ -60,6 +60,10 @@ test("API validates authentication and all run operations before reaching the se
   assert.equal((await call("/v1/runs", "POST", JSON.stringify(input))).status, 202);
   assert.equal((await call(`/v1/runs/${runId}/recover`, "POST", "{}")).status, 202);
   const accepted = calls.length;
+  const { "x-ax-workspace-id": omitted, ...legacyHeaders } = headers;
+  const missing = await app.request(`${config.apiOrigin}/v1/runs`, { method:"POST",headers:legacyHeaders,body:JSON.stringify(input) });
+  assert.equal(missing.status,400); assert.deepEqual(await missing.json(),{error:"workspace_required"});
+  assert.equal((await call("/v1/runs","POST",JSON.stringify(input),{"x-ax-workspace-id":"bad"})).status,400);
   for (const [extra, expected] of [[{ authorization: "Bearer wrong" }, 401], [{ "x-ax-access-token": "" }, 401], [{ "x-ax-access-token": "invalid" }, 401], [{ origin: config.webOrigin }, 403], [{ host: "attacker.example" }, 403]] as const) {
     assert.equal((await call("/v1/runs", "POST", JSON.stringify(input), extra)).status, expected);
   }
@@ -80,7 +84,7 @@ test("API rejects malformed service responses and never publishes unexpected err
   service.submit = async () => { throw new RunServiceError("idempotency_conflict", 409); };
   service.get = async () => { throw new Error("SECRET from stderr"); };
   const app = createApi(config, undefined, service, undefined, testAuthenticate);
-  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-access-token": TEST_ACCESS_TOKEN };
+  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-workspace-id": TEST_OWNER, "x-ax-access-token": TEST_ACCESS_TOKEN };
   const invalid = await app.request(`${config.apiOrigin}/v1/runs`, { headers });
   assert.equal(invalid.status, 503);
   assert.deepEqual(await invalid.json(), { error: "invalid_bridge_response" });
@@ -100,7 +104,7 @@ test("BFF client traverses real HTTP and preserves typed operations, status and 
   t.after(() => { if ("closeAllConnections" in server) server.closeAllConnections(); server.close(); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
-  const client = runsClient(TEST_ACCESS_TOKEN, { ...config, apiOrigin: `http://127.0.0.1:${address.port}` });
+  const client = runsClient(TEST_ACCESS_TOKEN, { ...config, apiOrigin: `http://127.0.0.1:${address.port}` }, 8000, TEST_OWNER);
   assert.deepEqual(await client.list(), { runs: [detail.summary] });
   assert.deepEqual(await client.get(runId), detail);
   assert.deepEqual(await client.submit(input), { run_id: runId, replayed: false });

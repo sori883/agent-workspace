@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sori883/agent-workspace/execution/native"
 )
@@ -114,7 +115,7 @@ func (p *Postgres) Intent(ctx context.Context, c *Claim, operation native.Operat
 	defer cancel()
 	var data []byte
 	if err := p.pool.QueryRow(ctx, p.query("ax_intent")+"($1,$2,$3,$4)", c.RunID, c.Generation, p.controllerID, string(operation)).Scan(&data); err != nil {
-		return "", errors.New("database_intent_unconfirmed")
+		return "", classifyIntentError(err)
 	}
 	var result struct {
 		OperationID string `json:"operation_id"`
@@ -145,14 +146,14 @@ func (p *Postgres) Finish(ctx context.Context, c *Claim) error {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 	var data []byte
-	if err := p.pool.QueryRow(ctx, p.query("ax_finish")+"($1,$2,$3)", c.RunID, c.Generation, p.controllerID).Scan(&data); err != nil {
+	if err := p.pool.QueryRow(ctx, p.query(finishFunction(c))+"($1,$2,$3)", c.RunID, c.Generation, p.controllerID).Scan(&data); err != nil {
 		return errors.New("database_finish_unconfirmed")
 	}
 	var result struct {
 		Resolved *bool  `json:"resolved"`
 		Outcome  string `json:"outcome"`
 	}
-	if json.Unmarshal(data, &result) != nil || result.Resolved == nil || (result.Outcome != "succeeded" && result.Outcome != "failed") {
+	if json.Unmarshal(data, &result) != nil || result.Resolved == nil || !validFinishOutcome(c, result.Outcome) {
 		return errors.New("invalid_finish_result")
 	}
 	if !*result.Resolved {
@@ -171,4 +172,26 @@ func (p *Postgres) exec(ctx context.Context, name, args string, values ...any) e
 		return errors.New("database_operation_unconfirmed")
 	}
 	return nil
+}
+
+func classifyIntentError(err error) error {
+	var databaseError *pgconn.PgError
+	if errors.As(err, &databaseError) && databaseError.Code == "P0001" && databaseError.Message == "workspace_access_revoked" {
+		return ErrAuthorizationRevoked
+	}
+	return errors.New("database_intent_unconfirmed")
+}
+
+func finishFunction(c *Claim) string {
+	if c.Kind == "execute" && len(c.Effects) == 0 {
+		return "ax_cancel_unstarted"
+	}
+	return "ax_finish"
+}
+
+func validFinishOutcome(c *Claim, outcome string) bool {
+	if finishFunction(c) == "ax_cancel_unstarted" {
+		return outcome == "not_started"
+	}
+	return outcome == "succeeded" || outcome == "failed"
 }

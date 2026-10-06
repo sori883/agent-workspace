@@ -1,3 +1,5 @@
+import { requireWorkspaceScope, workspaceTitle } from "../lib/workspace-scope.server";
+import { scopeHref } from "../lib/workspace-scope";
 import { requireAuth } from "../lib/auth.server";
 import { createHash, randomUUID } from "node:crypto";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +11,7 @@ import { runsClient, RunApiError } from "../lib/runs.server";
 import { loadSession, pageHeaders, verifySubmission } from "../lib/security.server";
 import { readLocalForm } from "../lib/forms.server";
 import { runErrorMessage } from "../lib/run-copy";
+import { LegacyNotice } from "../components/organization";
 import { Notice, useRunRefresh, Workspace } from "../components/workspace";
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -35,26 +38,29 @@ function chatError(code: string) {
 export function meta() { return [{ title: "チャット | AX ワークスペース" }]; }
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireAuth(request);
+  const scope = requireWorkspaceScope(request);
   const session = await loadSession(request);
   const headers = pageHeaders();
   if (session.cookie) headers.set("Set-Cookie", session.cookie);
+  const selectedName = workspaceTitle(user.accessToken, scope);
   const rawId = new URL(request.url).searchParams.get("conversation");
-  if (!rawId || !uuidPattern.test(rawId)) return redirect(`/?conversation=${randomUUID()}`, { headers });
+  if (!rawId || !uuidPattern.test(rawId)) return redirect(scopeHref(`/?conversation=${randomUUID()}`, scope), { headers });
   const id = rawId.toLowerCase();
   let conversations: ConversationSummary[] = [];
   let conversation: ConversationDetail | null = null;
   let error: string | null = null;
-  const client = chatsClient(user.accessToken);
+  const client = chatsClient(user.accessToken, undefined, undefined, scope.workspaceId);
   const results = await Promise.allSettled([client.list(), client.get(id)]);
   if (results[0].status === "fulfilled") conversations = results[0].value.conversations;
-  else error = "会話一覧を取得できませんでした。接続を確認してから更新してください。";
+  else error = results[0].reason instanceof RunApiError ? runErrorMessage(results[0].reason.code) : "会話一覧を取得できませんでした。接続を確認してから更新してください。";
   if (results[1].status === "fulfilled") conversation = results[1].value;
-  else if (!(results[1].reason instanceof RunApiError && results[1].reason.code === "conversation_not_found")) error = "会話を取得できませんでした。接続を確認してから更新してください。";
+  else if (!(results[1].reason instanceof RunApiError && results[1].reason.code === "conversation_not_found")) error = results[1].reason instanceof RunApiError ? runErrorMessage(results[1].reason.code) : "会話を取得できませんでした。接続を確認してから更新してください。";
   const head = conversation?.conversation.head_run_id ?? null;
-  return data({ csrf: session.csrf, id, key: draftKey(id, head), conversation, conversations, error }, { headers });
+  return data({ scope, workspaceName: await selectedName, csrf: session.csrf, id, key: draftKey(id, head), conversation, conversations, error }, { headers });
 }
 export async function action({ request }: Route.ActionArgs) {
   const user = await requireAuth(request);
+  const scope = requireWorkspaceScope(request);
   let submitted = { id: "", key: "", parent_run_id: null as string | null, text: "", allow_model: false };
   const failure = (error: string, status: number) => data({ error, submitted, uncertain: status === 503 }, { status, headers: pageHeaders() });
   try {
@@ -63,17 +69,18 @@ export async function action({ request }: Route.ActionArgs) {
     await verifySubmission(request, form.get("csrf"));
     if (!uuidPattern.test(submitted.id)) return failure("会話を読み直してから送信してください。", 400);
     if (form.get("intent") === "recover") {
-      const detail = await chatsClient(user.accessToken).get(submitted.id);
+      const detail = await chatsClient(user.accessToken, undefined, undefined, scope.workspaceId).get(submitted.id);
       const last = detail.turns.at(-1)?.summary;
       if (!last || last.run_id !== form.get("run_id") || !last.can_recover) return failure("現在の状態を更新してから確認してください。", 409);
-      await runsClient(user.accessToken).recover(last.run_id);
+      await runsClient(user.accessToken, undefined, undefined, scope.workspaceId).recover(last.run_id);
     } else {
+      if (scope.legacy) return failure("以前の履歴には送信できません。ワークスペースを選んで新しいチャットを始めてください。", 403);
       const { id, ...input } = submitted;
       const parsed = chatInputSchema.safeParse(input);
       if (!parsed.success) return failure("メッセージの長さと、モデル利用の確認を見直してください。", 400);
-      await chatsClient(user.accessToken).submit(id, parsed.data);
+      await chatsClient(user.accessToken, undefined, undefined, scope.workspaceId).submit(id, parsed.data);
     }
-    return redirect(`/?conversation=${submitted.id.toLowerCase()}`, { status: 303, headers: pageHeaders() });
+    return redirect(scopeHref(`/?conversation=${submitted.id.toLowerCase()}`, scope), { status: 303, headers: pageHeaders() });
   } catch (cause) {
     if (cause instanceof Response) return failure(await cause.text(), cause.status);
     if (cause instanceof RunApiError) return failure(chatError(cause.code), cause.status);
@@ -86,7 +93,7 @@ export const headers: Route.HeadersFunction = ({ loaderHeaders, actionHeaders, e
   return result;
 };
 
-function Composer({ csrf, id, draft, parent, initial, consented, busy, uncertain }: { csrf: string; id: string; draft: string; parent: string | null; initial: string; consented: boolean; busy: boolean; uncertain: boolean }) {
+function Composer({ csrf, id, draft, parent, initial, consented, busy, waiting, uncertain }: { csrf: string; id: string; draft: string; parent: string | null; initial: string; consented: boolean; busy: boolean; waiting: boolean; uncertain: boolean }) {
   const textarea = useRef<HTMLTextAreaElement>(null);
   const [initialValue] = useState(() => {
     if (typeof document === "undefined") return initial;
@@ -104,11 +111,12 @@ function Composer({ csrf, id, draft, parent, initial, consented, busy, uncertain
     <textarea ref={textarea} id="message" name="text" data-draft={draft} defaultValue={initialValue} required maxLength={2048} readOnly={uncertain} disabled={busy} aria-describedby="message-hint message-count" aria-invalid={count > 2048 || undefined} placeholder="今日は、何から考えましょうか。" onChange={(event) => setCount(new TextEncoder().encode(event.currentTarget.value).length)} />
     <div className="composer-meta"><span>Enterで改行 · Ctrl / ⌘ + Enterで送信</span><span id="message-count" className={count > 2048 ? "field-error" : ""}>{count.toLocaleString()} / 2,048 バイト</span></div>
     {consented ? <><input type="hidden" name="allow_model" value="yes" /><p className="chat-consent-note">送信すると、会話をGeminiへ送り、利用料金が発生します。</p></> : <div className="chat-consent"><label><input type="checkbox" name="allow_model" value="yes" required /><span>会話の外部送信とモデル利用料金を確認しました</span></label><p>会話をGeminiへ送信します。利用量には上限があり、送信した会話はこの環境に保存されます。</p></div>}
-    <div className="composer-actions"><p>返答は完成すると表示されます。</p><button className="button button-primary" type="submit" disabled={busy || count > 2048}>{busy ? "返答を待っています" : uncertain ? "同じ内容を再送" : "送信する"}<span aria-hidden="true">↑</span></button></div>
+    <div className="composer-actions"><p>返答は完成すると表示されます。</p><button className="button button-primary" type="submit" disabled={busy || count > 2048}>{busy ? waiting ? "返答を待っています" : "送信できません" : uncertain ? "同じ内容を再送" : "送信する"}<span aria-hidden="true">↑</span></button></div>
   </Form>;
 }
 
 export default function Chat({ loaderData, actionData }: Route.ComponentProps) {
+  const scope = loaderData.scope;
   const navigation = useNavigation();
   const [retainedAction, setRetainedAction] = useState(actionData);
   useEffect(() => { if (actionData) setRetainedAction(actionData); }, [actionData]);
@@ -130,26 +138,27 @@ export default function Chat({ loaderData, actionData }: Route.ComponentProps) {
   useEffect(() => { if (response) error.current?.focus(); }, [response]);
   const submitted = response?.submitted.key ? response.submitted : null;
   const blocked = !!loaderData.error || working || (detail !== null && !detail.can_send);
-  const sidebar = <div className="chat-history"><a href="/" className="new-chat-link"><span aria-hidden="true">＋</span> 新しいチャット</a><details open><summary>最近の会話</summary>{loaderData.conversations.length === 0 ? <p className="history-empty">送信すると、ここに<br />会話が並びます。</p> : <ul>{loaderData.conversations.map((item) => <li key={item.id}><a href={`/?conversation=${item.id}`} aria-current={item.id === loaderData.id ? "page" : undefined}><span>{item.title}</span><small>{item.turn_count}回のやり取り</small></a></li>)}</ul>}</details></div>;
-  return <Workspace title="チャット" intro="会話を重ねながら、一緒に考える。" sidebar={sidebar} chat>
+  const sidebar = <div className="chat-history">{!scope.legacy && <a href={scopeHref("/", scope)} className="new-chat-link"><span aria-hidden="true">＋</span> 新しいチャット</a>}<details open><summary>最近の会話</summary>{loaderData.conversations.length === 0 ? <p className="history-empty">送信すると、ここに<br />会話が並びます。</p> : <ul>{loaderData.conversations.map((item) => <li key={item.id}><a href={scopeHref(`/?conversation=${item.id}`, scope)} aria-current={item.id === loaderData.id ? "page" : undefined}><span>{item.title}</span><small>{item.turn_count}回のやり取り</small></a></li>)}</ul>}</details></div>;
+  return <Workspace workspaceName={loaderData.workspaceName} title="チャット" intro="会話を重ねながら、一緒に考える。" sidebar={sidebar} chat>
     <div className="chat-shell">
-      <div className="chat-toolbar"><span><span className="status-dot" /> AX エージェント <span className="chat-model">Gemini</span></span><a href={`/?conversation=${loaderData.id}`} className="chat-refresh">会話を更新</a></div>
-      {loaderData.error && <Notice title="接続を確認してください" error><p>{loaderData.error}</p><a href="/connection">接続確認を開く</a></Notice>}
+      {scope.legacy && <LegacyNotice />}
+      <div className="chat-toolbar"><span><span className="status-dot" /> AX エージェント <span className="chat-model">Gemini</span></span><a href={scopeHref(`/?conversation=${loaderData.id}`, scope)} className="chat-refresh">会話を更新</a></div>
+      {loaderData.error && <Notice title="会話を表示できません" error><p>{loaderData.error}</p><p><a href="/workspaces">ワークスペースを選び直す</a></p><a href="/connection">接続確認を開く</a></Notice>}
       <div className="chat-thread" aria-label="会話">
         {turns.length === 0 && <div className="chat-welcome"><span className="chat-mark" aria-hidden="true">ax<span>.</span></span><h2>話してみることから、<br />始めましょう。</h2><p>考えを整理したり、文章を相談したり。<br />前のやり取りを踏まえて、会話を続けられます。</p><div className="chat-examples"><span>考えを整理する</span><span>文章を相談する</span><span>仕組みを理解する</span></div></div>}
         {turns.map((turn) => <div className="chat-turn" key={turn.summary.run_id}>
           <article className="chat-message user-message" aria-label="あなたのメッセージ"><div className="message-author">あなた</div><p>{turn.user}</p></article>
-          {turn.assistant !== null && <article className="chat-message assistant-message" aria-label="エージェントの返答"><div className="message-author"><span className="agent-avatar" aria-hidden="true">ax.</span>AX エージェント</div><p>{turn.assistant}</p><a className="message-detail" href={`/runs/${turn.summary.run_id}`}>実行の詳細</a></article>}
-          {turn.assistant === null && !turn.summary.active && !["accepted", "running"].includes(turn.summary.state) && <div className="chat-turn-error"><strong>{turn.summary.state === "not_started" ? "このメッセージは実行されませんでした" : "返答を完了できませんでした"}</strong><p>{turn.summary.can_recover ? "実行の終了状態を確認してから、続きを送れます。" : "この発言は、次の会話の文脈に含まれません。"}</p><a href={`/runs/${turn.summary.run_id}`}>実行の詳細を確認する</a></div>}
+          {turn.assistant !== null && <article className="chat-message assistant-message" aria-label="エージェントの返答"><div className="message-author"><span className="agent-avatar" aria-hidden="true">ax.</span>AX エージェント</div><p>{turn.assistant}</p><a className="message-detail" href={scopeHref(`/runs/${turn.summary.run_id}`, scope)}>実行の詳細</a></article>}
+          {turn.assistant === null && !turn.summary.active && !["accepted", "running"].includes(turn.summary.state) && <div className="chat-turn-error"><strong>{turn.summary.state === "not_started" ? "このメッセージは実行されませんでした" : "返答を完了できませんでした"}</strong><p>{turn.summary.can_recover ? "実行の終了状態を確認してから、続きを送れます。" : "この発言は、次の会話の文脈に含まれません。"}</p><a href={scopeHref(`/runs/${turn.summary.run_id}`, scope)}>実行の詳細を確認する</a></div>}
         </div>)}
         <div role="status" aria-live="polite" aria-atomic="true" className="chat-live-status">{working ? <p><span aria-hidden="true">⌛</span> エージェントが返答を準備しています。<small>この画面を閉じても処理は続きます。</small></p> : turns.length > 0 && last?.state === "succeeded" ? <span className="visually-hidden">返答が届きました。</span> : null}</div>
         <div ref={end} />
       </div>
       {last?.can_recover && <Form method="post" className="chat-recovery"><input type="hidden" name="csrf" value={loaderData.csrf} /><input type="hidden" name="id" value={loaderData.id} /><input type="hidden" name="intent" value="recover" /><input type="hidden" name="run_id" value={last.run_id} /><p>モデルを再実行せずに、終了状態を確認します。</p><button type="submit" className="button button-secondary" disabled={pending}>終了状態を確認する</button></Form>}
-      {detail?.context_full && <Notice title="新しいチャットに続けましょう"><p>この会話で扱える長さに達しました。ここまでの会話は保存されています。</p><a href="/">新しいチャットを始める</a></Notice>}
-      {response && <div ref={error} tabIndex={-1} className="form-error"><Notice title="送信を確認してください" error><p>{response.error}</p>{response.uncertain && <p>受付結果が不明です。内容を変えずに再送すると、受け付け済みの実行は増えません。</p>}<a href={`/?conversation=${loaderData.id}`}>会話を読み直す</a></Notice></div>}
-      {!detail?.context_full && <Composer key={submitted?.key ?? loaderData.key} csrf={loaderData.csrf} id={loaderData.id} draft={submitted?.key ?? loaderData.key} parent={submitted ? submitted.parent_run_id : detail?.conversation.head_run_id ?? null} initial={submitted?.text ?? ""} consented={submitted?.allow_model || turns.length > 0} busy={pending || blocked} uncertain={response?.uncertain ?? false} />}
-      <p className="chat-footnote">短い会話に対応しています。会話が長くなると、新しいチャットをご案内します。</p>
+      {!scope.legacy && detail?.context_full && <Notice title="新しいチャットに続けましょう"><p>この会話で扱える長さに達しました。ここまでの会話は保存されています。</p><a href={scopeHref("/", scope)}>新しいチャットを始める</a></Notice>}
+      {response && <div ref={error} tabIndex={-1} className="form-error"><Notice title="送信を確認してください" error><p>{response.error}</p>{response.uncertain && <p>受付結果が不明です。内容を変えずに再送すると、受け付け済みの実行は増えません。</p>}<a href={scopeHref(`/?conversation=${loaderData.id}`, scope)}>会話を読み直す</a></Notice></div>}
+      {!scope.legacy && !detail?.context_full && <Composer key={submitted?.key ?? loaderData.key} csrf={loaderData.csrf} id={loaderData.id} draft={submitted?.key ?? loaderData.key} parent={submitted ? submitted.parent_run_id : detail?.conversation.head_run_id ?? null} initial={submitted?.text ?? ""} consented={submitted?.allow_model || turns.length > 0} busy={pending || blocked} waiting={pending || working} uncertain={response?.uncertain ?? false} />}
+      {!scope.legacy && <p className="chat-footnote">短い会話に対応しています。会話が長くなると、新しいチャットをご案内します。</p>}
     </div>
   </Workspace>;
 }

@@ -7,14 +7,14 @@ export class RunApiError extends Error {
   constructor(public readonly code: string, public readonly status: number = 503) { super(code); }
 }
 
-export function runsClient(accessToken: string, config: LocalConfig = readConfig(), timeoutMs = 8000) {
+export function runsClient(accessToken: string, config: LocalConfig = readConfig(), timeoutMs = 8000, workspaceId?: string | null) {
   async function request<T>(path: string, schema: z.ZodType<T>, input?: unknown): Promise<T> {
     const body = input === undefined ? undefined : JSON.stringify(input);
     if (body !== undefined && Buffer.byteLength(body) > MAX_RUN_REQUEST_BYTES) throw new RunApiError("body_too_large", 413);
     try {
       const response = await fetch(new URL(path, config.apiOrigin), {
         method: input === undefined ? "GET" : "POST",
-        headers: { Authorization: `Bearer ${config.apiToken}`, "Content-Type": "application/json", "X-AX-Access-Token": accessToken },
+        headers: { Authorization: `Bearer ${config.apiToken}`, "Content-Type": "application/json", "X-AX-Access-Token": accessToken, ...(workspaceId ? { "X-AX-Workspace-ID": workspaceId } : {}) },
         body, signal: AbortSignal.timeout(timeoutMs), redirect: "error",
       });
       if (response.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() !== "application/json") throw new RunApiError("invalid_api_response");

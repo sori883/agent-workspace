@@ -3,7 +3,7 @@ import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { createPool } from "../../server/auth-store";
 import { prepareTestAuth } from "../prepare-auth";
-import { login } from "./auth-helper";
+import { login, workspacePath, artifactPath } from "./auth-helper";
 
 const origin = "http://127.0.0.1:3210";
 const hash = (value: string) => createHash("sha256").update(value).digest("hex");
@@ -29,7 +29,7 @@ test("anonymous access and forged login are rejected without exposing private pa
   for (const path of ["/", "/tasks", "/connection", "/account", "/runs/ax-run-0123456789abcdef", "/runs/ax-run-0123456789abcdef/artifact"]) {
     const response = await page.request.get(path, { maxRedirects: 0 });
     expect(response.status()).toBe(302);
-    expect(response.headers().location).toBe("/login");
+    expect(response.headers().location).toBe(`/login?returnTo=${encodeURIComponent(path === "/connection" ? "/workspaces" : path)}`);
     expect(response.headers()["cache-control"]).toBe("no-store");
   }
   await page.goto("/login");
@@ -57,7 +57,7 @@ test("normal login keeps tokens server-side, rotates sessions and logout revokes
   await login(page);
   expect(await sessionId(page)).not.toBe(firstId);
   const old = await browser.newContext({ storageState: first });
-  try { expect((await old.request.get(`${origin}/account`, { maxRedirects: 0 })).headers().location).toBe("/login?expired=1"); }
+  try { expect((await old.request.get(`${origin}/account`, { maxRedirects: 0 })).headers().location).toBe("/login?returnTo=%2Faccount&expired=1"); }
   finally { await old.close(); }
   const copied = await page.context().storageState();
   await page.goto("/account");
@@ -65,7 +65,7 @@ test("normal login keeps tokens server-side, rotates sessions and logout revokes
   await expect(page).toHaveURL(`${origin}/login`);
   expect((await page.context().cookies()).some((value) => value.name === "ax_auth_3210")).toBe(false);
   const replay = await browser.newContext({ storageState: copied });
-  try { expect((await replay.request.get(`${origin}/account`, { maxRedirects: 0 })).headers().location).toBe("/login?expired=1"); }
+  try { expect((await replay.request.get(`${origin}/account`, { maxRedirects: 0 })).headers().location).toBe("/login?returnTo=%2Faccount&expired=1"); }
   finally { await replay.close(); }
   expect(requests.filter((url) => new URL(url).port === "3211")).toEqual([]);
   const logoutRequests = requests.map((url) => new URL(url)).filter((url) => url.origin === "http://127.0.0.1:3212" && url.pathname === "/logout");
@@ -84,7 +84,7 @@ test("two users cannot list, read, continue, download or recover each other's co
   const conversationUrl = page.url();
   const id = new URL(conversationUrl).searchParams.get("conversation")!;
   const runPath = await page.getByRole("link", { name: "実行の詳細", exact: true }).getAttribute("href");
-  const runId = runPath!.split("/").at(-1)!;
+  const runId = new URL(runPath!, origin).pathname.split("/").at(-1)!;
   const second = await browser.newContext();
   try {
     const bob = await second.newPage();
@@ -94,8 +94,8 @@ test("two users cannot list, read, continue, download or recover each other's co
     await expect(bob.getByLabel("あなたのメッセージ")).toHaveCount(0);
     expect(await bob.content()).not.toContain(text);
     const csrf = await bob.locator('input[name="csrf"]').inputValue();
-    for (const path of [runPath!, `${runPath}/artifact`]) {
-      const denied = await bob.request.get(`${origin}${path}`);
+    for (const path of [new URL(runPath!, origin).href, artifactPath(runPath!)]) {
+      const denied = await bob.request.get(path);
       expect(denied.status()).toBe(404);
       expect(await denied.text()).not.toContain(text);
     }
@@ -103,7 +103,7 @@ test("two users cannot list, read, continue, download or recover each other's co
     expect(recover.status()).toBe(404);
     const continued = await bob.request.post(`${conversationUrl}&index`, { headers: { origin }, form: { csrf, id, key: randomUUID(), parent_run_id: runId, text: "他人の会話へ送信", allow_model: "yes" } });
     expect(continued.status()).toBe(404);
-    await bob.goto(`${origin}/tasks`);
+    await bob.goto(workspacePath(bob, "/tasks"));
     await expect(bob.getByRole("link", { name: runId, exact: false })).toHaveCount(0);
     await page.reload();
     await expect(page.getByLabel("あなたのメッセージ")).toHaveCount(1);
@@ -119,7 +119,7 @@ test("local logout remains revoked when the identity provider logout page is una
   await expect(page.getByText("Identity provider unavailable", { exact: true })).toBeVisible();
   expect((await page.context().cookies()).some((value) => value.name === "ax_auth_3210")).toBe(false);
   const replay = await browser.newContext({ storageState: copied });
-  try { expect((await replay.request.get(`${origin}/account`, { maxRedirects: 0 })).headers().location).toBe("/login?expired=1"); }
+  try { expect((await replay.request.get(`${origin}/account`, { maxRedirects: 0 })).headers().location).toBe("/login?returnTo=%2Faccount&expired=1"); }
   finally { await replay.close(); }
 });
 
@@ -137,7 +137,7 @@ test("callback requires the starting browser and rejects duplicate parameters an
   expect((await page.request.get(duplicate.href, { maxRedirects: 0 })).headers().location).toBe("/login?error=1");
   await page.context().addCookies(flowCookies.cookies);
   const accepted = await page.request.get(callback.href, { maxRedirects: 0 });
-  expect(accepted.headers().location).toBe("/");
+  expect(accepted.headers().location).toBe("/workspaces");
   expect(accepted.headers()["referrer-policy"]).toBe("no-referrer");
   await sessionId(page);
   const replay = await browser.newContext({ storageState: flowCookies });
@@ -159,13 +159,13 @@ test("expired flows, expired sessions and disabled accounts fail closed", async 
     const id = await sessionId(page);
     await pool.query("UPDATE sessions SET expires_at=now()-interval '1 second' WHERE id_hash=$1", [hash(id)]);
     await page.goto("/account");
-    await expect(page).toHaveURL(`${origin}/login?expired=1`);
+    await expect(page).toHaveURL(`${origin}/login?returnTo=%2Faccount&expired=1`);
     await login(page, "bob");
     const owner = (await pool.query("SELECT user_id FROM identities WHERE issuer=$1 AND subject='bob'", [config.issuer])).rows[0].user_id;
     await pool.query("UPDATE users SET status='disabled' WHERE id=$1", [owner]);
     try {
       await page.goto("/account");
-      await expect(page).toHaveURL(`${origin}/login?expired=1`);
+      await expect(page).toHaveURL(`${origin}/login?returnTo=%2Faccount&expired=1`);
       await page.getByRole("button", { name: "ログインへ進む" }).click();
       await page.getByRole("button", { name: "Bobでログイン" }).click();
       await expect(page).toHaveURL(`${origin}/login?error=1`);

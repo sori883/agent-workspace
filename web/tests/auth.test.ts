@@ -12,6 +12,7 @@ import { migrateAuth } from "../server/auth-migrate";
 import { IdentityProvider } from "../server/oidc";
 import { prepareTestAuth } from "./prepare-auth";
 import { startOidcFixture } from "./helpers/oidc-fixture";
+import { loginDestination } from "../server/login-destination";
 
 let settings: AuthConfig;
 let pool: pg.Pool;
@@ -66,10 +67,27 @@ test("authentication config rejects insecure endpoints and malformed secrets wit
 
 test("schema migration is idempotent and refuses unknown versions", async () => {
   await migrateAuth(pool);
-  assert.deepEqual((await pool.query("SELECT version FROM auth_migrations")).rows, [{ version: 1 }]);
-  await pool.query("INSERT INTO auth_migrations VALUES(2)");
+  assert.deepEqual((await pool.query("SELECT version FROM auth_migrations ORDER BY version")).rows, [{ version: 1 }, { version: 2 }]);
+  await pool.query("INSERT INTO auth_migrations VALUES(3)");
   try { await assert.rejects(migrateAuth(pool), /Unsupported authentication schema version/); }
-  finally { await pool.query("DELETE FROM auth_migrations WHERE version=2"); }
+  finally { await pool.query("DELETE FROM auth_migrations WHERE version=3"); }
+});
+
+test("verified email is normalized, cleared on unverified login and never merges identities", async () => {
+  const a = await store.identify(fixture.issuer, "email-a", "User A", "Shared@Example.test");
+  const b = await store.identify(fixture.issuer, "email-b", "User B", "Shared@Example.test");
+  assert.notEqual(a, b);
+  assert.equal((await pool.query("SELECT verified_email FROM users WHERE id=$1", [a])).rows[0].verified_email, "shared@example.test");
+  await store.identify(fixture.issuer, "email-a", "User A", null);
+  assert.equal((await pool.query("SELECT verified_email FROM users WHERE id=$1", [a])).rows[0].verified_email, null);
+  assert.equal((await pool.query("SELECT verified_email FROM users WHERE id=$1", [b])).rows[0].verified_email, "shared@example.test");
+});
+
+test("login return destinations retain local invitations and reject external or malformed redirects", () => {
+  const target = "/join?token=sample_invitation";
+  assert.equal(loginDestination(target), target);
+  assert.equal(loginDestination("/tasks?workspace=local&draft=test"), "/tasks?workspace=local&draft=test");
+  for (const value of [null, "https://attacker.example", "//attacker.example", "/\\attacker.example", "/%2f%2fattacker.example", "/join\nLocation:bad", "/unknown", "/join?x=" + "a".repeat(4096)]) assert.equal(loginDestination(value), "/workspaces");
 });
 
 test("issuer and subject uniquely identify users even with concurrent logins or matching email", async () => {
@@ -163,6 +181,7 @@ test("authorization code flow validates PKCE, state, nonce, callback and one-use
   const identity = await idp.exchange(callback, good);
   assert.equal(identity.subject, "bob");
   assert.equal(identity.issuer, fixture.issuer);
+  assert.equal(identity.verifiedEmail, "bob@example.test");
   await assert.rejects(idp.exchange(callback, good));
   for (const change of ["verifier", "nonce", "state"] as const) {
     const original = flow();
@@ -173,6 +192,15 @@ test("authorization code flow validates PKCE, state, nonce, callback and one-use
   const redirected = await fixture.authorize(await idp.authorization(wrongCallback));
   redirected.pathname = "/unexpected";
   await assert.rejects(idp.exchange(redirected, wrongCallback), denied);
+});
+
+test("unverified identity-provider email does not authorize an invitation address", async () => {
+  fixture.setEmailVerified(false);
+  try {
+    const value = flow();
+    const callback = await fixture.authorize(await idp.authorization(value));
+    assert.equal((await idp.exchange(callback, value)).verifiedEmail, null);
+  } finally { fixture.setEmailVerified(true); }
 });
 
 test("logout redirects with the client identity and return URI without exposing tokens", async () => {

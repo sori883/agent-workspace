@@ -72,7 +72,7 @@ test("chat schemas normalize UUIDs and reject unsafe input and inconsistent conv
 test("chat HTTP authentication, methods and input validation precede any service operation", async () => {
   const calls: unknown[] = [];
   const app = createApi(config, undefined, undefined, fakeService(calls), testAuthenticate);
-  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-access-token": TEST_ACCESS_TOKEN, "x-ax-owner-id": "attacker-selected-owner" };
+  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-workspace-id": TEST_OWNER, "x-ax-access-token": TEST_ACCESS_TOKEN, "x-ax-owner-id": "attacker-selected-owner" };
   const call = (path: string, method = "GET", body?: string, extra = {}) => app.request(`${config.apiOrigin}${path}`, { method, headers: { ...headers, ...extra }, body });
   assert.equal((await call("/v1/conversations")).status, 200);
   assert.equal((await call(`/v1/conversations/${id.toUpperCase()}`)).status, 200);
@@ -95,7 +95,7 @@ test("chat HTTP authentication, methods and input validation precede any service
 test("chat API validates response identity, safe errors and strict response fields", async () => {
   const service = fakeService();
   const app = createApi(config, undefined, undefined, service, testAuthenticate);
-  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-access-token": TEST_ACCESS_TOKEN };
+  const headers = { host: "127.0.0.1:3411", authorization: `Bearer ${config.apiToken}`, "content-type": "application/json", "x-ax-workspace-id": TEST_OWNER, "x-ax-access-token": TEST_ACCESS_TOKEN };
   service.get = async () => ({ ...detail, conversation: { ...detail.conversation, id: otherId } });
   assert.deepEqual(await (await app.request(`${config.apiOrigin}/v1/conversations/${id}`, { headers })).json(), { error: "invalid_bridge_response" });
   service.get = async () => ({ ...detail, secret: "PRIVATE" });
@@ -116,7 +116,7 @@ test("BFF chat client traverses real HTTP, including maximum escaped history abo
   t.after(() => { if ("closeAllConnections" in server) server.closeAllConnections(); server.close(); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
-  const client = chatsClient(TEST_ACCESS_TOKEN, { ...config, apiOrigin: `http://127.0.0.1:${address.port}` });
+  const client = chatsClient(TEST_ACCESS_TOKEN, { ...config, apiOrigin: `http://127.0.0.1:${address.port}` }, 8000, TEST_OWNER);
   assert.deepEqual(await client.list(), { conversations: [detail.conversation] });
   assert.deepEqual(await client.get(id.toUpperCase()), detail);
   assert.deepEqual(await client.submit(id, input), accepted);

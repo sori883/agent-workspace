@@ -19,6 +19,7 @@ type fakeStore struct {
 	mu                sync.Mutex
 	claim             *Claim
 	intentError       native.Operation
+	revokedOperation  native.Operation
 	evidenceError     bool
 	heartbeatError    bool
 	finished          bool
@@ -44,6 +45,9 @@ func (s *fakeStore) Heartbeat(ctx context.Context, _ *Claim) error {
 	return nil
 }
 func (s *fakeStore) Intent(_ context.Context, _ *Claim, operation native.Operation) (string, error) {
+	if s.revokedOperation == operation {
+		return "", ErrAuthorizationRevoked
+	}
 	if s.intentError == operation {
 		return "", errors.New("intent_response_lost")
 	}
@@ -264,5 +268,48 @@ func TestNormalCompletionCancelsBlockedHeartbeatWithoutHoldingRun(t *testing.T) 
 	worked, err := c.RunOnce(ctx)
 	if !worked || err != nil || !store.finished || store.failed {
 		t.Fatalf("normal completion became hold: worked=%v err=%v finished=%v failed=%v", worked, err, store.finished, store.failed)
+	}
+}
+
+func TestRevokedMembershipBeforeCreateFinishesWithoutExternalEffects(t *testing.T) {
+	c, s, e := setup(t)
+	s.revokedOperation = native.CreateOperation
+	worked, err := c.RunOnce(context.Background())
+	if !worked || err != nil || !s.finished || s.failed || len(e.calls) != 0 || len(s.intents) != 0 {
+		t.Fatalf("revoked before create: err=%v finished=%v failed=%v calls=%v", err, s.finished, s.failed, e.calls)
+	}
+}
+
+func TestRevokedMembershipStopsAndCleansUpWithoutStarting(t *testing.T) {
+	for _, operation := range []native.Operation{native.ResumeOperation, native.StageOperation, native.PrepareEgressOperation, native.AllowOperation, native.StartOperation} {
+		t.Run(string(operation), func(t *testing.T) {
+			c, s, e := setup(t)
+			if operation == native.AllowOperation {
+				s.claim.Request.Adapter = "antigravity"
+			}
+			s.revokedOperation = operation
+			_, err := c.RunOnce(context.Background())
+			if err != nil || !s.finished || s.failed || s.collected || e.missingIntent {
+				t.Fatalf("revoked: err=%v finished=%v failed=%v calls=%v", err, s.finished, s.failed, e.calls)
+			}
+			for _, call := range e.calls {
+				if call == operation || call == native.StartOperation {
+					t.Fatalf("revoked effect dispatched: %v", e.calls)
+				}
+			}
+			if len(e.calls) < 3 || e.calls[len(e.calls)-3] != native.DenyOperation || e.calls[len(e.calls)-2] != native.SuspendOperation || e.calls[len(e.calls)-1] != "observe_stop" {
+				t.Fatalf("cleanup missing: %v", e.calls)
+			}
+		})
+	}
+}
+
+func TestRevokedMembershipDoesNotResolveUnknownCleanup(t *testing.T) {
+	c, s, e := setup(t)
+	s.revokedOperation = native.StartOperation
+	e.errorOperation = native.DenyOperation
+	_, err := c.RunOnce(context.Background())
+	if err == nil || s.finished || !s.failed || e.calls[len(e.calls)-1] != native.DenyOperation {
+		t.Fatalf("unknown cleanup resolved: err=%v calls=%v", err, e.calls)
 	}
 }

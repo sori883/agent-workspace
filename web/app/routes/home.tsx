@@ -71,7 +71,7 @@ export default function Home({ loaderData, actionData }: Route.ComponentProps) {
     <>
       <a className="skip-link" href="#main">本文へ移動</a>
       <header className="site-header">
-        <a className="brand" href="/" aria-label="AX ワークスペース ホーム"><span className="brand-symbol" aria-hidden="true">ax<span>.</span></span><span className="brand-name">ワークスペース</span></a>
+        <a className="brand" href="/workspaces" aria-label="AX ワークスペース ホーム"><span className="brand-symbol" aria-hidden="true">ax<span>.</span></span><span className="brand-name">ワークスペース</span></a>
         <span className="environment-chip"><span className="status-dot" />ローカル環境</span>
       </header>
       <div className="page-frame">
@@ -112,7 +112,7 @@ export default function Home({ loaderData, actionData }: Route.ComponentProps) {
               <p className="environment-note">このパソコンの中だけで動作しています。</p>
             </aside>
           </div>
-          <section className="about-section" id="about" aria-labelledby="about-title"><p className="eyebrow">NEXT STEP</p><h2 id="about-title">エージェントで作業を始める</h2><p>接続を確認できたら、指示を渡して実行と成果物の確認へ進めます。</p><a className="button button-primary" href="/">エージェントを実行する</a></section>
+          <section className="about-section" id="about" aria-labelledby="about-title"><p className="eyebrow">NEXT STEP</p><h2 id="about-title">エージェントで作業を始める</h2><p>接続を確認できたら、指示を渡して実行と成果物の確認へ進めます。</p><a className="button button-primary" href="/workspaces">ワークスペースを選ぶ</a></section>
           <footer className="page-footer"><span>AX WORKSPACE</span><span>ローカルプレビュー</span></footer>
         </main>
       </div>

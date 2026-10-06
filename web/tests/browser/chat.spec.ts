@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
-import { login } from "./auth-helper";
+import { login, workspacePath, artifactPath } from "./auth-helper";
 
 test.beforeEach(async ({ page }) => { await login(page); });
 
 import AxeBuilder from "@axe-core/playwright";
 
 async function start(page: import("@playwright/test").Page, text: string) {
-  await page.goto("/");
+  await page.goto(workspacePath(page, "/"));
   await page.getByLabel("メッセージ", { exact: true }).fill(text);
   await page.getByLabel("会話の外部送信とモデル利用料金を確認しました").check();
   await page.getByRole("button", { name: "送信する", exact: true }).click();
@@ -36,7 +36,7 @@ test("a saved conversation continues after reload through the BFF and HTTP API",
 
 test("mobile, consent, UTF-8 limits, keyboard and Japanese composition", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 740 });
-  await page.goto("/");
+  await page.goto(workspacePath(page, "/"));
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "本文へ移動" })).toBeFocused();
   const field = page.getByLabel("メッセージ", { exact: true });
@@ -75,7 +75,7 @@ test("native form and manual refresh keep a conversation usable without JavaScri
   try {
     const page = await context.newPage();
     await login(page);
-    await page.goto("http://127.0.0.1:3210/");
+    await page.goto(workspacePath(page, "/"));
     const key = await page.locator('input[name="key"]').inputValue();
     await page.reload();
     expect(await page.locator('input[name="key"]').inputValue()).toBe(key);

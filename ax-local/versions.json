@@ -3,7 +3,7 @@
   "substrate": "944abe3278b895ccbf5d45555a49dd0f2f6ceae7",
   "go": "1.27.1",
   "execution_go_image": "golang@sha256:8a5910f31396cd4d89662f56c68b3ae31d374308270a1c3bd96672ee5ed43414",
-  "execution": "localhost:5001/ax-execution@sha256:cbc21c779a2eaefe03f950519920852b841c744f9794e9d33fdd922a488c825d",
+  "execution": "localhost:5001/ax-execution@sha256:38bc9977eb8ff2eeb32a1ca79239a654ec09cf6a23f3c968254eb8fdeef526d2",
   "worker_controlled": "localhost:5001/ax-worker-controlled@sha256:35c939bf561a380e0f4f82bd7111ce778547b31f4d2a5eba7f19b280664b7b32",
   "ko": "0.19.1",
   "platform": "linux/arm64",
