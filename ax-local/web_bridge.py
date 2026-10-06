@@ -16,6 +16,8 @@ from task_runtime.protocol import MAX_ARTIFACT_BYTES, ProtocolError, validate_re
 
 MAX_INPUT = 64 * 1024
 MAX_OUTPUT = 512 * 1024
+MAX_CHAT_RESPONSE_BYTES = 1024 * 1024
+CHAT_OPERATIONS = {"conversations", "conversation", "chat"}
 SAFE_CODE = re.compile(r"[A-Za-z][A-Za-z0-9_]{0,95}\Z")
 
 
@@ -29,16 +31,18 @@ def error_response(error):
     if isinstance(error, ProtocolError):
         code = "invalid_request"
     status = 503
-    if code in {"invalid_request", "model_not_allowed", "invalid_run_id"}:
+    if code in {"invalid_request", "model_not_allowed", "invalid_run_id", "invalid_conversation_id"}:
         status = 400
-    elif code in {"run_not_found", "artifact_unavailable"}:
+    elif code in {"run_not_found", "artifact_unavailable", "conversation_not_found"}:
         status = 404
     elif code in {"idempotency_conflict", "another_cli_running", "unresolved_run", "unknown_paid_usage",
                   "paid_failure_requires_review", "failed_request_already_attempted", "pilot_estimate_limit_reached",
-                  "execution_already_claimed"}:
+                  "execution_already_claimed", "conversation_conflict", "conversation_busy", "invalid_conversation_state"}:
         status = 409
     elif code == "request_too_large":
         status = 413
+    elif code == "conversation_context_full":
+        status = 422
     return {"ok": False, "error": {"code": code, "status": status}}
 
 
@@ -89,12 +93,11 @@ class WebBridge:
         except (OSError, TaskError):
             pass
 
-    def submit(self, value):
-        request, key_hash, payload_hash = parse_submission(value)
+    def admit(self, accept):
         deadline = time.monotonic() + 0.5
         while True:
             try:
-                receipt, replayed = self.cli.accept(request, key_hash, payload_hash)
+                receipt, replayed = accept()
                 break
             except TaskError as error:
                 if str(error) != "another_cli_running" or time.monotonic() >= deadline:
@@ -105,7 +108,28 @@ class WebBridge:
                 self.launch("execute", receipt["run_id"])
             except OSError:
                 self.record_spawn_failure(receipt["run_id"])
+        return receipt, replayed
+
+    def submit(self, value):
+        request, key_hash, payload_hash = parse_submission(value)
+        receipt, replayed = self.admit(lambda: self.cli.accept(request, key_hash, payload_hash))
         return {"run_id": receipt["run_id"], "replayed": replayed}
+
+    def chat_service(self):
+        from chat import ChatService
+        return ChatService(self.cli, self.summary)
+
+    def conversations(self, value):
+        object_fields(value, ())
+        return self.chat_service().list()
+
+    def conversation(self, value):
+        object_fields(value, ("id",))
+        return self.chat_service().get(value["id"])
+
+    def chat(self, value):
+        receipt, replayed = self.admit(lambda: self.chat_service().accept(value))
+        return {"conversation_id": receipt["conversation"]["id"], "run_id": receipt["run_id"], "replayed": replayed}
 
     def summary(self, receipt, active):
         resolved = receipt.get("resolved")
@@ -187,7 +211,7 @@ class WebBridge:
         return {"run_id": value["run_id"]}
 
     def dispatch(self, operation, value):
-        if operation not in {"submit", "list", "get", "artifact", "recover"}:
+        if operation not in {"submit", "list", "get", "artifact", "recover"} | CHAT_OPERATIONS:
             raise TaskError("invalid_request")
         return {"ok": True, "data": getattr(self, operation)(value)}
 
@@ -231,7 +255,8 @@ def main(argv=None):
             return 1
         response = error_response(error)
     encoded = json.dumps(response, ensure_ascii=False, allow_nan=False).encode("utf-8")
-    if len(encoded) > MAX_OUTPUT:
+    limit = MAX_CHAT_RESPONSE_BYTES if args and args[0] in CHAT_OPERATIONS else MAX_OUTPUT
+    if len(encoded) + 1 > limit:
         response = error_response(TaskError("response_too_large"))
         encoded = json.dumps(response).encode("utf-8")
     sys.stdout.buffer.write(encoded + b"\n")

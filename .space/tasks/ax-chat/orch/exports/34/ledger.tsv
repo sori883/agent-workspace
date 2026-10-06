@@ -1,0 +1,6 @@
+revision	updated_at	id	unit	attempt	condition	target	target_version	verdict	supersedes	evidence
+34	2026-10-06T05:36:38.901Z	bf7ad8ba-fb2c-4a31-a2e4-6a5186a0af1d	chat-design	1	delivery	result	fa552d219a220ea08d5188090ca1946ea6c14adfccbf8a4aea36110a6edf6385	pass		.space/tasks/ax-chat/design.md
+34	2026-10-06T05:36:38.901Z	9501442e-aba1-45cd-96f2-512280eabfec	chat-python	1	delivery	result	af7d93fa664c84ba9305c714d47a2b1e9f967bd724b4e22499c297152fbe29be	pass		.space/tasks/ax-chat/evidence/python-verification.md
+34	2026-10-06T05:36:38.901Z	5fc9a573-ba22-4c49-b010-abb0466a5739	chat-http	1	delivery	result	d9ae6c9f85b52185f0136884276027cd05788f64d569875cec1ce4b019de6a62	pass		.space/tasks/ax-chat/evidence/http-verification.md
+34	2026-10-06T05:36:38.901Z	89407051-0c76-4429-a22c-040322440d50	chat-design	2	delivery	result	cb44e77e1d7d0a8083acbf198061ad225a5ab4896551c83275dff150bab94f6f	pass		.space/tasks/ax-chat/evidence/review.md
+34	2026-10-06T05:36:38.901Z	07cb781a-8921-4f41-9457-33a5228dc408	chat	1	delivery	result	25183339aeb58c08de5631743f0c0c054d322d2723096736182b3cdfe25d60d4	pass		.space/tasks/ax-chat/verification.md

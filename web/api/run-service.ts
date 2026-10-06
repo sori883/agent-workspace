@@ -1,6 +1,7 @@
 import { spawn, type SpawnOptionsWithoutStdio } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
+import { MAX_CHAT_RESPONSE_BYTES } from "../shared/chat-contracts";
 import { artifactResultSchema, bridgeErrorSchema, MAX_RUN_REQUEST_BYTES, MAX_RUN_RESPONSE_BYTES, recoverResultSchema, runDetailSchema, runIdSchema, runInputSchema, runListSchema, submitResultSchema, type ArtifactResult, type RecoverResult, type RunDetail, type RunErrorStatus, type RunInput, type RunList, type SubmitResult } from "../shared/run-contracts";
 
 export class RunServiceError extends Error {
@@ -15,13 +16,15 @@ export interface RunService {
   recover(runId: string): Promise<RecoverResult>;
 }
 
-type Operation = "submit" | "list" | "get" | "artifact" | "recover";
+type Operation = "submit" | "list" | "get" | "artifact" | "recover" | "conversations" | "conversation" | "chat";
+export type BridgeInvoke = (operation: Operation, input: unknown) => Promise<unknown>;
 type SpawnBridge = (command: string, args: string[], options: SpawnOptionsWithoutStdio) => ReturnType<typeof spawn>;
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const script = fileURLToPath(new URL("../../ax-local/web_bridge.py", import.meta.url));
 
 export async function invokeBridge(operation: Operation, input: unknown, launch: SpawnBridge = spawn, timeoutMs = 5000): Promise<unknown> {
   const payload = JSON.stringify(input);
+  const maxBytes = ["conversations", "conversation", "chat"].includes(operation) ? MAX_CHAT_RESPONSE_BYTES : MAX_RUN_RESPONSE_BYTES;
   if (Buffer.byteLength(payload) > MAX_RUN_REQUEST_BYTES) throw new RunServiceError("body_too_large", 413);
   return new Promise((resolve, reject) => {
     let child: ReturnType<SpawnBridge>;
@@ -42,12 +45,12 @@ export async function invokeBridge(operation: Operation, input: unknown, launch:
     child.stdin?.on("error", () => fail("bridge_unavailable"));
     child.stdout?.on("data", (chunk: Buffer) => {
       size += chunk.length;
-      if (size > MAX_RUN_RESPONSE_BYTES) fail("invalid_bridge_response");
+      if (size > maxBytes) fail("invalid_bridge_response");
       else chunks.push(chunk);
     });
     child.stderr?.on("data", (chunk: Buffer) => {
       size += chunk.length;
-      if (size > MAX_RUN_RESPONSE_BYTES) fail("invalid_bridge_response");
+      if (size > maxBytes) fail("invalid_bridge_response");
     });
     child.on("close", (code) => {
       if (complete) return;
@@ -63,20 +66,22 @@ export async function invokeBridge(operation: Operation, input: unknown, launch:
   });
 }
 
-export function pythonRunService(invoke: (operation: Operation, input: unknown) => Promise<unknown> = invokeBridge): RunService {
-  async function command<T>(operation: Operation, input: unknown, schema: z.ZodType<T>): Promise<T> {
-    let value: unknown;
-    try { value = await invoke(operation, input); }
-    catch (error) {
-      if (error instanceof RunServiceError) throw error;
-      throw new RunServiceError("bridge_unavailable");
-    }
-    const error = bridgeErrorSchema.safeParse(value);
-    if (error.success) throw new RunServiceError(error.data.error.code, error.data.error.status);
-    const result = z.object({ ok: z.literal(true), data: schema }).strict().safeParse(value);
-    if (!result.success) throw new RunServiceError("invalid_bridge_response");
-    return result.data.data;
+export async function bridgeRequest<T>(operation: Operation, input: unknown, schema: z.ZodType<T>, invoke: BridgeInvoke = invokeBridge): Promise<T> {
+  let value: unknown;
+  try { value = await invoke(operation, input); }
+  catch (error) {
+    if (error instanceof RunServiceError) throw error;
+    throw new RunServiceError("bridge_unavailable");
   }
+  const error = bridgeErrorSchema.safeParse(value);
+  if (error.success) throw new RunServiceError(error.data.error.code, error.data.error.status);
+  const result = z.object({ ok: z.literal(true), data: schema }).strict().safeParse(value);
+  if (!result.success) throw new RunServiceError("invalid_bridge_response");
+  return result.data.data;
+}
+
+export function pythonRunService(invoke: BridgeInvoke = invokeBridge): RunService {
+  const command = <T>(operation: Operation, input: unknown, schema: z.ZodType<T>) => bridgeRequest(operation, input, schema, invoke);
   function validId(runId: string) {
     if (!runIdSchema.safeParse(runId).success) throw new RunServiceError("invalid_run_id", 400);
     return { run_id: runId };

@@ -17,7 +17,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const draft = url.searchParams.get("draft");
   if (!draft || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(draft)) {
-    return redirect(`/?draft=${randomUUID()}${url.hash}`, { headers });
+    return redirect(`/tasks?draft=${randomUUID()}${url.hash}`, { headers });
   }
   let runs: RunSummary[] = [];
   let error: string | null = null;
@@ -67,7 +67,7 @@ export default function RunWorkspace({ loaderData, actionData }: Route.Component
         <TextField id="input_text" label="作業用テキスト" initial={submitted?.input_text ?? "はじめてのエージェント実行です。"} limit={4096} hint="任意。4096バイト以内（日本語で約1,360文字が目安）。" invalid={actionData?.fields.includes("input_text")} />
         <div className="run-field"><label htmlFor="output_name">成果物の名前<span className="required-label">必須</span></label><p className="field-hint" id="output-hint">半角英数字で始まる64文字以内。ピリオド・ハイフン・アンダーバーも使えます。</p><input className="text-input" id="output_name" name="output_name" defaultValue={submitted?.output_name ?? "result.txt"} maxLength={64} aria-describedby="output-hint" aria-invalid={actionData?.fields.includes("output_name") || undefined} /></div>
         <div className="model-consent"><label><input type="checkbox" name="allow_model" value="yes" defaultChecked={submitted?.allow_model ?? false} /><span>モデル利用時の外部送信と料金を確認しました</span></label><p>「モデルを使う」を選ぶ場合のみ必要です。指示と作業用テキストをモデル提供元へ送信します。呼び出し回数と使用量には上限を設けています。</p></div>
-        <div className="form-actions"><button type="submit" className="button button-primary" disabled={pending}>{pending ? "受け付けています…" : "実行する"}</button><a href="/">新しい実行</a></div>
+        <div className="form-actions"><button type="submit" className="button button-primary" disabled={pending}>{pending ? "受け付けています…" : "実行する"}</button><a href="/tasks">新しい実行</a></div>
       </Form>
     </section><aside className="environment-panel" aria-labelledby="execution-info"><p className="eyebrow">HOW IT WORKS</p><h2 id="execution-info">実行後の流れ</h2><ol className="execution-steps"><li><strong>依頼を受け付け</strong><p>実行番号を発行し、結果画面へ移動します。</p></li><li><strong>エージェントが作業</strong><p>この画面を閉じても、受け付けた処理は続きます。</p></li><li><strong>成果物を確認</strong><p>結果・使用量・停止の確認まで、記録を残します。</p></li></ol><p className="environment-note">途中で接続が切れた場合は、下の実行一覧を確認してください。実行のやり直しは自動で行いません。</p></aside></div>
     <RunHistory runs={loaderData.runs} draftKey={loaderData.key} />

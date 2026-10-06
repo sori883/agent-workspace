@@ -55,7 +55,7 @@ export default function RunResult({ loaderData, actionData }: Route.ComponentPro
   const pending = useNavigation().state !== "idle";
   useRunRefresh(Boolean(detail && (detail.summary.active || detail.summary.state === "accepted")));
   return <Workspace title="実行の結果" intro="作業の進み具合と、保存された成果物を確認できます。">
-    <div className="detail-navigation"><a href="/#history">← 実行一覧へ</a><a href="/">新しい実行</a></div>
+    <div className="detail-navigation"><a href="/tasks#history">← 実行一覧へ</a><a href="/tasks">新しい実行</a></div>
     {(loaderData.error || actionData?.error) && <Notice title="状況を確認してください" error><p>{actionData?.error ?? loaderData.error}</p></Notice>}
     {detail && <>
       <section className="run-status-panel" aria-labelledby="run-status-title"><p className="eyebrow">STATUS</p><h2 id="run-status-title" aria-live="polite">{runStateLabels[detail.summary.state]}</h2><p className="run-identifier">{detail.summary.run_id}</p>

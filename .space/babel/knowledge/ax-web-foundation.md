@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: ローカルWebの境界と非同期実行
-description: SSR/BFFとHonoの境界、既存receiptへ統合したAX非同期実行、再送・復旧・費用制御の理由と確認範囲
+description: React Router/Hono/PythonのローカルWeb境界、非同期AX実行と保存済み会話の継続、再送・復旧・表示上の制約
 status: stable
 tags: 
   - ax
@@ -11,6 +11,9 @@ code_refs:
   - web/
   - ax-local/web_bridge.py
   - ax-local/task_cli.py
+  - ax-local/chat.py
+  - web/shared/chat-contracts.ts
+  - web/app/routes/chat.tsx
 sources: 
   - resource: web/README.md
   - resource: .space/tasks/ax-web-foundation/task.md
@@ -22,9 +25,10 @@ sources:
   - resource: .space/tasks/ax-web-runs/review.md
   - resource: ax-local/web_bridge.py
   - resource: web/tests/runs.test.ts
+  - resource: .space/tasks/ax-chat/verification.md
 generated: 
   by: agent:codex
-  at: 2026-10-06T03:06:21.098Z
+  at: 2026-10-06T05:33:01.623Z
 ---
 # ローカルWebの境界と非同期実行
 
@@ -58,7 +62,7 @@ React DOM 19.2.8はtextareaのhydrationで非空の既定値をvalueへ代入す
 
 ## 操作と入力
 
-受付キーはフォームURLのdraftに保持する。再読込やセッション更新で消さず、別の作業は「新しい実行」で新規キーにする。通常フォームのCRLFとJavaScriptのLFが別内容にならないよう、BFFで指示・テキストの改行をLFにそろえる。一覧更新は同じdraftを送る通常GETフォームでactionを `/` とする。同一queryにfragmentだけを付けたactionではページ内遷移となり、GETが起きなかった。
+受付キーはフォームURLのdraftに保持する。再読込やセッション更新で消さず、別の作業は「新しい実行」で新規キーにする。通常フォームのCRLFとJavaScriptのLFが別内容にならないよう、BFFで指示・テキストの改行をLFにそろえる。単発作業の一覧更新は同じdraftを送る通常GETフォームでactionを `/tasks` とする。同一queryにfragmentだけを付けたactionではページ内遷移となり、GETが起きなかった。
 
 既定offlineは実AX内で入力を成果物に保存し、モデルを使わない。modelの明示選択と外部送信・料金への同意がある場合だけ、設定済みAntigravity/Geminiを選ぶ。指示2048バイト・入力4096バイト、成果物1件64 KiBまで。成果物はサイズ・SHA256・UTF-8を再確認して表示・取得する。未知usage、cleanup未完、有料失敗のguardと[費用ルール](../rules/ax-model-spending.md)を維持する。
 
@@ -69,3 +73,12 @@ W1は境界5件・ブラウザ8件で模擬往復を確認した。W2〜W4の最
 実ブラウザからAX offlineを2件実行し、期待成果物・使用量0・通信遮断・Task停止を確認した。同じキーの再送で実行が増えず、完了後のWeb/API再起動でも結果を再表示できた。実行途中の実AX/API停止は停止前に完了したため未確認。worker寿命・強制終了時の排他は隔離した子プロセス試験で確認した。今回の有料API送信は0件で、Webからの有料モデル全経路は実機未検証。
 
 デザインはプロジェクト内の[参照スキル](project-design-skill.md)が保存したDADSの基本・フォーム・通知に基づく。320px・キーボード・axeは確認したが完全適合の証明ではない。根拠は `.space/tasks/ax-web-runs/{design,verification,review}.md`、利用手順は `web/README.md`。
+
+
+## 保存した会話を続ける画面
+
+2026-10-06、ルート画面をチャットへ変更し、単発作業を/tasksへ移動した。会話の順序・本文・返答を既存receipt/request/成果物から復元し、成功ペアのrole付き履歴を各往復の有限Taskへ渡す。設計理由、再送と文脈の不変条件、制限は[会話の設計](../decisions/systems/ax/chat-turns.md)へまとめる。
+
+APIはGET /v1/conversations、GET /v1/conversations/:id、POST /v1/conversations/:id/turns。会話応答のみ1MiBへ拡張し、旧runの512KiBを維持する。会話IDはURL、送信keyはIDと末尾runから復元する。503の原送信はGET再取得後もstateに保持し、同じ内容だけ再送可能にする。Enter改行、Ctrl/⌘+Enter送信、IME変換中は送信しない。現在の返答は完成後に表示する。
+
+実AX2往復で再読込後の文脈参照を確認し、モデル使用量と終了処理も確定した。会話履歴の長さは有限で、本番配置や共通認証には進んでいない。
