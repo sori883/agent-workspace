@@ -48,17 +48,16 @@ export const protocolResultSchema = z.object({
   error_type: protocolIdentifier.nullable(),
   artifact: z.object({ name: outputNameSchema, size_bytes: z.number().int().min(0).max(MAX_ARTIFACT_BYTES), sha256: z.string().regex(/^[0-9a-f]{64}$/) }).strict().nullable(),
 }).strict().refine((value) => {
-  if (value.adapter === "interactive" && value.estimated_usd !== null && value.estimated_usd !== 0) return false;
   if (value.status !== "succeeded") return value.exit_code !== 0;
   if (value.exit_code !== 0 || value.error_type !== null || value.usage === null || value.estimated_usd === null || value.artifact === null) return false;
   if (value.adapter === "offline") return value.stop_reason === "OFFLINE" && value.estimated_usd === 0 && Object.values(value.usage).every((amount) => amount === 0);
-  if (value.adapter === "interactive" && value.estimated_usd !== 0) return false;
   return value.stop_reason === "UNSPECIFIED" && (value.usage.prompt_token_count ?? 0) > 0 && (value.usage.total_token_count ?? 0) > 0;
 });
 
 export const runSummarySchema = z.object({
   run_id: runIdSchema,
   adapter: adapterSchema,
+  agent_mode: z.enum(["preview", "model"]).optional(),
   accepted_at: z.iso.datetime().nullable(),
   state: z.enum(["accepted", "running", "succeeded", "failed", "needs_recovery", "not_started"]),
   phase: safeIdentifier,

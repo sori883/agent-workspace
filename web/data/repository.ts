@@ -7,6 +7,7 @@ import type { Database } from "./db";
 import { canonical, decodeUtf8, fingerprint, hex, historyJson, sha256, unhex } from "./canonical";
 
 const snapshotSchema = z.object({
+  agent_mode: z.enum(["preview", "model"]).optional(),
   run_id: runIdSchema, owner_user_id: z.uuid().nullable(), conversation_id: z.uuid().nullable(), sequence: z.number().int().nullable(), parent_run_id: runIdSchema.nullable(),
   request: protocolRequestSchema, request_hex: z.string(), request_hash: z.string(), image: z.string(), manifest: z.unknown(), fingerprint: z.string(),
   accepted_at: z.string().nullable(), phase: z.string(), outcome: z.string(), resolved: z.boolean(), active: z.boolean(), error_type: z.string().nullable(),
@@ -70,7 +71,7 @@ export class DataRepository {
   private summary(row: Snapshot): RunSummary {
     const active = row.active && !row.resolved;
     const state = row.resolved ? ["not_started", "dry_run"].includes(row.outcome) ? "not_started" : row.outcome === "succeeded" ? "succeeded" : "failed" : row.phase === "accepted" ? "accepted" : active ? "running" : "needs_recovery";
-    return runSummarySchema.parse({ run_id: row.run_id, adapter: row.request.adapter, accepted_at: row.accepted_at, phase: row.phase, state, resolved: row.resolved, active, can_recover: !row.resolved && !active, error_type: row.error_type });
+    return runSummarySchema.parse({ run_id: row.run_id, adapter: row.request.adapter, ...(row.agent_mode ? {agent_mode: row.agent_mode} : {}), accepted_at: row.accepted_at, phase: row.phase, state, resolved: row.resolved, active, can_recover: !row.resolved && !active, error_type: row.error_type });
   }
   private async artifactContent(row: Snapshot): Promise<string> {
     if (!row.result?.artifact) throw new RunServiceError("artifact_unavailable", 404);

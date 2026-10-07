@@ -319,6 +319,8 @@ class InteractiveSdkTests(unittest.TestCase):
                         elif case == "missing-usage":
                             response.pop("usageMetadata")
                         body = {"response": response}
+                        if case == "model-billing":
+                            body["billing"] = {"profile_id": "gemini-3.1-flash-lite-standard-2026-10-07-v1", "estimated_usd": .000055}
                     else:
                         self.assertFalse((root / "output/reply.txt").exists())
                         body = {"accepted": True}

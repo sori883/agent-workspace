@@ -46,16 +46,17 @@ async function password(user: "alice" | "bob") {
 
 async function main() {
   const args = process.argv.slice(2);
-  check(args.includes("--run") && args.every(arg => ["--run", "--headed"].includes(arg)) && new Set(args).size === args.length, "run_flag_required");
+  check(args.includes("--run") && args.every(arg => ["--run", "--headed", "--real-model"].includes(arg)) && new Set(args).size === args.length, "run_flag_required");
+  const realModel = args.includes("--real-model");
   process.umask(0o077);
   const evidenceDir = join(repository, "ax-local/.state/verification", `interactive-${new Date().toISOString().replace(/[:.]/g, "-")}-${randomUUID().slice(0, 8)}`);
   await mkdir(evidenceDir, { recursive: true, mode: 0o700 });
   const marker = randomUUID().slice(0, 8);
-  const requestText = `ローカル対話プレビュー検証 ${marker}。質問の後、回答をそのまま成果物にしてください。`;
-  const answerText = `AX 対話Runtime検証 ${marker}\n質問への回答を成果物として保存できました。`;
+  const requestText = realModel ? `チーム向けの短い会議案内を作りたいです。日時が未定なので、まず日時を一つ質問してください。検証番号 ${marker}。` : `ローカル対話プレビュー検証 ${marker}。質問の後、回答をそのまま成果物にしてください。`;
+  const answerText = realModel ? "10月8日15時、30分の開発定例です。本文は80字以内、日本語で日時と会議名を必ず含めてください。" : `AX 対話Runtime検証 ${marker}\n質問への回答を成果物として保存できました。`;
   const mutations = { workspace: 0, start: 0, answer: 0 };
   const observations: Record<string, boolean | number | string | string[] | null> = {
-    mock_preview_only: true, model_consent_submissions: 0, server_paid_usage_verified: false,
+    mock_preview_only: !realModel, model_consent_submissions: realModel ? 1 : 0, server_paid_usage_verified: false,
     workspace_id: null, conversation_id: null, root_id: null, run_ids: [], workspace_created: false,
     question_verified: false, reload_preserved_question: false, artifact_matches_answer: false,
     bob_cannot_view: false, bob_artifact_status: null, blocked_requests: 0, page_error_count: 0,
@@ -100,8 +101,8 @@ async function main() {
           if (user === "alice" && phase === "workspace" && path === "/workspaces" && only(["csrf", "key", "name"]) && fields.get("name") === workspaceName && mutations.workspace === 0) {
             mutations.workspace++; allowed = true;
           }
-          if (user === "alice" && path === "/agent" && url.searchParams.get("workspace") === observations.workspace_id && only(["csrf", "intent", "key", "text", "conversation_id", "root_id", "question_id", "expected_revision"])) {
-            if (phase === "request" && fields.get("intent") === "start" && fields.get("text") === requestText && mutations.start === 0) {
+          if (user === "alice" && path === "/agent" && url.searchParams.get("workspace") === observations.workspace_id && only(["csrf", "intent", "key", "text", "conversation_id", "root_id", "question_id", "expected_revision", "mode", "allow_model"])) {
+            if (phase === "request" && fields.get("intent") === "start" && fields.get("text") === requestText && fields.get("mode") === (realModel ? "model" : "preview") && fields.has("allow_model") === realModel && (!realModel || fields.get("allow_model") === "yes") && mutations.start === 0) {
               mutations.start++; allowed = true;
             }
             if (phase === "answer" && fields.get("intent") === "answer" && fields.get("text")?.replace(/\r\n?/g, "\n") === answerText && fields.get("root_id") === observations.root_id && mutations.answer === 0) {
@@ -161,8 +162,10 @@ async function main() {
     const workspace = identifier(localURL(href).searchParams.get("workspace"));
     observations.workspace_id = workspace;
     await alice.goto(`${webOrigin}/agent?workspace=${workspace}`);
-    await expect(alice.getByRole("heading", { name: "模擬モデルで対話の流れを試せます", exact: true })).toBeVisible();
-    check(await alice.locator('input[name="allow_model"],input[name="model_consent"]').count() === 0, "model_consent_present");
+    await expect(alice.getByRole("heading", { name: "依頼に合わせた返答と成果物を受け取れます", exact: true })).toBeVisible();
+    await alice.getByRole("radio", { name: realModel ? "実モデルで依頼を進める" : "模擬応答で操作を試す（無料）", exact: true }).check();
+    if (realModel) await alice.getByRole("checkbox", { name: "会話の外部送信とモデル利用料金を確認しました", exact: true }).check();
+    else check(await alice.locator('input[name="allow_model"],input[name="model_consent"]').count() === 0, "model_consent_present");
     observations.conversation_id = identifier(new URL(alice.url()).searchParams.get("draft"));
     await step("request");
     await alice.getByLabel("依頼内容", { exact: true }).fill(requestText);
@@ -171,19 +174,28 @@ async function main() {
     observations.root_id = identifier(new URL(alice.url()).searchParams.get("root"));
     await step("question");
     await waitState(alice, "waiting_input");
-    await expect(alice.getByLabel("プレビューの返答", { exact: true }).locator("p")).toHaveText(question);
+    if (realModel) await expect(alice.getByLabel("エージェントの返答", { exact: true }).locator("p")).toContainText(/日時|いつ|何時/);
+    else await expect(alice.getByLabel("エージェントの返答", { exact: true }).locator("p")).toHaveText(question);
     observations.question_verified = true;
     await alice.reload();
     await waitState(alice, "waiting_input");
-    await expect(alice.getByLabel("プレビューの返答", { exact: true }).locator("p")).toHaveText(question);
+    if (realModel) await expect(alice.getByLabel("エージェントの返答", { exact: true }).locator("p")).toContainText(/日時|いつ|何時/);
+    else await expect(alice.getByLabel("エージェントの返答", { exact: true }).locator("p")).toHaveText(question);
     observations.reload_preserved_question = true;
+    if (realModel) {
+      const usage = await alice.locator(".agent-usage").textContent();
+      const amount = usage?.match(/(\d+\.\d+) USD/);
+      check(amount && Number(amount[1]) > 0 && Number(amount[1]) < 0.002, "first_segment_usage_unconfirmed");
+      observations.first_segment_estimated_usd = Number(amount[1]);
+    }
     await step("answer");
     await alice.getByLabel("質問への回答", { exact: true }).fill(answerText);
     await alice.getByRole("button", { name: "回答して続ける", exact: true }).click();
     await waitState(alice, "succeeded");
     await expect(alice.getByLabel("あなたのメッセージ", { exact: true })).toHaveCount(2);
-    await expect(alice.getByLabel("プレビューの返答", { exact: true })).toHaveCount(2);
-    check(await alice.getByLabel("プレビューの返答", { exact: true }).last().locator("p").textContent() === answerText, "reply_mismatch");
+    await expect(alice.getByLabel("エージェントの返答", { exact: true })).toHaveCount(2);
+    const expectedArtifact = await alice.getByLabel("エージェントの返答", { exact: true }).last().locator("p").textContent();
+    check(expectedArtifact && (realModel ? expectedArtifact.includes("10月8日") && /15[時:：]/.test(expectedArtifact) && expectedArtifact.includes("開発定例") && expectedArtifact !== answerText : expectedArtifact === answerText), "reply_mismatch");
     const runLinks = await alice.getByRole("link", { name: "実行の詳細", exact: true }).evaluateAll(links => links.map(link => link.getAttribute("href")));
     const runs = runLinks.map(link => localURL(link ?? "").pathname.split("/").at(-1) ?? "");
     check(runs.length === 2 && runs.every(value => runId.test(value)) && new Set(runs).size === 2, "invalid_segment_runs");
@@ -200,10 +212,13 @@ async function main() {
     await download.saveAs(artifactPath);
     await chmod(artifactPath, 0o600);
     const artifact = await readFile(artifactPath);
-    check(artifact.equals(Buffer.from(answerText, "utf8")), "artifact_mismatch");
-    observations.artifact_matches_answer = true;
+    check(artifact.equals(Buffer.from(expectedArtifact, "utf8")), "artifact_mismatch");
+    observations.artifact_matches_answer = !realModel;
+    observations.artifact_matches_request_and_answer = realModel;
     observations.artifact_bytes = artifact.length;
     observations.artifact_sha256 = createHash("sha256").update(artifact).digest("hex");
+    screenshot = "completed.png";
+    await alice.screenshot({ path: join(evidenceDir, screenshot), fullPage: true, mask: [alice.locator(".sidebar")] });
     await step("bob_login");
     const bob = await newPage("bob");
     await login(bob, "bob");
@@ -245,6 +260,6 @@ async function main() {
 
 main().catch(cause => {
   process.stderr.write(JSON.stringify({ passed: false, failure: cause instanceof VerificationError ? cause.message : "verification_setup_failed",
-    usage: "node web/node_modules/tsx/dist/cli.mjs web/scripts/verify-interactive-local.ts --run [--headed]" }) + "\n");
+    usage: "node web/node_modules/tsx/dist/cli.mjs web/scripts/verify-interactive-local.ts --run [--headed] [--real-model]" }) + "\n");
   process.exitCode = 1;
 });

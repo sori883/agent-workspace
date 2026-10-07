@@ -1,0 +1,4799 @@
+{
+  "schemaVersion": 1,
+  "revision": 25,
+  "project": "/Users/const/sori883/agent-workspace",
+  "coordinator": {
+    "actor": "parent",
+    "session": "model-parent-1"
+  },
+  "createdAt": "2026-10-07T09:17:08.024Z",
+  "updatedAt": "2026-10-07T10:10:00.996Z",
+  "units": [
+    {
+      "id": "model",
+      "parent": null,
+      "size": "standard",
+      "purpose": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+      "track": "",
+      "owner": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "verifiers": [],
+      "scope": [
+        "全体統合/UI/配備/検証/納品"
+      ],
+      "taskRef": ".space/tasks/ax-agent-model/task.md",
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "delivery",
+          "description": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "result"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 6,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "実装・実経路検証・独立レビュー・OKF保存を完了しPR #19へ提出。マージ完了の判断はGitHub状態確認後に行う。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-model/task.md",
+                  "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-model/verification.md",
+                  "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+                },
+                {
+                  "ref": "https://github.com/sori883/agent-workspace/pull/19",
+                  "digest": null
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-07T09:18:43.893Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+      "contractHistory": []
+    },
+    {
+      "id": "gateway",
+      "parent": "model",
+      "size": "small",
+      "purpose": "実モデル送信とusage確定を隔離境界内で実装・検証する",
+      "track": "",
+      "owner": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "verifiers": [],
+      "scope": [
+        "execution/",
+        "ax-local/task_runtime/"
+      ],
+      "taskRef": null,
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "delivery",
+          "description": "実モデル送信とusage確定を隔離境界内で実装・検証する",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "result"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 6,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "担当AのGo・固定SDKと拒否系回帰が成功。親が独立レビューおよび実モデル2回の利用量・停止証拠を照合し受領。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-model/verification.md",
+                  "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                  "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-07T09:18:43.994Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3",
+      "contractHistory": []
+    },
+    {
+      "id": "ledger",
+      "parent": "model",
+      "size": "small",
+      "purpose": "mode同意と送信前費用予約・精算を互換移行する",
+      "track": "",
+      "owner": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "verifiers": [],
+      "scope": [
+        "web/data/",
+        "web/api/",
+        "web/shared/",
+        "関連tests/"
+      ],
+      "taskRef": null,
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "delivery",
+          "description": "mode同意と送信前費用予約・精算を互換移行する",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "result"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 6,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "担当BのPG/API42件を含むNode114件・型検査成功。親がv5 digestと稼働DB移行、台帳費用および独立レビューを照合し受領。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-model/verification.md",
+                  "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                  "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-07T09:18:44.100Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": "9221ecb8-32b6-4211-a831-1fba215e68db",
+      "contractHistory": []
+    },
+    {
+      "id": "review",
+      "parent": "model",
+      "size": "small",
+      "purpose": "設計・差分・検証の独立レビューを報告する",
+      "track": "",
+      "owner": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "verifiers": [],
+      "scope": [
+        "読み取り専用レビュー"
+      ],
+      "taskRef": null,
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "delivery",
+          "description": "設計・差分・検証の独立レビューを報告する",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "result"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 6,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "completed",
+          "stages": {
+            "review": {
+              "selection": "execute",
+              "reason": "独立担当Cが設計・UI・統合と保存された実モデル証拠を照合し、必須の未修正指摘なしを報告。親が対象と報告を照合し受領。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-model/verification.md",
+                  "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                  "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-07T09:18:44.223Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38",
+      "contractHistory": []
+    }
+  ],
+  "checks": [
+    {
+      "id": "8b008ac9-a34e-4039-888c-15ad05965a37",
+      "unit": "gateway",
+      "attempt": 1,
+      "condition": "delivery",
+      "target": {
+        "id": "result",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "ax-local/task_runtime/adapters/interactive.py",
+            "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+          },
+          {
+            "ref": "ax-local/task_runtime/mailbox.py",
+            "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+          },
+          {
+            "ref": "ax-local/tests/test_interactive.py",
+            "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+          },
+          {
+            "ref": "ax-local/tests/test_interactive_model.py",
+            "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+          },
+          {
+            "ref": "execution/Dockerfile",
+            "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+          },
+          {
+            "ref": "execution/README.md",
+            "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+          },
+          {
+            "ref": "execution/cmd/ax-controller/main.go",
+            "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+          },
+          {
+            "ref": "execution/controller/controller.go",
+            "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+          },
+          {
+            "ref": "execution/controller/interactive.go",
+            "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+          },
+          {
+            "ref": "execution/controller/interactive_test.go",
+            "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+          },
+          {
+            "ref": "execution/controller/model_test.go",
+            "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+          },
+          {
+            "ref": "execution/controller/postgres.go",
+            "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+          },
+          {
+            "ref": "execution/controller/reservation_test.go",
+            "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+          },
+          {
+            "ref": "execution/gateway/model.go",
+            "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+          },
+          {
+            "ref": "execution/gateway/model_test.go",
+            "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+          },
+          {
+            "ref": "execution/native/protocol.go",
+            "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+          },
+          {
+            "ref": "execution/settings/settings.go",
+            "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+          },
+          {
+            "ref": "execution/settings/settings_test.go",
+            "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+          }
+        ],
+        "version": "0e81fe8e06973e31533b4374e8b7f6d91516a694a43a6e4c4a520e8d43efbd35"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        }
+      ],
+      "reason": "",
+      "method": "担当AのGo・固定SDKと拒否系回帰が成功。親が独立レビューおよび実モデル2回の利用量・停止証拠を照合し受領。",
+      "environment": "共有checkout、固定SDK、専用試験PGおよび実Keycloak/Web/AXの保存証拠。テスト実施者A/B/C、現在の親が差分・証拠を照合。",
+      "observedAt": "2026-10-07T10:07:30.124039+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-07T10:07:30.169Z"
+    },
+    {
+      "id": "abe5b431-309a-43b1-bf9e-8a9e174143ce",
+      "unit": "ledger",
+      "attempt": 1,
+      "condition": "delivery",
+      "target": {
+        "id": "result",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "web/data/agents.ts",
+            "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+          },
+          {
+            "ref": "web/data/db.ts",
+            "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+          },
+          {
+            "ref": "web/data/permissions.ts",
+            "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+          },
+          {
+            "ref": "web/data/repository.ts",
+            "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+          },
+          {
+            "ref": "web/data/schema-v5.sql",
+            "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+          },
+          {
+            "ref": "web/server/data-migrate.ts",
+            "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+          },
+          {
+            "ref": "web/shared/agent-contracts.ts",
+            "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+          },
+          {
+            "ref": "web/shared/run-contracts.ts",
+            "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+          },
+          {
+            "ref": "web/tests/agents.test.ts",
+            "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+          },
+          {
+            "ref": "web/tests/workspaces.test.ts",
+            "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+          }
+        ],
+        "version": "d8e3f2d386aabd13e57846710cd9da21875d8c1fc505c1fe30ac5aca4b4b95bd"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        }
+      ],
+      "reason": "",
+      "method": "担当BのPG/API42件を含むNode114件・型検査成功。親がv5 digestと稼働DB移行、台帳費用および独立レビューを照合し受領。",
+      "environment": "共有checkout、固定SDK、専用試験PGおよび実Keycloak/Web/AXの保存証拠。テスト実施者A/B/C、現在の親が差分・証拠を照合。",
+      "observedAt": "2026-10-07T10:07:30.224739+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-07T10:07:30.269Z"
+    },
+    {
+      "id": "30e54a9c-7bbe-4d19-adc9-3b24ec68b26b",
+      "unit": "review",
+      "attempt": 1,
+      "condition": "delivery",
+      "target": {
+        "id": "result",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/design-review.md",
+            "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/ui-review.md",
+            "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+          }
+        ],
+        "version": "9569b71388a8934c0367fa637c7ffde88051abe159541cb405049fecc8181427"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        }
+      ],
+      "reason": "",
+      "method": "独立担当Cが設計・UI・統合と保存された実モデル証拠を照合し、必須の未修正指摘なしを報告。親が対象と報告を照合し受領。",
+      "environment": "共有checkout、固定SDK、専用試験PGおよび実Keycloak/Web/AXの保存証拠。テスト実施者A/B/C、現在の親が差分・証拠を照合。",
+      "observedAt": "2026-10-07T10:07:30.321072+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-07T10:07:30.366Z"
+    },
+    {
+      "id": "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e",
+      "unit": "model",
+      "attempt": 1,
+      "condition": "delivery",
+      "target": {
+        "id": "result",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": ".github/workflows/web.yml",
+            "digest": "f1547cb05b0db3db4f026dbd101fa4de5b05322545fdb4cda797527a092b2270"
+          },
+          {
+            "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+            "digest": "18984b81ab82911f01d7312c8102d1f924871871861d2c4cca2e402b2cfe2f87"
+          },
+          {
+            "ref": ".space/babel/decisions/systems/ax/index.md",
+            "digest": "240b3ab7da36336956b22285bed1ca3fb2c117fcaab7d1b74160d83a127d4cbc"
+          },
+          {
+            "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+            "digest": "dc21923048e78470bba5690422cb320ac05fa376334face7e7e3fce8c5121359"
+          },
+          {
+            "ref": ".space/babel/log.md",
+            "digest": "fec141b9abdcd086d6e0003c3a35cbbe5ce780f07c49568e1651ea135f39a65f"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/contract.md",
+            "digest": "a5e9ba64665b5b18ac3d166f93db7bdb2d1d31f6d98cc4a07b5970c6fbd77796"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/design-review.md",
+            "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/task.md",
+            "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/ui-review.md",
+            "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": "README.md",
+            "digest": "4e8a1db03a99b696130934f97b65dd316dbb19c75235700541ccf6bdb9c37c89"
+          },
+          {
+            "ref": "ax-local/task_runtime/adapters/interactive.py",
+            "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+          },
+          {
+            "ref": "ax-local/task_runtime/mailbox.py",
+            "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+          },
+          {
+            "ref": "ax-local/tests/test_interactive.py",
+            "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+          },
+          {
+            "ref": "ax-local/tests/test_interactive_model.py",
+            "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+          },
+          {
+            "ref": "ax-local/versions.json",
+            "digest": "b5aa25fb7f53c101f265f853d091df03dfa814425b01e4f24d4fa14aa2aef8b9"
+          },
+          {
+            "ref": "docs/agent-runtime-design.md",
+            "digest": "096d44b820754599cda265a893c6d46929befcaa1316c33d6c0752dbc352c916"
+          },
+          {
+            "ref": "execution/Dockerfile",
+            "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+          },
+          {
+            "ref": "execution/README.md",
+            "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+          },
+          {
+            "ref": "execution/cmd/ax-controller/main.go",
+            "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+          },
+          {
+            "ref": "execution/controller/controller.go",
+            "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+          },
+          {
+            "ref": "execution/controller/interactive.go",
+            "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+          },
+          {
+            "ref": "execution/controller/interactive_test.go",
+            "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+          },
+          {
+            "ref": "execution/controller/model_test.go",
+            "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+          },
+          {
+            "ref": "execution/controller/postgres.go",
+            "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+          },
+          {
+            "ref": "execution/controller/reservation_test.go",
+            "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+          },
+          {
+            "ref": "execution/gateway/model.go",
+            "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+          },
+          {
+            "ref": "execution/gateway/model_test.go",
+            "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+          },
+          {
+            "ref": "execution/native/protocol.go",
+            "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+          },
+          {
+            "ref": "execution/settings/settings.go",
+            "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+          },
+          {
+            "ref": "execution/settings/settings_test.go",
+            "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+          },
+          {
+            "ref": "web/README.md",
+            "digest": "6a333b99a98b6f7c334123b1b147fb368e0678a250dbfdb6aa1aa2c4585c2e75"
+          },
+          {
+            "ref": "web/app/app.css",
+            "digest": "39e01c5e119a473c968e71cd720597c279322f882da83c3f1d75b91b7aac3ce9"
+          },
+          {
+            "ref": "web/app/components/workspace.tsx",
+            "digest": "d1284203208326f76caa620bdb08f37de489710f3f8a1c782d3dc18228fa2320"
+          },
+          {
+            "ref": "web/app/routes/agent.tsx",
+            "digest": "bba0b9861b93003ab75826c106207ff7afb694875d71a64f76e720ddc4643e27"
+          },
+          {
+            "ref": "web/app/routes/run-detail.tsx",
+            "digest": "15dd2b0851b281925e9cd0affe0eac9b42aab1907eb3cbc0eebdf31bc2425814"
+          },
+          {
+            "ref": "web/data/agents.ts",
+            "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+          },
+          {
+            "ref": "web/data/db.ts",
+            "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+          },
+          {
+            "ref": "web/data/permissions.ts",
+            "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+          },
+          {
+            "ref": "web/data/repository.ts",
+            "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+          },
+          {
+            "ref": "web/data/schema-v5.sql",
+            "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+          },
+          {
+            "ref": "web/scripts/deploy-execution.ts",
+            "digest": "5f94e3e7b6ced1d4c2ede1f3175e6259269a0cc795a9d590547f71867b993407"
+          },
+          {
+            "ref": "web/scripts/verify-interactive-local.ts",
+            "digest": "55d48e13b7fa185133318be7a39919e16703f41896ba37d9212809b7f3baeb5f"
+          },
+          {
+            "ref": "web/server/data-migrate.ts",
+            "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+          },
+          {
+            "ref": "web/shared/agent-contracts.ts",
+            "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+          },
+          {
+            "ref": "web/shared/run-contracts.ts",
+            "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+          },
+          {
+            "ref": "web/tests/agents.test.ts",
+            "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+          },
+          {
+            "ref": "web/tests/browser/agent-fixture.ts",
+            "digest": "68dfcd8742a74d88ec70be19239382bc1528e64d262aadb71509480a2d3bf2cf"
+          },
+          {
+            "ref": "web/tests/browser/agent.spec.ts",
+            "digest": "f234b4af2f4a5d6e368aaa9c2f8f69a94dd5f369a1ace8904b631b158fc56fe9"
+          },
+          {
+            "ref": "web/tests/workspaces.test.ts",
+            "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+          }
+        ],
+        "version": "2079baaf9fb1cf5776c6642c001fcc9360dd4b296bd6acb56e0ed390985c58be"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/19",
+          "digest": null
+        }
+      ],
+      "reason": "",
+      "method": "Webから実モデルの対話・成果物と本人限定、外部台帳・費用・実停止、閉鎖後previewの回帰を検証。関連テストと独立レビューに残件なく、同一差分を一つのPRへ提出したことを確認。PRの最終CIとマージは引き渡し後の親の操作として継続する。",
+      "environment": "ローカルkind/AX・Docker PostgreSQL・実Keycloak/Web・Gemini 2生成、およびPR #19 head f77b12f。マージ前の提出成果物評価。",
+      "observedAt": "2026-10-07T10:10:00.802272+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-07T10:10:00.855Z"
+    }
+  ],
+  "submissions": [
+    {
+      "id": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3",
+      "unit": "gateway",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "8b008ac9-a34e-4039-888c-15ad05965a37"
+      ],
+      "outputs": [
+        {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/task_runtime/adapters/interactive.py",
+              "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+            },
+            {
+              "ref": "ax-local/task_runtime/mailbox.py",
+              "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive.py",
+              "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive_model.py",
+              "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+            },
+            {
+              "ref": "execution/Dockerfile",
+              "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+            },
+            {
+              "ref": "execution/README.md",
+              "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+            },
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+            },
+            {
+              "ref": "execution/controller/interactive.go",
+              "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+            },
+            {
+              "ref": "execution/controller/interactive_test.go",
+              "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+            },
+            {
+              "ref": "execution/controller/model_test.go",
+              "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+            },
+            {
+              "ref": "execution/controller/reservation_test.go",
+              "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+            },
+            {
+              "ref": "execution/gateway/model.go",
+              "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+            },
+            {
+              "ref": "execution/gateway/model_test.go",
+              "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+            },
+            {
+              "ref": "execution/settings/settings.go",
+              "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+            },
+            {
+              "ref": "execution/settings/settings_test.go",
+              "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+            }
+          ],
+          "version": "0e81fe8e06973e31533b4374e8b7f6d91516a694a43a6e4c4a520e8d43efbd35"
+        }
+      ],
+      "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "at": "2026-10-07T10:07:50.760Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "reason": "親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
+        "at": "2026-10-07T10:08:03.075Z"
+      }
+    },
+    {
+      "id": "9221ecb8-32b6-4211-a831-1fba215e68db",
+      "unit": "ledger",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "abe5b431-309a-43b1-bf9e-8a9e174143ce"
+      ],
+      "outputs": [
+        {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/data/agents.ts",
+              "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+            },
+            {
+              "ref": "web/data/db.ts",
+              "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+            },
+            {
+              "ref": "web/data/permissions.ts",
+              "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+            },
+            {
+              "ref": "web/data/schema-v5.sql",
+              "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+            },
+            {
+              "ref": "web/shared/agent-contracts.ts",
+              "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+            },
+            {
+              "ref": "web/tests/agents.test.ts",
+              "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+            }
+          ],
+          "version": "d8e3f2d386aabd13e57846710cd9da21875d8c1fc505c1fe30ac5aca4b4b95bd"
+        }
+      ],
+      "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "at": "2026-10-07T10:07:50.832Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "reason": "親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
+        "at": "2026-10-07T10:08:03.152Z"
+      }
+    },
+    {
+      "id": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38",
+      "unit": "review",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "30e54a9c-7bbe-4d19-adc9-3b24ec68b26b"
+      ],
+      "outputs": [
+        {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".space/tasks/ax-agent-model/design-review.md",
+              "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/integration-review.md",
+              "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/ui-review.md",
+              "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+            }
+          ],
+          "version": "9569b71388a8934c0367fa637c7ffde88051abe159541cb405049fecc8181427"
+        }
+      ],
+      "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "at": "2026-10-07T10:07:50.897Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "reason": "親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
+        "at": "2026-10-07T10:08:03.229Z"
+      }
+    },
+    {
+      "id": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+      "unit": "model",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e"
+      ],
+      "outputs": [
+        {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".github/workflows/web.yml",
+              "digest": "f1547cb05b0db3db4f026dbd101fa4de5b05322545fdb4cda797527a092b2270"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+              "digest": "18984b81ab82911f01d7312c8102d1f924871871861d2c4cca2e402b2cfe2f87"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/index.md",
+              "digest": "240b3ab7da36336956b22285bed1ca3fb2c117fcaab7d1b74160d83a127d4cbc"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+              "digest": "dc21923048e78470bba5690422cb320ac05fa376334face7e7e3fce8c5121359"
+            },
+            {
+              "ref": ".space/babel/log.md",
+              "digest": "fec141b9abdcd086d6e0003c3a35cbbe5ce780f07c49568e1651ea135f39a65f"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/contract.md",
+              "digest": "a5e9ba64665b5b18ac3d166f93db7bdb2d1d31f6d98cc4a07b5970c6fbd77796"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/design-review.md",
+              "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/integration-review.md",
+              "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/task.md",
+              "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/ui-review.md",
+              "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/verification.md",
+              "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+            },
+            {
+              "ref": "README.md",
+              "digest": "4e8a1db03a99b696130934f97b65dd316dbb19c75235700541ccf6bdb9c37c89"
+            },
+            {
+              "ref": "ax-local/task_runtime/adapters/interactive.py",
+              "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+            },
+            {
+              "ref": "ax-local/task_runtime/mailbox.py",
+              "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive.py",
+              "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive_model.py",
+              "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "b5aa25fb7f53c101f265f853d091df03dfa814425b01e4f24d4fa14aa2aef8b9"
+            },
+            {
+              "ref": "docs/agent-runtime-design.md",
+              "digest": "096d44b820754599cda265a893c6d46929befcaa1316c33d6c0752dbc352c916"
+            },
+            {
+              "ref": "execution/Dockerfile",
+              "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+            },
+            {
+              "ref": "execution/README.md",
+              "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+            },
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+            },
+            {
+              "ref": "execution/controller/interactive.go",
+              "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+            },
+            {
+              "ref": "execution/controller/interactive_test.go",
+              "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+            },
+            {
+              "ref": "execution/controller/model_test.go",
+              "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+            },
+            {
+              "ref": "execution/controller/reservation_test.go",
+              "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+            },
+            {
+              "ref": "execution/gateway/model.go",
+              "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+            },
+            {
+              "ref": "execution/gateway/model_test.go",
+              "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+            },
+            {
+              "ref": "execution/settings/settings.go",
+              "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+            },
+            {
+              "ref": "execution/settings/settings_test.go",
+              "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+            },
+            {
+              "ref": "web/README.md",
+              "digest": "6a333b99a98b6f7c334123b1b147fb368e0678a250dbfdb6aa1aa2c4585c2e75"
+            },
+            {
+              "ref": "web/app/app.css",
+              "digest": "39e01c5e119a473c968e71cd720597c279322f882da83c3f1d75b91b7aac3ce9"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "d1284203208326f76caa620bdb08f37de489710f3f8a1c782d3dc18228fa2320"
+            },
+            {
+              "ref": "web/app/routes/agent.tsx",
+              "digest": "bba0b9861b93003ab75826c106207ff7afb694875d71a64f76e720ddc4643e27"
+            },
+            {
+              "ref": "web/app/routes/run-detail.tsx",
+              "digest": "15dd2b0851b281925e9cd0affe0eac9b42aab1907eb3cbc0eebdf31bc2425814"
+            },
+            {
+              "ref": "web/data/agents.ts",
+              "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+            },
+            {
+              "ref": "web/data/db.ts",
+              "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+            },
+            {
+              "ref": "web/data/permissions.ts",
+              "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+            },
+            {
+              "ref": "web/data/schema-v5.sql",
+              "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+            },
+            {
+              "ref": "web/scripts/deploy-execution.ts",
+              "digest": "5f94e3e7b6ced1d4c2ede1f3175e6259269a0cc795a9d590547f71867b993407"
+            },
+            {
+              "ref": "web/scripts/verify-interactive-local.ts",
+              "digest": "55d48e13b7fa185133318be7a39919e16703f41896ba37d9212809b7f3baeb5f"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+            },
+            {
+              "ref": "web/shared/agent-contracts.ts",
+              "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+            },
+            {
+              "ref": "web/tests/agents.test.ts",
+              "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+            },
+            {
+              "ref": "web/tests/browser/agent-fixture.ts",
+              "digest": "68dfcd8742a74d88ec70be19239382bc1528e64d262aadb71509480a2d3bf2cf"
+            },
+            {
+              "ref": "web/tests/browser/agent.spec.ts",
+              "digest": "f234b4af2f4a5d6e368aaa9c2f8f69a94dd5f369a1ace8904b631b158fc56fe9"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+            }
+          ],
+          "version": "2079baaf9fb1cf5776c6642c001fcc9360dd4b296bd6acb56e0ed390985c58be"
+        }
+      ],
+      "report": "実装・検証・独立レビュー・知識保存の成果をPR #19へ統合提出。子3件の受け入れを照合済み。最終CIとマージは親が続行し、GitHub側の結果確認前にマージ済みとは報告しない。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-model/task.md",
+          "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/19",
+          "digest": null
+        }
+      ],
+      "children": [
+        {
+          "unit": "gateway",
+          "submission": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3"
+        },
+        {
+          "unit": "ledger",
+          "submission": "9221ecb8-32b6-4211-a831-1fba215e68db"
+        },
+        {
+          "unit": "review",
+          "submission": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38"
+        }
+      ],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "at": "2026-10-07T10:10:00.920Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "reason": "現在の成果物と子3件の受け入れ、実モデルとpreviewの実機検証、単一PRへの提出を確認して受領。最終CI・マージ操作は親が継続し、その結果を利用者へ報告する。",
+        "at": "2026-10-07T10:10:00.996Z"
+      }
+    }
+  ],
+  "messages": [
+    {
+      "id": "0cf954e2-6b7f-434e-aad7-52b3f04d9da7",
+      "unit": "gateway",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        }
+      ],
+      "submission": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3",
+      "state": "processed",
+      "resolution": "accepted: 親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
+      "at": "2026-10-07T10:07:50.760Z"
+    },
+    {
+      "id": "d35da7c6-d7f0-43ec-afb2-9aeb8326893f",
+      "unit": "ledger",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        }
+      ],
+      "submission": "9221ecb8-32b6-4211-a831-1fba215e68db",
+      "state": "processed",
+      "resolution": "accepted: 親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
+      "at": "2026-10-07T10:07:50.832Z"
+    },
+    {
+      "id": "e9424d3e-327c-4e01-9c63-04ce57a10ec3",
+      "unit": "review",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        }
+      ],
+      "submission": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38",
+      "state": "processed",
+      "resolution": "accepted: 親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
+      "at": "2026-10-07T10:07:50.897Z"
+    },
+    {
+      "id": "ca9180d1-bee6-4edb-b26e-713b6aeee16e",
+      "unit": "model",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "実装・検証・独立レビュー・知識保存の成果をPR #19へ統合提出。子3件の受け入れを照合済み。最終CIとマージは親が続行し、GitHub側の結果確認前にマージ済みとは報告しない。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-model/task.md",
+          "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/19",
+          "digest": null
+        }
+      ],
+      "submission": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+      "state": "processed",
+      "resolution": "accepted: 現在の成果物と子3件の受け入れ、実モデルとpreviewの実機検証、単一PRへの提出を確認して受領。最終CI・マージ操作は親が継続し、その結果を利用者へ報告する。",
+      "at": "2026-10-07T10:10:00.920Z"
+    }
+  ],
+  "gates": [],
+  "operations": [
+    {
+      "id": "model-init",
+      "hash": "c76f95992da2a09d102eaa543e67f65231cc065d1284a0947f5c247578ac3a57",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "init",
+      "request": {
+        "command": "init",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "model-init",
+        "input": {
+          "project": "/Users/const/sori883/agent-workspace"
+        }
+      },
+      "affectedUnits": [],
+      "evidence": [],
+      "revision": 1,
+      "data": {
+        "project": "/Users/const/sori883/agent-workspace",
+        "coordinator": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "store": "/Users/const/sori883/agent-workspace/.space/tasks/ax-agent-model/orch"
+      },
+      "at": "2026-10-07T09:17:08.024Z"
+    },
+    {
+      "id": "model-add-model",
+      "hash": "e90e9cba1756d550d3a7e72f96c5ea3c0ad5a35462dba79b53fdb72d5d41ef59",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "model",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "model-add-model",
+        "input": {
+          "size": "standard",
+          "purpose": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+          "owner": {
+            "actor": "parent",
+            "session": "model-parent-1"
+          },
+          "scope": [
+            "全体統合/UI/配備/検証/納品"
+          ],
+          "conditions": [
+            {
+              "id": "delivery",
+              "description": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+              "purpose": "delivery",
+              "required": true,
+              "allowed": [
+                "pass"
+              ],
+              "target": "result"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "依頼の実装・独立レビュー"
+            }
+          },
+          "taskRef": ".space/tasks/ax-agent-model/task.md"
+        }
+      },
+      "affectedUnits": [
+        "model"
+      ],
+      "evidence": [],
+      "revision": 2,
+      "data": {
+        "id": "model",
+        "parent": null,
+        "size": "standard",
+        "purpose": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "全体統合/UI/配備/検証/納品"
+        ],
+        "taskRef": ".space/tasks/ax-agent-model/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "依頼の実装・独立レビュー",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:43.893Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T09:18:43.893Z"
+    },
+    {
+      "id": "model-start-model",
+      "hash": "0cc2f52e602485e06a4e7eb0768f9a21dff6bff4fc2dba0cfa7e2b3847379351",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "model",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "model-start-model",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "model"
+      ],
+      "evidence": [],
+      "revision": 3,
+      "data": {
+        "id": "model",
+        "parent": null,
+        "size": "standard",
+        "purpose": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "全体統合/UI/配備/検証/納品"
+        ],
+        "taskRef": ".space/tasks/ax-agent-model/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "依頼の実装・独立レビュー",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:43.893Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T09:18:43.964Z"
+    },
+    {
+      "id": "model-add-gateway",
+      "hash": "d8d5ed48d2e0adff5a67aee05221123e6dbbed8e16e3569000306dbcb246db7e",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "gateway",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "model-add-gateway",
+        "input": {
+          "size": "small",
+          "purpose": "実モデル送信とusage確定を隔離境界内で実装・検証する",
+          "owner": {
+            "actor": "parent",
+            "session": "model-parent-1"
+          },
+          "scope": [
+            "execution/",
+            "ax-local/task_runtime/"
+          ],
+          "conditions": [
+            {
+              "id": "delivery",
+              "description": "実モデル送信とusage確定を隔離境界内で実装・検証する",
+              "purpose": "delivery",
+              "required": true,
+              "allowed": [
+                "pass"
+              ],
+              "target": "result"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "依頼の実装・独立レビュー"
+            }
+          },
+          "parent": "model"
+        }
+      },
+      "affectedUnits": [
+        "gateway"
+      ],
+      "evidence": [],
+      "revision": 4,
+      "data": {
+        "id": "gateway",
+        "parent": "model",
+        "size": "small",
+        "purpose": "実モデル送信とusage確定を隔離境界内で実装・検証する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "execution/",
+          "ax-local/task_runtime/"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "実モデル送信とusage確定を隔離境界内で実装・検証する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "依頼の実装・独立レビュー",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:43.994Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T09:18:43.994Z"
+    },
+    {
+      "id": "model-start-gateway",
+      "hash": "99882d64d47a745b58e1eeb4b3175a27f67dbe2fb763faaec6c88cf9084b9eaa",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "gateway",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "model-start-gateway",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "gateway"
+      ],
+      "evidence": [],
+      "revision": 5,
+      "data": {
+        "id": "gateway",
+        "parent": "model",
+        "size": "small",
+        "purpose": "実モデル送信とusage確定を隔離境界内で実装・検証する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "execution/",
+          "ax-local/task_runtime/"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "実モデル送信とusage確定を隔離境界内で実装・検証する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "依頼の実装・独立レビュー",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:43.994Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T09:18:44.056Z"
+    },
+    {
+      "id": "model-add-ledger",
+      "hash": "61e7e2ee32ca8340fa075dbd50d5376e32da9206ac5859276de0a2ae26386654",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "ledger",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "model-add-ledger",
+        "input": {
+          "size": "small",
+          "purpose": "mode同意と送信前費用予約・精算を互換移行する",
+          "owner": {
+            "actor": "parent",
+            "session": "model-parent-1"
+          },
+          "scope": [
+            "web/data/",
+            "web/api/",
+            "web/shared/",
+            "関連tests/"
+          ],
+          "conditions": [
+            {
+              "id": "delivery",
+              "description": "mode同意と送信前費用予約・精算を互換移行する",
+              "purpose": "delivery",
+              "required": true,
+              "allowed": [
+                "pass"
+              ],
+              "target": "result"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "依頼の実装・独立レビュー"
+            }
+          },
+          "parent": "model"
+        }
+      },
+      "affectedUnits": [
+        "ledger"
+      ],
+      "evidence": [],
+      "revision": 6,
+      "data": {
+        "id": "ledger",
+        "parent": "model",
+        "size": "small",
+        "purpose": "mode同意と送信前費用予約・精算を互換移行する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/",
+          "web/api/",
+          "web/shared/",
+          "関連tests/"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "mode同意と送信前費用予約・精算を互換移行する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "依頼の実装・独立レビュー",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:44.100Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T09:18:44.100Z"
+    },
+    {
+      "id": "model-start-ledger",
+      "hash": "00aa4727429e156691d4fdf361a53f5d2ea2fac972fb466ce00517aa226704fd",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "ledger",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "model-start-ledger",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ledger"
+      ],
+      "evidence": [],
+      "revision": 7,
+      "data": {
+        "id": "ledger",
+        "parent": "model",
+        "size": "small",
+        "purpose": "mode同意と送信前費用予約・精算を互換移行する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/",
+          "web/api/",
+          "web/shared/",
+          "関連tests/"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "mode同意と送信前費用予約・精算を互換移行する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "依頼の実装・独立レビュー",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:44.100Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T09:18:44.179Z"
+    },
+    {
+      "id": "model-add-review",
+      "hash": "beba9b0120d7863af3323853f0dfbc7c34551b2d78d1365cd61fcc9bb33643c9",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "review",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "model-add-review",
+        "input": {
+          "size": "small",
+          "purpose": "設計・差分・検証の独立レビューを報告する",
+          "owner": {
+            "actor": "parent",
+            "session": "model-parent-1"
+          },
+          "scope": [
+            "読み取り専用レビュー"
+          ],
+          "conditions": [
+            {
+              "id": "delivery",
+              "description": "設計・差分・検証の独立レビューを報告する",
+              "purpose": "delivery",
+              "required": true,
+              "allowed": [
+                "pass"
+              ],
+              "target": "result"
+            }
+          ],
+          "stages": {
+            "review": {
+              "selection": "execute",
+              "reason": "依頼の実装・独立レビュー"
+            }
+          },
+          "parent": "model"
+        }
+      },
+      "affectedUnits": [
+        "review"
+      ],
+      "evidence": [],
+      "revision": 8,
+      "data": {
+        "id": "review",
+        "parent": "model",
+        "size": "small",
+        "purpose": "設計・差分・検証の独立レビューを報告する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "読み取り専用レビュー"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "設計・差分・検証の独立レビューを報告する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "review": {
+                "selection": "execute",
+                "reason": "依頼の実装・独立レビュー",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:44.223Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T09:18:44.223Z"
+    },
+    {
+      "id": "model-start-review",
+      "hash": "721d1bbe1969355741fb6c5c7063aef8ee48929c1be7e7a085c0a01cc9dc71cb",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "review",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "model-start-review",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "review"
+      ],
+      "evidence": [],
+      "revision": 9,
+      "data": {
+        "id": "review",
+        "parent": "model",
+        "size": "small",
+        "purpose": "設計・差分・検証の独立レビューを報告する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "読み取り専用レビュー"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "設計・差分・検証の独立レビューを報告する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "review": {
+                "selection": "execute",
+                "reason": "依頼の実装・独立レビュー",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:44.223Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T09:18:44.296Z"
+    },
+    {
+      "id": "finish-gateway-stage-190730076635",
+      "hash": "c9b0c0d736793149063ba8d5c001791465e01adc8788da467e2a89be9bc2f3a2",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "gateway",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-gateway-stage-190730076635",
+        "input": {
+          "selection": "execute",
+          "reason": "担当AのGo・固定SDKと拒否系回帰が成功。親が独立レビューおよび実モデル2回の利用量・停止証拠を照合し受領。",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "gateway"
+      ],
+      "evidence": [],
+      "revision": 10,
+      "data": {
+        "id": "gateway",
+        "parent": "model",
+        "size": "small",
+        "purpose": "実モデル送信とusage確定を隔離境界内で実装・検証する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "execution/",
+          "ax-local/task_runtime/"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "実モデル送信とusage確定を隔離境界内で実装・検証する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当AのGo・固定SDKと拒否系回帰が成功。親が独立レビューおよび実モデル2回の利用量・停止証拠を照合し受領。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-model/verification.md",
+                    "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                    "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:43.994Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T10:07:30.114Z"
+    },
+    {
+      "id": "finish-gateway-record-190730146837",
+      "hash": "0913553e00ff2f512355fb28de25309a8dd15285edb68e9afa413769603d67ef",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "gateway",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-gateway-record-190730146837",
+        "input": {
+          "condition": "delivery",
+          "verdict": "pass",
+          "target": {
+            "id": "result",
+            "kind": "files",
+            "files": [
+              "ax-local/task_runtime/adapters/interactive.py",
+              "ax-local/task_runtime/mailbox.py",
+              "ax-local/tests/test_interactive.py",
+              "execution/Dockerfile",
+              "execution/README.md",
+              "execution/cmd/ax-controller/main.go",
+              "execution/controller/controller.go",
+              "execution/controller/interactive.go",
+              "execution/controller/interactive_test.go",
+              "execution/controller/postgres.go",
+              "execution/native/protocol.go",
+              "execution/settings/settings.go",
+              "execution/settings/settings_test.go",
+              "ax-local/tests/test_interactive_model.py",
+              "execution/controller/model_test.go",
+              "execution/controller/reservation_test.go",
+              "execution/gateway/model.go",
+              "execution/gateway/model_test.go"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md"
+          ],
+          "method": "担当AのGo・固定SDKと拒否系回帰が成功。親が独立レビューおよび実モデル2回の利用量・停止証拠を照合し受領。",
+          "environment": "共有checkout、固定SDK、専用試験PGおよび実Keycloak/Web/AXの保存証拠。テスト実施者A/B/C、現在の親が差分・証拠を照合。",
+          "observedAt": "2026-10-07T10:07:30.124039+00:00"
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "gateway"
+      ],
+      "evidence": [],
+      "revision": 11,
+      "data": {
+        "id": "8b008ac9-a34e-4039-888c-15ad05965a37",
+        "unit": "gateway",
+        "attempt": 1,
+        "condition": "delivery",
+        "target": {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/task_runtime/adapters/interactive.py",
+              "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+            },
+            {
+              "ref": "ax-local/task_runtime/mailbox.py",
+              "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive.py",
+              "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive_model.py",
+              "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+            },
+            {
+              "ref": "execution/Dockerfile",
+              "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+            },
+            {
+              "ref": "execution/README.md",
+              "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+            },
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+            },
+            {
+              "ref": "execution/controller/interactive.go",
+              "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+            },
+            {
+              "ref": "execution/controller/interactive_test.go",
+              "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+            },
+            {
+              "ref": "execution/controller/model_test.go",
+              "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+            },
+            {
+              "ref": "execution/controller/reservation_test.go",
+              "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+            },
+            {
+              "ref": "execution/gateway/model.go",
+              "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+            },
+            {
+              "ref": "execution/gateway/model_test.go",
+              "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+            },
+            {
+              "ref": "execution/settings/settings.go",
+              "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+            },
+            {
+              "ref": "execution/settings/settings_test.go",
+              "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+            }
+          ],
+          "version": "0e81fe8e06973e31533b4374e8b7f6d91516a694a43a6e4c4a520e8d43efbd35"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          }
+        ],
+        "reason": "",
+        "method": "担当AのGo・固定SDKと拒否系回帰が成功。親が独立レビューおよび実モデル2回の利用量・停止証拠を照合し受領。",
+        "environment": "共有checkout、固定SDK、専用試験PGおよび実Keycloak/Web/AXの保存証拠。テスト実施者A/B/C、現在の親が差分・証拠を照合。",
+        "observedAt": "2026-10-07T10:07:30.124039+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-07T10:07:30.169Z"
+      },
+      "at": "2026-10-07T10:07:30.169Z"
+    },
+    {
+      "id": "finish-ledger-stage-190730198971",
+      "hash": "c019c350b6b0ac205071a71de125aa8705241fb22be9c775fd628b008dbd4584",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "ledger",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-ledger-stage-190730198971",
+        "input": {
+          "selection": "execute",
+          "reason": "担当BのPG/API42件を含むNode114件・型検査成功。親がv5 digestと稼働DB移行、台帳費用および独立レビューを照合し受領。",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ledger"
+      ],
+      "evidence": [],
+      "revision": 12,
+      "data": {
+        "id": "ledger",
+        "parent": "model",
+        "size": "small",
+        "purpose": "mode同意と送信前費用予約・精算を互換移行する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/",
+          "web/api/",
+          "web/shared/",
+          "関連tests/"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "mode同意と送信前費用予約・精算を互換移行する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当BのPG/API42件を含むNode114件・型検査成功。親がv5 digestと稼働DB移行、台帳費用および独立レビューを照合し受領。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-model/verification.md",
+                    "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                    "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:44.100Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T10:07:30.221Z"
+    },
+    {
+      "id": "finish-ledger-record-190730247968",
+      "hash": "5ccbf537b3d895a8fe659bc6f12f8ed13cd509e0ff3ba5cada96112c72eba52d",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "ledger",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-ledger-record-190730247968",
+        "input": {
+          "condition": "delivery",
+          "verdict": "pass",
+          "target": {
+            "id": "result",
+            "kind": "files",
+            "files": [
+              "web/data/agents.ts",
+              "web/data/db.ts",
+              "web/data/permissions.ts",
+              "web/data/repository.ts",
+              "web/server/data-migrate.ts",
+              "web/shared/agent-contracts.ts",
+              "web/shared/run-contracts.ts",
+              "web/tests/agents.test.ts",
+              "web/tests/workspaces.test.ts",
+              "web/data/schema-v5.sql"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md"
+          ],
+          "method": "担当BのPG/API42件を含むNode114件・型検査成功。親がv5 digestと稼働DB移行、台帳費用および独立レビューを照合し受領。",
+          "environment": "共有checkout、固定SDK、専用試験PGおよび実Keycloak/Web/AXの保存証拠。テスト実施者A/B/C、現在の親が差分・証拠を照合。",
+          "observedAt": "2026-10-07T10:07:30.224739+00:00"
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ledger"
+      ],
+      "evidence": [],
+      "revision": 13,
+      "data": {
+        "id": "abe5b431-309a-43b1-bf9e-8a9e174143ce",
+        "unit": "ledger",
+        "attempt": 1,
+        "condition": "delivery",
+        "target": {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/data/agents.ts",
+              "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+            },
+            {
+              "ref": "web/data/db.ts",
+              "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+            },
+            {
+              "ref": "web/data/permissions.ts",
+              "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+            },
+            {
+              "ref": "web/data/schema-v5.sql",
+              "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+            },
+            {
+              "ref": "web/shared/agent-contracts.ts",
+              "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+            },
+            {
+              "ref": "web/tests/agents.test.ts",
+              "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+            }
+          ],
+          "version": "d8e3f2d386aabd13e57846710cd9da21875d8c1fc505c1fe30ac5aca4b4b95bd"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          }
+        ],
+        "reason": "",
+        "method": "担当BのPG/API42件を含むNode114件・型検査成功。親がv5 digestと稼働DB移行、台帳費用および独立レビューを照合し受領。",
+        "environment": "共有checkout、固定SDK、専用試験PGおよび実Keycloak/Web/AXの保存証拠。テスト実施者A/B/C、現在の親が差分・証拠を照合。",
+        "observedAt": "2026-10-07T10:07:30.224739+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-07T10:07:30.269Z"
+      },
+      "at": "2026-10-07T10:07:30.269Z"
+    },
+    {
+      "id": "finish-review-stage-190730295802",
+      "hash": "faa794b49f2cb7dbd54dd9b2153ea9a88c8f1853bbd754b4606aac569cc33196",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "review",
+        "stage": "review",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-review-stage-190730295802",
+        "input": {
+          "selection": "execute",
+          "reason": "独立担当Cが設計・UI・統合と保存された実モデル証拠を照合し、必須の未修正指摘なしを報告。親が対象と報告を照合し受領。",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "review"
+      ],
+      "evidence": [],
+      "revision": 14,
+      "data": {
+        "id": "review",
+        "parent": "model",
+        "size": "small",
+        "purpose": "設計・差分・検証の独立レビューを報告する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "読み取り専用レビュー"
+        ],
+        "taskRef": null,
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "設計・差分・検証の独立レビューを報告する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "review": {
+                "selection": "execute",
+                "reason": "独立担当Cが設計・UI・統合と保存された実モデル証拠を照合し、必須の未修正指摘なしを報告。親が対象と報告を照合し受領。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-model/verification.md",
+                    "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                    "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:44.223Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T10:07:30.317Z"
+    },
+    {
+      "id": "finish-review-record-190730343896",
+      "hash": "a65797e21f8597c6c6662c1f4297f3911bb834a89fa994896223c4115dbe36be",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "review",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-review-record-190730343896",
+        "input": {
+          "condition": "delivery",
+          "verdict": "pass",
+          "target": {
+            "id": "result",
+            "kind": "files",
+            "files": [
+              ".space/tasks/ax-agent-model/design-review.md",
+              ".space/tasks/ax-agent-model/integration-review.md",
+              ".space/tasks/ax-agent-model/ui-review.md"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md"
+          ],
+          "method": "独立担当Cが設計・UI・統合と保存された実モデル証拠を照合し、必須の未修正指摘なしを報告。親が対象と報告を照合し受領。",
+          "environment": "共有checkout、固定SDK、専用試験PGおよび実Keycloak/Web/AXの保存証拠。テスト実施者A/B/C、現在の親が差分・証拠を照合。",
+          "observedAt": "2026-10-07T10:07:30.321072+00:00"
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "review"
+      ],
+      "evidence": [],
+      "revision": 15,
+      "data": {
+        "id": "30e54a9c-7bbe-4d19-adc9-3b24ec68b26b",
+        "unit": "review",
+        "attempt": 1,
+        "condition": "delivery",
+        "target": {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".space/tasks/ax-agent-model/design-review.md",
+              "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/integration-review.md",
+              "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/ui-review.md",
+              "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+            }
+          ],
+          "version": "9569b71388a8934c0367fa637c7ffde88051abe159541cb405049fecc8181427"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          }
+        ],
+        "reason": "",
+        "method": "独立担当Cが設計・UI・統合と保存された実モデル証拠を照合し、必須の未修正指摘なしを報告。親が対象と報告を照合し受領。",
+        "environment": "共有checkout、固定SDK、専用試験PGおよび実Keycloak/Web/AXの保存証拠。テスト実施者A/B/C、現在の親が差分・証拠を照合。",
+        "observedAt": "2026-10-07T10:07:30.321072+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-07T10:07:30.366Z"
+      },
+      "at": "2026-10-07T10:07:30.366Z"
+    },
+    {
+      "id": "finish-gateway-submit-190750722420",
+      "hash": "2647e834372b172612f5dcadb5f9be277bf16c347d17e5dad87785abb1c8ff8c",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "gateway",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-gateway-submit-190750722420",
+        "input": {
+          "checks": [
+            "8b008ac9-a34e-4039-888c-15ad05965a37"
+          ],
+          "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+          "refs": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md"
+          ]
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "gateway"
+      ],
+      "evidence": [],
+      "revision": 16,
+      "data": {
+        "id": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3",
+        "unit": "gateway",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "8b008ac9-a34e-4039-888c-15ad05965a37"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/task_runtime/adapters/interactive.py",
+                "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+              },
+              {
+                "ref": "ax-local/task_runtime/mailbox.py",
+                "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive.py",
+                "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive_model.py",
+                "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+              },
+              {
+                "ref": "execution/Dockerfile",
+                "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+              },
+              {
+                "ref": "execution/README.md",
+                "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+              },
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+              },
+              {
+                "ref": "execution/controller/interactive.go",
+                "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+              },
+              {
+                "ref": "execution/controller/interactive_test.go",
+                "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+              },
+              {
+                "ref": "execution/controller/model_test.go",
+                "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+              },
+              {
+                "ref": "execution/controller/reservation_test.go",
+                "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+              },
+              {
+                "ref": "execution/gateway/model.go",
+                "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+              },
+              {
+                "ref": "execution/gateway/model_test.go",
+                "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+              },
+              {
+                "ref": "execution/settings/settings.go",
+                "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+              },
+              {
+                "ref": "execution/settings/settings_test.go",
+                "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+              }
+            ],
+            "version": "0e81fe8e06973e31533b4374e8b7f6d91516a694a43a6e4c4a520e8d43efbd35"
+          }
+        ],
+        "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "at": "2026-10-07T10:07:50.760Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-07T10:07:50.760Z"
+    },
+    {
+      "id": "finish-ledger-submit-190750803031",
+      "hash": "a0d3b972598db3a82ceb80fef8b4f648868af7a776e1d1457a23e5abb46728d7",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "ledger",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-ledger-submit-190750803031",
+        "input": {
+          "checks": [
+            "abe5b431-309a-43b1-bf9e-8a9e174143ce"
+          ],
+          "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+          "refs": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md"
+          ]
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ledger"
+      ],
+      "evidence": [],
+      "revision": 17,
+      "data": {
+        "id": "9221ecb8-32b6-4211-a831-1fba215e68db",
+        "unit": "ledger",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "abe5b431-309a-43b1-bf9e-8a9e174143ce"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/data/agents.ts",
+                "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+              },
+              {
+                "ref": "web/data/db.ts",
+                "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+              },
+              {
+                "ref": "web/data/permissions.ts",
+                "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+              },
+              {
+                "ref": "web/data/schema-v5.sql",
+                "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+              },
+              {
+                "ref": "web/shared/agent-contracts.ts",
+                "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+              },
+              {
+                "ref": "web/tests/agents.test.ts",
+                "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+              }
+            ],
+            "version": "d8e3f2d386aabd13e57846710cd9da21875d8c1fc505c1fe30ac5aca4b4b95bd"
+          }
+        ],
+        "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "at": "2026-10-07T10:07:50.832Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-07T10:07:50.832Z"
+    },
+    {
+      "id": "finish-review-submit-190750869877",
+      "hash": "e8ece1611906c5108114eb9669007f2c7f0c1240e7a6170ce37921183dd31e41",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "review",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-review-submit-190750869877",
+        "input": {
+          "checks": [
+            "30e54a9c-7bbe-4d19-adc9-3b24ec68b26b"
+          ],
+          "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+          "refs": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md"
+          ]
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "review"
+      ],
+      "evidence": [],
+      "revision": 18,
+      "data": {
+        "id": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38",
+        "unit": "review",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "30e54a9c-7bbe-4d19-adc9-3b24ec68b26b"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".space/tasks/ax-agent-model/design-review.md",
+                "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/ui-review.md",
+                "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+              }
+            ],
+            "version": "9569b71388a8934c0367fa637c7ffde88051abe159541cb405049fecc8181427"
+          }
+        ],
+        "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "at": "2026-10-07T10:07:50.897Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-07T10:07:50.897Z"
+    },
+    {
+      "id": "finish-gateway-accept-190803047561",
+      "hash": "f31b7ba75cbd9b48c42ad742527cec3d46e5210901b18b13b1b8f8cd9278db22",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "gateway",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-gateway-accept-190803047561",
+        "input": {
+          "submission": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3",
+          "reason": "親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。"
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "gateway"
+      ],
+      "evidence": [],
+      "revision": 19,
+      "data": {
+        "id": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3",
+        "unit": "gateway",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "8b008ac9-a34e-4039-888c-15ad05965a37"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/task_runtime/adapters/interactive.py",
+                "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+              },
+              {
+                "ref": "ax-local/task_runtime/mailbox.py",
+                "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive.py",
+                "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive_model.py",
+                "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+              },
+              {
+                "ref": "execution/Dockerfile",
+                "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+              },
+              {
+                "ref": "execution/README.md",
+                "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+              },
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+              },
+              {
+                "ref": "execution/controller/interactive.go",
+                "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+              },
+              {
+                "ref": "execution/controller/interactive_test.go",
+                "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+              },
+              {
+                "ref": "execution/controller/model_test.go",
+                "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+              },
+              {
+                "ref": "execution/controller/reservation_test.go",
+                "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+              },
+              {
+                "ref": "execution/gateway/model.go",
+                "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+              },
+              {
+                "ref": "execution/gateway/model_test.go",
+                "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+              },
+              {
+                "ref": "execution/settings/settings.go",
+                "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+              },
+              {
+                "ref": "execution/settings/settings_test.go",
+                "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+              }
+            ],
+            "version": "0e81fe8e06973e31533b4374e8b7f6d91516a694a43a6e4c4a520e8d43efbd35"
+          }
+        ],
+        "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "at": "2026-10-07T10:07:50.760Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "model-parent-1"
+          },
+          "reason": "親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
+          "at": "2026-10-07T10:08:03.075Z"
+        }
+      },
+      "at": "2026-10-07T10:08:03.075Z"
+    },
+    {
+      "id": "finish-ledger-accept-190803130761",
+      "hash": "21f3e60bb8ca5c27cfcde497644e56c0032cae47dc5fe4f7873cc5d3d7c93f19",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "ledger",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-ledger-accept-190803130761",
+        "input": {
+          "submission": "9221ecb8-32b6-4211-a831-1fba215e68db",
+          "reason": "親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。"
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "ledger"
+      ],
+      "evidence": [],
+      "revision": 20,
+      "data": {
+        "id": "9221ecb8-32b6-4211-a831-1fba215e68db",
+        "unit": "ledger",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "abe5b431-309a-43b1-bf9e-8a9e174143ce"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/data/agents.ts",
+                "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+              },
+              {
+                "ref": "web/data/db.ts",
+                "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+              },
+              {
+                "ref": "web/data/permissions.ts",
+                "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+              },
+              {
+                "ref": "web/data/schema-v5.sql",
+                "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+              },
+              {
+                "ref": "web/shared/agent-contracts.ts",
+                "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+              },
+              {
+                "ref": "web/tests/agents.test.ts",
+                "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+              }
+            ],
+            "version": "d8e3f2d386aabd13e57846710cd9da21875d8c1fc505c1fe30ac5aca4b4b95bd"
+          }
+        ],
+        "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "at": "2026-10-07T10:07:50.832Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "model-parent-1"
+          },
+          "reason": "親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
+          "at": "2026-10-07T10:08:03.152Z"
+        }
+      },
+      "at": "2026-10-07T10:08:03.152Z"
+    },
+    {
+      "id": "finish-review-accept-190803207223",
+      "hash": "77d5e098ad1bb6c3341068147b0a54c9cdcdf2d6d4804dbf59d564b17f52ac6a",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "review",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-review-accept-190803207223",
+        "input": {
+          "submission": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38",
+          "reason": "親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。"
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "review"
+      ],
+      "evidence": [],
+      "revision": 21,
+      "data": {
+        "id": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38",
+        "unit": "review",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "30e54a9c-7bbe-4d19-adc9-3b24ec68b26b"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".space/tasks/ax-agent-model/design-review.md",
+                "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/ui-review.md",
+                "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+              }
+            ],
+            "version": "9569b71388a8934c0367fa637c7ffde88051abe159541cb405049fecc8181427"
+          }
+        ],
+        "report": "担当からの成果物・試験・独立レビューと親による実経路の検証を照合済み。対象条件を満たし、親の統合へ引き渡す。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "at": "2026-10-07T10:07:50.897Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "model-parent-1"
+          },
+          "reason": "親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
+          "at": "2026-10-07T10:08:03.229Z"
+        }
+      },
+      "at": "2026-10-07T10:08:03.229Z"
+    },
+    {
+      "id": "finish-model-stage-191000745614",
+      "hash": "9298700ef1e1061239924de612d1ae4a1fe40ec745e9c6eecf92e996f22cb36c",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "model",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-model-stage-191000745614",
+        "input": {
+          "selection": "execute",
+          "reason": "実装・実経路検証・独立レビュー・OKF保存を完了しPR #19へ提出。マージ完了の判断はGitHub状態確認後に行う。",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-agent-model/task.md",
+            ".space/tasks/ax-agent-model/verification.md",
+            "https://github.com/sori883/agent-workspace/pull/19"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "model"
+      ],
+      "evidence": [],
+      "revision": 22,
+      "data": {
+        "id": "model",
+        "parent": null,
+        "size": "standard",
+        "purpose": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "全体統合/UI/配備/検証/納品"
+        ],
+        "taskRef": ".space/tasks/ax-agent-model/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装・実経路検証・独立レビュー・OKF保存を完了しPR #19へ提出。マージ完了の判断はGitHub状態確認後に行う。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-model/task.md",
+                    "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-model/verification.md",
+                    "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+                  },
+                  {
+                    "ref": "https://github.com/sori883/agent-workspace/pull/19",
+                    "digest": null
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:43.893Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T10:10:00.775Z"
+    },
+    {
+      "id": "finish-model-record-191000826763",
+      "hash": "86b5a9f00f4ddda002fc0ad4e50752e7ecc2354a0f9d3e801f461cf8aaa5281f",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "model",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-model-record-191000826763",
+        "input": {
+          "condition": "delivery",
+          "verdict": "pass",
+          "target": {
+            "id": "result",
+            "kind": "files",
+            "files": [
+              ".github/workflows/web.yml",
+              ".space/babel/decisions/systems/ax/agent-runtime.md",
+              ".space/babel/decisions/systems/ax/index.md",
+              ".space/babel/knowledge/ax-agent-platform-direction.md",
+              ".space/babel/log.md",
+              ".space/tasks/ax-agent-model/contract.md",
+              ".space/tasks/ax-agent-model/design-review.md",
+              ".space/tasks/ax-agent-model/integration-review.md",
+              ".space/tasks/ax-agent-model/task.md",
+              ".space/tasks/ax-agent-model/ui-review.md",
+              ".space/tasks/ax-agent-model/verification.md",
+              "README.md",
+              "ax-local/task_runtime/adapters/interactive.py",
+              "ax-local/task_runtime/mailbox.py",
+              "ax-local/tests/test_interactive.py",
+              "ax-local/tests/test_interactive_model.py",
+              "ax-local/versions.json",
+              "docs/agent-runtime-design.md",
+              "execution/Dockerfile",
+              "execution/README.md",
+              "execution/cmd/ax-controller/main.go",
+              "execution/controller/controller.go",
+              "execution/controller/interactive.go",
+              "execution/controller/interactive_test.go",
+              "execution/controller/model_test.go",
+              "execution/controller/postgres.go",
+              "execution/controller/reservation_test.go",
+              "execution/gateway/model.go",
+              "execution/gateway/model_test.go",
+              "execution/native/protocol.go",
+              "execution/settings/settings.go",
+              "execution/settings/settings_test.go",
+              "web/README.md",
+              "web/app/app.css",
+              "web/app/components/workspace.tsx",
+              "web/app/routes/agent.tsx",
+              "web/app/routes/run-detail.tsx",
+              "web/data/agents.ts",
+              "web/data/db.ts",
+              "web/data/permissions.ts",
+              "web/data/repository.ts",
+              "web/data/schema-v5.sql",
+              "web/scripts/deploy-execution.ts",
+              "web/scripts/verify-interactive-local.ts",
+              "web/server/data-migrate.ts",
+              "web/shared/agent-contracts.ts",
+              "web/shared/run-contracts.ts",
+              "web/tests/agents.test.ts",
+              "web/tests/browser/agent-fixture.ts",
+              "web/tests/browser/agent.spec.ts",
+              "web/tests/workspaces.test.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md",
+            "https://github.com/sori883/agent-workspace/pull/19"
+          ],
+          "method": "Webから実モデルの対話・成果物と本人限定、外部台帳・費用・実停止、閉鎖後previewの回帰を検証。関連テストと独立レビューに残件なく、同一差分を一つのPRへ提出したことを確認。PRの最終CIとマージは引き渡し後の親の操作として継続する。",
+          "environment": "ローカルkind/AX・Docker PostgreSQL・実Keycloak/Web・Gemini 2生成、およびPR #19 head f77b12f。マージ前の提出成果物評価。",
+          "observedAt": "2026-10-07T10:10:00.802272+00:00"
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "model"
+      ],
+      "evidence": [],
+      "revision": 23,
+      "data": {
+        "id": "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e",
+        "unit": "model",
+        "attempt": 1,
+        "condition": "delivery",
+        "target": {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".github/workflows/web.yml",
+              "digest": "f1547cb05b0db3db4f026dbd101fa4de5b05322545fdb4cda797527a092b2270"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+              "digest": "18984b81ab82911f01d7312c8102d1f924871871861d2c4cca2e402b2cfe2f87"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/index.md",
+              "digest": "240b3ab7da36336956b22285bed1ca3fb2c117fcaab7d1b74160d83a127d4cbc"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+              "digest": "dc21923048e78470bba5690422cb320ac05fa376334face7e7e3fce8c5121359"
+            },
+            {
+              "ref": ".space/babel/log.md",
+              "digest": "fec141b9abdcd086d6e0003c3a35cbbe5ce780f07c49568e1651ea135f39a65f"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/contract.md",
+              "digest": "a5e9ba64665b5b18ac3d166f93db7bdb2d1d31f6d98cc4a07b5970c6fbd77796"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/design-review.md",
+              "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/integration-review.md",
+              "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/task.md",
+              "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/ui-review.md",
+              "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/verification.md",
+              "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+            },
+            {
+              "ref": "README.md",
+              "digest": "4e8a1db03a99b696130934f97b65dd316dbb19c75235700541ccf6bdb9c37c89"
+            },
+            {
+              "ref": "ax-local/task_runtime/adapters/interactive.py",
+              "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+            },
+            {
+              "ref": "ax-local/task_runtime/mailbox.py",
+              "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive.py",
+              "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive_model.py",
+              "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "b5aa25fb7f53c101f265f853d091df03dfa814425b01e4f24d4fa14aa2aef8b9"
+            },
+            {
+              "ref": "docs/agent-runtime-design.md",
+              "digest": "096d44b820754599cda265a893c6d46929befcaa1316c33d6c0752dbc352c916"
+            },
+            {
+              "ref": "execution/Dockerfile",
+              "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+            },
+            {
+              "ref": "execution/README.md",
+              "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+            },
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+            },
+            {
+              "ref": "execution/controller/interactive.go",
+              "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+            },
+            {
+              "ref": "execution/controller/interactive_test.go",
+              "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+            },
+            {
+              "ref": "execution/controller/model_test.go",
+              "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+            },
+            {
+              "ref": "execution/controller/reservation_test.go",
+              "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+            },
+            {
+              "ref": "execution/gateway/model.go",
+              "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+            },
+            {
+              "ref": "execution/gateway/model_test.go",
+              "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+            },
+            {
+              "ref": "execution/settings/settings.go",
+              "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+            },
+            {
+              "ref": "execution/settings/settings_test.go",
+              "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+            },
+            {
+              "ref": "web/README.md",
+              "digest": "6a333b99a98b6f7c334123b1b147fb368e0678a250dbfdb6aa1aa2c4585c2e75"
+            },
+            {
+              "ref": "web/app/app.css",
+              "digest": "39e01c5e119a473c968e71cd720597c279322f882da83c3f1d75b91b7aac3ce9"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "d1284203208326f76caa620bdb08f37de489710f3f8a1c782d3dc18228fa2320"
+            },
+            {
+              "ref": "web/app/routes/agent.tsx",
+              "digest": "bba0b9861b93003ab75826c106207ff7afb694875d71a64f76e720ddc4643e27"
+            },
+            {
+              "ref": "web/app/routes/run-detail.tsx",
+              "digest": "15dd2b0851b281925e9cd0affe0eac9b42aab1907eb3cbc0eebdf31bc2425814"
+            },
+            {
+              "ref": "web/data/agents.ts",
+              "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+            },
+            {
+              "ref": "web/data/db.ts",
+              "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+            },
+            {
+              "ref": "web/data/permissions.ts",
+              "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+            },
+            {
+              "ref": "web/data/schema-v5.sql",
+              "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+            },
+            {
+              "ref": "web/scripts/deploy-execution.ts",
+              "digest": "5f94e3e7b6ced1d4c2ede1f3175e6259269a0cc795a9d590547f71867b993407"
+            },
+            {
+              "ref": "web/scripts/verify-interactive-local.ts",
+              "digest": "55d48e13b7fa185133318be7a39919e16703f41896ba37d9212809b7f3baeb5f"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+            },
+            {
+              "ref": "web/shared/agent-contracts.ts",
+              "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+            },
+            {
+              "ref": "web/tests/agents.test.ts",
+              "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+            },
+            {
+              "ref": "web/tests/browser/agent-fixture.ts",
+              "digest": "68dfcd8742a74d88ec70be19239382bc1528e64d262aadb71509480a2d3bf2cf"
+            },
+            {
+              "ref": "web/tests/browser/agent.spec.ts",
+              "digest": "f234b4af2f4a5d6e368aaa9c2f8f69a94dd5f369a1ace8904b631b158fc56fe9"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+            }
+          ],
+          "version": "2079baaf9fb1cf5776c6642c001fcc9360dd4b296bd6acb56e0ed390985c58be"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/19",
+            "digest": null
+          }
+        ],
+        "reason": "",
+        "method": "Webから実モデルの対話・成果物と本人限定、外部台帳・費用・実停止、閉鎖後previewの回帰を検証。関連テストと独立レビューに残件なく、同一差分を一つのPRへ提出したことを確認。PRの最終CIとマージは引き渡し後の親の操作として継続する。",
+        "environment": "ローカルkind/AX・Docker PostgreSQL・実Keycloak/Web・Gemini 2生成、およびPR #19 head f77b12f。マージ前の提出成果物評価。",
+        "observedAt": "2026-10-07T10:10:00.802272+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-07T10:10:00.855Z"
+      },
+      "at": "2026-10-07T10:10:00.855Z"
+    },
+    {
+      "id": "finish-model-submit-191000890630",
+      "hash": "bd8a9964b257370ab1567f104a42ee3c9cfd9b19ccea36e3fb0b3cc4c17cefe8",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "model",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-model-submit-191000890630",
+        "input": {
+          "checks": [
+            "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e"
+          ],
+          "report": "実装・検証・独立レビュー・知識保存の成果をPR #19へ統合提出。子3件の受け入れを照合済み。最終CIとマージは親が続行し、GitHub側の結果確認前にマージ済みとは報告しない。",
+          "refs": [
+            ".space/tasks/ax-agent-model/task.md",
+            "https://github.com/sori883/agent-workspace/pull/19"
+          ]
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "model"
+      ],
+      "evidence": [],
+      "revision": 24,
+      "data": {
+        "id": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+        "unit": "model",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".github/workflows/web.yml",
+                "digest": "f1547cb05b0db3db4f026dbd101fa4de5b05322545fdb4cda797527a092b2270"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+                "digest": "18984b81ab82911f01d7312c8102d1f924871871861d2c4cca2e402b2cfe2f87"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/index.md",
+                "digest": "240b3ab7da36336956b22285bed1ca3fb2c117fcaab7d1b74160d83a127d4cbc"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+                "digest": "dc21923048e78470bba5690422cb320ac05fa376334face7e7e3fce8c5121359"
+              },
+              {
+                "ref": ".space/babel/log.md",
+                "digest": "fec141b9abdcd086d6e0003c3a35cbbe5ce780f07c49568e1651ea135f39a65f"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/contract.md",
+                "digest": "a5e9ba64665b5b18ac3d166f93db7bdb2d1d31f6d98cc4a07b5970c6fbd77796"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/design-review.md",
+                "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/task.md",
+                "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/ui-review.md",
+                "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/verification.md",
+                "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+              },
+              {
+                "ref": "README.md",
+                "digest": "4e8a1db03a99b696130934f97b65dd316dbb19c75235700541ccf6bdb9c37c89"
+              },
+              {
+                "ref": "ax-local/task_runtime/adapters/interactive.py",
+                "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+              },
+              {
+                "ref": "ax-local/task_runtime/mailbox.py",
+                "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive.py",
+                "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive_model.py",
+                "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "b5aa25fb7f53c101f265f853d091df03dfa814425b01e4f24d4fa14aa2aef8b9"
+              },
+              {
+                "ref": "docs/agent-runtime-design.md",
+                "digest": "096d44b820754599cda265a893c6d46929befcaa1316c33d6c0752dbc352c916"
+              },
+              {
+                "ref": "execution/Dockerfile",
+                "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+              },
+              {
+                "ref": "execution/README.md",
+                "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+              },
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+              },
+              {
+                "ref": "execution/controller/interactive.go",
+                "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+              },
+              {
+                "ref": "execution/controller/interactive_test.go",
+                "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+              },
+              {
+                "ref": "execution/controller/model_test.go",
+                "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+              },
+              {
+                "ref": "execution/controller/reservation_test.go",
+                "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+              },
+              {
+                "ref": "execution/gateway/model.go",
+                "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+              },
+              {
+                "ref": "execution/gateway/model_test.go",
+                "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+              },
+              {
+                "ref": "execution/settings/settings.go",
+                "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+              },
+              {
+                "ref": "execution/settings/settings_test.go",
+                "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+              },
+              {
+                "ref": "web/README.md",
+                "digest": "6a333b99a98b6f7c334123b1b147fb368e0678a250dbfdb6aa1aa2c4585c2e75"
+              },
+              {
+                "ref": "web/app/app.css",
+                "digest": "39e01c5e119a473c968e71cd720597c279322f882da83c3f1d75b91b7aac3ce9"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "d1284203208326f76caa620bdb08f37de489710f3f8a1c782d3dc18228fa2320"
+              },
+              {
+                "ref": "web/app/routes/agent.tsx",
+                "digest": "bba0b9861b93003ab75826c106207ff7afb694875d71a64f76e720ddc4643e27"
+              },
+              {
+                "ref": "web/app/routes/run-detail.tsx",
+                "digest": "15dd2b0851b281925e9cd0affe0eac9b42aab1907eb3cbc0eebdf31bc2425814"
+              },
+              {
+                "ref": "web/data/agents.ts",
+                "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+              },
+              {
+                "ref": "web/data/db.ts",
+                "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+              },
+              {
+                "ref": "web/data/permissions.ts",
+                "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+              },
+              {
+                "ref": "web/data/schema-v5.sql",
+                "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+              },
+              {
+                "ref": "web/scripts/deploy-execution.ts",
+                "digest": "5f94e3e7b6ced1d4c2ede1f3175e6259269a0cc795a9d590547f71867b993407"
+              },
+              {
+                "ref": "web/scripts/verify-interactive-local.ts",
+                "digest": "55d48e13b7fa185133318be7a39919e16703f41896ba37d9212809b7f3baeb5f"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+              },
+              {
+                "ref": "web/shared/agent-contracts.ts",
+                "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+              },
+              {
+                "ref": "web/tests/agents.test.ts",
+                "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+              },
+              {
+                "ref": "web/tests/browser/agent-fixture.ts",
+                "digest": "68dfcd8742a74d88ec70be19239382bc1528e64d262aadb71509480a2d3bf2cf"
+              },
+              {
+                "ref": "web/tests/browser/agent.spec.ts",
+                "digest": "f234b4af2f4a5d6e368aaa9c2f8f69a94dd5f369a1ace8904b631b158fc56fe9"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+              }
+            ],
+            "version": "2079baaf9fb1cf5776c6642c001fcc9360dd4b296bd6acb56e0ed390985c58be"
+          }
+        ],
+        "report": "実装・検証・独立レビュー・知識保存の成果をPR #19へ統合提出。子3件の受け入れを照合済み。最終CIとマージは親が続行し、GitHub側の結果確認前にマージ済みとは報告しない。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/task.md",
+            "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/19",
+            "digest": null
+          }
+        ],
+        "children": [
+          {
+            "unit": "gateway",
+            "submission": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3"
+          },
+          {
+            "unit": "ledger",
+            "submission": "9221ecb8-32b6-4211-a831-1fba215e68db"
+          },
+          {
+            "unit": "review",
+            "submission": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38"
+          }
+        ],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "at": "2026-10-07T10:10:00.920Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-07T10:10:00.920Z"
+    },
+    {
+      "id": "finish-model-accept-191000964243",
+      "hash": "1ef3a179c5eca28d1630528cb2d20efa936a50bf682ac482d754f5b316118275",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "model",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-model-accept-191000964243",
+        "input": {
+          "submission": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+          "reason": "現在の成果物と子3件の受け入れ、実モデルとpreviewの実機検証、単一PRへの提出を確認して受領。最終CI・マージ操作は親が継続し、その結果を利用者へ報告する。"
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "model"
+      ],
+      "evidence": [],
+      "revision": 25,
+      "data": {
+        "id": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+        "unit": "model",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".github/workflows/web.yml",
+                "digest": "f1547cb05b0db3db4f026dbd101fa4de5b05322545fdb4cda797527a092b2270"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+                "digest": "18984b81ab82911f01d7312c8102d1f924871871861d2c4cca2e402b2cfe2f87"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/index.md",
+                "digest": "240b3ab7da36336956b22285bed1ca3fb2c117fcaab7d1b74160d83a127d4cbc"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+                "digest": "dc21923048e78470bba5690422cb320ac05fa376334face7e7e3fce8c5121359"
+              },
+              {
+                "ref": ".space/babel/log.md",
+                "digest": "fec141b9abdcd086d6e0003c3a35cbbe5ce780f07c49568e1651ea135f39a65f"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/contract.md",
+                "digest": "a5e9ba64665b5b18ac3d166f93db7bdb2d1d31f6d98cc4a07b5970c6fbd77796"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/design-review.md",
+                "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/task.md",
+                "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/ui-review.md",
+                "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/verification.md",
+                "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+              },
+              {
+                "ref": "README.md",
+                "digest": "4e8a1db03a99b696130934f97b65dd316dbb19c75235700541ccf6bdb9c37c89"
+              },
+              {
+                "ref": "ax-local/task_runtime/adapters/interactive.py",
+                "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+              },
+              {
+                "ref": "ax-local/task_runtime/mailbox.py",
+                "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive.py",
+                "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive_model.py",
+                "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "b5aa25fb7f53c101f265f853d091df03dfa814425b01e4f24d4fa14aa2aef8b9"
+              },
+              {
+                "ref": "docs/agent-runtime-design.md",
+                "digest": "096d44b820754599cda265a893c6d46929befcaa1316c33d6c0752dbc352c916"
+              },
+              {
+                "ref": "execution/Dockerfile",
+                "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+              },
+              {
+                "ref": "execution/README.md",
+                "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+              },
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+              },
+              {
+                "ref": "execution/controller/interactive.go",
+                "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+              },
+              {
+                "ref": "execution/controller/interactive_test.go",
+                "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+              },
+              {
+                "ref": "execution/controller/model_test.go",
+                "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+              },
+              {
+                "ref": "execution/controller/reservation_test.go",
+                "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+              },
+              {
+                "ref": "execution/gateway/model.go",
+                "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+              },
+              {
+                "ref": "execution/gateway/model_test.go",
+                "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+              },
+              {
+                "ref": "execution/settings/settings.go",
+                "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+              },
+              {
+                "ref": "execution/settings/settings_test.go",
+                "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+              },
+              {
+                "ref": "web/README.md",
+                "digest": "6a333b99a98b6f7c334123b1b147fb368e0678a250dbfdb6aa1aa2c4585c2e75"
+              },
+              {
+                "ref": "web/app/app.css",
+                "digest": "39e01c5e119a473c968e71cd720597c279322f882da83c3f1d75b91b7aac3ce9"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "d1284203208326f76caa620bdb08f37de489710f3f8a1c782d3dc18228fa2320"
+              },
+              {
+                "ref": "web/app/routes/agent.tsx",
+                "digest": "bba0b9861b93003ab75826c106207ff7afb694875d71a64f76e720ddc4643e27"
+              },
+              {
+                "ref": "web/app/routes/run-detail.tsx",
+                "digest": "15dd2b0851b281925e9cd0affe0eac9b42aab1907eb3cbc0eebdf31bc2425814"
+              },
+              {
+                "ref": "web/data/agents.ts",
+                "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+              },
+              {
+                "ref": "web/data/db.ts",
+                "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+              },
+              {
+                "ref": "web/data/permissions.ts",
+                "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+              },
+              {
+                "ref": "web/data/schema-v5.sql",
+                "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+              },
+              {
+                "ref": "web/scripts/deploy-execution.ts",
+                "digest": "5f94e3e7b6ced1d4c2ede1f3175e6259269a0cc795a9d590547f71867b993407"
+              },
+              {
+                "ref": "web/scripts/verify-interactive-local.ts",
+                "digest": "55d48e13b7fa185133318be7a39919e16703f41896ba37d9212809b7f3baeb5f"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+              },
+              {
+                "ref": "web/shared/agent-contracts.ts",
+                "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+              },
+              {
+                "ref": "web/tests/agents.test.ts",
+                "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+              },
+              {
+                "ref": "web/tests/browser/agent-fixture.ts",
+                "digest": "68dfcd8742a74d88ec70be19239382bc1528e64d262aadb71509480a2d3bf2cf"
+              },
+              {
+                "ref": "web/tests/browser/agent.spec.ts",
+                "digest": "f234b4af2f4a5d6e368aaa9c2f8f69a94dd5f369a1ace8904b631b158fc56fe9"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+              }
+            ],
+            "version": "2079baaf9fb1cf5776c6642c001fcc9360dd4b296bd6acb56e0ed390985c58be"
+          }
+        ],
+        "report": "実装・検証・独立レビュー・知識保存の成果をPR #19へ統合提出。子3件の受け入れを照合済み。最終CIとマージは親が続行し、GitHub側の結果確認前にマージ済みとは報告しない。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/task.md",
+            "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/19",
+            "digest": null
+          }
+        ],
+        "children": [
+          {
+            "unit": "gateway",
+            "submission": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3"
+          },
+          {
+            "unit": "ledger",
+            "submission": "9221ecb8-32b6-4211-a831-1fba215e68db"
+          },
+          {
+            "unit": "review",
+            "submission": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38"
+          }
+        ],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "at": "2026-10-07T10:10:00.920Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "model-parent-1"
+          },
+          "reason": "現在の成果物と子3件の受け入れ、実モデルとpreviewの実機検証、単一PRへの提出を確認して受領。最終CI・マージ操作は親が継続し、その結果を利用者へ報告する。",
+          "at": "2026-10-07T10:10:00.996Z"
+        }
+      },
+      "at": "2026-10-07T10:10:00.996Z"
+    }
+  ]
+}

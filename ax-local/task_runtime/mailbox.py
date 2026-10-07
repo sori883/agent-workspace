@@ -3,6 +3,7 @@ import binascii
 from contextlib import contextmanager
 import fcntl
 import hashlib
+import math
 import os
 from pathlib import Path
 import stat
@@ -120,8 +121,15 @@ class Mailbox:
             raise ProtocolError("InvalidMailboxReplyBody")
         if value["status"] == "ok":
             if request["kind"] == "model":
-                if set(value["body"]) != {"response"} or not isinstance(value["body"]["response"], dict):
+                if set(value["body"]) not in ({"response"}, {"response", "billing"}) or not isinstance(value["body"]["response"], dict):
                     raise ProtocolError("InvalidModelReply")
+                if "billing" in value["body"]:
+                    billing = value["body"]["billing"]
+                    if (not isinstance(billing, dict) or set(billing) != {"profile_id", "estimated_usd"}
+                        or billing["profile_id"] not in ("preview-v1", "gemini-3.1-flash-lite-standard-2026-10-07-v1")
+                        or type(billing["estimated_usd"]) not in (int, float)
+                        or not math.isfinite(billing["estimated_usd"]) or billing["estimated_usd"] < 0):
+                        raise ProtocolError("InvalidModelBilling")
             elif value["body"] != {"accepted": True} or value["body"].get("accepted") is not True:
                 raise ProtocolError("InvalidToolReply")
         return value

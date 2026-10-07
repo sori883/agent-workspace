@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
-import {randomBytes,randomUUID} from "node:crypto";
+import {createHash,randomBytes,randomUUID} from "node:crypto";
 import {readFileSync} from "node:fs";
+import {execFileSync} from "node:child_process";
 import {before,beforeEach,after,test} from "node:test";
 import pg from "pg";
 import {prepareTestAuth} from "./prepare-auth";
@@ -9,13 +10,14 @@ import {AgentRepository} from "../data/agents";
 import {DataRepository} from "../data/repository";
 import {WorkspaceRepository} from "../data/workspaces";
 import {sha256,utf8} from "../data/canonical";
+import {apiFunctions,executionFunctions} from "../data/permissions";
 import {createApi} from "../api/app";
 import {postgresChatService} from "../api/chat-service";
 import {postgresRunService} from "../api/run-service";
 
 const schema=`agent_test_${randomBytes(8).toString("hex")}`;
 const owner=randomUUID(), other=randomUUID(), controller="agent-test", image=`localhost:5001/runner@sha256:${"a".repeat(64)}`;
-let pool:pg.Pool, admin:pg.Pool, agents:AgentRepository, data:DataRepository, workspace:string;
+let pool:pg.Pool, admin:pg.Pool, agents:AgentRepository, data:DataRepository, workspace:string, connectionOptions:pg.PoolConfig;
 const call=async(name:string,args:unknown[]=[]) => (await pool.query(`SELECT ${name}(${args.map((_,i)=>`$${i+1}`).join(",")}) value`,args)).rows[0].value;
 const tokenHash="b".repeat(64);
 const exp=()=>Math.floor(Date.now()/1000)+300;
@@ -26,7 +28,7 @@ const metadata={promptTokenCount:100,candidatesTokenCount:20,thoughtsTokenCount:
 before(async()=>{
  const {caPath,...database}=prepareTestAuth().database;
  const options={...database,ssl:caPath?{ca:readFileSync(caPath,"utf8"),rejectUnauthorized:true}:false,max:10,statement_timeout:10000};
- admin=new pg.Pool(options);await admin.query(`CREATE SCHEMA ${schema}`);pool=new pg.Pool({...options,options:`-c search_path=${schema}`});
+ connectionOptions=options;admin=new pg.Pool(options);await admin.query(`CREATE SCHEMA ${schema}`);pool=new pg.Pool({...options,options:`-c search_path=${schema}`});
  await pool.query(readFileSync(new URL("../server/auth-schema.sql",import.meta.url),"utf8"));
  await pool.query(readFileSync(new URL("../server/auth-schema-v2.sql",import.meta.url),"utf8"));
  await migrateData(pool);
@@ -88,7 +90,7 @@ test("question becomes waiting only after stop; one answer creates a new Task an
 });
 test("settled mailbox replay returns stored response, unresolved reservation never resends",async()=>{
  await begin();const c=await start();const {m}=await proposal(c);
- assert.deepEqual(await call("ax_agent_reserve",[c.run_id,c.generation,controller,1,m.bytes]),{send:false,response:m.response});
+ assert.deepEqual(await call("ax_agent_reserve",[c.run_id,c.generation,controller,1,m.bytes]),{send:false,response:m.response,input_limit:0,output_limit:0,profile_id:"preview-v1"});
  await assert.rejects(call("ax_agent_reserve",[c.run_id,c.generation,controller,1,utf8(JSON.stringify({version:1,run_id:c.run_id,sequence:1,kind:"model",body:{changed:true}}))]),error("agent_operation_conflict"));
 });
 test("unknown operation holds global slot despite confirmed stop",async()=>{
@@ -267,4 +269,237 @@ test("membership revocation and runtime intent serialize workspace before root",
   await client.query("DELETE FROM org_memberships WHERE workspace_id=$1 AND user_id=$2",[workspace,other]);
   await client.query("COMMIT");assert.equal(await pending,"agent_stopped");
  }finally{await client.query("ROLLBACK");client.release();await pool.query("INSERT INTO org_memberships VALUES($1,$2,'member','general') ON CONFLICT DO NOTHING",[workspace,other]);}
+});
+
+const paidProfile="gemini-3.1-flash-lite-standard-2026-10-07-v1";
+const payloadHash="d".repeat(64);
+const realUsage={prompt_token_count:1000,candidates_token_count:100,thoughts_token_count:10,total_token_count:1110,model_call_count:1};
+const zeroUsage={prompt_token_count:0,candidates_token_count:0,thoughts_token_count:0,total_token_count:0,model_call_count:0};
+const price=(u=realUsage)=>Math.round((u.prompt_token_count*.25+(u.candidates_token_count+u.thoughts_token_count)*1.5)*1000)/1e9;
+const beginPaid=(text="案内文")=>agents.start(owner,workspace,{key:randomUUID(),conversation_id:randomUUID(),text,mode:"model",allow_model:true},exp(),tokenHash);
+async function reservePaid(c:any){
+ const bytes=utf8(JSON.stringify({version:1,run_id:c.run_id,sequence:1,kind:"model",body:{contents:[{role:"user",parts:[{text:"hello"}]}]}}));
+ const reservation=await call("ax_agent_reserve",[c.run_id,c.generation,controller,1,bytes]);return {bytes,reservation};
+}
+async function authorizePaid(c:any,count=1000){return call("ax_agent_authorize_generation",[c.run_id,c.generation,controller,1,payloadHash,count]);}
+async function settlePaid(c:any,bytes:Uint8Array,options:{outcome?:string;kind?:string;text?:string;usage?:typeof realUsage;code?:string;count?:number;metadata?:unknown;billing?:number}={}){
+ const outcome=options.outcome??"ok", u=options.usage??realUsage, code=options.code??(outcome==="ok"?"ok":"invalid_proposal");
+ const p={kind:options.kind??"question",text:options.text??"誰向けですか？"};
+ const md=options.metadata??{promptTokenCount:u.prompt_token_count,candidatesTokenCount:u.candidates_token_count,thoughtsTokenCount:u.thoughts_token_count,totalTokenCount:u.total_token_count};
+ const response={version:1,run_id:c.run_id,sequence:1,request_sha256:await sha256(bytes),status:outcome==="ok"?"ok":"denied",body:outcome==="ok"?{response:{candidates:[{content:{parts:[{text:JSON.stringify(p)}]},finishReason:"STOP"}],usageMetadata:md},billing:{profile_id:paidProfile,estimated_usd:options.billing??price(u)}}:{code}};
+ const evidence={outcome,code,payload_sha256:outcome==="no_send"?null:payloadHash,counted_input_tokens:outcome==="no_send"?null:(options.count??1000),count_attempt:1,http_status:200,finish_reason:outcome==="ok"?"STOP":null,response_sha256:outcome==="no_send"?null:"e".repeat(64)};
+ await call("ax_agent_settle",[c.run_id,c.generation,controller,1,response,u,3,evidence]);
+ return {p,response,evidence,saved:await call("ax_agent_reserve",[c.run_id,c.generation,controller,1,bytes])};
+}
+
+test("model requires explicit consent; preview default/replay and immutable mode are preserved",async()=>{
+ const input={key:randomUUID(),conversation_id:randomUUID(),text:"hello"};
+ await assert.rejects(call("ax_agent_start",[owner,workspace,{...input,mode:"model"},image,"ax-run-aaaaaaaaaaaaaaaa",exp(),tokenHash]),error("model_not_allowed"));
+ const accepted=await agents.start(owner,workspace,input,exp(),tokenHash);
+ const replay=await agents.start(owner,workspace,{...input,mode:"preview",allow_model:false},exp(),tokenHash);assert.equal(replay.run_id,accepted.run_id);assert.equal(replay.replayed,true);
+ const view=await agents.get(owner,workspace,accepted.root_id);assert.equal(view.mode,"preview");assert.equal(view.preview,true);assert.equal(view.estimated_usd,0);
+ await assert.rejects(agents.start(owner,workspace,{...input,mode:"model",allow_model:true},exp(),tokenHash),error("idempotency_conflict"));
+ await assert.rejects(pool.query("UPDATE ax_agent_roots SET mode='model',profile_id=$2 WHERE id=$1",[accepted.root_id,paidProfile]),error("immutable_agent_mode"));
+});
+
+test("paid claim, generation permission and two segments preserve profile and real totals",async()=>{
+ const accepted=await beginPaid();const c=await start();assert.deepEqual(c.agent,{mode:"model",profile_id:paidProfile});
+ const m=await reservePaid(c);assert.equal(m.reservation.input_limit,6000);assert.equal(m.reservation.output_limit,256);assert.equal(m.reservation.profile_id,paidProfile);
+ assert.equal((await agents.get(owner,workspace,accepted.root_id)).estimated_usd,null);
+ assert.deepEqual(await authorizePaid(c),{send:true});await assert.rejects(authorizePaid(c),error("agent_operation_unknown"));
+ const result=await settlePaid(c,m.bytes);assert.equal(result.saved.send,false);
+ await operation(c,2,result.p,{accepted:true},{});await collect(c,result.p.text,{usage:realUsage,estimated_usd:price()});await finish(c);
+ const root=await agents.get(owner,workspace,accepted.root_id);assert.equal(root.state,"waiting_input");assert.equal(root.mode,"model");assert.equal(root.preview,false);assert.equal(root.model,"gemini-3.1-flash-lite");assert.equal(root.estimated_usd,price());
+ assert.equal((await data.get(owner,c.run_id,workspace)).summary.agent_mode,"model");
+ await agents.answer(owner,workspace,root.id,{key:randomUUID(),question_id:root.id,expected_revision:root.revision,text:"社員向け"},exp(),tokenHash);
+ const next=await start();assert.deepEqual(next.agent,c.agent);const n=await reservePaid(next);assert.equal(n.reservation.input_limit,5000);assert.equal(n.reservation.output_limit,256);
+ await authorizePaid(next);const final=await settlePaid(next,n.bytes,{kind:"output",text:"社員のみなさんへ。"});await operation(next,2,final.p,{accepted:true},{});await collect(next,final.p.text,{usage:realUsage,estimated_usd:price()});await finish(next);
+ const done=await agents.get(owner,workspace,root.id);assert.equal(done.state,"succeeded");assert.equal(done.model_calls,2);assert.equal(done.estimated_usd,price()*2);
+ assert.equal(Number(await call("ax_paid_total",[false])),price()*2);
+});
+
+test("stop during count forbids generation but permits proven no-send settlement",async()=>{
+ const accepted=await beginPaid();const c=await start(),m=await reservePaid(c);await agents.stop(owner,workspace,accepted.root_id);
+ await assert.rejects(authorizePaid(c),error("agent_stopped"));await settlePaid(c,m.bytes,{outcome:"no_send",usage:zeroUsage,code:"agent_stopped"});
+ assert.equal((await finish(c)).resolved,true);assert.equal((await agents.get(owner,workspace,accepted.root_id)).state,"stopped");assert.equal(Number(await call("ax_paid_total",[true])),0);
+});
+
+test("count rejection has no generation charge, while authorization ACK loss cannot release reservation",async()=>{
+ await beginPaid();const c=await start(),m=await reservePaid(c);await assert.rejects(authorizePaid(c,5873),error("agent_budget_exhausted"));
+ await authorizePaid(c);await assert.rejects(settlePaid(c,m.bytes,{outcome:"no_send",usage:zeroUsage}),error("agent_usage_mismatch"));
+ assert.equal((await finish(c)).resolved,false);assert.equal((await pool.query("SELECT generation_started,reserved_usd,actual_usd FROM ax_agent_operations WHERE run_id=$1 AND sequence=1",[c.run_id])).rows[0].actual_usd,null);
+ assert.equal((await call("ax_paid_total",[true]))>0,true);
+});
+
+test("grant expiry, logout and membership revocation after count cannot generate",async()=>{
+ const accepted=await beginPaid();const c=await start();await reservePaid(c);
+ await pool.query("UPDATE ax_agent_roots SET grant_expires_at=clock_timestamp()-interval '1 second' WHERE id=$1",[accepted.root_id]);await assert.rejects(authorizePaid(c),error("agent_grant_expired"));
+ await pool.query("UPDATE ax_agent_roots SET grant_expires_at=clock_timestamp()+interval '5 minute' WHERE id=$1",[accepted.root_id]);await agents.revoke(owner,tokenHash);await assert.rejects(authorizePaid(c),error("agent_stopped"));
+});
+
+test("settlement after logout retains known usage and cannot turn a cancelled run into success",async()=>{
+ const accepted=await beginPaid();const c=await start(),m=await reservePaid(c);await authorizePaid(c);await agents.revoke(owner,tokenHash);await settlePaid(c,m.bytes,{outcome:"failed",code:"invalid_proposal"});
+ assert.equal((await finish(c)).resolved,true);const view=await agents.get(owner,workspace,accepted.root_id);assert.equal(view.state,"stopped");assert.equal(view.estimated_usd,price());
+});
+
+test("known usage malformed proposal settles failure and blocks paid retry until review",async()=>{
+ await beginPaid();const c=await start(),m=await reservePaid(c);await authorizePaid(c);const result=await settlePaid(c,m.bytes,{kind:"invalid"});assert.equal(result.saved.response.status,"denied");
+ await call("ax_agent_settle",[c.run_id,c.generation,controller,1,result.response,realUsage,3,result.evidence]);
+ assert.deepEqual(await finish(c),{resolved:true,outcome:"failed"});assert.equal((await data.get(owner,c.run_id,workspace)).result?.estimated_usd,price());
+ await assert.rejects(beginPaid("different request"),error("paid_failure_requires_review"));
+ await call("ax_review_failure",[c.run_id,"Offline diagnosis complete; changed request."]);
+ await assert.rejects(beginPaid(),error("failed_request_already_attempted"));
+ await beginPaid("different request");
+});
+
+test("known usage overflow is persisted without granting fixed tool or clearing the charge",async()=>{
+ const accepted=await beginPaid();const c=await start(),m=await reservePaid(c);await authorizePaid(c);
+ const over={prompt_token_count:6100,candidates_token_count:280,thoughts_token_count:0,total_token_count:6380,model_call_count:1};
+ const result=await settlePaid(c,m.bytes,{usage:over});assert.equal(result.saved.response.status,"denied");assert.equal(result.saved.response.body.code,"agent_budget_exhausted");
+ assert.equal((await pool.query("SELECT budget_exceeded FROM ax_agent_operations WHERE run_id=$1 AND sequence=1",[c.run_id])).rows[0].budget_exceeded,true);
+ assert.equal((await finish(c)).resolved,true);const view=await agents.get(owner,workspace,accepted.root_id);assert.equal(view.state,"failed");assert.equal(view.estimated_usd,price(over));
+});
+
+test("unknown paid reservation stays held with stopped Actor and zero-cost receipt cannot erase it",async()=>{
+ await beginPaid();const c=await start();await reservePaid(c);await authorizePaid(c);await collect(c,"fake",{usage:zeroUsage,estimated_usd:0,status:"failed",exit_code:1,error_type:"unknown_provider"});
+ assert.equal((await finish(c)).resolved,false);await assert.rejects(beginPaid("next"),error("unresolved_run"));assert.equal((await call("ax_paid_total",[true]))>0,true);
+});
+
+test("legacy and new model costs share the pilot guard without double counting",async()=>{
+ await beginPaid();const c=await start(),m=await reservePaid(c);await authorizePaid(c);const u={prompt_token_count:40000,candidates_token_count:0,thoughts_token_count:0,total_token_count:40000,model_call_count:1};
+ await settlePaid(c,m.bytes,{outcome:"failed",usage:u});await finish(c);await call("ax_review_failure",[c.run_id,"Investigated unexpected provider token consumption."]);
+ assert.equal(await call("ax_paid_total",[false]),"0.010000000");
+ await assert.rejects(data.submit(owner,{key:randomUUID(),mode:"model",instruction:"legacy request",input_text:"",output_name:"a.txt",allow_model:true},workspace),error("pilot_estimate_limit_reached"));
+ await assert.rejects(beginPaid("new request"),error("pilot_estimate_limit_reached"));
+});
+
+test("forged usage or payload evidence cannot settle a paid operation",async()=>{
+ await beginPaid();const c=await start(),m=await reservePaid(c);await authorizePaid(c);
+ await assert.rejects(settlePaid(c,m.bytes,{metadata:{promptTokenCount:9}}),error("agent_usage_mismatch"));
+ await assert.rejects(settlePaid(c,m.bytes,{count:1001}),error("agent_usage_mismatch"));
+ await assert.rejects(settlePaid(c,m.bytes,{billing:0}),error("agent_usage_mismatch"));
+ const response={version:1,run_id:c.run_id,sequence:1,request_sha256:await sha256(m.bytes),status:"denied",body:{code:"invalid_proposal"}};
+ await assert.rejects(call("ax_agent_settle",[c.run_id,c.generation,controller,1,response,realUsage,1,{outcome:null,code:"invalid_proposal",payload_sha256:payloadHash,counted_input_tokens:1000,count_attempt:1,http_status:200,finish_reason:"STOP",response_sha256:"e".repeat(64)}]),error("agent_response_mismatch"));
+ assert.equal(await call("ax_agent_proposal",[{candidates:[{content:{parts:[{text:JSON.stringify({kind:null,text:"unexpected"})}]},finishReason:"STOP"}]},1]),null);
+ assert.equal((await finish(c)).resolved,false);
+});
+
+test("remaining pilot allowance includes legacy spend before reserving a new model request",async()=>{
+ await data.submit(owner,{key:randomUUID(),mode:"model",instruction:"legacy",input_text:"",output_name:"reply.txt",allow_model:true},workspace);
+ const legacy=await call("ax_claim",[controller,30]);for(const op of ["create","resume","stage","egress_allow","start"])await effect(legacy,op);
+ await collect(legacy,"legacy",{adapter:"antigravity",estimated_usd:.0085});await finish(legacy);
+ const accepted=await beginPaid();const c=await start();await assert.rejects(reservePaid(c),error("pilot_estimate_limit_reached"));
+ assert.equal((await pool.query("SELECT count(*)::int n FROM ax_agent_operations WHERE run_id=$1",[c.run_id])).rows[0].n,0);
+ await finish(c);assert.equal((await agents.get(owner,workspace,accepted.root_id)).estimated_usd,0);
+ assert.equal(Number(await call("ax_paid_total",[false])),.0085);
+});
+
+test("concurrent reservation and generation authorization issue a single send permission",async()=>{
+ await beginPaid();const c=await start();const res=await Promise.allSettled(Array.from({length:4},()=>reservePaid(c)));
+ assert.equal(res.filter(x=>x.status==="fulfilled").length,1);
+ const attempts=await Promise.allSettled(Array.from({length:4},()=>authorizePaid(c)));
+ assert.equal(attempts.filter(x=>x.status==="fulfilled").length,1);
+ assert.equal((await pool.query("SELECT model_calls FROM ax_agent_roots")).rows[0].model_calls,1);
+});
+
+test("paid manifest is immutable and old owner/private reads cannot select its mode",async()=>{
+ const accepted=await beginPaid();const c=await start();
+ await assert.rejects(pool.query("UPDATE ax_agent_segments SET execution_manifest=$2 WHERE run_id=$1",[c.run_id,{version:1,mode:"preview",profile_id:"preview-v1"}]),error("immutable_agent_manifest"));
+ await assert.rejects(agents.get(other,workspace,accepted.root_id),error("agent_not_found"));
+ await assert.rejects(data.get(other,c.run_id,workspace),error("run_not_found"));
+ assert.equal((await data.get(owner,c.run_id,workspace)).summary.agent_mode,"model");
+});
+
+test("API model consent is explicit and response exposes persisted mode without accepting answer mode",async()=>{
+ const config={apiOrigin:"http://127.0.0.1:3999",apiToken:"a".repeat(64)};
+ const app=createApi(config,undefined,postgresRunService(data),postgresChatService(data),async()=>({ownerUserId:owner,expiresAt:exp(),tokenFingerprint:tokenHash}),undefined,agents);
+ const headers={host:"127.0.0.1:3999",authorization:`Bearer ${config.apiToken}`,"content-type":"application/json","x-ax-workspace-id":workspace};
+ const input={key:randomUUID(),conversation_id:randomUUID(),text:"hello",mode:"model"};
+ const bad=await app.request("http://127.0.0.1:3999/v1/agent-roots",{method:"POST",headers,body:JSON.stringify(input)});assert.equal(bad.status,400);
+ const response=await app.request("http://127.0.0.1:3999/v1/agent-roots",{method:"POST",headers,body:JSON.stringify({...input,allow_model:true})});assert.equal(response.status,202);
+ const accepted=await response.json();const detail=await app.request(`http://127.0.0.1:3999/v1/agent-roots/${accepted.root_id}`,{headers});assert.equal((await detail.json()).mode,"model");
+ const forged=await app.request(`http://127.0.0.1:3999/v1/agent-roots/${accepted.root_id}/answer`,{method:"POST",headers,body:JSON.stringify({key:randomUUID(),question_id:accepted.root_id,expected_revision:1,text:"x",mode:"preview"})});assert.equal(forged.status,400);
+});
+
+test("v4 preview migration retains original run bytes, old-key replay and pending claims",async()=>{
+ const oldSchema=`agent_v4_${randomBytes(8).toString("hex")}`;
+ await admin.query(`CREATE SCHEMA ${oldSchema}`);const old=new pg.Pool({...connectionOptions,options:`-c search_path=${oldSchema}`});
+ try {
+  await old.query(readFileSync(new URL("../server/auth-schema.sql",import.meta.url),"utf8"));await old.query(readFileSync(new URL("../server/auth-schema-v2.sql",import.meta.url),"utf8"));
+  const client=await old.connect();try {
+   await client.query("BEGIN");await client.query("CREATE TABLE ax_migrations(version integer PRIMARY KEY,digest text NOT NULL)");
+   for(const [i,name] of ["schema.sql","schema-v2.sql","schema-v3.sql","schema-v4.sql"].entries()){
+    const source=readFileSync(new URL(`../data/${name}`,import.meta.url),"utf8");await client.query(source);await client.query("INSERT INTO ax_migrations VALUES($1,$2)",[i+1,createHash("sha256").update(source).digest("hex")]);
+   }
+   await client.query("COMMIT");
+  }catch(e){await client.query("ROLLBACK");throw e;}finally{client.release();}
+  await old.query("INSERT INTO users(id,status,display_name) VALUES($1,'active','old')",[owner]);await old.query("UPDATE ax_control SET accepting=true");
+  const wid=(await new WorkspaceRepository(old).create(owner,{key:randomUUID(),name:"old"})).workspace.id;
+  const repo=new AgentRepository(old,image),input={key:randomUUID(),conversation_id:randomUUID(),text:"old pending"};
+  const oldCall=async(name:string,args:unknown[]=[]) => (await old.query(`SELECT ${name}(${args.map((_,i)=>`$${i+1}`).join(",")}) value`,args)).rows[0].value;
+  const oldAccepted=await repo.start(owner,wid,{key:randomUUID(),conversation_id:randomUUID(),text:"old settled"},exp(),tokenHash);
+  const oldClaim=await oldCall("ax_claim",[controller,30]);
+  for(const operation of ["create","resume","stage","egress_prepare","start"]){const op=await oldCall("ax_intent",[oldClaim.run_id,oldClaim.generation,controller,operation]);await oldCall("ax_evidence",[oldClaim.run_id,oldClaim.generation,controller,op.operation_id,{confirmed:true,actor:oldClaim.run_id}]);}
+  const priorBytes=utf8(JSON.stringify({version:1,run_id:oldClaim.run_id,sequence:1,kind:"model",body:{contents:[]}}));
+  await oldCall("ax_agent_reserve",[oldClaim.run_id,oldClaim.generation,controller,1,priorBytes]);
+  const priorReply={version:1,run_id:oldClaim.run_id,sequence:1,request_sha256:await sha256(priorBytes),status:"ok",body:{response:{candidates:[{content:{parts:[{text:JSON.stringify({kind:"question",text:"Who?"})}]}}],usageMetadata:metadata}}};
+  await oldCall("ax_agent_settle",[oldClaim.run_id,oldClaim.generation,controller,1,priorReply,usage,1]);
+  for(const operation of ["egress_deny","suspend"]){const op=await oldCall("ax_intent",[oldClaim.run_id,oldClaim.generation,controller,operation]);await oldCall("ax_evidence",[oldClaim.run_id,oldClaim.generation,controller,op.operation_id,operation==="egress_deny"?{egress_denied:true,actor:oldClaim.run_id}:{phase:"SUSPENDED",worker_assignment:null,actor:oldClaim.run_id}]);}
+  await oldCall("ax_finish",[oldClaim.run_id,oldClaim.generation,controller]);
+  const accepted=await repo.start(owner,wid,input,exp(),tokenHash);
+  const before=(await old.query("SELECT to_jsonb(r) value FROM ax_runs r ORDER BY run_id")).rows.map(r=>r.value);
+  await migrateData(old);await migrateData(old);
+  assert.deepEqual((await old.query("SELECT to_jsonb(r) value FROM ax_runs r ORDER BY run_id")).rows.map(r=>r.value),before);
+  assert.deepEqual((await old.query("SELECT response,usage FROM ax_agent_operations WHERE run_id=$1",[oldAccepted.run_id])).rows[0],{response:priorReply,usage});
+  assert.equal((await repo.get(owner,wid,accepted.root_id)).mode,"preview");
+  assert.equal((await repo.start(owner,wid,{...input,mode:"preview"},exp(),tokenHash)).replayed,true);
+  assert.deepEqual((await old.query("SELECT ax_claim($1,30) v",[controller])).rows[0].v.agent,{mode:"preview",profile_id:"preview-v1"});
+ }finally{await old.end();await admin.query(`DROP SCHEMA ${oldSchema} CASCADE`);}
+});
+
+test("limited API and controller roles can use v5 entry points but cannot bypass them",async()=>{
+ const roles=(await admin.query("SELECT rolname FROM pg_roles WHERE rolname IN ('ax_api','ax_execution')")).rows.map(x=>x.rolname);
+ assert.equal(roles.length,2,"Prepared test server provides the existing API and controller roles");
+ const functions=(await pool.query("SELECT p.oid::regprocedure::text signature,p.proname FROM pg_proc p WHERE p.pronamespace=current_schema()::regnamespace")).rows;
+ for(const [role,names] of [["ax_api",apiFunctions],["ax_execution",executionFunctions]] as const){
+  await pool.query(`GRANT USAGE ON SCHEMA ${schema} TO ${role}`);
+  for(const f of functions.filter(x=>names.includes(x.proname)))await pool.query(`GRANT EXECUTE ON FUNCTION ${f.signature} TO ${role}`);
+ }
+ const transaction=(role:string,sql:string)=>execFileSync("docker",["exec","-i",process.env.POSTGRES_CONTAINER??"ax-local-postgres","psql","-X","-qAt","-v","ON_ERROR_STOP=1","-U","postgres","-d","app_auth_test"],{input:`BEGIN; SET LOCAL search_path=${schema},pg_temp; SET LOCAL ROLE ${role}; ${sql} COMMIT;`,encoding:"utf8",stdio:["pipe","pipe","pipe"],timeout:10000}).trim();
+ const literal=(value:unknown):string=>value instanceof Uint8Array?`decode('${Buffer.from(value).toString("hex")}','hex')`:value===null?"NULL":typeof value==="number"?String(value):`'${(typeof value==="string"?value:JSON.stringify(value)).replaceAll("'","''")}'`;
+ const restricted=(name:string,args:unknown[]=[],role="ax_execution")=>{
+  const value=transaction(role,`SELECT ${name}(${args.map(literal).join(",")});`);return value?JSON.parse(value):null;
+ };
+ const denied=(e:any)=>e.status===3&&String(e.stderr).includes("permission denied");
+ const input={key:randomUUID(),conversation_id:randomUUID(),text:"limited role",mode:"model",allow_model:true};
+ const accepted=restricted("ax_agent_start",[owner,workspace,input,image,`ax-run-${randomBytes(8).toString("hex")}`,exp(),tokenHash],"ax_api");
+ assert.throws(()=>restricted("ax_claim",["forged",30],"ax_api"),denied);
+ assert.throws(()=>transaction("ax_api","SELECT * FROM ax_agent_operations;"),denied);
+ const c=restricted("ax_claim",[controller,30]);assert.equal(c.run_id,accepted.run_id);assert.equal(c.agent.mode,"model");
+ assert.throws(()=>restricted("ax_agent_start",[owner,workspace,input,image,`ax-run-${randomBytes(8).toString("hex")}`,exp(),tokenHash]),denied);
+ assert.throws(()=>restricted("ax_agent_settle_v4",[c.run_id,c.generation,controller,1,{}, {},1]),denied);
+ assert.throws(()=>restricted("ax_agent_reserve_v4",[c.run_id,c.generation,controller,1,utf8("{}")]),denied);
+ const restrictedEffect=(operation:string)=>{const op=restricted("ax_intent",[c.run_id,c.generation,controller,operation]);restricted("ax_evidence",[c.run_id,c.generation,controller,op.operation_id,operation==="egress_deny"?{egress_denied:true,actor:c.run_id}:operation==="suspend"?{phase:"SUSPENDED",worker_assignment:null,actor:c.run_id}:{confirmed:true,actor:c.run_id}]);};
+ for(const op of ["create","resume","stage","egress_prepare","start"])restrictedEffect(op);
+ const bytes=utf8(JSON.stringify({version:1,run_id:c.run_id,sequence:1,kind:"model",body:{contents:[]}}));
+ assert.equal(restricted("ax_agent_reserve",[c.run_id,c.generation,controller,1,bytes]).send,true);
+ assert.equal(restricted("ax_agent_authorize_generation",[c.run_id,c.generation,controller,1,payloadHash,1000]).send,true);
+ const response={version:1,run_id:c.run_id,sequence:1,request_sha256:await sha256(bytes),status:"denied",body:{code:"invalid_proposal"}};
+ const evidence={outcome:"failed",code:"invalid_proposal",payload_sha256:payloadHash,counted_input_tokens:1000,count_attempt:1,http_status:200,finish_reason:"MAX_TOKENS",response_sha256:"e".repeat(64)};
+ restricted("ax_agent_settle",[c.run_id,c.generation,controller,1,response,realUsage,3,evidence]);
+ assert.equal(restricted("ax_agent_reserve",[c.run_id,c.generation,controller,1,bytes]).send,false);
+ restrictedEffect("egress_deny");restrictedEffect("suspend");assert.equal(restricted("ax_finish",[c.run_id,c.generation,controller]).resolved,true);
+ assert.equal((await agents.get(owner,workspace,accepted.root_id)).estimated_usd,price());
+ await call("ax_review_failure",[c.run_id,"Restricted role failure was checked."]);
+ for(const scenario of ["no_send","unknown"]){
+  const next=restricted("ax_agent_start",[owner,workspace,{...input,key:randomUUID(),conversation_id:randomUUID(),text:scenario},image,`ax-run-${randomBytes(8).toString("hex")}`,exp(),tokenHash],"ax_api");
+  Object.assign(c,restricted("ax_claim",[controller,30]));
+  for(const op of ["create","resume","stage","egress_prepare","start"])restrictedEffect(op);
+  const body=utf8(JSON.stringify({version:1,run_id:c.run_id,sequence:1,kind:"model",body:{contents:[]}}));restricted("ax_agent_reserve",[c.run_id,c.generation,controller,1,body]);
+  if(scenario==="no_send"){
+   restricted("ax_agent_settle",[c.run_id,c.generation,controller,1,{version:1,run_id:c.run_id,sequence:1,request_sha256:await sha256(body),status:"denied",body:{code:"count_rejected"}},zeroUsage,1,{outcome:"no_send",code:"count_rejected",payload_sha256:null,counted_input_tokens:null,count_attempt:1,http_status:400,finish_reason:null,response_sha256:null}]);
+  }else restricted("ax_agent_authorize_generation",[c.run_id,c.generation,controller,1,payloadHash,1000]);
+  restrictedEffect("egress_deny");restrictedEffect("suspend");assert.equal(restricted("ax_finish",[c.run_id,c.generation,controller]).resolved,scenario==="no_send");
+  assert.equal((await agents.get(owner,workspace,next.root_id)).estimated_usd,scenario==="no_send"?0:null);
+ }
 });

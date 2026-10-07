@@ -39,7 +39,7 @@ function agentError(code: string) {
   };
   return messages[code] ?? runErrorMessage(code);
 }
-export function meta() { return [{ title: "対話プレビュー | AX ワークスペース" }]; }
+export function meta() { return [{ title: "エージェント対話 | AX ワークスペース" }]; }
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireAuth(request);
   const scope = requireWorkspaceScope(request);
@@ -75,11 +75,11 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   const user = await requireAuth(request);
   const scope = requireWorkspaceScope(request);
-  let submitted = { key: "", text: "", revision: 0, intent: "", rootId: "" };
+  let submitted = { key: "", text: "", revision: 0, intent: "", rootId: "", mode: "model", allow_model: false };
   const failure = (error: string, status: number) => data({ error, submitted, uncertain: status === 503 }, { status, headers: pageHeaders() });
   try {
-    const form = await readLocalForm(request, ["csrf", "intent", "key", "text", "conversation_id", "root_id", "question_id", "expected_revision"]);
-    submitted = { key: form.get("key") ?? "", text: (form.get("text") ?? "").replace(/\r\n?/g, "\n"), revision: Number(form.get("expected_revision") ?? 0), intent: form.get("intent") ?? "", rootId: form.get("root_id") ?? "" };
+    const form = await readLocalForm(request, ["csrf", "intent", "key", "text", "conversation_id", "root_id", "question_id", "expected_revision", "mode", "allow_model"]);
+    submitted = { key: form.get("key") ?? "", text: (form.get("text") ?? "").replace(/\r\n?/g, "\n"), revision: Number(form.get("expected_revision") ?? 0), intent: form.get("intent") ?? "", rootId: form.get("root_id") ?? "", mode: form.get("mode") ?? "model", allow_model: form.get("allow_model") === "yes" };
     await verifySubmission(request, form.get("csrf"));
     if (scope.legacy) return failure("ワークスペースを選んでください。", 403);
     const api = agentsClient(user.accessToken, undefined, undefined, scope.workspaceId);
@@ -91,7 +91,8 @@ export async function action({ request }: Route.ActionArgs) {
       if (!parsed.success) return failure("回答の長さを確認し、対話を読み直してから送信してください。", 400);
       destination = (await api.answer(rootId, parsed.data)).root_id;
     } else if (form.get("intent") === "start") {
-      const parsed = agentStartSchema.safeParse({ key: submitted.key, text: submitted.text, conversation_id: form.get("conversation_id") });
+      if (submitted.mode === "model" && !submitted.allow_model) return failure("実モデルを使う場合は、会話の外部送信と利用料金を確認してください。", 400);
+      const parsed = agentStartSchema.safeParse({ key: submitted.key, text: submitted.text, conversation_id: form.get("conversation_id"), mode: submitted.mode, allow_model: submitted.mode === "model" && submitted.allow_model });
       if (!parsed.success) return failure("依頼を入力してください。日本語で約680文字までが目安です。", 400);
       destination = (await api.start(parsed.data)).root_id;
     } else return failure("操作を確認してください。", 400);
@@ -105,19 +106,39 @@ export const headers: Route.HeadersFunction = ({ loaderHeaders, actionHeaders, e
   for (const source of [loaderHeaders, actionHeaders, errorHeaders]) source?.forEach((value, key) => result.set(key, value));
   return result;
 };
-function Composer({ csrf, root, id, draft, initial, uncertain, busy }: { csrf: string; root: AgentRoot | null; id: string; draft: string; initial: string; uncertain: boolean; busy: boolean }) {
+function Composer({ csrf, root, id, draft, initial, initialMode, consented, uncertain, busy }: { csrf: string; root: AgentRoot | null; id: string; draft: string; initial: string; initialMode: string; consented: boolean; uncertain: boolean; busy: boolean }) {
   const [text, setText] = useState(() => {
     if (typeof document === "undefined") return initial;
     const field = document.getElementById("agent-text");
     return field instanceof HTMLTextAreaElement && field.dataset.draft === draft ? field.value : initial;
   });
+  const [mode, setMode] = useState(() => {
+    if (root) return root.mode;
+    if (typeof document !== "undefined") {
+      const field = document.querySelector<HTMLInputElement>('input[name="mode"]:checked');
+      if (field?.dataset.draft === draft && ["model", "preview"].includes(field.value)) return field.value;
+    }
+    return initialMode === "preview" ? "preview" : "model";
+  });
+  const [consent, setConsent] = useState(() => {
+    if (typeof document !== "undefined") {
+      const field = document.getElementById("agent-consent");
+      if (field instanceof HTMLInputElement && field.dataset.draft === draft) return field.checked;
+    }
+    return consented;
+  });
   const bytes = new TextEncoder().encode(text).length;
   return <Form method="post" className="chat-composer">
     <input type="hidden" name="csrf" value={csrf} /><input type="hidden" name="intent" value={root ? "answer" : "start"} /><input type="hidden" name="key" value={draft} /><input type="hidden" name="conversation_id" value={id} /><input type="hidden" name="root_id" value={root?.id ?? ""} /><input type="hidden" name="question_id" value={root?.question_id ?? ""} /><input type="hidden" name="expected_revision" value={root?.revision ?? 0} />
+    {!root && <>
+      <fieldset className="agent-mode" disabled={busy || uncertain}><legend>応答の種類</legend><label><input type="radio" name="mode" value="model" data-draft={draft} checked={mode === "model"} onChange={() => setMode("model")} />実モデルで依頼を進める</label><label><input type="radio" name="mode" value="preview" data-draft={draft} checked={mode === "preview"} onChange={() => setMode("preview")} />模擬応答で操作を試す（無料）</label></fieldset>
+      {uncertain && <input type="hidden" name="mode" value={mode} />}
+      {mode === "model" && <div className="chat-consent agent-consent"><label><input id="agent-consent" data-draft={draft} type="checkbox" name="allow_model" value="yes" checked={consent} onChange={event => setConsent(event.target.checked)} disabled={busy || uncertain} /><span>会話の外部送信とモデル利用料金を確認しました</span></label><p>この対話の依頼と回答をGeminiへ送信します。短い文書の作成や、内容を整理する相談に使えます。</p>{uncertain && consent && <input type="hidden" name="allow_model" value="yes" />}</div>}
+    </>}
     <label htmlFor="agent-text">{root ? "質問への回答" : "依頼内容"}</label><p id="agent-text-hint" className="composer-hint">日本語で約680文字までが目安です。</p>
     <textarea id="agent-text" name="text" data-draft={draft} value={text} onChange={event => setText(event.target.value)} required maxLength={2048} readOnly={uncertain} disabled={busy} aria-describedby="agent-text-hint agent-text-count" aria-invalid={bytes > 2048 || undefined} />
     <div className="composer-meta"><span>会話と成果物は本人だけが閲覧できます。</span><span id="agent-text-count">{bytes} / 2,048 バイト</span></div>
-    <div className="composer-actions"><p>外部モデルの利用料金は発生しません。</p><button className="button button-primary" disabled={busy || bytes > 2048} type="submit">{uncertain ? "同じ内容を再送" : root ? "回答して続ける" : "対話を始める"}</button></div>
+    <div className="composer-actions"><p>{mode === "model" ? "送信すると、会話をGeminiへ送り、利用料金が発生します。" : "模擬応答では外部モデルの利用料金は発生しません。"}</p><button className="button button-primary" disabled={busy || bytes > 2048} type="submit">{uncertain ? "同じ内容を再送" : root ? "回答して続ける" : "対話を始める"}</button></div>
   </Form>;
 }
 export default function Agent({ loaderData, actionData }: Route.ComponentProps) {
@@ -133,15 +154,16 @@ export default function Agent({ loaderData, actionData }: Route.ComponentProps) 
   const composerResponse = relevant?.submitted.intent === "stop" ? undefined : relevant;
   const href = scopeHref(root ? `/agent?root=${root.id}` : `/agent?draft=${loaderData.id}`, scope);
   const last = detail?.turns.at(-1)?.summary;
-  const sidebar = <div className="chat-history"><a className="new-chat-link" href={scopeHref("/agent", scope)}>＋ 新しい対話</a><details open><summary>最近の対話</summary><ul>{loaderData.roots.map(item => <li key={item.id}><a href={scopeHref(`/agent?root=${item.id}`, scope)} aria-current={root?.id === item.id ? "page" : undefined}><span>{loaderData.titles[item.conversation_id] ?? "対話プレビュー"}</span><small>{stateLabels[item.state]}</small></a></li>)}</ul></details></div>;
-  return <Workspace workspaceName={loaderData.workspaceName} title="対話プレビュー" intro="質問に答えて、依頼をひとつずつ進める。" sidebar={sidebar} chat>
-    <div className="chat-shell"><Notice title="模擬モデルで対話の流れを試せます"><p>現在は、決まった質問と返答で動きを確認するプレビューです。依頼を受け付け、質問への回答後にテキストの成果物を作ります。</p></Notice>
+  const sidebar = <div className="chat-history"><a className="new-chat-link" href={scopeHref("/agent", scope)}>＋ 新しい対話</a><details open><summary>最近の対話</summary><ul>{loaderData.roots.map(item => <li key={item.id}><a href={scopeHref(`/agent?root=${item.id}`, scope)} aria-current={root?.id === item.id ? "page" : undefined}><span>{loaderData.titles[item.conversation_id] ?? "エージェント対話"}</span><small>{item.preview ? "模擬応答 · " : "実モデル · "}{stateLabels[item.state]}</small></a></li>)}</ul></details></div>;
+  return <Workspace workspaceName={loaderData.workspaceName} title="エージェント対話" intro="質問に答えて、依頼をひとつずつ進める。" sidebar={sidebar} chat>
+    <div className="chat-shell"><Notice title={root?.preview ? "模擬応答で対話の流れを試しています" : "依頼に合わせた返答と成果物を受け取れます"}><p>{root?.preview ? "決まった質問と返答で操作を確認しています。外部モデルへの送信と課金はありません。" : "依頼を受け付け、必要なら一度質問してから、短いテキストの成果物を作ります。会話と成果物は本人だけが閲覧できます。"}</p></Notice>
       <div className="chat-toolbar"><span>本人限定の対話</span><a href={href}>対話を更新</a></div>
       {loaderData.error && <Notice title="対話を表示できません" error><p>{loaderData.error}</p><a href="/workspaces">ワークスペースを選び直す</a></Notice>}
-      <div className="chat-thread" aria-label="会話">{detail?.turns.map(turn => <div className="chat-turn" key={turn.summary.run_id}><article className="chat-message user-message" aria-label="あなたのメッセージ"><div className="message-author">あなた</div><p>{turn.user}</p></article>{turn.assistant !== null && <article className="chat-message assistant-message" aria-label="プレビューの返答"><div className="message-author">AX 対話プレビュー</div><p>{turn.assistant}</p><a className="message-detail" href={scopeHref(`/runs/${turn.summary.run_id}`, scope)}>実行の詳細</a></article>}</div>)}</div>
+      <div className="chat-thread" aria-label="会話">{detail?.turns.map(turn => <div className="chat-turn" key={turn.summary.run_id}><article className="chat-message user-message" aria-label="あなたのメッセージ"><div className="message-author">あなた</div><p>{turn.user}</p></article>{turn.assistant !== null && <article className="chat-message assistant-message" aria-label="エージェントの返答"><div className="message-author">{root?.preview ? "AX 模擬応答" : "AX エージェント"}</div><p>{turn.assistant}</p><a className="message-detail" href={scopeHref(`/runs/${turn.summary.run_id}`, scope)}>実行の詳細</a></article>}</div>)}</div>
+      {root && <p className="agent-usage">{root.preview ? "模擬応答 · 利用料金なし" : `${root.model ?? "実モデル"} · この対話の料金の目安：${root.estimated_usd === null ? "確認中" : `${root.estimated_usd.toFixed(8)} USD`}`}</p>}
       {root && <div className="run-status-panel" role="status" aria-live="polite"><h2>{stateLabels[root.state]}</h2>{root.state === "waiting_input" && <p>{root.can_answer ? "処理は停止しています。回答すると、新しい実行で続けます。" : "回答できる期限が切れたか、続行する権限を確認できません。新しい対話を始めてください。"}</p>}{root.state === "stopping" && <p>停止を受け付けました。実際の停止が確認できるまでお待ちください。</p>}{root.state === "blocked_unknown" && <p>結果が不明なため、続行を保留しています。実行の詳細から確認してください。</p>}{last && ["blocked_unknown", "failed"].includes(root.state) && <a href={scopeHref(`/runs/${last.run_id}`, scope)}>実行の詳細を確認する</a>}{root.state === "succeeded" && last && <a className="button button-secondary" href={scopeHref(`/runs/${last.run_id}/artifact`, scope)}>成果物をダウンロード</a>}</div>}
       {relevant && <Notice title="送信を確認してください" error><p>{relevant.error}</p>{relevant.uncertain && <p>{relevant.submitted.intent === "stop" ? "停止の受付結果が不明です。対話を更新するか、停止操作をもう一度行ってください。" : "受付結果が不明です。内容を変えずに再送すると、受け付け済みの実行は増えません。"}</p>}</Notice>}
-      {!loaderData.error && (!root || root.can_answer) && <Composer key={composerResponse?.submitted.key || loaderData.key} csrf={loaderData.csrf} root={root} id={loaderData.id} draft={composerResponse?.submitted.key || loaderData.key} initial={composerResponse?.submitted.text ?? ""} uncertain={!!composerResponse?.uncertain} busy={navigation.state !== "idle" || !!(relevant?.uncertain && relevant.submitted.intent === "stop")} />}
+      {!loaderData.error && (!root || root.can_answer) && <Composer key={composerResponse?.submitted.key || loaderData.key} csrf={loaderData.csrf} root={root} id={loaderData.id} draft={composerResponse?.submitted.key || loaderData.key} initial={composerResponse?.submitted.text ?? ""} initialMode={composerResponse?.submitted.mode ?? "model"} consented={composerResponse?.submitted.allow_model ?? false} uncertain={!!composerResponse?.uncertain} busy={navigation.state !== "idle" || !!(relevant?.uncertain && relevant.submitted.intent === "stop")} />}
       {root && ["running", "waiting_input"].includes(root.state) && <Form method="post" className="chat-recovery"><input type="hidden" name="csrf" value={loaderData.csrf} /><input type="hidden" name="intent" value="stop" /><input type="hidden" name="root_id" value={root.id} /><button className="button button-secondary" type="submit" disabled={navigation.state !== "idle"}>この対話を停止する</button></Form>}
       {root && !active && !root.can_answer && <p><a href={scopeHref("/agent", scope)}>新しい対話を始める</a></p>}
     </div>

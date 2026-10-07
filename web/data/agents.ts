@@ -17,8 +17,8 @@ export class AgentRepository {
         const code=error.message;
         if(["agent_not_found","conversation_not_found","workspace_not_found"].includes(code)) throw new RunServiceError(code,404);
         if(["workspace_forbidden","workspace_access_revoked"].includes(code)) throw new RunServiceError(code,403);
-        if(["invalid_request","invalid_owner_user_id"].includes(code)) throw new RunServiceError(code,400);
-        if(["agent_grant_expired","agent_grant_revoked","agent_answer_conflict","agent_budget_exhausted","agent_stopped","idempotency_conflict","conversation_conflict","conversation_busy","unresolved_run","unknown_paid_usage","paid_failure_requires_review","pilot_estimate_limit_reached","invalid_conversation_state"].includes(code)) throw new RunServiceError(code,409);
+        if(["invalid_request","invalid_owner_user_id","model_not_allowed"].includes(code)) throw new RunServiceError(code,400);
+        if(["agent_grant_expired","agent_grant_revoked","agent_answer_conflict","agent_budget_exhausted","agent_stopped","failed_request_already_attempted","idempotency_conflict","conversation_conflict","conversation_busy","unresolved_run","unknown_paid_usage","paid_failure_requires_review","pilot_estimate_limit_reached","invalid_conversation_state"].includes(code)) throw new RunServiceError(code,409);
       }
       throw new RunServiceError("bridge_unavailable");
     }

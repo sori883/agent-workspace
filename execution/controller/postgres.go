@@ -13,6 +13,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sori883/agent-workspace/execution/gateway"
 	"github.com/sori883/agent-workspace/execution/native"
 )
 
@@ -96,6 +97,7 @@ func (p *Postgres) Claim(ctx context.Context) (*Claim, error) {
 	}
 	var requestWire struct {
 		Request json.RawMessage `json:"request"`
+		Agent   json.RawMessage `json:"agent"`
 	}
 	if json.Unmarshal(data, &requestWire) != nil {
 		return nil, errors.New("invalid_database_claim")
@@ -105,6 +107,15 @@ func (p *Postgres) Claim(ctx context.Context) (*Claim, error) {
 		return nil, errors.New("invalid_database_claim")
 	}
 	claim.Request = request
+	if request.Adapter == "interactive" {
+		var agent gateway.Agent
+		if native.DecodeStrict(requestWire.Agent, &agent) != nil || !agent.Valid() {
+			return nil, errors.New("invalid_database_claim")
+		}
+		claim.Agent = &agent
+	} else if claim.Agent != nil {
+		return nil, errors.New("invalid_database_claim")
+	}
 	return &claim, nil
 }
 func (p *Postgres) Heartbeat(ctx context.Context, c *Claim) error {
@@ -181,7 +192,7 @@ func classifyIntentError(err error) error {
 	}
 	if errors.As(err, &databaseError) && databaseError.Code == "P0001" {
 		switch databaseError.Message {
-		case "agent_stopped", "agent_grant_expired", "agent_budget_exhausted":
+		case "agent_stopped", "agent_grant_expired", "agent_budget_exhausted", "pilot_estimate_limit_reached":
 			return ErrGatewayDenied
 		}
 	}
@@ -195,23 +206,49 @@ func (p *Postgres) Reserve(ctx context.Context, c *Claim, mailbox *native.Mailbo
 	if err := p.pool.QueryRow(ctx, p.query("ax_agent_reserve")+"($1,$2,$3,$4,$5::bytea)", c.RunID, c.Generation, p.controllerID, mailbox.Request.Sequence, mailbox.Bytes).Scan(&data); err != nil {
 		return Reservation{}, classifyIntentError(err)
 	}
+	return parseReservation(data, c, mailbox)
+}
+
+func parseReservation(data []byte, c *Claim, mailbox *native.Mailbox) (Reservation, error) {
 	var wire struct {
-		Send     *bool           `json:"send"`
-		Response json.RawMessage `json:"response"`
+		Send        *bool            `json:"send"`
+		Response    *json.RawMessage `json:"response"`
+		InputLimit  int              `json:"input_limit"`
+		OutputLimit int              `json:"output_limit"`
+		ProfileID   string           `json:"profile_id"`
 	}
-	if len(data) > 128*1024 || json.Unmarshal(data, &wire) != nil || wire.Send == nil || len(wire.Response) == 0 {
+	if native.DecodeStrict(data, &wire) != nil || wire.Send == nil || c.Agent == nil || wire.ProfileID != c.Agent.ProfileID || wire.InputLimit < 0 || wire.InputLimit > 6000 || wire.OutputLimit < 0 || wire.OutputLimit > 256 {
 		return Reservation{}, errors.New("invalid_gateway_reservation")
+	}
+	response := json.RawMessage("null")
+	if wire.Response != nil {
+		response = *wire.Response
 	}
 	if *wire.Send {
-		if !bytes.Equal(bytes.TrimSpace(wire.Response), []byte("null")) {
+		if wire.Response != nil {
 			return Reservation{}, errors.New("invalid_gateway_reservation")
 		}
-	} else if _, err := native.ParseReply(wire.Response, mailbox); err != nil {
+	} else if _, err := native.ParseReply(response, mailbox); err != nil {
 		return Reservation{}, errors.New("invalid_gateway_reservation")
 	}
-	return Reservation{Send: *wire.Send, Response: wire.Response}, nil
+	return Reservation{Send: *wire.Send, Response: response, InputLimit: wire.InputLimit, OutputLimit: wire.OutputLimit, ProfileID: wire.ProfileID}, nil
 }
-func (p *Postgres) Settle(ctx context.Context, c *Claim, mailbox *native.Mailbox, reply []byte, usage map[string]float64, elapsedMS int) error {
+func (p *Postgres) AuthorizeGeneration(ctx context.Context, c *Claim, mailbox *native.Mailbox, sha string, count int) error {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	var data []byte
+	if err := p.pool.QueryRow(ctx, p.query("ax_agent_authorize_generation")+"($1,$2,$3,$4,$5,$6)", c.RunID, c.Generation, p.controllerID, mailbox.Request.Sequence, sha, count).Scan(&data); err != nil {
+		return classifyIntentError(err)
+	}
+	var result struct {
+		Send bool `json:"send"`
+	}
+	if native.DecodeStrict(data, &result) != nil || !result.Send {
+		return errors.New("model_authorization_unknown")
+	}
+	return nil
+}
+func (p *Postgres) Settle(ctx context.Context, c *Claim, mailbox *native.Mailbox, reply []byte, usage map[string]float64, elapsedMS int, evidence gateway.Evidence) error {
 	if _, err := native.ParseReply(reply, mailbox); err != nil {
 		return errors.New("invalid_gateway_response")
 	}
@@ -219,7 +256,11 @@ func (p *Postgres) Settle(ctx context.Context, c *Claim, mailbox *native.Mailbox
 	if err != nil {
 		return errors.New("invalid_gateway_usage")
 	}
-	return p.exec(ctx, "ax_agent_settle", "($1,$2,$3,$4,$5::jsonb,$6::jsonb,$7)", c.RunID, c.Generation, p.controllerID, mailbox.Request.Sequence, string(reply), string(data), elapsedMS)
+	proof, err := json.Marshal(evidence)
+	if err != nil {
+		return errors.New("invalid_gateway_evidence")
+	}
+	return p.exec(ctx, "ax_agent_settle", "($1,$2,$3,$4,$5::jsonb,$6::jsonb,$7,$8::jsonb)", c.RunID, c.Generation, p.controllerID, mailbox.Request.Sequence, string(reply), string(data), elapsedMS, string(proof))
 }
 
 func finishFunction(c *Claim) string {

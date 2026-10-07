@@ -56,6 +56,7 @@ jobs:
         run: |
           docker exec "$POSTGRES_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE ROLE ax_app LOGIN PASSWORD 'ax-app-ci-only';"
           docker exec "$POSTGRES_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 -c 'CREATE ROLE ax_api NOLOGIN;'
+          docker exec "$POSTGRES_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 -c 'CREATE ROLE ax_execution NOLOGIN;'
           docker exec "$POSTGRES_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE app_auth_test OWNER ax_app;'
           docker exec "$POSTGRES_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 -c 'REVOKE ALL ON DATABASE app_auth_test FROM PUBLIC;'
           node --import tsx tests/prepare-auth.ts

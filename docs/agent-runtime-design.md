@@ -2,17 +2,17 @@
 
 2026-10-07。設計の基準はmain `a682948be9daddc37555067fd98475eb3938b427`、上流AX固定版は `ac2332829f22360ff97b0ba34d94dd0dd782f17e`。その後の初期実装を反映している。**Agent RuntimeをAX Task内で、作業が進む区間だけ起動するA案**を採用する。会話、本人認可、送信済み操作、費用の正本はTask外のapp PostgreSQLに置く。
 
-初期実装は**固定の模擬応答を使う無課金の対話プレビュー**である。実SDKを使うが、実モデルの推論ではない。質問一つ、停止後の回答一回、登録済みスキルと固定toolによる小さい本文成果物までを実装した。コード・局所試験の成立と実AXでの稼働合格は区別する。初期の質問・回答・本人の成果物取得は実Keycloak・実AXで確認した。停止・使用量・限界を含む結果の正本は[検証記録](../.space/tasks/ax-agent-runtime/verification.md)とする。
+初期の無課金プレビューに、実モデルの接続を追加した。画面から実モデルと模擬応答を選び、実モデルは外部送信・料金への同意を伴って開始する。質問一つ、停止後の回答一回、固定スキルと固定toolによる小さい本文成果物という範囲は維持する。初期の模擬経路は[検証記録](../.space/tasks/ax-agent-runtime/verification.md)で確認済み。実モデルもWeb・実AXで質問→回答→本文生成の2区間が成功し、使用量と実停止を照合した。[実モデルの検証記録](../.space/tasks/ax-agent-model/verification.md)。試験後は費用方針に従って有料Gatewayを閉じ、無料previewの受付を維持している。
 
 既存の通常チャットは維持する。生成コード、サブエージェント、動的な環境準備、GitHubのclone/push/PR、社内API/MCP/RAG、定期実行UIは後続である。利用者による方向性の了承を、詳細全項目の検証・承認と読み替えない。
 
 ## 1. 初期実装の構成
 
-ブラウザの専用プレビュー画面 `/agent` から、本人と選択Workspaceに属する依頼を受け付ける。Runtimeは固定SDKで型付き提案を一つ作り、外側のGatewayが許可した固定toolで本文を書く。質問なら、本文・使用量・通信遮断・実停止の確認後に回答待ちへ移る。本人の回答は一度だけ受け付け、次の新Taskへ渡す。
+ブラウザのエージェント対話画面 `/agent` から、本人と選択Workspaceに属する依頼を受け付ける。Runtimeは固定SDKで型付き提案を一つ作り、外側のGatewayが許可した固定toolで本文を書く。質問なら、本文・使用量・通信遮断・実停止の確認後に回答待ちへ移る。本人の回答は一度だけ受け付け、次の新Taskへ渡す。
 
 ```mermaid
 flowchart TD
-  Browser[ブラウザの対話プレビュー] --> BFF[React Router BFF]
+  Browser[ブラウザのエージェント対話] --> BFF[React Router BFF]
   BFF --> IDP[Keycloak等の本人確認]
   BFF --> API[Hono共通API]
   API <--> DB[(app PostgreSQL)]
@@ -29,7 +29,7 @@ flowchart TD
   end
   Controller <--> DB
   Gateway <--> DB
-  Gateway -. 後続 .-> Model[実モデルAPI・秘密保管]
+  Gateway --> Model[Gemini API]
   Gateway -. 後続 .-> Corp[社内API・MCP・RAG]
   AX -. 後続 .-> Code[生成コード用の別Task]
 ```
@@ -42,14 +42,14 @@ Hono共通APIはTypeScriptの短い受付・参照処理を保ち、Python子プ
 
 ## 2. 実装した範囲と上限
 
-| 項目 | 初期の対話プレビュー | 維持する境界・後続事項 |
+| 項目 | 現在の対話経路 | 維持する境界・後続事項 |
 | --- | --- | --- |
 | 会話 | 依頼→質問一つ→回答一回→本文成果物。直接成果物・未対応の説明も可能 | 私有会話を維持。通常チャットは別経路 |
 | Runtime | Python、Antigravity SDK 0.1.20、plain JSON提案 | SDK内部DBの移植なし。任意コード・subagentなし |
 | SDK設定 | `tools=[]`、builtin tools空、subagents無効、retryなし、response_schemaなし | SDK自身に外部操作を実行させない |
 | 固定処理 | image内の`brief-v1`と信頼済み`write_output` | スキル登録・公開UI、任意script実行は後続 |
 | 実行 | 最大2区間、区間ごとに新Task・新SDKプロセス | 同じTaskのresumeは未採用 |
-| 送信・費用 | Task外のGatewayが予約・応答・usageを保存。providerは固定の模擬応答 | 新経路の有料provider接続は後続 |
+| 送信・費用 | Task外のGatewayが予約・応答・usageを保存。実Geminiと無料previewを受付時に固定 | count後にも生成直前認可、実usageと費用は外部台帳で確定 |
 | 保存 | root、有限run、操作、質問・回答、成果物をapp PostgreSQLに保存 | Task filesystemやAX Redisを会話の正本にしない |
 | 認証 | 検証済みtokenの期限とfingerprint、現在の本人・所属を検査 | 接続先への委任は後続 |
 
@@ -239,20 +239,19 @@ Gatewayは送信前intentと予算を確定し、相手の冪等キー・結果�
 
 ## 10. 実装と検証の段階
 
-初期の製品単位は、**依頼→質問一つ→安全な待機→回答→登録済みスキル一つと信頼済み固定tool→本人の小さい成果物**である。未対応なら理由と代案を返す。外側の応答が固定の模擬providerであることを画面へ明示する。
+初期の製品単位は、**依頼→質問一つ→安全な待機→回答→登録済みスキル一つと信頼済み固定tool→本人の小さい成果物**である。未対応なら理由と代案を返す。実モデルと模擬応答を画面で区別し、同じrootの途中で切り替えない。
 
 | 段階 | 現在の位置 | 終了判断に必要な証拠 |
 | --- | --- | --- |
 | 実SDK＋模擬provider | plain JSONによる2プロセス継続を初期方式として採用 | 固定SDKで各区間1要求・正常終了。SQLite移植とは区別 |
 | Python・PG/API・Go・BFF | 初期経路を実装し、局所試験と独立レビューを実施 | 版と条件を付けた回帰結果、失効・未知・二重送信・予算・本人境界 |
-| 実AX Taskの往復 | ライブ検証中 | 鍵なし、開始前0要求、質問→実停止→新Task回答、usage/成果物照合、全体枠1、切替時間 |
+| 実AX Taskの往復 | 模擬・実モデルとも2区間の往復と実停止を確認済み | 鍵なし、開始前0要求、質問→実停止→新Task回答、usage/成果物照合、全体枠1、切替時間 |
 | 実Web統合 | 検証記録に結果を集約 | 本人限定、回答待ち、二重送信、再接続、小成果物、旧経路の保持 |
 
-局所試験やイメージbuildを、実Actorでの成功と同一視しない。実行条件・失敗・修正後の再検証は[検証記録](../.space/tasks/ax-agent-runtime/verification.md)へ集約し、本書で進行中の結果を先取りしない。
+局所試験やイメージbuildを、実Actorでの成功と同一視しない。実行条件・失敗・修正後の再検証は[初期の検証記録](../.space/tasks/ax-agent-runtime/verification.md)と[実モデルの検証記録](../.space/tasks/ax-agent-model/verification.md)へ集約し、本書で進行中の結果を先取りしない。
 
 | 後続の単位 | 開始条件 |
 | --- | --- |
-| 新経路の実provider | 初期無課金経路の合格、実usage・費用計測、送信先と資格情報の管理 |
 | 生成コード | 固定の無課金code Task往復、鍵注入防止、通信/RPC・ファイル隔離、資源制限を実Actorで確認 |
 | 子エージェント | 親子の権限縮小、合算予算、停止連動、文脈・作業領域の分離 |
 | 環境準備 | 配布物の取得・検証と実行の分離、版固定、準備失敗時の停止。mise等は試作後に選定 |
@@ -265,7 +264,7 @@ Gatewayは送信前intentと予算を確定し、相手の冪等キー・結果�
 
 ## 11. 残る確認と拡張時の判断
 
-初期実装の契約と、現在の稼働確認は分ける。直近では次を実経路の証拠と照合する。
+実装の契約と、稼働確認の条件は分ける。今回の結果は上記の検証記録に残し、今後の拡張でも次の境界を維持・再検証する。
 
 - 実Taskの鍵・DB資格情報不在、開始許可前の0要求、egress denyとActor実停止・worker未割当。
 - 質問から新Taskへ移る時間、rootの実作業90秒と人待ち24時間、停止済み待機での全体枠解放。
@@ -273,6 +272,19 @@ Gatewayは送信前intentと予算を確定し、相手の冪等キー・結果�
 - ログアウト後の同token遅延受付、所属削除→再加入、disabled→activeで旧rootが復活しないこと。
 - 他人・別Workspaceの参照拒否、私有成果物、旧チャット・履歴・費用guardの回帰。
 
-任意コード、subagent、RAG、外部更新の境界はまだ実装済みではない。これらの導入時には、全通信・制御RPC・ファイル隔離、親子権限と予算、ACL失効と派生物、接続先の認証・結果照会を別途検証する。同じTaskのresume、実provider、動的準備に必要な時間・容量、管理UIも後続判断とする。上限拡大や有料送信の許可を、模擬providerの検証から導かない。
+任意コード、subagent、RAG、外部更新の境界はまだ実装済みではない。これらの導入時には、全通信・制御RPC・ファイル隔離、親子権限と予算、ACL失効と派生物、接続先の認証・結果照会を別途検証する。同じTaskのresume、モデルの選択肢拡大、動的準備に必要な時間・容量、管理UIも後続判断とする。上限拡大や有料送信の許可を、模擬providerの検証から導かない。
 
 判断の履歴は[タスク記録](../.space/tasks/ax-agent-runtime/task.md)、初期契約は[implementation.md](../.space/tasks/ax-agent-runtime/implementation.md)、結果は[verification.md](../.space/tasks/ax-agent-runtime/verification.md)を参照する。
+
+
+## 12. 実モデル送信と費用の確定
+
+実モデルは `gemini-3.1-flash-lite`、標準テキスト料金、固定profile版を使う。送信先・モデル・出力形式・思考設定をTaskから自由指定させない。鍵はGo Gatewayだけが読むファイルに置き、AX Taskのenvやpromptには渡さない。`model_gateway.enabled`の既定はfalseで、配備時に明示して有効化する。
+
+PGで権限と予算を確認して予約し、Gatewayが最終送信内容をcountTokensで一度計数する。生成直前に所属・停止・期限をもう一度確認し、同じ操作に一回だけ生成権を発行する。確認応答が不明なら再生成しない。SDKの要求と、Gatewayが固定設定へ正規化した送信内容は、それぞれ別のhashで記録する。
+
+生成の出力は思考込みで一区間最大256、root合計512トークン。入力は事前計数へ128トークンの余裕を加え、root残量内なら送信する。countと実usageの完全一致を保証できないため、入力6000は事前判定と実測超過時の停止で扱う。超過や形式不正でも、既知のusage・概算費用を保存する。成果物としての成功と、費用の確定を同じ判定にしない。
+
+0.01 USDの試用停止条件には、従来の有料チャット、新しい有料対話、未精算予約を合算する。これは公開単価による概算の停止ガードであり、請求額の絶対保証ではない。countTokens固有の無料という明示は確認できていないため、生成のusageによる概算と全請求を同一視しない。利用者が設定した2,000円の上限・前払いを引き上げず、試験後は送信を閉じる。
+
+schema v5がmode・profile・送信/精算記録を追加する。旧rootはpreviewとして扱い、v1〜v4のSQL、既存のrequest・実行manifest・hashを変更しない。API/Web/controllerはv5対応版をそろえて更新する。詳細は[送信と精算の契約](../.space/tasks/ax-agent-model/contract.md)を参照。

@@ -6,7 +6,8 @@ import { readAuthConfig } from "../server/auth-config";
 import { createPool } from "../server/auth-store";
 
 async function run() {
-  if (process.argv[2] !== "--deploy" || process.argv.length !== 3) throw new Error("Choose --deploy after closing legacy admission.");
+  const enableModel = process.argv[3] === "--enable-model";
+  if (process.argv[2] !== "--deploy" || process.argv.length !== (enableModel ? 4 : 3)) throw new Error("Choose --deploy after closing admission; add --enable-model only for bounded model use.");
   const root = resolve("../ax-local");
   if (!existsSync(resolve(root, ".state/execution/managed"))) throw new Error("Legacy admission must be retired first.");
   const versions = JSON.parse(readFileSync(resolve(root, "versions.json"), "utf8"));
@@ -30,6 +31,7 @@ async function run() {
     substrate: { address: "api.ate-system.svc:443", server_name: "api.ate-system.svc", ca_path: "/run/servicedns-ca/trust-bundle.pem", bearer_path: "/var/run/secrets/ateapi/token" },
     secret_group_read: true, atespace: "ax-demo", image: versions.runner_task,
     interactive: { image: versions.runner_task, atespace: "ax-runtime", guest_identity: "spiffe://cluster.local/ns/ax-demo/sa/default" },
+    model_gateway: { enabled: enableModel, api_key_path: "/run/model-gateway/GEMINI_API_KEY" },
     allowed_hosts: ["generativelanguage.googleapis.com"], call_timeout_seconds: 15, lifecycle_timeout_seconds: 180,
     controller_id: "ax-local-controller", database: { host: "host.docker.internal", port: 55432, database: auth.database.database, user: "ax_execution",
       password_path: "/run/execution-database/password", ca_path: "/run/execution-database/ca.pem", server_name: "localhost", schema: "public" },
@@ -45,6 +47,12 @@ async function run() {
       "ca.pem": readFileSync(auth.database.caPath, "utf8"),
     } },
   ] };
+  if (enableModel) {
+    const secret = JSON.parse(kubectl(["-n", "ax-demo", "get", "secret", "gemini-api-secret", "-o", "json"]));
+    const key = secret.data?.GEMINI_API_KEY;
+    if (typeof key !== "string" || !key || key.length > 8192) throw new Error("A bounded model credential is required.");
+    kubectl(["apply", "-f", "-"], { apiVersion: "v1", kind: "Secret", metadata: { name: "ax-model-gateway", namespace: "ax-system" }, type: "Opaque", data: { GEMINI_API_KEY: key } });
+  }
   kubectl(["apply", "-f", "-"], resources);
   kubectl(["-n", "ax-demo", "patch", "workerpool", "ax-local", "--type=merge", "--patch-file=/dev/stdin"], { spec: { workerImage: versions.worker_controlled } });
   const deployment = JSON.parse(kubectl(["-n", "ax-system", "get", "deployment", "ax-server", "-o", "json"]));
@@ -69,6 +77,7 @@ async function run() {
     volumeMounts: [
       { name: "execution-config", mountPath: "/etc/execution", readOnly: true },
       { name: "execution-database", mountPath: "/run/execution-database", readOnly: true },
+      ...(enableModel ? [{ name: "model-gateway", mountPath: "/run/model-gateway", readOnly: true }] : []),
       { name: "execution-identity", mountPath: "/run/podidentity", readOnly: true },
       { name: "ate-token", mountPath: "/var/run/secrets/ateapi", readOnly: true },
       { name: "servicedns-ca", mountPath: "/run/servicedns-ca", readOnly: true },
@@ -77,7 +86,7 @@ async function run() {
   pod.securityContext = { ...pod.securityContext, fsGroup: 65532 };
   pod.terminationGracePeriodSeconds = 30;
   for (const volume of pod.volumes) if (volume.name === "ate-token") volume.projected.defaultMode = 0o440;
-  pod.volumes = pod.volumes.filter((volume: { name: string }) => !["execution-config", "execution-database", "execution-identity"].includes(volume.name));
+  pod.volumes = pod.volumes.filter((volume: { name: string }) => !["execution-config", "execution-database", "execution-identity", "model-gateway"].includes(volume.name));
   pod.volumes.push(
     { name: "execution-config", configMap: { name: "ax-execution" } },
     { name: "execution-database", secret: { secretName: "ax-execution-database", defaultMode: 0o440 } },
@@ -86,12 +95,13 @@ async function run() {
       { clusterTrustBundle: { signerName: "podidentity.podcert.ate.dev/identity", labelSelector: { matchLabels: { "podcert.ate.dev/canarying": "live" } }, path: "trust-bundle.pem" } },
     ] } },
   );
+  if (enableModel) pod.volumes.push({ name: "model-gateway", secret: { secretName: "ax-model-gateway", defaultMode: 0o440 } });
   delete deployment.metadata.managedFields;
   delete deployment.status;
   deployment.spec.strategy = { type: "Recreate" };
   kubectl(["replace", "-f", "-"], deployment);
   kubectl(["-n", "ax-system", "delete", "service", "ax-server", "--ignore-not-found"]);
-  console.info("Managed execution deployment requested. Verify readiness and direct-connection denial before opening admission.");
+  console.info(`Managed execution deployment requested; model sending ${enableModel ? "enabled for bounded use" : "disabled"}. Verify readiness and direct-connection denial before opening admission.`);
 }
 try { await run(); }
 catch { console.error("Managed deployment stopped. Admission remains closed; inspect local deployment status."); process.exitCode = 1; }

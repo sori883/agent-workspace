@@ -1,7 +1,7 @@
 ---
 type: decision
 title: AX Task内の対話型ランタイムと外部の制御基盤
-description: AX内Runtimeへ変更した判断、外部の認可・秘密・費用、SDK継続試作と初期対話経路の条件
+description: AX内Runtimeと外部の認可・秘密・費用、実モデル接続・停止・継続の条件
 status: draft
 governance: context
 code_refs: 
@@ -9,6 +9,8 @@ code_refs:
   - execution/
   - ax-local/task_runtime/
   - ax-local/runner/Dockerfile
+  - web/data/schema-v5.sql
+  - web/app/routes/agent.tsx
 sources: 
   - resource: docs/agent-runtime-design.md
   - resource: .space/tasks/ax-agent-runtime/task.md
@@ -20,9 +22,12 @@ sources:
   - resource: .space/tasks/ax-agent-runtime/spike/README.md
   - resource: .space/tasks/ax-agent-runtime/implementation.md
   - resource: .space/tasks/ax-agent-runtime/verification.md
+  - resource: .space/tasks/ax-agent-model/contract.md
+  - resource: .space/tasks/ax-agent-model/verification.md
+  - resource: .space/tasks/ax-agent-model/integration-review.md
 generated: 
   by: agent:codex
-  at: 2026-10-07T07:47:20.291Z
+  at: 2026-10-07T10:06:07.293Z
 ---
 # AX Task内の対話型ランタイムと外部の制御基盤
 
@@ -31,6 +36,16 @@ generated:
 利用者提供の独立レビューをコードと照合し、**A：Agent RuntimeをAX Task内で、作業が進む区間だけ動かす構成**へ推奨を変更した。会話・認可・秘密・費用の正本はAX外に置く。Bの常駐Runtimeは起動遅延等の実測で必要性が示された場合の再検討案とする。これは設計判断であり、詳細全項目の人間承認や稼働保証ではない。
 
 利用者はランタイム充実の方向性を了承して実装を依頼した後、AX外配置に疑問を示し、別担当のレビュー結果を提供した。実装依頼は取り消されていない。Aを採用し、初期の無課金対話プレビューを実装した。実Keycloak・実Webから実AX Taskを2区間動かし、質問→再読込→回答→本人の成果物、別ユーザーの拒否、PG使用量と独立した実停止観測を確認した。模擬providerによる固定の質問・回答転記であり、実モデルによる推論とは表示しない。
+
+## 実モデル接続（2026-10-07）
+
+その後、利用者の実装依頼によりGemini 3.1 Flash-Liteを接続した。受付時にpreview/modelと固定の料金profileを保存し、modelは明示同意を必須にする。旧履歴はpreviewのまま入力bytes・hashを維持し、追加schema-v5で移行した。
+
+モデル鍵は外側のGo Gatewayだけが保持する。TaskのSDK要求を固定の本文生成payloadへ変換し、PG予約→count→生成直前の本人・失効・停止・残予算再確認→一回の生成→外部台帳へのusage精算を行う。SDK・HTTPとも再試行しない。形式不正などの失敗でも既知usageと費用は保存し、usage不明なら予約と全体holdを維持する。旧有料adapterも含む0.01 USD停止ガードを共有する。
+
+入力6000は事前計数と128トークンの余裕で制限し、実usage超過は記録して停止する。入力・請求額の絶対上限保証ではない。出力は思考込み累積512、各区間256以下、合計3要求・2固定tool・実作業90秒を維持する。countTokensの無料を前提にせず、料金表示は公開生成単価の概算とする。
+
+実Keycloak・Web・PG・AXで日時の質問→回答→会議案内生成が2区間で成功した。生成2回・count2回、input2005/output90、18,239ms、今回概算0.00063625 USD。別ユーザーの拒否、保存と独立した実停止も確認した。試験後は有料Gatewayを無効化し鍵mountを外し、無料previewの成功と全体概算0.00422600 USD不変を確認した。固定スキル/固定toolの範囲であり、生成コード・subagent・外部接続は後続である。
 
 ## 変更した理由と事実の訂正
 
