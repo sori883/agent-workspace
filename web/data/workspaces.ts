@@ -6,9 +6,9 @@ import type { Database } from "./db";
 import { sha256, utf8 } from "./canonical";
 const errors = new Map<string, 400 | 403 | 404 | 409>([
   ["invalid_request", 400], ["invalid_owner_user_id", 400], ["workspace_required", 400],
-  ["workspace_forbidden", 403], ["verified_email_required", 403], ["invitation_recipient_mismatch", 403],
-  ...["workspace_not_found", "group_not_found", "member_not_found", "invitation_not_found"].map((code) => [code, 404] as const),
-  ...["workspace_creation_limit", "last_workspace_admin", "idempotency_conflict", "invitation_unavailable", "invitation_sender_inactive", "invitation_already_used"].map((code) => [code, 409] as const),
+  ["workspace_forbidden", 403], ["workspace_owner_required", 403], ["ownership_transfer_forbidden", 403], ["verified_email_required", 403], ["invitation_recipient_mismatch", 403],
+  ...["workspace_not_found", "group_not_found", "member_not_found", "invitation_not_found", "ownership_transfer_not_found"].map((code) => [code, 404] as const),
+  ...["workspace_ownership_limit", "workspace_owner_cannot_leave", "ownership_transfer_pending", "ownership_transfer_unavailable", "ownership_transfer_invalid_recipient", "last_workspace_admin", "idempotency_conflict", "invitation_unavailable", "invitation_sender_inactive", "invitation_already_used"].map((code) => [code, 409] as const),
 ]);
 function parse<T>(schema: z.ZodType<T>, value: unknown): T {
   const parsed = schema.safeParse(value);
@@ -29,6 +29,13 @@ export class WorkspaceRepository implements WorkspaceService {
       if (error && typeof error === "object" && "code" in error && error.code === "P0001" && "message" in error && typeof error.message === "string" && errors.has(error.message)) throw new RunServiceError(error.message, errors.get(error.message));
       throw new RunServiceError("bridge_unavailable");
     }
+  }
+  proposeOwnership(owner: string, id: string, input: c.OwnershipTransferInput) {
+    const value = parse(c.ownershipTransferInputSchema, input);
+    return this.call("org_propose_ownership", [parse(c.workspaceIdSchema, owner), parse(c.workspaceIdSchema, id), value.key, value.to_user_id, crypto.randomUUID()], c.ownershipTransferResultSchema);
+  }
+  respondOwnership(owner: string, id: string, transferId: string, action: c.OwnershipTransferAction) {
+    return this.call("org_respond_ownership", [parse(c.workspaceIdSchema, owner), parse(c.workspaceIdSchema, id), parse(c.workspaceIdSchema, transferId), parse(c.ownershipTransferActionSchema, action)], c.workspaceMutationResultSchema);
   }
   list(owner: string) { return this.call("org_list", [parse(c.workspaceIdSchema, owner)], c.workspaceListSchema); }
   create(owner: string, input: c.WorkspaceCreateInput) {

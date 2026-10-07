@@ -167,6 +167,13 @@ export function createApi(config: ApiConfig, onCheck: (id: string) => void = () 
   app.post("/v1/workspaces/:id/invitations", c => runResponse(c, wc.invitationCreateResultSchema, async () => workspaceService().invite(c.get("ownerUserId"), id(c), await runBody(c.req.raw, wc.invitationCreateInputSchema))));
   app.delete("/v1/workspaces/:id/invitations/:inviteId", c => runResponse(c, wc.workspaceMutationResultSchema, () => workspaceService().revokeInvitation(c.get("ownerUserId"), id(c), id(c,"inviteId"))));
   app.post("/v1/invitations/accept", c => runResponse(c, wc.invitationAcceptResultSchema, async () => workspaceService().accept(c.get("ownerUserId"), await runBody(c.req.raw, wc.invitationAcceptInputSchema))));
+  app.post("/v1/workspaces/:id/ownership-transfers", c => runResponse(c, wc.ownershipTransferResultSchema, async () => workspaceService().proposeOwnership(c.get("ownerUserId"), id(c), await runBody(c.req.raw, wc.ownershipTransferInputSchema))));
+  app.post("/v1/workspaces/:id/ownership-transfers/:transferId/:action", c => runResponse(c, wc.workspaceMutationResultSchema, async () => {
+    const action = wc.ownershipTransferActionSchema.safeParse(c.req.param("action"));
+    if (!action.success) throw new RunServiceError("invalid_request", 400);
+    await runBody(c.req.raw, wc.workspaceEmptyInputSchema);
+    return workspaceService().respondOwnership(c.get("ownerUserId"), id(c), id(c,"transferId"), action.data);
+  }));
   app.notFound((context) => context.json({ error: "not_found" }, 404));
   app.onError(() => new Response(JSON.stringify({ error: "internal_error" }), {
     status: 500,

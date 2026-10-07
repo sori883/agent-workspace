@@ -1,3 +1,8 @@
+## 2026-10-07
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).
+* **Update**: [組織への所属を権限と業務ロールの境界にする](decisions/systems/ax/workspace-access.md).
+
 ## 2026-10-06
 * **Relationship**: [組織への所属を権限と業務ロールの境界にする](decisions/systems/ax/workspace-access.md).
 * **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).

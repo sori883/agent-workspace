@@ -17,9 +17,10 @@ sources:
   - resource: web/data/schema.sql
   - resource: execution/controller/
   - resource: .space/tasks/ax-portable-api/verification.md
+  - resource: .space/tasks/ax-workspace-access/ownership.md
 generated: 
   by: agent:codex
-  at: 2026-10-06T14:18:10.198Z
+  at: 2026-10-07T01:10:31.390Z
 ---
 # ローカルWebの境界と非同期実行
 
@@ -45,9 +46,9 @@ API/business layer、SQL、native adapter、配備設定に対応する図であ
 
 ## Workspaceによる利用先と本人限定
 
-ログイン後は `/workspaces` で作成・選択・招待参加する。Userの作成上限は3個で、招待所属とは別に数える。管理権限admin/memberと業務ロールgeneral/developerはWorkspaceごとの所属に保存する。Group参加は同じWorkspace内に限定する。所属と招待の正本はapp DBのorg_*領域で、Keycloakは本人確認を担当する。
+ログイン後は `/workspaces` で作成・選択・招待参加する。Userの現在所有上限は50個で、招待参加には上限を設けない。所有者は一人のadmin所属として別に持ち、相手の承諾で所有権を譲渡すると元の所有者の枠が空く。所有者は譲渡前に退出・削除・降格できない。管理権限admin/memberと業務ロールgeneral/developerはWorkspaceごとの所属に保存する。Group参加は同じWorkspace内に限定する。所属と招待の正本はapp DBのorg_*領域で、Keycloakは本人確認を担当する。
 
-チャット・実行URLはworkspaceを明示し、APIのX-AX-Workspace-IDと現在所属、記録のownerで認可する。管理者でも他人の会話は閲覧できない。旧記録はNULL Workspaceのまま `legacy=1` から本人限定の参照・安全復旧に使い、新規送信は止める。招待は確認済みメール、7日期限、取消、招待元の現在権限を検査し、秘密のハッシュだけ保存する。
+チャット・実行URLはworkspaceを明示し、APIのX-AX-Workspace-IDと現在所属、記録のownerで認可する。Workspaceの所有者・管理者でも他人の会話は閲覧できず、譲渡で会話や実行のownerは変わらない。旧記録はNULL Workspaceのまま `legacy=1` から本人限定の参照・安全復旧に使い、新規送信は止める。招待は確認済みメール、7日期限、取消、招待元の現在権限を検査し、秘密のハッシュだけ保存する。
 
 開始側のintentでも所属を再確認する。確定した失効は新たな開始を止めて未開始終了またはcleanupへ進み、通信不明は保留する。開始済み処理の回収・停止まで所属解除で禁止しない。詳細は[組織所属の決定](../decisions/systems/ax/workspace-access.md)、最新の確認は `.space/tasks/ax-workspace-access/verification.md`。
 

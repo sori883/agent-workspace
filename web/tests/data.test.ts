@@ -58,6 +58,7 @@ before(async () => {
     await client.query(readFileSync(new URL("../server/auth-schema-v2.sql", import.meta.url), "utf8"));
     await client.query(readFileSync(new URL("../data/schema.sql", import.meta.url), "utf8"));
     await client.query(readFileSync(new URL("../data/schema-v2.sql", import.meta.url), "utf8"));
+    await client.query(readFileSync(new URL("../data/schema-v3.sql", import.meta.url), "utf8"));
     await client.query("INSERT INTO users(id,status,display_name) VALUES($1,'active','A'),($2,'active','B')", [owner, other]);
     await client.query("COMMIT");
   } catch (error) { await client.query("ROLLBACK"); throw error; }

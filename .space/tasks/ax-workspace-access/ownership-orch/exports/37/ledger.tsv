@@ -1,0 +1,7 @@
+revision	updated_at	id	unit	attempt	condition	target	target_version	verdict	supersedes	evidence
+37	2026-10-07T01:16:42.966Z	23bc24d5-609b-486b-80bb-5c7f64528063	ownership-api	1	complete	result	c9740b3e6ffe761c615631a9f36abfb2d85cc335e2c35fa67db9e9ea04562fb7	pass		.space/tasks/ax-workspace-access/ownership-api-verification.md
+37	2026-10-07T01:16:42.966Z	de9efbd5-c5c5-4db6-b0a0-b44de4725a66	ownership-ui	1	complete	result	8e17ff0f1a3bf62055f7cd29f05911e376c3f871af400499c1a3912a3b41280e	pass		.space/tasks/ax-workspace-access/ownership-ui-verification.md
+37	2026-10-07T01:16:42.966Z	8ee233f5-c7f1-4d88-af4c-b4d7f19401a1	ownership-review	1	complete	result	d037675a07bfbb9e0d837b38881e8447aab729c9230ab463c70996e360c7e613	pass		.space/tasks/ax-workspace-access/ownership.md
+37	2026-10-07T01:16:42.966Z	53b2a7c2-8f81-41d6-806b-7f2abdf5c89f	ownership	1	complete	result	d7f6a5e88c35d9c68e675b3cbc2e440881d4e209b4b897d79fc196298b12980b	pass		.space/tasks/ax-workspace-access/ownership.md
+37	2026-10-07T01:16:42.966Z	6968cc3b-3ea9-4963-9d6d-f51026e6a406	ownership-review	2	complete	result	45cd13fc853b0fe988dd5bedcbcc1da6a198e8f2bc9ef480eeb3e6e22924de97	pass		.space/tasks/ax-workspace-access/ownership.md
+37	2026-10-07T01:16:42.966Z	dcb6a4d2-2222-40dc-8c12-e833fc7a7062	ownership	2	complete	result	9b4b8bede1d3f42e8e7ec25532622a7b5036c82854f02664e7f40d53d8a2ca7b	pass		.space/tasks/ax-workspace-access/ownership.md
