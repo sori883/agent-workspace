@@ -10,16 +10,30 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sori883/agent-workspace/execution/gateway"
 	"github.com/sori883/agent-workspace/execution/native"
 )
 
 type agentStore struct {
 	*fakeStore
-	responses    map[int][]byte
-	reserveError error
-	settleError  bool
-	sends        int
-	settlements  int
+	responses      map[int][]byte
+	reserveError   error
+	settleError    bool
+	sends          int
+	settlements    int
+	authorizations int
+	authorizeError error
+	evidence       gateway.Evidence
+	usage          map[string]float64
+	denySettlement bool
+	holdOnFinish   bool
+}
+
+func (s *agentStore) Finish(ctx context.Context, c *Claim) error {
+	if s.holdOnFinish {
+		return ErrHeld
+	}
+	return s.fakeStore.Finish(ctx, c)
 }
 
 func (s *agentStore) Reserve(_ context.Context, _ *Claim, m *native.Mailbox) (Reservation, error) {
@@ -27,15 +41,27 @@ func (s *agentStore) Reserve(_ context.Context, _ *Claim, m *native.Mailbox) (Re
 		return Reservation{}, s.reserveError
 	}
 	if response, ok := s.responses[m.Request.Sequence]; ok {
-		return Reservation{Response: response}, nil
+		return Reservation{Response: response, ProfileID: s.claim.Agent.ProfileID}, nil
 	}
 	s.sends++
-	return Reservation{Send: true}, nil
+	return Reservation{Send: true, InputLimit: 6000, OutputLimit: 256, ProfileID: s.claim.Agent.ProfileID}, nil
 }
-func (s *agentStore) Settle(_ context.Context, _ *Claim, m *native.Mailbox, r []byte, _ map[string]float64, _ int) error {
+func (s *agentStore) AuthorizeGeneration(context.Context, *Claim, *native.Mailbox, string, int) error {
+	s.authorizations++
+	return s.authorizeError
+}
+func (s *agentStore) Settle(_ context.Context, _ *Claim, m *native.Mailbox, r []byte, usage map[string]float64, _ int, evidence gateway.Evidence) error {
 	s.settlements++
+	s.evidence = evidence
+	s.usage = usage
 	if s.settleError {
 		return errors.New("settle_ack_lost")
+	}
+	if s.denySettlement {
+		parsed, _ := native.ParseReply(r, m)
+		parsed.Status = "denied"
+		parsed.Body = map[string]json.RawMessage{"code": json.RawMessage(`"model_budget_exceeded"`)}
+		r, _ = json.Marshal(parsed)
 	}
 	s.responses[m.Request.Sequence] = r
 	return nil
@@ -71,6 +97,7 @@ func (e *interactiveExecutor) Status(ctx context.Context, r native.Request) (nat
 func interactiveFixture(t *testing.T) (*Controller, *agentStore, *interactiveExecutor) {
 	c, s, e := setup(t)
 	s.claim.Request = native.Request{SchemaVersion: 1, RunID: runID, Adapter: "interactive", Instruction: "test", OutputName: "reply.txt", Inputs: map[string]string{"conversation.json": "[]", "runtime.json": `{"version":1,"root_id":"12345678-1234-1234-1234-123456789abc","phase":"request","question_id":null,"skill_id":"brief-v1","remaining_ms":90000}`}}
+	s.claim.Agent = &gateway.Agent{Mode: "preview", ProfileID: gateway.PreviewProfileID}
 	e.result.Adapter = "interactive"
 	e.result.Artifact.Name = "reply.txt"
 	stop := "UNSPECIFIED"

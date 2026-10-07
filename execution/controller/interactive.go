@@ -12,14 +12,19 @@ import (
 )
 
 var ErrGatewayDenied = errors.New("agent_send_denied")
+var ErrModelUsageUnknown = errors.New("model_usage_unknown")
 
 type Reservation struct {
-	Send     bool            `json:"send"`
-	Response json.RawMessage `json:"response"`
+	Send        bool            `json:"send"`
+	Response    json.RawMessage `json:"response"`
+	InputLimit  int             `json:"input_limit"`
+	OutputLimit int             `json:"output_limit"`
+	ProfileID   string          `json:"profile_id"`
 }
 type AgentStore interface {
 	Reserve(context.Context, *Claim, *native.Mailbox) (Reservation, error)
-	Settle(context.Context, *Claim, *native.Mailbox, []byte, map[string]float64, int) error
+	AuthorizeGeneration(context.Context, *Claim, *native.Mailbox, string, int) error
+	Settle(context.Context, *Claim, *native.Mailbox, []byte, map[string]float64, int, gateway.Evidence) error
 }
 type MailboxExecutor interface {
 	Mailbox(context.Context, string) (*native.Mailbox, error)
@@ -41,22 +46,38 @@ func (c *Controller) processMailbox(ctx context.Context, claim *Claim) error {
 	if err != nil {
 		return err
 	}
+	if claim.Agent == nil || !claim.Agent.Valid() || reservation.ProfileID != claim.Agent.ProfileID {
+		return errors.New("invalid_gateway_reservation")
+	}
 	reply := []byte(reservation.Response)
 	if reservation.Send {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
 		var usage map[string]float64
-		reply, usage, err = gateway.Respond(claim.Request, mailbox)
+		var evidence gateway.Evidence
+		reply, usage, evidence, err = c.respond(ctx, store, claim, mailbox, reservation)
 		if err != nil {
 			return err
 		}
-		if err = store.Settle(ctx, claim, mailbox, reply, usage, int(time.Since(began).Milliseconds())); err != nil {
+		settleContext, stop := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
+		err = store.Settle(settleContext, claim, mailbox, reply, usage, int(time.Since(began).Milliseconds()), evidence)
+		stop()
+		if err != nil {
 			return err
 		}
+		observed, readErr := store.Reserve(ctx, claim, mailbox)
+		if readErr != nil || observed.Send || observed.ProfileID != claim.Agent.ProfileID {
+			return errors.New("gateway_settlement_unconfirmed")
+		}
+		reply = observed.Response
 	}
-	if _, err := native.ParseReply(reply, mailbox); err != nil {
+	parsed, err := native.ParseReply(reply, mailbox)
+	if err != nil {
 		return errors.New("invalid_gateway_response")
+	}
+	if parsed.Status == "denied" {
+		return ErrGatewayDenied
 	}
 	if err := ctx.Err(); err != nil {
 		return err
@@ -79,6 +100,61 @@ func (c *Controller) processMailbox(ctx context.Context, claim *Claim) error {
 		return executor.Reply(ctx, mailbox, observed.Response)
 	}
 	return nil
+}
+
+func (c *Controller) respond(ctx context.Context, store AgentStore, claim *Claim, mailbox *native.Mailbox, reservation Reservation) ([]byte, map[string]float64, gateway.Evidence, error) {
+	if claim.Agent.Mode == "preview" || mailbox.Request.Kind == "tool" {
+		reply, usage, err := gateway.Respond(claim.Request, mailbox)
+		return reply, usage, gateway.Evidence{Outcome: "ok", Code: "ok"}, err
+	}
+	evidence := gateway.Evidence{Outcome: "no_send", Code: "model_not_configured"}
+	noSend := func(code string) ([]byte, map[string]float64, gateway.Evidence, error) {
+		evidence.Code = code
+		usage := gateway.ZeroUsage()
+		reply, err := gateway.ModelReply(mailbox, gateway.Generated{Usage: usage, Evidence: evidence})
+		return reply, usage, evidence, err
+	}
+	if c.ModelProvider == nil {
+		return noSend("model_not_configured")
+	}
+	limits := gateway.Limits{Input: reservation.InputLimit, Output: reservation.OutputLimit}
+	prepared, err := gateway.Prepare(claim.Request, mailbox, limits)
+	if err != nil {
+		return noSend("model_request_invalid")
+	}
+	evidence.PayloadSHA256 = &prepared.SHA256
+	if ctx.Err() != nil {
+		return noSend("model_deadline")
+	}
+	evidence.CountAttempt = 1
+	count, err := c.ModelProvider.Count(ctx, prepared)
+	if err != nil {
+		return noSend("model_count_failed")
+	}
+	evidence.CountedInputTokens = &count
+	if count <= 0 || count > limits.Input-gateway.InputMargin {
+		return noSend("model_input_limit")
+	}
+	if ctx.Err() != nil {
+		return noSend("model_deadline")
+	}
+	if err = store.AuthorizeGeneration(ctx, claim, mailbox, prepared.SHA256, count); err != nil {
+		if errors.Is(err, ErrGatewayDenied) || errors.Is(err, ErrAuthorizationRevoked) {
+			return noSend("model_authorization_revoked")
+		}
+		return nil, nil, evidence, err
+	}
+	if ctx.Err() != nil {
+		return nil, nil, evidence, errors.New("model_send_unconfirmed")
+	}
+	result, err := c.ModelProvider.Generate(ctx, prepared, limits)
+	if err != nil {
+		return nil, nil, evidence, ErrModelUsageUnknown
+	}
+	result.Evidence.CountAttempt = 1
+	result.Evidence.CountedInputTokens = &count
+	reply, err := gateway.ModelReply(mailbox, result)
+	return reply, result.Usage, result.Evidence, err
 }
 
 func (c *Controller) waitInteractive(ctx context.Context, claim *Claim, started time.Time) error {

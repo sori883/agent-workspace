@@ -21,6 +21,7 @@ workerはcontrollerのPod identityだけを許可する固定イメージを使�
 | `image` | Task用runnerのdigest固定イメージ |
 | `controller_id` | claimを所有するcontrollerの識別子 |
 | `allowed_hosts` | モデル接続時だけ許可するホスト |
+| `model_gateway` | 対話実モデル用enabledとapi_key_path。未設定/falseは実モデル送信禁止 |
 
 DBは外部配置できます。設定にKubernetes内のDBを必須としません。ローカル配備スクリプトだけはDockerの`localhost:55432`を対象とし、Podからは`host.docker.internal`へ接続します。外部DBでは環境に合う設定・資格情報の配備を別途用意してください。
 
@@ -122,10 +123,28 @@ Taskの領域は`ax-runtime`、実行workerは既存の`ax-demo/ax-local` Worker
 
 以前の専用worker構成から移す場合は、受付を閉じて対象Actorの実停止・worker未割当と未解決runを確認し、専用poolとそのworkerの退役を完了してから共有worker設定を配置する。旧poolを残したままidentityだけを変えると、schedulerの割当先によって接続できなくなる。別のworker poolを加えるときは、この配置前提とselectorの設計を見直す。
 
-TaskのSDKはloopback proxyへ要求し、固定mailboxに保存する。controllerは既存mTLS guest RPCで元bytes/hashを受け取り、`ax_agent_reserve`でroot予算・権限と一度限りの送信権を取得する。初期GatewayはGo内部の固定模擬providerだけで、HTTP送信先やモデル鍵の設定を持たない。`ax_agent_settle`で応答・模擬usageを保存してからguestへ返す。
+TaskのSDKはloopback proxyへ要求し、固定mailboxに保存する。controllerは既存mTLS guest RPCで元bytes/hashを受け取り、`ax_agent_reserve`でroot予算・権限と一度限りの処理権を取得する。previewはGo内部の固定模擬providerで応答し、外部へ送信しない。`ax_agent_settle`で応答・usageを保存し、DBの確定応答を読み戻してからguestへ返す。
 
 応答投入ACK喪失ではPGの確定済み応答を照合し、同じ応答を一度だけ再投入する。予約・確定の応答が不明ならモデル処理を再送せずholdする。確定した失効・停止・予算拒否はdeny/suspendへ進める。root累積3モデル・2tool・token・90秒の正本はPGで、Goも区間の残時間を期限にする。
 
 `mailbox`と`reply`は各64KiBまで。JSON重複キー、不正UTF-8、hash・run・sequence不一致を拒否する。Task側usageの自己申告だけで成功にせず、PGが保存済みGateway usage・許可したtool提案・成果物・cleanupと照合する。
 
 AXには[管理対象領域の注入禁止patch](../ax-local/patches/README.md)が必要。新規Actor不存在、専用templateの固定image/command、`AX_TASK_YAML`以外のenv無し、単一workspace、gVisor、resume前のworker未割当を検査する。生成コード、live provider、任意URL転送はこのpreviewに含まない。
+
+## 対話ランタイムの実モデル接続
+
+本人の明示同意で受付したmodel rootだけ、Gatewayから固定の `gemini-3.1-flash-lite` へ接続する。rootのmodeと料金profileはDBへ固定し、回答時に変更しない。Task内のSDKは実鍵を持たず、Taskのegress denyも維持する。秘密はexecutionコンテナだけへマウントする。
+
+```json
+{"model_gateway":{"enabled":true,"api_key_path":"/etc/gateway/GEMINI_API_KEY"}}
+```
+
+未設定またはenabled=falseなら実モデル区間を送信前に失敗として確定し、previewは継続できる。設定は起動時に読み込むので変更後は受付と実行状態を確認してcontrollerを更新する。秘密ファイルは通常0600、Podの信頼group読取を明示する場合は0440と所有groupを検証し、送信時に毎回読む。URLやモデル名は設定から変更できない。最終イメージは固定Go build imageのCA storeを同梱し、HTTPS検証を無効化しない。
+
+送信順序は費用予約→countTokens一度→現在の権限・stop・期限をDBで再確認→generateContent一度→usage精算→DB確定応答の読戻し。SDKの大きい既定出力値を引き継がず、GatewayがJSON Schema・text限定・minimal thinking・min(256,残output)へ組み直す。最終payload hashはTask mailbox hashとは別に保存する。再認可ACK、生成結果、精算ACKが不明なら再送しない。
+
+入力はsystem instructionsと固定schemaを含む同じ生成要求をcountし、残入力から128を引いた範囲に収まる場合だけ生成する。countと生成usageの完全一致を保証するものではなく、実usageの超過は費用とともに保存して停止する。出力512の累積枠には思考tokenも含める。SDKの修正用追加生成は許可しない。生成応答がMAX_TOKENS・提案JSON不正でもusageが確認できれば精算して失敗にし、成功へ変換しない。
+
+実usageが欠けるHTTP失敗、timeout、不完全な本文は予約を残して保留する。HTTP処理が終了しstartが確認済みのinteractive区間に限り、同じ有効claimでdeny/suspendを行うが、未知usageの予約・全体枠は解放しない。create/resumeの不明結果やlease失効・プロセス取消はこの停止分岐へ入れず、管理者の復旧確認を必要とする。失敗HTTPを無課金とは見なさない。レスポンス本文込み64KiB、各HTTP最大25秒かつroot残時間内、redirectと環境proxyなし、再試行なし。秘密、エラー本文、思考内容をログへ出さない。生成に必要な本文はGoogleへ送信される。
+
+概算は標準テキスト入力0.25 USD、思考込み出力1.50 USD/100万tokenで、cache割引は見込まない。countTokens自体の無料明記は未確認であり、0.01 USDの概算停止ガードを全請求保証とは扱わない。[共有契約と公式根拠](../.space/tasks/ax-agent-model/contract.md)に条件を記載する。検証後はmodel gateを閉じる。実モデル接続の稼働証拠は親の[検証記録](../.space/tasks/ax-agent-model/verification.md)で別途管理する。

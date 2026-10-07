@@ -208,7 +208,11 @@ func parseCollection(data []byte, request Request) (Collection, error) {
 	return Collection{Result: wire.Result, Bytes: content}, nil
 }
 
-func decodeStrict(data []byte, target any) error {
+func DecodeStrict(data []byte, target any) error { return decodeStrict(data, target) }
+func DecodeJSON(data []byte, target any) error   { return decodeJSON(data, target, false) }
+
+func decodeStrict(data []byte, target any) error { return decodeJSON(data, target, true) }
+func decodeJSON(data []byte, target any, strictShape bool) error {
 	if len(data) > maxResponseBytes || !utf8.Valid(data) || !validEscapes(data) {
 		return errProtocol
 	}
@@ -220,7 +224,7 @@ func decodeStrict(data []byte, target any) error {
 	if _, err := decoder.Token(); err != io.EOF {
 		return errProtocol
 	}
-	if checkShape(data, reflect.TypeOf(target).Elem()) != nil {
+	if strictShape && checkShape(data, reflect.TypeOf(target).Elem()) != nil {
 		return errProtocol
 	}
 	decoder = json.NewDecoder(bytes.NewReader(data))

@@ -4,6 +4,8 @@
 * **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
 * **Update**: [AX Task内の対話型ランタイムと外部の制御基盤](decisions/systems/ax/agent-runtime.md).
 * **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Update**: [AX Task内の対話型ランタイムと外部の制御基盤](decisions/systems/ax/agent-runtime.md).
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
 * **Update**: [エージェント制御と隔離コード実行を分ける設計案](decisions/systems/ax/agent-runtime.md).
 * **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
 * **Update**: [エージェント制御と隔離コード実行を分ける設計案](decisions/systems/ax/agent-runtime.md).

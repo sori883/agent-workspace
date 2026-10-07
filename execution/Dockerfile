@@ -10,6 +10,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -trimpath -o /o
     CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -trimpath -o /out/offline-probe ./cmd/offline-probe && \
     CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -trimpath -o /out/inspect ./cmd/inspect
 FROM scratch
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=build /out/ax-controller /out/offline-probe /out/inspect /
 USER 65532:65532
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 CMD ["/ax-controller", "-healthcheck"]

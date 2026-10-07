@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/sori883/agent-workspace/execution/controller"
+	"github.com/sori883/agent-workspace/execution/gateway"
 	"github.com/sori883/agent-workspace/execution/native"
 )
 
@@ -24,6 +25,10 @@ type Endpoint struct {
 }
 
 type File struct {
+	ModelGateway *struct {
+		Enabled    bool   `json:"enabled"`
+		APIKeyPath string `json:"api_key_path"`
+	} `json:"model_gateway"`
 	SecretGroupRead bool     `json:"secret_group_read"`
 	AX              Endpoint `json:"ax"`
 	Guest           Endpoint `json:"guest"`
@@ -54,6 +59,26 @@ type File struct {
 		CAPath       string `json:"ca_path"`
 		Schema       string `json:"schema"`
 	} `json:"database"`
+}
+
+func (f File) ModelProvider() (gateway.Provider, error) {
+	if f.ModelGateway == nil || !f.ModelGateway.Enabled {
+		return nil, nil
+	}
+	if f.ModelGateway.APIKeyPath == "" {
+		return nil, errors.New("invalid_model_gateway_config")
+	}
+	return gateway.NewGemini(func() (string, error) {
+		data, err := read(f.ModelGateway.APIKeyPath, true, 4096, f.SecretGroupRead)
+		if err != nil {
+			return "", errors.New("model_credential_unavailable")
+		}
+		key := strings.TrimSpace(string(data))
+		if key == "" || strings.ContainsAny(key, "\r\n\x00") {
+			return "", errors.New("model_credential_unavailable")
+		}
+		return key, nil
+	}), nil
 }
 
 func (f File) InteractiveNative() (*native.Config, error) {

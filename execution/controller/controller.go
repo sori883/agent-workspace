@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/sori883/agent-workspace/execution/gateway"
 	"github.com/sori883/agent-workspace/execution/native"
 )
 
@@ -21,6 +22,7 @@ type Claim struct {
 	Image      string                      `json:"image"`
 	Result     *native.Result              `json:"result"`
 	Effects    map[native.Operation]Effect `json:"effects"`
+	Agent      *gateway.Agent              `json:"agent"`
 }
 
 type Store interface {
@@ -52,6 +54,7 @@ type Controller struct {
 	Executor            Executor
 	InteractiveExecutor Executor
 	InteractiveImage    string
+	ModelProvider       gateway.Provider
 	Image               string
 	PollInterval        time.Duration
 	HeartbeatInterval   time.Duration
@@ -73,7 +76,7 @@ func (c *Controller) RunOnce(ctx context.Context) (bool, error) {
 		return false, err
 	}
 	if claim.Request.Adapter == "interactive" {
-		if c.InteractiveExecutor == nil || c.InteractiveImage == "" {
+		if c.InteractiveExecutor == nil || c.InteractiveImage == "" || claim.Agent == nil || !claim.Agent.Valid() {
 			return true, errors.New("interactive_executor_unavailable")
 		}
 		selected := *c
@@ -104,7 +107,9 @@ func (c *Controller) RunOnce(ctx context.Context) (bool, error) {
 		}
 	}()
 	err = c.process(work, claim)
-	if (errors.Is(err, ErrAuthorizationRevoked) || errors.Is(err, ErrGatewayDenied)) && work.Err() == nil {
+	start := claim.Effects[native.StartOperation]
+	unknownCompletedModel := errors.Is(err, ErrModelUsageUnknown) && claim.Request.Adapter == "interactive" && claim.Kind == "execute" && start.Evidence["confirmed"] == true && start.Evidence["actor"] == claim.RunID
+	if (errors.Is(err, ErrAuthorizationRevoked) || errors.Is(err, ErrGatewayDenied) || unknownCompletedModel) && work.Err() == nil {
 		if len(claim.Effects) == 0 {
 			err = nil
 		} else {

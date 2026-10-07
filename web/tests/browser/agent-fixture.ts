@@ -19,7 +19,7 @@ export function agentFixture(baseRuns: RunService, baseChats: ChatService, check
   function segment(item: NonNullable<ReturnType<typeof roots.get>>, text: string) {
     const run_id = `ax-run-${randomUUID().replaceAll("-", "").slice(0, 16)}`;
     const accepted_at = new Date().toISOString();
-    const run: RunDetail = { summary: { run_id, adapter: "interactive", accepted_at, state: "running", phase: "running", resolved: false, active: true, can_recover: false, error_type: null }, request: { schema_version: 1, run_id, adapter: "interactive", instruction: text, inputs: {}, output_name: "reply.txt" }, result: null, cleanup: { egress_denied: false, suspended: false }, cleanup_errors: [] };
+    const run: RunDetail = { summary: { run_id, adapter: "interactive", agent_mode: item.root.mode, accepted_at, state: "running", phase: "running", resolved: false, active: true, can_recover: false, error_type: null }, request: { schema_version: 1, run_id, adapter: "interactive", instruction: text, inputs: {}, output_name: "reply.txt" }, result: null, cleanup: { egress_denied: false, suspended: false }, cleanup_errors: [] };
     item.runs.push(run);
     item.detail.turns.push({ summary: run.summary, user: text, assistant: null });
     item.detail.conversation = { ...item.detail.conversation, updated_at: accepted_at, head_run_id: run_id, turn_count: item.runs.length, state: "running" };
@@ -29,7 +29,7 @@ export function agentFixture(baseRuns: RunService, baseChats: ChatService, check
       const stopped = item.root.stop_requested;
       run.summary = { ...run.summary, state: stopped ? "not_started" : "succeeded", phase: "finished", resolved: true, active: false };
       run.cleanup = { egress_denied: true, suspended: true };
-      if (!stopped) run.result = { schema_version: 1, run_id, adapter: "interactive", status: "succeeded", exit_code: 0, stop_reason: "UNSPECIFIED", usage: { prompt_token_count: 100, candidates_token_count: 20, total_token_count: 120 }, estimated_usd: 0, error_type: null, artifact: { name: "reply.txt", size_bytes: Buffer.byteLength(reply), sha256: createHash("sha256").update(reply).digest("hex") } };
+      if (!stopped) run.result = { schema_version: 1, run_id, adapter: "interactive", status: "succeeded", exit_code: 0, stop_reason: "UNSPECIFIED", usage: { prompt_token_count: 100, candidates_token_count: 20, total_token_count: 120 }, estimated_usd: item.root.mode === "model" ? 0.000055 : 0, error_type: null, artifact: { name: "reply.txt", size_bytes: Buffer.byteLength(reply), sha256: createHash("sha256").update(reply).digest("hex") } };
       item.detail.turns[item.runs.length - 1] = { summary: run.summary, user: text, assistant: stopped ? null : reply };
       item.detail.conversation.state = run.summary.state;
       item.root.state = stopped ? "stopped" : item.runs.length === 1 ? "waiting_input" : "succeeded";
@@ -39,6 +39,7 @@ export function agentFixture(baseRuns: RunService, baseChats: ChatService, check
       item.root.revision++;
       item.root.model_calls++;
       item.root.tool_calls++;
+      item.root.estimated_usd = item.root.mode === "model" ? item.root.model_calls * 0.000055 : 0;
     }, 700);
     return { root_id: item.root.id, conversation_id: item.root.conversation_id, run_id, replayed: false };
   }
@@ -51,7 +52,7 @@ export function agentFixture(baseRuns: RunService, baseChats: ChatService, check
       const previous = keys.get(key);
       if (previous) { if (previous.payload !== JSON.stringify(input)) throw new RunServiceError("idempotency_conflict", 409); return { ...previous.result, replayed: true }; }
       const id = randomUUID();
-      const item = { owner, workspace, root: { id, conversation_id: input.conversation_id, state: "running", revision: 1, question_id: null, question: null, can_answer: false, stop_requested: false, model_calls: 0, tool_calls: 0, active_ms: 0, grant_expires_at: new Date(expires * 1000).toISOString(), wait_expires_at: null, preview: true } as AgentRoot, detail: { conversation: { id: input.conversation_id, title: input.text, updated_at: new Date().toISOString(), head_run_id: "", turn_count: 0, state: "running" }, turns: [], can_send: false, context_full: false, agent_root_id: id } as ConversationDetail, runs: [] as RunDetail[] };
+      const item = { owner, workspace, root: { id, conversation_id: input.conversation_id, state: "running", revision: 1, question_id: null, question: null, can_answer: false, stop_requested: false, model_calls: 0, tool_calls: 0, active_ms: 0, grant_expires_at: new Date(expires * 1000).toISOString(), wait_expires_at: null, preview: input.mode !== "model", mode: input.mode ?? "preview", model: input.mode === "model" ? "gemini-3.1-flash-lite" : null, estimated_usd: 0 } as AgentRoot, detail: { conversation: { id: input.conversation_id, title: input.text, updated_at: new Date().toISOString(), head_run_id: "", turn_count: 0, state: "running" }, turns: [], can_send: false, context_full: false, agent_root_id: id } as ConversationDetail, runs: [] as RunDetail[] };
       roots.set(id, item);
       const result = segment(item, input.text);
       keys.set(key, { payload: JSON.stringify(input), result });

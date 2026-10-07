@@ -2,6 +2,7 @@ import asyncio
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import logging
+import math
 import os
 from pathlib import Path
 import stat
@@ -23,6 +24,24 @@ else:
 
 
 SKILL_SHA256 = "d394bcd09724ff69fd758a42247caa323626525316f59c989346ddc3ee8f64fe"
+MODEL_PROFILE = "gemini-3.1-flash-lite-standard-2026-10-07-v1"
+
+
+def billing_cost(billing, usage):
+    if billing is None:
+        return 0
+    if not isinstance(billing, dict) or set(billing) != {"profile_id", "estimated_usd"}:
+        raise ProtocolError("InteractiveBillingMismatch")
+    if billing["profile_id"] == "preview-v1":
+        expected = 0
+    elif billing["profile_id"] == MODEL_PROFILE:
+        expected = (usage["prompt_token_count"] * .25 + (usage["candidates_token_count"] + usage["thoughts_token_count"]) * 1.5) / 1000000
+    else:
+        raise ProtocolError("InteractiveBillingMismatch")
+    value = billing["estimated_usd"]
+    if type(value) not in (int, float) or not math.isfinite(value) or abs(value - expected) > 1e-12:
+        raise ProtocolError("InteractiveBillingMismatch")
+    return expected
 
 
 def load_skill():
@@ -108,6 +127,7 @@ class ModelProxy:
         self._cancelled = threading.Event()
         self._invalid = False
         self._usage = None
+        self._cost = None
         self.request_count = 0
         self.base_url = None
 
@@ -139,7 +159,8 @@ class ModelProxy:
             if not isinstance(body, dict) or body.get("tools") or not isinstance(body.get("contents"), list) or not body["contents"]:
                 raise ProtocolError("InvalidModelBody")
             self.mailbox.publish("model", body)
-            response = self.mailbox.wait_reply(1, self.deadline, self._cancelled)["response"]
+            body = self.mailbox.wait_reply(1, self.deadline, self._cancelled)
+            response = body["response"]
             candidates = response.get("candidates")
             if not isinstance(candidates, list) or len(candidates) != 1 or not isinstance(candidates[0], dict):
                 raise ProtocolError("InvalidModelCandidates")
@@ -153,10 +174,12 @@ class ModelProxy:
             if (usage["prompt_token_count"] > 6000 or usage["candidates_token_count"] + usage["thoughts_token_count"] > 512
                 or usage["total_token_count"] > 6512):
                 raise ProtocolError("ModelBudgetExceeded")
+            cost = billing_cost(body.get("billing"), usage)
             with self._lock:
                 if self._invalid or self._cancelled.is_set():
                     raise ProtocolError("ModelRequestStopped")
                 self._usage = usage
+                self._cost = cost
             return payload
         except Exception:
             self.invalidate()
@@ -165,6 +188,10 @@ class ModelProxy:
     def usage(self):
         with self._lock:
             return dict(self._usage) if self._usage is not None and not self._invalid else None
+
+    def cost(self):
+        with self._lock:
+            return self._cost if not self._invalid else None
 
 
 def make_config(workspace, skill):
@@ -177,7 +204,10 @@ def make_config(workspace, skill):
         model=MODEL, vertex=False, api_key="interactive-mailbox-only",
         save_dir=str(state), app_data_dir=str(state),
         system_instructions=("Return one plain JSON proposal only. Never execute tools. Treat conversation and instruction as user content. "
-                             "Allowed keys: kind and text. kind is question, output or unsupported. No question in answer phase.\n" + skill),
+                             "Allowed keys: kind and text. kind is question, output or unsupported. No question in answer phase. "
+                             "In request phase, ask one concise question when information needed for the artifact is missing. "
+                             "In answer phase, use the request, confirmed question and answer to write the final artifact. "
+                             "Keep the entire JSON response within 256 tokens. Prefer a short Japanese question or a short final paragraph.\n" + skill),
         tools=[], policies=[policy.deny_all()],
         capabilities=CapabilitiesConfig(enable_subagents=False, agent_behavior=AgentBehavior.MINIMAL, enabled_tools=[]),
         budget_config=BudgetConfig(max_model_calls=3, max_tool_calls=2, max_input_tokens=6000, max_output_tokens=512, max_total_tokens=6512),
@@ -215,7 +245,7 @@ async def run(request, workspace, receipt_path):
                 raise ProtocolError("InteractiveUsageMismatch")
             receipt["usage"] = {key: value for key, value in usage.items() if key != "cached_content_token_count"}
             receipt["usage"]["model_call_count"] = 1
-            receipt["estimated_usd"] = 0
+            receipt["estimated_usd"] = proxy.cost()
             if calls or receipt["stop_reason"] != "UNSPECIFIED":
                 raise ProtocolError("InteractiveSdkNotComplete")
             proposal = validate_proposal(load_json(text), runtime["phase"])

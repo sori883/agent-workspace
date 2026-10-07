@@ -1,10 +1,31 @@
 package settings
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"testing"
 )
+
+func TestModelGatewayIsExplicitAndClosedWithoutReadingCredentials(t *testing.T) {
+	for _, source := range []string{`{}`, `{"model_gateway":{"enabled":false,"api_key_path":"/no-such-synthetic-key"}}`} {
+		var config File
+		if err := json.Unmarshal([]byte(source), &config); err != nil {
+			t.Fatal(err)
+		}
+		provider, err := config.ModelProvider()
+		if err != nil || provider != nil {
+			t.Fatal("closed model gateway constructed provider", err)
+		}
+	}
+	var config File
+	if err := json.Unmarshal([]byte(`{"model_gateway":{"enabled":true,"api_key_path":""}}`), &config); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := config.ModelProvider(); err == nil {
+		t.Fatal("enabled gateway accepted absent key path")
+	}
+}
 
 func TestSecretsArePrivateUnlessTrustedGroupIsExplicit(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "token")

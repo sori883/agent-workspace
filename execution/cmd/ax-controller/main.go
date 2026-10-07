@@ -70,6 +70,11 @@ func run() int {
 	}
 	defer db.Close()
 	runner := controller.New(db, adapter, config.Image)
+	runner.ModelProvider, err = config.ModelProvider()
+	if err != nil {
+		report("model_gateway_config_invalid")
+		return 2
+	}
 	interactiveConfig, err := config.InteractiveNative()
 	if err != nil {
 		report("interactive_config_invalid")

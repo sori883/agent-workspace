@@ -348,3 +348,11 @@ input { font: inherit; }
   .site-header { height: auto; min-height: 76px; flex-wrap: wrap; gap: 12px; padding-block: 16px; }
   .brand-name, .environment-chip { white-space: nowrap; }
 }
+
+.agent-mode { display: grid; gap: 12px; border: 0; padding: 0; margin: 0 0 24px; }
+.agent-mode legend { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.agent-mode label { display: flex; align-items: flex-start; gap: 10px; font-size: 16px; font-weight: 400; cursor: pointer; }
+.agent-mode input { width: 20px; height: 20px; margin: 3px 0 0; flex-shrink: 0; accent-color: var(--accent); }
+.agent-consent { margin: 0 0 24px; }
+.agent-consent label, .agent-consent p, .agent-usage { font-size: 16px; line-height: 1.5; }
+.agent-usage { color: var(--muted); overflow-wrap: anywhere; }

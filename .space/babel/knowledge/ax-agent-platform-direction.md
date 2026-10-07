@@ -10,7 +10,7 @@ tags:
   - egress
 generated: 
   by: agent:codex
-  at: 2026-10-07T07:47:20.385Z
+  at: 2026-10-07T10:06:07.420Z
 sources: 
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: ax-local/task-cli.md
@@ -36,6 +36,9 @@ sources:
   - resource: .space/tasks/ax-agent-runtime/spike/README.md
   - resource: .space/tasks/ax-agent-runtime/implementation.md
   - resource: .space/tasks/ax-agent-runtime/verification.md
+  - resource: .space/tasks/ax-agent-model/contract.md
+  - resource: .space/tasks/ax-agent-model/verification.md
+  - resource: .space/tasks/ax-agent-model/integration-review.md
 ---
 # AXを中心とするエージェント実行基盤の構想
 
@@ -43,7 +46,7 @@ sources:
 
 利用者提供の独立レビューをコードと照合し、Agent RuntimeをAX Task内で作業中の区間だけ動かすA案へ推奨を変更した。会話・認可・秘密・費用の正本はAX外に置く。当初のAX外常駐案は平常時の切替を減らす利点から選んだものだったが、AXの必須制約ではなく、常駐案にも保存・復旧が必要である。
 
-利用者はランタイム充実の方向を了承し実装を依頼した後、AX外配置に疑問を示してレビューを求めた。実装依頼は維持されている。初期の無課金対話プレビューを実装し、実Keycloak・実Web・実AXで質問→回答→本人の成果物と停止を確認した。固定の模擬providerなので、自由な依頼の推論や有料モデル接続は今回の経路に含まない。詳細は[ランタイムの決定](../decisions/systems/ax/agent-runtime.md)、`docs/agent-runtime-design.md` と `.space/tasks/ax-agent-runtime/task.md`。
+利用者はランタイム充実の方向を了承し実装を依頼した後、AX外配置に疑問を示してレビューを求めた。実装依頼は維持されている。初期の無課金対話プレビューを実装し、実Keycloak・実Web・実AXで質問→回答→本人の成果物と停止を確認した。その後、固定モデルGemini 3.1 Flash-Liteによる質問→回答→本文生成も実装・実機確認した。受付時に実モデル/無課金previewを固定し、有料利用の同意・外部Gatewayの鍵と認可・PG費用台帳を持つ。生成コード、subagent、接続先への委任はまだ後続である。実モデル試験は生成2回で概算0.00063625 USD、停止と本人限定を確認済み。費用方針に従い試験後は有料送信を閉じ、無課金previewを維持した。新しい契約と検証は `.space/tasks/ax-agent-model/contract.md` と `.space/tasks/ax-agent-model/verification.md`。詳細は[ランタイムの決定](../decisions/systems/ax/agent-runtime.md)、`docs/agent-runtime-design.md` と `.space/tasks/ax-agent-runtime/task.md`。
 
 現在は上流runnerが独自Python commandを起動する構成である。固定上流のスキル準備はディレクトリ作成にとどまり、MCP設定の実体化は確認した起動経路では未確認。goal bootstrapの失敗時続行やAXのモデル鍵自動注入も移行条件とする。これらを標準機能として利用済み・隔離保証済みとはしない。
 
