@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 131,
+  "revision": 137,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "parent",
     "session": "workbench-parent-1"
   },
   "createdAt": "2026-10-07T10:53:37.550Z",
-  "updatedAt": "2026-10-07T18:25:43.703Z",
+  "updatedAt": "2026-10-07T18:37:51.522Z",
   "units": [
     {
       "id": "workbench",
@@ -246,7 +246,7 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 22,
+      "version": 28,
       "contractVersion": 2,
       "attempts": [
         {
@@ -375,10 +375,41 @@
           "next": "",
           "resumeRef": null,
           "createdAt": "2026-10-07T14:17:51.265Z"
+        },
+        {
+          "number": 5,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "integrate",
+              "reason": "製品は既存実装のまま。CI用seed処理のみ修正し、局所検証と独立レビューを完了。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/files-ci-verification.md",
+                  "digest": "52920d93ed37bcb33f776530e888547b118caae30e9ee546a3daba8b15ddcd0d"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 2,
+            "contractFiles": [
+              {
+                "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+              }
+            ],
+            "dependencies": []
+          },
+          "reason": "PR20のCIで容量fixture一括INSERTが10秒timeout。assertionを維持した分割準備へ変更し、専用DB18件とtypecheck・独立レビューで再照合する。",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-07T18:37:51.160Z"
         }
       ],
-      "currentAttempt": 4,
-      "currentSubmission": "c79bff76-2fe6-458e-871f-a6b29d25f605",
+      "currentAttempt": 5,
+      "currentSubmission": "1f085b67-e9ec-40f3-9d04-c54f3ed94490",
       "contractHistory": [
         {
           "version": 1,
@@ -3399,6 +3430,83 @@
       "reusedFrom": null,
       "reuseReason": "",
       "at": "2026-10-07T18:25:43.484Z"
+    },
+    {
+      "id": "b853c771-c82e-42da-a836-69ccb939d0c1",
+      "unit": "files",
+      "attempt": 5,
+      "condition": "delivery",
+      "target": {
+        "id": "result",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "web/data/db.ts",
+            "digest": "da0ee79db47c5274677ab180bf3dfc1ff8daaca0fd6b35604f0922e9fb8b570e"
+          },
+          {
+            "ref": "web/data/files.ts",
+            "digest": "5fadc7ee17dccc5a113c17b8abfd87427fc77a3efcd57aea6ebadd67ea8f610a"
+          },
+          {
+            "ref": "web/data/permissions.ts",
+            "digest": "d7e3c5957b259121125465565d2c1c58ee27cd5b1987cccca670d1c8ddeed450"
+          },
+          {
+            "ref": "web/data/schema-v6.sql",
+            "digest": "cd2380231128fc573373213e33b3a8e5fb954877a1313553ee932c18b8c2f186"
+          },
+          {
+            "ref": "web/server/data-migrate.ts",
+            "digest": "9685ae3765a80fb201b357abefb16edd5451466d4acdac6b6659e8e079e2a527"
+          },
+          {
+            "ref": "web/shared/file-contracts.ts",
+            "digest": "12b337a293fcbee34be6212953d1713531f6fa77beece6d083968049100edb14"
+          },
+          {
+            "ref": "web/shared/file-transfer.ts",
+            "digest": "2082dea819b71f739aeb8e8d519afd7a940049e7aeddb789eb710983bb94ff7a"
+          },
+          {
+            "ref": "web/tests/files.test.ts",
+            "digest": "d41abcd29dbf49b03517f1a0f5f2613e8dae74f1d75ffcaabced4d1a765914c2"
+          },
+          {
+            "ref": "web/tests/workspaces.test.ts",
+            "digest": "ec8287682a1bf2ea5aabc6a22184d9aa0e054b07183540a8260c27ef3dfd52d1"
+          }
+        ],
+        "version": "3b14a969fb225b631a2d6ba36952ede712f0039c94cb1f15acd0d8da1941db80"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-agent-workbench/files-ci-verification.md",
+          "digest": "52920d93ed37bcb33f776530e888547b118caae30e9ee546a3daba8b15ddcd0d"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-workbench/workbench-web-verification.md",
+          "digest": "382c3b17d0c8b6f40cd863f675235f8ec5a7fa1a907f475d3016b7cd41b4708b"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-workbench/files-review.md",
+          "digest": "fe5a3e83741cbea5b29575f543c5eb55ef87a3cc7af2f12b68607a695e1c7782"
+        }
+      ],
+      "reason": "",
+      "method": "製品側ファイルの不変を照合し既存レビューを再利用。変更したテスト準備は専用DB18件・typecheckと独立読み取りレビューで確認。",
+      "environment": "Node24.15、ローカル専用app_auth_test、codex/agent-workbench",
+      "observedAt": "2026-10-07T18:37:50.918453+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-07T18:37:51.360Z"
     }
   ],
   "submissions": [
@@ -4293,9 +4401,9 @@
         }
       ],
       "children": [],
-      "active": true,
-      "obsoleteReason": "",
-      "successor": null,
+      "active": false,
+      "obsoleteReason": "PR20のCIで容量fixture一括INSERTが10秒timeout。assertionを維持した分割準備へ変更し、専用DB18件とtypecheck・独立レビューで再照合する。",
+      "successor": "1f085b67-e9ec-40f3-9d04-c54f3ed94490",
       "createdBy": {
         "actor": "parent",
         "session": "workbench-parent-1"
@@ -5502,6 +5610,95 @@
         "reason": "C最終レビューの原本hash/UI/PG/正式Actor/費用/閉鎖状態の一致と親実測を照合。",
         "at": "2026-10-07T18:25:43.606Z"
       }
+    },
+    {
+      "id": "1f085b67-e9ec-40f3-9d04-c54f3ed94490",
+      "unit": "files",
+      "attempt": 5,
+      "contractVersion": 2,
+      "inputs": {
+        "contractVersion": 2,
+        "contractFiles": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+            "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+          }
+        ],
+        "dependencies": []
+      },
+      "checks": [
+        "b853c771-c82e-42da-a836-69ccb939d0c1"
+      ],
+      "outputs": [
+        {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/data/db.ts",
+              "digest": "da0ee79db47c5274677ab180bf3dfc1ff8daaca0fd6b35604f0922e9fb8b570e"
+            },
+            {
+              "ref": "web/data/files.ts",
+              "digest": "5fadc7ee17dccc5a113c17b8abfd87427fc77a3efcd57aea6ebadd67ea8f610a"
+            },
+            {
+              "ref": "web/data/permissions.ts",
+              "digest": "d7e3c5957b259121125465565d2c1c58ee27cd5b1987cccca670d1c8ddeed450"
+            },
+            {
+              "ref": "web/data/schema-v6.sql",
+              "digest": "cd2380231128fc573373213e33b3a8e5fb954877a1313553ee932c18b8c2f186"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "9685ae3765a80fb201b357abefb16edd5451466d4acdac6b6659e8e079e2a527"
+            },
+            {
+              "ref": "web/shared/file-contracts.ts",
+              "digest": "12b337a293fcbee34be6212953d1713531f6fa77beece6d083968049100edb14"
+            },
+            {
+              "ref": "web/shared/file-transfer.ts",
+              "digest": "2082dea819b71f739aeb8e8d519afd7a940049e7aeddb789eb710983bb94ff7a"
+            },
+            {
+              "ref": "web/tests/files.test.ts",
+              "digest": "d41abcd29dbf49b03517f1a0f5f2613e8dae74f1d75ffcaabced4d1a765914c2"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "ec8287682a1bf2ea5aabc6a22184d9aa0e054b07183540a8260c27ef3dfd52d1"
+            }
+          ],
+          "version": "3b14a969fb225b631a2d6ba36952ede712f0039c94cb1f15acd0d8da1941db80"
+        }
+      ],
+      "report": "CIのデータ準備を1ファイルずつへ分割。容量・競合・権限の製品挙動と検証条件を維持し全18件成功。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-workbench/files-ci-verification.md",
+          "digest": "52920d93ed37bcb33f776530e888547b118caae30e9ee546a3daba8b15ddcd0d"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "at": "2026-10-07T18:37:51.427Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "reason": "既存対象版と変更したseed helper、18件成功・型検査・独立レビューの証拠を照合。製品保存仕様を変えない限定修正を受入。",
+        "at": "2026-10-07T18:37:51.522Z"
+      }
     }
   ],
   "messages": [
@@ -5994,6 +6191,28 @@
       "state": "processed",
       "resolution": "accepted: C最終レビューの原本hash/UI/PG/正式Actor/費用/閉鎖状態の一致と親実測を照合。",
       "at": "2026-10-07T18:25:43.548Z"
+    },
+    {
+      "id": "fa337f9f-25fa-4358-94ff-ca6cd2eda62d",
+      "unit": "files",
+      "attempt": 5,
+      "from": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "CIのデータ準備を1ファイルずつへ分割。容量・競合・権限の製品挙動と検証条件を維持し全18件成功。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-workbench/files-ci-verification.md",
+          "digest": "52920d93ed37bcb33f776530e888547b118caae30e9ee546a3daba8b15ddcd0d"
+        }
+      ],
+      "submission": "1f085b67-e9ec-40f3-9d04-c54f3ed94490",
+      "state": "processed",
+      "resolution": "accepted: 既存対象版と変更したseed helper、18件成功・型検査・独立レビューの証拠を照合。製品保存仕様を変えない限定修正を受入。",
+      "at": "2026-10-07T18:37:51.427Z"
     }
   ],
   "gates": [
@@ -24595,6 +24814,1150 @@
         "contractHistory": []
       },
       "at": "2026-10-07T18:25:43.703Z"
+    },
+    {
+      "id": "wb-20261008033751061699",
+      "hash": "4918f4ec2b05afbaf676983d7b6243632e425bdddae846f43f01ae3003365f2b",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit reopen",
+      "request": {
+        "command": "unit reopen",
+        "id": "files",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008033751061699",
+        "input": {
+          "reason": "PR20のCIで容量fixture一括INSERTが10秒timeout。assertionを維持した分割準備へ変更し、専用DB18件とtypecheck・独立レビューで再照合する。"
+        },
+        "ifVersion": 22,
+        "attempt": 4
+      },
+      "affectedUnits": [
+        "files"
+      ],
+      "evidence": [],
+      "revision": 132,
+      "data": {
+        "id": "files",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "SQL v6・保存クラス・共有型・移行入口・保存試験"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/task.md",
+        "planRef": null,
+        "contractFiles": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+            "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+          }
+        ],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 23,
+        "contractVersion": 2,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "paused",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存承認の範囲内で利用経路を実装・検証",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "5ea176bce7745d6f14196e57ac2c5d07e317bed8756f49a71438849b79333cc8"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "独立レビューで失効draftの容量拘束を検出。担当の待機を確認し、明示取消の回復経路を契約へ追加する。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T10:53:37.754Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "保存層・失効draft回復・限定権限を実装し専用DBで検証。独立レビュー指摘も解消。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-verification.md",
+                    "digest": "76d93f6333c133880543ac4971498bc7eb8ef5b72f92717345630d62c065f198"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "失効したWorkspaceに残った未完了送信を本人が明示取消できる回復経路を独立レビューで追加",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T11:15:14.555Z"
+          },
+          {
+            "number": 3,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と局所・実経路の検証を完了。限定した対象版を独立確認。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-v7-regression.md",
+                    "digest": "790a21e97b2a6f45876a6c247ce9b9fde2da7bdcc7eb6664081e8b02ed0b7111"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-review.md",
+                    "digest": "fe5a3e83741cbea5b29575f543c5eb55ef87a3cc7af2f12b68607a695e1c7782"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "v7統合で移行入口・schema health・権限が変わったため、filesの専用DBとbrowser回帰の結果で再照合する",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T13:17:50.621Z"
+          },
+          {
+            "number": 4,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と局所検証・独立又は統合レビューを記録。実AX/配備は別の未完了単位。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/workbench-web-verification.md",
+                    "digest": "382c3b17d0c8b6f40cd863f675235f8ec5a7fa1a907f475d3016b7cd41b4708b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-review.md",
+                    "digest": "fe5a3e83741cbea5b29575f543c5eb55ef87a3cc7af2f12b68607a695e1c7782"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "v8移行入口とAPI/ナビ変更後の現対象版を177件＋browser8件で再確認",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T14:17:51.265Z"
+          },
+          {
+            "number": 5,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と局所検証・独立又は統合レビューを記録。実AX/配備は別の未完了単位。",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "PR20のCIで容量fixture一括INSERTが10秒timeout。assertionを維持した分割準備へ変更し、専用DB18件とtypecheck・独立レビューで再照合する。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T18:37:51.160Z"
+          }
+        ],
+        "currentAttempt": 5,
+        "currentSubmission": null,
+        "contractHistory": [
+          {
+            "version": 1,
+            "snapshot": {
+              "purpose": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+              "scope": [
+                "SQL v6・保存クラス・共有型・移行入口・保存試験"
+              ],
+              "conditions": [
+                {
+                  "id": "delivery",
+                  "description": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+                  "purpose": "delivery",
+                  "required": true,
+                  "allowed": [
+                    "pass"
+                  ],
+                  "target": "result"
+                }
+              ],
+              "dependencies": [],
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "5ea176bce7745d6f14196e57ac2c5d07e317bed8756f49a71438849b79333cc8"
+                }
+              ],
+              "exclusions": []
+            },
+            "reason": "失効したWorkspaceに残った未完了送信を本人が明示取消できる回復経路を独立レビューで追加",
+            "at": "2026-10-07T11:15:14.555Z"
+          }
+        ]
+      },
+      "at": "2026-10-07T18:37:51.160Z"
+    },
+    {
+      "id": "wb-20261008033751174617",
+      "hash": "8e64aa75c8bd67f0a32dce6bd0d4b60fe18c41dfdb3e5a4f76be073d304c17ed",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "files",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008033751174617",
+        "input": {},
+        "ifVersion": 23,
+        "attempt": 5
+      },
+      "affectedUnits": [
+        "files"
+      ],
+      "evidence": [],
+      "revision": 133,
+      "data": {
+        "id": "files",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "SQL v6・保存クラス・共有型・移行入口・保存試験"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/task.md",
+        "planRef": null,
+        "contractFiles": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+            "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+          }
+        ],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 24,
+        "contractVersion": 2,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "paused",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存承認の範囲内で利用経路を実装・検証",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "5ea176bce7745d6f14196e57ac2c5d07e317bed8756f49a71438849b79333cc8"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "独立レビューで失効draftの容量拘束を検出。担当の待機を確認し、明示取消の回復経路を契約へ追加する。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T10:53:37.754Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "保存層・失効draft回復・限定権限を実装し専用DBで検証。独立レビュー指摘も解消。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-verification.md",
+                    "digest": "76d93f6333c133880543ac4971498bc7eb8ef5b72f92717345630d62c065f198"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "失効したWorkspaceに残った未完了送信を本人が明示取消できる回復経路を独立レビューで追加",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T11:15:14.555Z"
+          },
+          {
+            "number": 3,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と局所・実経路の検証を完了。限定した対象版を独立確認。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-v7-regression.md",
+                    "digest": "790a21e97b2a6f45876a6c247ce9b9fde2da7bdcc7eb6664081e8b02ed0b7111"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-review.md",
+                    "digest": "fe5a3e83741cbea5b29575f543c5eb55ef87a3cc7af2f12b68607a695e1c7782"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "v7統合で移行入口・schema health・権限が変わったため、filesの専用DBとbrowser回帰の結果で再照合する",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T13:17:50.621Z"
+          },
+          {
+            "number": 4,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と局所検証・独立又は統合レビューを記録。実AX/配備は別の未完了単位。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/workbench-web-verification.md",
+                    "digest": "382c3b17d0c8b6f40cd863f675235f8ec5a7fa1a907f475d3016b7cd41b4708b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-review.md",
+                    "digest": "fe5a3e83741cbea5b29575f543c5eb55ef87a3cc7af2f12b68607a695e1c7782"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "v8移行入口とAPI/ナビ変更後の現対象版を177件＋browser8件で再確認",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T14:17:51.265Z"
+          },
+          {
+            "number": 5,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と局所検証・独立又は統合レビューを記録。実AX/配備は別の未完了単位。",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "PR20のCIで容量fixture一括INSERTが10秒timeout。assertionを維持した分割準備へ変更し、専用DB18件とtypecheck・独立レビューで再照合する。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T18:37:51.160Z"
+          }
+        ],
+        "currentAttempt": 5,
+        "currentSubmission": null,
+        "contractHistory": [
+          {
+            "version": 1,
+            "snapshot": {
+              "purpose": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+              "scope": [
+                "SQL v6・保存クラス・共有型・移行入口・保存試験"
+              ],
+              "conditions": [
+                {
+                  "id": "delivery",
+                  "description": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+                  "purpose": "delivery",
+                  "required": true,
+                  "allowed": [
+                    "pass"
+                  ],
+                  "target": "result"
+                }
+              ],
+              "dependencies": [],
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "5ea176bce7745d6f14196e57ac2c5d07e317bed8756f49a71438849b79333cc8"
+                }
+              ],
+              "exclusions": []
+            },
+            "reason": "失効したWorkspaceに残った未完了送信を本人が明示取消できる回復経路を独立レビューで追加",
+            "at": "2026-10-07T11:15:14.555Z"
+          }
+        ]
+      },
+      "at": "2026-10-07T18:37:51.235Z"
+    },
+    {
+      "id": "wb-20261008033751243830",
+      "hash": "b77d64435a56ec6edd6c71fdaf29171409234837ced80590e2619466b0e05675",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "files",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008033751243830",
+        "input": {
+          "selection": "integrate",
+          "reason": "製品は既存実装のまま。CI用seed処理のみ修正し、局所検証と独立レビューを完了。",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/files-ci-verification.md"
+          ]
+        },
+        "ifVersion": 24,
+        "attempt": 5
+      },
+      "affectedUnits": [
+        "files"
+      ],
+      "evidence": [],
+      "revision": 134,
+      "data": {
+        "id": "files",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "SQL v6・保存クラス・共有型・移行入口・保存試験"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/task.md",
+        "planRef": null,
+        "contractFiles": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+            "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+          }
+        ],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 25,
+        "contractVersion": 2,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "paused",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存承認の範囲内で利用経路を実装・検証",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "5ea176bce7745d6f14196e57ac2c5d07e317bed8756f49a71438849b79333cc8"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "独立レビューで失効draftの容量拘束を検出。担当の待機を確認し、明示取消の回復経路を契約へ追加する。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T10:53:37.754Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "保存層・失効draft回復・限定権限を実装し専用DBで検証。独立レビュー指摘も解消。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-verification.md",
+                    "digest": "76d93f6333c133880543ac4971498bc7eb8ef5b72f92717345630d62c065f198"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "失効したWorkspaceに残った未完了送信を本人が明示取消できる回復経路を独立レビューで追加",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T11:15:14.555Z"
+          },
+          {
+            "number": 3,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と局所・実経路の検証を完了。限定した対象版を独立確認。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-v7-regression.md",
+                    "digest": "790a21e97b2a6f45876a6c247ce9b9fde2da7bdcc7eb6664081e8b02ed0b7111"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-review.md",
+                    "digest": "fe5a3e83741cbea5b29575f543c5eb55ef87a3cc7af2f12b68607a695e1c7782"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "v7統合で移行入口・schema health・権限が変わったため、filesの専用DBとbrowser回帰の結果で再照合する",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T13:17:50.621Z"
+          },
+          {
+            "number": 4,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と局所検証・独立又は統合レビューを記録。実AX/配備は別の未完了単位。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/workbench-web-verification.md",
+                    "digest": "382c3b17d0c8b6f40cd863f675235f8ec5a7fa1a907f475d3016b7cd41b4708b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-review.md",
+                    "digest": "fe5a3e83741cbea5b29575f543c5eb55ef87a3cc7af2f12b68607a695e1c7782"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "v8移行入口とAPI/ナビ変更後の現対象版を177件＋browser8件で再確認",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T14:17:51.265Z"
+          },
+          {
+            "number": 5,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "integrate",
+                "reason": "製品は既存実装のまま。CI用seed処理のみ修正し、局所検証と独立レビューを完了。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/files-ci-verification.md",
+                    "digest": "52920d93ed37bcb33f776530e888547b118caae30e9ee546a3daba8b15ddcd0d"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 2,
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+                }
+              ],
+              "dependencies": []
+            },
+            "reason": "PR20のCIで容量fixture一括INSERTが10秒timeout。assertionを維持した分割準備へ変更し、専用DB18件とtypecheck・独立レビューで再照合する。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T18:37:51.160Z"
+          }
+        ],
+        "currentAttempt": 5,
+        "currentSubmission": null,
+        "contractHistory": [
+          {
+            "version": 1,
+            "snapshot": {
+              "purpose": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+              "scope": [
+                "SQL v6・保存クラス・共有型・移行入口・保存試験"
+              ],
+              "conditions": [
+                {
+                  "id": "delivery",
+                  "description": "本人ファイルを分割転送・不変確定し、権限と容量を保って再取得できる保存経路を実装する",
+                  "purpose": "delivery",
+                  "required": true,
+                  "allowed": [
+                    "pass"
+                  ],
+                  "target": "result"
+                }
+              ],
+              "dependencies": [],
+              "contractFiles": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+                  "digest": "5ea176bce7745d6f14196e57ac2c5d07e317bed8756f49a71438849b79333cc8"
+                }
+              ],
+              "exclusions": []
+            },
+            "reason": "失効したWorkspaceに残った未完了送信を本人が明示取消できる回復経路を独立レビューで追加",
+            "at": "2026-10-07T11:15:14.555Z"
+          }
+        ]
+      },
+      "at": "2026-10-07T18:37:51.297Z"
+    },
+    {
+      "id": "wb-20261008033751303667",
+      "hash": "4aeec8f2f075a3bec0a8581c8f7e68cd7c711f7dafde74058297caade6d47ca5",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "files",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008033751303667",
+        "input": {
+          "condition": "delivery",
+          "verdict": "pass",
+          "target": {
+            "id": "result",
+            "kind": "files",
+            "files": [
+              "web/data/db.ts",
+              "web/data/files.ts",
+              "web/data/permissions.ts",
+              "web/data/schema-v6.sql",
+              "web/server/data-migrate.ts",
+              "web/shared/file-contracts.ts",
+              "web/shared/file-transfer.ts",
+              "web/tests/files.test.ts",
+              "web/tests/workspaces.test.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-agent-workbench/files-ci-verification.md",
+            ".space/tasks/ax-agent-workbench/workbench-web-verification.md",
+            ".space/tasks/ax-agent-workbench/files-review.md"
+          ],
+          "method": "製品側ファイルの不変を照合し既存レビューを再利用。変更したテスト準備は専用DB18件・typecheckと独立読み取りレビューで確認。",
+          "environment": "Node24.15、ローカル専用app_auth_test、codex/agent-workbench",
+          "observedAt": "2026-10-07T18:37:50.918453+00:00"
+        },
+        "ifVersion": 25,
+        "attempt": 5
+      },
+      "affectedUnits": [
+        "files"
+      ],
+      "evidence": [],
+      "revision": 135,
+      "data": {
+        "id": "b853c771-c82e-42da-a836-69ccb939d0c1",
+        "unit": "files",
+        "attempt": 5,
+        "condition": "delivery",
+        "target": {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/data/db.ts",
+              "digest": "da0ee79db47c5274677ab180bf3dfc1ff8daaca0fd6b35604f0922e9fb8b570e"
+            },
+            {
+              "ref": "web/data/files.ts",
+              "digest": "5fadc7ee17dccc5a113c17b8abfd87427fc77a3efcd57aea6ebadd67ea8f610a"
+            },
+            {
+              "ref": "web/data/permissions.ts",
+              "digest": "d7e3c5957b259121125465565d2c1c58ee27cd5b1987cccca670d1c8ddeed450"
+            },
+            {
+              "ref": "web/data/schema-v6.sql",
+              "digest": "cd2380231128fc573373213e33b3a8e5fb954877a1313553ee932c18b8c2f186"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "9685ae3765a80fb201b357abefb16edd5451466d4acdac6b6659e8e079e2a527"
+            },
+            {
+              "ref": "web/shared/file-contracts.ts",
+              "digest": "12b337a293fcbee34be6212953d1713531f6fa77beece6d083968049100edb14"
+            },
+            {
+              "ref": "web/shared/file-transfer.ts",
+              "digest": "2082dea819b71f739aeb8e8d519afd7a940049e7aeddb789eb710983bb94ff7a"
+            },
+            {
+              "ref": "web/tests/files.test.ts",
+              "digest": "d41abcd29dbf49b03517f1a0f5f2613e8dae74f1d75ffcaabced4d1a765914c2"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "ec8287682a1bf2ea5aabc6a22184d9aa0e054b07183540a8260c27ef3dfd52d1"
+            }
+          ],
+          "version": "3b14a969fb225b631a2d6ba36952ede712f0039c94cb1f15acd0d8da1941db80"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/files-ci-verification.md",
+            "digest": "52920d93ed37bcb33f776530e888547b118caae30e9ee546a3daba8b15ddcd0d"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/workbench-web-verification.md",
+            "digest": "382c3b17d0c8b6f40cd863f675235f8ec5a7fa1a907f475d3016b7cd41b4708b"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/files-review.md",
+            "digest": "fe5a3e83741cbea5b29575f543c5eb55ef87a3cc7af2f12b68607a695e1c7782"
+          }
+        ],
+        "reason": "",
+        "method": "製品側ファイルの不変を照合し既存レビューを再利用。変更したテスト準備は専用DB18件・typecheckと独立読み取りレビューで確認。",
+        "environment": "Node24.15、ローカル専用app_auth_test、codex/agent-workbench",
+        "observedAt": "2026-10-07T18:37:50.918453+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-07T18:37:51.360Z"
+      },
+      "at": "2026-10-07T18:37:51.360Z"
+    },
+    {
+      "id": "wb-20261008033751368211",
+      "hash": "f82b797c854f204081304b04b4c8fbf9a9ab4ea86c15a58baa7053c788eb57a1",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "files",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008033751368211",
+        "input": {
+          "checks": [
+            "b853c771-c82e-42da-a836-69ccb939d0c1"
+          ],
+          "report": "CIのデータ準備を1ファイルずつへ分割。容量・競合・権限の製品挙動と検証条件を維持し全18件成功。",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/files-ci-verification.md"
+          ]
+        },
+        "ifVersion": 26,
+        "attempt": 5
+      },
+      "affectedUnits": [
+        "files"
+      ],
+      "evidence": [],
+      "revision": 136,
+      "data": {
+        "id": "1f085b67-e9ec-40f3-9d04-c54f3ed94490",
+        "unit": "files",
+        "attempt": 5,
+        "contractVersion": 2,
+        "inputs": {
+          "contractVersion": 2,
+          "contractFiles": [
+            {
+              "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+              "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+            }
+          ],
+          "dependencies": []
+        },
+        "checks": [
+          "b853c771-c82e-42da-a836-69ccb939d0c1"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/data/db.ts",
+                "digest": "da0ee79db47c5274677ab180bf3dfc1ff8daaca0fd6b35604f0922e9fb8b570e"
+              },
+              {
+                "ref": "web/data/files.ts",
+                "digest": "5fadc7ee17dccc5a113c17b8abfd87427fc77a3efcd57aea6ebadd67ea8f610a"
+              },
+              {
+                "ref": "web/data/permissions.ts",
+                "digest": "d7e3c5957b259121125465565d2c1c58ee27cd5b1987cccca670d1c8ddeed450"
+              },
+              {
+                "ref": "web/data/schema-v6.sql",
+                "digest": "cd2380231128fc573373213e33b3a8e5fb954877a1313553ee932c18b8c2f186"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "9685ae3765a80fb201b357abefb16edd5451466d4acdac6b6659e8e079e2a527"
+              },
+              {
+                "ref": "web/shared/file-contracts.ts",
+                "digest": "12b337a293fcbee34be6212953d1713531f6fa77beece6d083968049100edb14"
+              },
+              {
+                "ref": "web/shared/file-transfer.ts",
+                "digest": "2082dea819b71f739aeb8e8d519afd7a940049e7aeddb789eb710983bb94ff7a"
+              },
+              {
+                "ref": "web/tests/files.test.ts",
+                "digest": "d41abcd29dbf49b03517f1a0f5f2613e8dae74f1d75ffcaabced4d1a765914c2"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "ec8287682a1bf2ea5aabc6a22184d9aa0e054b07183540a8260c27ef3dfd52d1"
+              }
+            ],
+            "version": "3b14a969fb225b631a2d6ba36952ede712f0039c94cb1f15acd0d8da1941db80"
+          }
+        ],
+        "report": "CIのデータ準備を1ファイルずつへ分割。容量・競合・権限の製品挙動と検証条件を維持し全18件成功。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/files-ci-verification.md",
+            "digest": "52920d93ed37bcb33f776530e888547b118caae30e9ee546a3daba8b15ddcd0d"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "at": "2026-10-07T18:37:51.427Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-07T18:37:51.428Z"
+    },
+    {
+      "id": "wb-20261008033751437072",
+      "hash": "039792e20e378bfdcce9dae9f994e590a7553195a2bd9443005067b0351f8334",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "files",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008033751437072",
+        "input": {
+          "submission": "1f085b67-e9ec-40f3-9d04-c54f3ed94490",
+          "reason": "既存対象版と変更したseed helper、18件成功・型検査・独立レビューの証拠を照合。製品保存仕様を変えない限定修正を受入。"
+        },
+        "ifVersion": 27,
+        "attempt": 5
+      },
+      "affectedUnits": [
+        "files"
+      ],
+      "evidence": [],
+      "revision": 137,
+      "data": {
+        "id": "1f085b67-e9ec-40f3-9d04-c54f3ed94490",
+        "unit": "files",
+        "attempt": 5,
+        "contractVersion": 2,
+        "inputs": {
+          "contractVersion": 2,
+          "contractFiles": [
+            {
+              "ref": ".space/tasks/ax-agent-workbench/file-contract.md",
+              "digest": "e3130af70b91beaee7ad84c5f09a31087aad343dfe82fc7d1fda645d8f4201ca"
+            }
+          ],
+          "dependencies": []
+        },
+        "checks": [
+          "b853c771-c82e-42da-a836-69ccb939d0c1"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/data/db.ts",
+                "digest": "da0ee79db47c5274677ab180bf3dfc1ff8daaca0fd6b35604f0922e9fb8b570e"
+              },
+              {
+                "ref": "web/data/files.ts",
+                "digest": "5fadc7ee17dccc5a113c17b8abfd87427fc77a3efcd57aea6ebadd67ea8f610a"
+              },
+              {
+                "ref": "web/data/permissions.ts",
+                "digest": "d7e3c5957b259121125465565d2c1c58ee27cd5b1987cccca670d1c8ddeed450"
+              },
+              {
+                "ref": "web/data/schema-v6.sql",
+                "digest": "cd2380231128fc573373213e33b3a8e5fb954877a1313553ee932c18b8c2f186"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "9685ae3765a80fb201b357abefb16edd5451466d4acdac6b6659e8e079e2a527"
+              },
+              {
+                "ref": "web/shared/file-contracts.ts",
+                "digest": "12b337a293fcbee34be6212953d1713531f6fa77beece6d083968049100edb14"
+              },
+              {
+                "ref": "web/shared/file-transfer.ts",
+                "digest": "2082dea819b71f739aeb8e8d519afd7a940049e7aeddb789eb710983bb94ff7a"
+              },
+              {
+                "ref": "web/tests/files.test.ts",
+                "digest": "d41abcd29dbf49b03517f1a0f5f2613e8dae74f1d75ffcaabced4d1a765914c2"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "ec8287682a1bf2ea5aabc6a22184d9aa0e054b07183540a8260c27ef3dfd52d1"
+              }
+            ],
+            "version": "3b14a969fb225b631a2d6ba36952ede712f0039c94cb1f15acd0d8da1941db80"
+          }
+        ],
+        "report": "CIのデータ準備を1ファイルずつへ分割。容量・競合・権限の製品挙動と検証条件を維持し全18件成功。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/files-ci-verification.md",
+            "digest": "52920d93ed37bcb33f776530e888547b118caae30e9ee546a3daba8b15ddcd0d"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "at": "2026-10-07T18:37:51.427Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "workbench-parent-1"
+          },
+          "reason": "既存対象版と変更したseed helper、18件成功・型検査・独立レビューの証拠を照合。製品保存仕様を変えない限定修正を受入。",
+          "at": "2026-10-07T18:37:51.522Z"
+        }
+      },
+      "at": "2026-10-07T18:37:51.522Z"
     }
   ]
 }

@@ -176,7 +176,10 @@ async function seedReady(count: number, actors: string[]) {
     await client.query("BEGIN");
     await client.query("CREATE TEMP TABLE file_seed_ids ON COMMIT DROP AS SELECT gen_random_uuid() id,($1::uuid[])[1+(i-1)/31] actor FROM generate_series(1,$2::int) i", [actors, count]);
     await client.query("INSERT INTO ax_files(id,owner_user_id,workspace_id,request_key,name,size_bytes,sha256,media_type) SELECT id,actor,$1,gen_random_uuid(),'stored.xlsx',8388608,$2,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' FROM file_seed_ids", [workspace, zeroHash]);
-    await client.query("INSERT INTO ax_file_chunks SELECT f.id,i,decode(repeat('00',32768),'hex') FROM file_seed_ids f CROSS JOIN generate_series(0,255) i");
+    const seeded = await client.query<{ id: string }>("SELECT id FROM file_seed_ids");
+    for (const { id } of seeded.rows) {
+      await client.query("INSERT INTO ax_file_chunks SELECT $1,i,decode(repeat('00',32768),'hex') FROM generate_series(0,255) i", [id]);
+    }
     await client.query("UPDATE ax_files SET state='ready',ready_at=clock_timestamp() WHERE id IN (SELECT id FROM file_seed_ids)");
     await client.query("COMMIT");
   } catch (error) { await client.query("ROLLBACK"); throw error; } finally { client.release(); }
