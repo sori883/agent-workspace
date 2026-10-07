@@ -37,7 +37,6 @@ jobs:
       TEST_DATABASE_HOST: 127.0.0.1
       TEST_DATABASE_PORT: 5432
       TEST_DATABASE_PASSWORD: ax-app-ci-only
-      POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
     defaults:
       run:
         working-directory: web
@@ -62,6 +61,8 @@ jobs:
           node --import tsx tests/prepare-auth.ts
       - run: npm run typecheck
       - run: npm test
+        env:
+          POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

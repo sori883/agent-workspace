@@ -70,3 +70,9 @@ Web/APIを再起動し、実KeycloakでAlice/Bobがログイン。既存Workspac
 型検査・build・Node 72件・ブラウザ34件が成功し、独立レビューはP0–P2なしで引き渡し可能と判定した。レビューは作成担当と別の同一モデル担当によるもので、独自の再試験はしていない。親が実移行・実操作・データ比較と担当証拠を照合して受け入れる。OKFのworkspace-access、ax-web-foundation、ax-agent-platform-directionを更新してCLIで読み返し、strict/drift検証はerrors/warnings/gate findings/broken linksが全て0。
 
 ソース、移行、画面、文書、試験を一つのPRへまとめる。公開・CI・マージの状態はGitHubを正本とし、ローカル成果の受け入れ状態はownership-orchを参照する。
+
+### PRの自動チェック設定の訂正
+
+PR #17の初回commit `58b5d00` は、追加した `POSTGRES_CONTAINER` がjob-level envでjob contextを参照したため、workflowの検証で失敗しジョブは起動しなかった。GitHub公式の[context availability](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability)と照合し、当該変数をjob contextが利用可能な `npm test` のstep-level envへ移した。既存のDB準備stepも同じ位置で参照している。限定runtime roleの試験だけがこの変数を使用し、製品コードと既に成功したローカル試験対象は変更していない。先行レビューではこの設定上の問題を見落としていたため、修正差分を独立レビューへ再提出した。修正後のリモート実行結果はPRのChecksを正本とする。
+
+独立レビュー担当は修正後の両stepのenvを公式資料と照合して追加指摘なし、`git diff --check`成功と報告した。親も同じ差分と資料を照合した。これは設定差分の確認であり、リモートCIの成功を代わりに主張するものではない。
