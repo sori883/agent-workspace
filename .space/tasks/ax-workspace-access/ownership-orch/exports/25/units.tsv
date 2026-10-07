@@ -1,0 +1,5 @@
+revision	updated_at	id	parent	owner	attempt	state	acceptance	acceptance_valid
+25	2026-10-07T01:12:10.889Z	ownership		parent	1	completed	accepted	true
+25	2026-10-07T01:12:10.889Z	ownership-api	ownership	api	1	completed	accepted	true
+25	2026-10-07T01:12:10.889Z	ownership-ui	ownership	ui	1	completed	accepted	true
+25	2026-10-07T01:12:10.889Z	ownership-review	ownership	review	1	completed	accepted	true

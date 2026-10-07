@@ -10,7 +10,7 @@ tags:
   - egress
 generated: 
   by: agent:codex
-  at: 2026-10-06T14:18:10.138Z
+  at: 2026-10-07T01:10:31.447Z
 sources: 
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: ax-local/task-cli.md
@@ -29,14 +29,15 @@ sources:
   - resource: ax-local/keycloak/README.md
   - resource: .space/tasks/ax-portable-api/design.md
   - resource: .space/tasks/ax-workspace-access/task.md
+  - resource: .space/tasks/ax-workspace-access/ownership.md
 ---
 # AXを中心とするエージェント実行基盤の構想
 
-## 現在地：ワークスペース・グループ・業務ロール（2026-10-06）
+## 現在地：ワークスペース・グループ・業務ロール（2026-10-07）
 
 利用者は会社を最上位のWorkspace、部署やプロジェクト等をGroupとし、Userの複数Workspace・複数Group所属を整理した後、「それで作って」と実装を依頼した。既存共通APIとapp PostgreSQLを正本とする案を採用した。管理権限admin/memberと業務ロールgeneral/developerは各Workspace所属に持ち、別々に判定する。
 
-有効な利用者は最大3個作成でき、招待参加は作成数に含めない。作成者は固定し、初期版にはWorkspace削除・移譲・作成枠返却を設けない。所属0件を許して、明示的な作成かメール宛先を確認する招待参加を選ぶ。既定の業務ロールはgeneral、作成者はadmin、招待参加はmember。Groupは平坦な集まりで、解除後の再参加時に旧権限やGroupを復元しない。
+2026-10-07の追加指定で、初期の累計作成3個を現在所有50個へ変更した。招待参加数には上限を設けない。各Workspaceは一人の所有者を持ち、参加メンバーの承諾で譲渡すると旧所有者の枠が空く。所有者は譲渡するまで退出・削除・降格できない。作成者は履歴として固定し、Workspace削除は未実装。所属0件を許して、明示的な作成かメール宛先を確認する招待参加を選ぶ。既定の業務ロールはgeneral、作成者はadmin、招待参加はmember。Groupは平坦な集まりで、解除後の再参加時に旧権限やGroupを復元しない。
 
 画面・API・DBと実行管理へこの境界を実装した。会話はWorkspace所属と本人ownerの両方を要求し、管理者も他人の会話を読めない。旧履歴は本人限定のNULL Workspaceのまま参照・復旧だけを許し、自動割当しない。詳細な理由・制約は[所属の決定](../decisions/systems/ax/workspace-access.md)、実装契約と結果は `.space/tasks/ax-workspace-access/` に残す。
 

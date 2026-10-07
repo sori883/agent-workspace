@@ -37,6 +37,7 @@ jobs:
       TEST_DATABASE_HOST: 127.0.0.1
       TEST_DATABASE_PORT: 5432
       TEST_DATABASE_PASSWORD: ax-app-ci-only
+      POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
     defaults:
       run:
         working-directory: web
@@ -55,6 +56,7 @@ jobs:
           POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
         run: |
           docker exec "$POSTGRES_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 -c "CREATE ROLE ax_app LOGIN PASSWORD 'ax-app-ci-only';"
+          docker exec "$POSTGRES_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 -c 'CREATE ROLE ax_api NOLOGIN;'
           docker exec "$POSTGRES_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE app_auth_test OWNER ax_app;'
           docker exec "$POSTGRES_CONTAINER" psql -U postgres -v ON_ERROR_STOP=1 -c 'REVOKE ALL ON DATABASE app_auth_test FROM PUBLIC;'
           node --import tsx tests/prepare-auth.ts

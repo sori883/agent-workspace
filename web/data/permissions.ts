@@ -1,2 +1,2 @@
-export const apiFunctions = ["ax_ws_accept", "ax_ws_read_run", "ax_ws_list_runs", "ax_ws_read_conversation", "ax_ws_list_conversations", "ax_ws_request_recovery", "org_list", "org_create", "org_detail", "org_mutate", "org_create_group", "org_invite", "org_accept_invitation"];
+export const apiFunctions = ["ax_ws_accept", "ax_ws_read_run", "ax_ws_list_runs", "ax_ws_read_conversation", "ax_ws_list_conversations", "ax_ws_request_recovery", "org_list", "org_create", "org_detail", "org_mutate", "org_create_group", "org_invite", "org_accept_invitation", "org_propose_ownership", "org_respond_ownership"];
 export const executionFunctions = ["ax_claim", "ax_heartbeat", "ax_intent", "ax_evidence", "ax_collect", "ax_finish", "ax_fail", "ax_cancel_unstarted"];

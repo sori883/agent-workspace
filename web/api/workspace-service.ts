@@ -1,6 +1,8 @@
 import type { WorkspaceRepository } from "../data/workspaces";
-import type { WorkspaceCreateInput, WorkspaceCreateResult, WorkspaceDetail, WorkspaceGroupCreateResult, WorkspaceList, WorkspaceMemberInput, WorkspaceMutationResult, InvitationCreateInput, InvitationCreateResult } from "../shared/workspace-contracts";
+import type { OwnershipTransferInput, OwnershipTransferResult, OwnershipTransferAction, WorkspaceCreateInput, WorkspaceCreateResult, WorkspaceDetail, WorkspaceGroupCreateResult, WorkspaceList, WorkspaceMemberInput, WorkspaceMutationResult, InvitationCreateInput, InvitationCreateResult } from "../shared/workspace-contracts";
 export interface WorkspaceService {
+  proposeOwnership(owner: string, id: string, input: OwnershipTransferInput): Promise<OwnershipTransferResult>;
+  respondOwnership(owner: string, id: string, transferId: string, action: OwnershipTransferAction): Promise<WorkspaceMutationResult>;
   list(owner: string): Promise<WorkspaceList>;
   create(owner: string, input: WorkspaceCreateInput): Promise<WorkspaceCreateResult>;
   get(owner: string, id: string): Promise<WorkspaceDetail>;

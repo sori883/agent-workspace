@@ -9,17 +9,20 @@ code_refs:
   - web/app/routes/workspace-manage.tsx
   - web/app/routes/join.tsx
   - execution/controller/
+  - web/data/schema-v3.sql
+  - web/app/components/ownership.tsx
 sources: 
   - resource: .space/tasks/ax-workspace-access/design.md
   - resource: .space/tasks/ax-workspace-access/plan.md
   - resource: .space/tasks/ax-workspace-access/verification.md
   - resource: web/data/schema-v2.sql
+  - resource: .space/tasks/ax-workspace-access/ownership.md
 type: decision
 title: 組織への所属を権限と業務ロールの境界にする
-description: 複数Workspace・Group所属、管理権限と業務ロール、招待・本人限定データ・実行失効の契約と採用理由
+description: 複数Workspace・Group所属、現在所有50個と承諾式譲渡、管理権限・業務ロール、本人限定データの契約と採用理由
 generated: 
   by: agent:codex
-  at: 2026-10-06T14:18:43.752Z
+  at: 2026-10-07T01:10:31.322Z
 ---
 # 組織への所属を権限と業務ロールの境界にする
 
@@ -29,7 +32,11 @@ generated:
 
 Userは複数のWorkspaceに所属でき、その所属に管理権限admin/memberと業務ロールgeneral/developerを一つずつ持つ。業務ロールを管理権限に読み替えない。Groupは一つのWorkspaceに属し、一人が複数のGroupへ参加できる。Group参加の複合外部キーは同じWorkspaceへの所属を要求する。初期版にはグループ階層、独自ロール、グループからの権限継承を設けない。
 
-有効な利用者全員がWorkspaceを最大3個作成できる。作成者は固定し、ユーザー行のロック下で作成数と同一キー再送を確認する。招待による参加は作成数に含まない。削除・作成者移譲・作成枠返却は初期範囲外。作成者はadmin/generalで始まり、最後の有効adminを退出・削除・降格できない。管理変更と開始側の認可はWorkspaceの行ロックで順序を決める。
+2026-10-07、利用者の追加指定により、累計作成3個から現在所有50個へ変更した。招待参加数には上限を設けない。Workspaceのowner_user_idを現在所有の正本とし、created_by_user_idは不変の履歴として保持する。ownerをmembershipの第3の管理権限にする案と比較し、既存admin/memberの認可を維持できる明示owner列を採用した。所有者は一人のadmin所属で、退出・削除・降格は譲渡まで禁止する。admin所属は遅延制約、所属自体は複合FKでも保証する。削除機能は追加していない。
+
+所有者は参加中の有効なメンバーへ7日期限の譲渡を申請する。有効pendingはWorkspaceごとに1件で、承諾・辞退は受取本人、取消は申請元だけが行える。承諾時に現在owner、元所有者のactive/admin、受取人のactive所属、期限、所有50個未満を確認し、所有権と申請の消費を同一transactionで更新する。旧所有者はadminで残り、業務ロールとGroup参加を保持する。受取人が退出・除籍された申請は取消となり、再加入しても復活しない。確定済みの同操作再送は無操作で成功し、再譲渡後に古い承諾を送っても所有者を巻き戻さない。
+
+作成と承諾は現在所有数を同じquota advisory lockで保護する。承諾では旧・新所有者のUUID順にquota lockを取得してからWorkspaceをロックする。既存の招待承諾がWorkspaceからUserへ行ロックを取るため、User行を先にFOR UPDATEしない。二重の件数カウンターは持たず、譲渡成立後に旧所有者の枠が空く。最後の有効adminも退出・削除・降格できない。
 
 所属0件を許し、初回に作成か招待参加を選ぶ。個人用Workspaceは自動作成しない。所属解除時はGroup参加も削除し、再参加時はmember/generalから始める。過去の管理権限やGroup参加を復元しない。
 
@@ -46,6 +53,10 @@ adminがメールアドレスを指定し、有効期限7日のリンクを発�
 開始側のcreate/resume/stage/egress_prepare/egress_allow/startのintent確定時にも有効なUserと所属を確認する。P0001/workspace_access_revokedというDBの確定拒否だけをGoが識別し、外部操作前は送信権0件などを再検査してnot_startedへ終了、操作後は同じclaimでdeny/suspendへ進む。通信断、heartbeat喪失、外部操作の応答不明は従来どおり保留し再送しない。既に開始した処理の回収・後片付けと所有者の安全な復旧要求は、所属解除後も許可する。メンバー削除を即時モデル取消とは扱わない。
 
 v1スキーマを変更せずv2を追加する。旧会話・実行のWorkspaceはNULLのまま保持し、本人限定の参照・復旧のみを許す。勝手なWorkspace割当や共有はしない。既存の費用・未知usage・同一失敗・全体実行枠の制約はWorkspaceをまたいで維持する。
+
+## 所有権の追加移行
+
+v1/v2のSQLとchecksumを保持してv3を追加した。作成者が現在active adminである全行だけを最初のownerにし、退出・降格・停止のある環境では全体をrollbackする。自動再参加・復権・別admin選出はしない。実ローカルの17実行・2会話・16成果物と既存の所属・Groupは内容hashで保持を確認した。実Keycloakの二人が往復譲渡し、枠の移動と新Workspace所有者による他人の成果物参照拒否を確認した。詳細は `.space/tasks/ax-workspace-access/ownership.md` と担当検証記録。
 
 ## 採用理由と確認範囲
 
