@@ -3,7 +3,7 @@
   "substrate": "944abe3278b895ccbf5d45555a49dd0f2f6ceae7",
   "go": "1.27.1",
   "execution_go_image": "golang@sha256:8a5910f31396cd4d89662f56c68b3ae31d374308270a1c3bd96672ee5ed43414",
-  "execution": "localhost:5001/ax-execution@sha256:38bc9977eb8ff2eeb32a1ca79239a654ec09cf6a23f3c968254eb8fdeef526d2",
+  "execution": "localhost:5001/ax-execution@sha256:129475fa0b58cec125d616eeb6088c33d22c22f2a5c0d64260c73e61f20de675",
   "worker_controlled": "localhost:5001/ax-worker-controlled@sha256:35c939bf561a380e0f4f82bd7111ce778547b31f4d2a5eba7f19b280664b7b32",
   "ko": "0.19.1",
   "platform": "linux/arm64",
@@ -14,5 +14,6 @@
   "runner_budget": "localhost:5001/ax-task-runner@sha256:6f4f48e64ae1eab1a9d1755d24675f676b0164e936d316d76ab64fa0246a2cad",
   "ax_server": "localhost:5001/ax-server-340c3583cc4a989b584acf55b1619e8e@sha256:2987fd43a36f9fd0ffbed7654f5d2466045bc8aa9f1578af066a4c56b9333ce9",
   "worker": "localhost:5001/ateom-gvisor-715889664656de67e44382a8d6ab981d@sha256:f42bf8b3a46e8212fada0ac3cd47a1e97d8818d1d614601b92be58af4a78f4c6",
-  "runner_task": "localhost:5001/ax-task-runner@sha256:1bce740d1ab5a5f7f051d67a7c36c24f7c9a21ffeebd1bb38a77c7d2b95939a5"
+  "runner_task": "localhost:5001/ax-task-runner@sha256:5eea9e42f17f268bf803be50c8e10ed5f10657680563136783562f5de1bdc790",
+  "ax_server_runtime": "localhost:5001/ax-server-credential-free@sha256:46469f275052acb4715ec5068ddb56471677f3db6d5ac7dd2f0da9d520988b59"
 }

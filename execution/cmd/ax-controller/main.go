@@ -70,6 +70,21 @@ func run() int {
 	}
 	defer db.Close()
 	runner := controller.New(db, adapter, config.Image)
+	interactiveConfig, err := config.InteractiveNative()
+	if err != nil {
+		report("interactive_config_invalid")
+		return 2
+	}
+	if interactiveConfig != nil {
+		interactive, err := native.Dial(*interactiveConfig)
+		if err != nil {
+			report("interactive_config_invalid")
+			return 2
+		}
+		defer interactive.Close()
+		runner.InteractiveExecutor = interactive
+		runner.InteractiveImage = interactiveConfig.Image
+	}
 	server := &http.Server{Addr: "127.0.0.1:9092", ReadHeaderTimeout: 2 * time.Second, Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/healthz" || r.Method != http.MethodGet {
 			http.NotFound(w, r)

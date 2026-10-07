@@ -1,0 +1,315 @@
+{
+  "date": "2026-10-07",
+  "base": "a682948be9daddc37555067fd98475eb3938b427",
+  "image_id": "sha256:1bce740d1ab5a5f7f051d67a7c36c24f7c9a21ffeebd1bb38a77c7d2b95939a5",
+  "sdk_version": "0.1.20",
+  "network": "Docker none; loopback stub only",
+  "external_model_requests": 0,
+  "production_limits_changed": false,
+  "source_sha256": "582952bbdfb4ff58f8f148e8a4c7b8e09faff71e0515752c3d195023e578a684",
+  "scope": "local SDK processes; no AX or database operations",
+  "cases": [
+    {
+      "model_cap": 5,
+      "tool_cap": 3,
+      "total_model_requests": 4,
+      "case": "happy",
+      "status": "passed",
+      "local_evidence": "evidence-cases/happy",
+      "phases": [
+        {
+          "phase": "idle",
+          "exit": 0,
+          "provider_requests": 0,
+          "stop_reason": null
+        },
+        {
+          "phase": "question",
+          "exit": 0,
+          "provider_requests": 2,
+          "stop_reason": "UNSPECIFIED"
+        },
+        {
+          "phase": "answer",
+          "exit": 0,
+          "provider_requests": 2,
+          "stop_reason": "UNSPECIFIED"
+        }
+      ],
+      "tool_invocation_names": [
+        "ask_user",
+        "write_output"
+      ],
+      "artifact": {
+        "bytes": 14,
+        "sha256": "e9bb7eee801cdc8bcdbf61c7d352325bf4320bd2b2b120ad68ac83657e2d4cad"
+      },
+      "diagnostic_budget_only": true,
+      "usage_before_resume": 240,
+      "usage_after_resume": 480
+    },
+    {
+      "model_cap": 5,
+      "tool_cap": 3,
+      "total_model_requests": 4,
+      "case": "copied_save",
+      "status": "passed",
+      "local_evidence": "evidence-cases/copied_save",
+      "phases": [
+        {
+          "phase": "idle",
+          "exit": 0,
+          "provider_requests": 0,
+          "stop_reason": null
+        },
+        {
+          "phase": "question",
+          "exit": 0,
+          "provider_requests": 2,
+          "stop_reason": "UNSPECIFIED"
+        },
+        {
+          "phase": "answer",
+          "exit": 0,
+          "provider_requests": 2,
+          "stop_reason": "UNSPECIFIED"
+        }
+      ],
+      "tool_invocation_names": [
+        "ask_user",
+        "write_output"
+      ],
+      "artifact": {
+        "bytes": 14,
+        "sha256": "e9bb7eee801cdc8bcdbf61c7d352325bf4320bd2b2b120ad68ac83657e2d4cad"
+      },
+      "diagnostic_budget_only": true,
+      "usage_before_resume": 240,
+      "usage_after_resume": 480
+    },
+    {
+      "model_cap": 2,
+      "tool_cap": 3,
+      "total_model_requests": 3,
+      "case": "model_limit",
+      "status": "failed",
+      "local_evidence": "evidence-cases/model_limit",
+      "phases": [
+        {
+          "phase": "idle",
+          "exit": 0,
+          "provider_requests": 0,
+          "stop_reason": null
+        },
+        {
+          "phase": "question",
+          "exit": 0,
+          "provider_requests": 2,
+          "stop_reason": "MAX_MODEL_CALLS_EXCEEDED"
+        },
+        {
+          "phase": "answer",
+          "exit": 0,
+          "provider_requests": 1,
+          "stop_reason": "MAX_MODEL_CALLS_EXCEEDED"
+        }
+      ],
+      "tool_invocation_names": [
+        "ask_user",
+        "write_output"
+      ],
+      "artifact": {
+        "bytes": 14,
+        "sha256": "e9bb7eee801cdc8bcdbf61c7d352325bf4320bd2b2b120ad68ac83657e2d4cad"
+      },
+      "expected_resume_provider_requests": 0,
+      "observed_resume_provider_requests": 1,
+      "initial_assertion_failed": true
+    },
+    {
+      "model_cap": 5,
+      "tool_cap": 1,
+      "total_model_requests": 2,
+      "case": "tool_limit",
+      "status": "failed",
+      "local_evidence": "evidence-boundaries/tool_limit",
+      "phases": [
+        {
+          "phase": "idle",
+          "exit": 0,
+          "provider_requests": 0,
+          "stop_reason": null
+        },
+        {
+          "phase": "question",
+          "exit": 0,
+          "provider_requests": 1,
+          "stop_reason": "MAX_TOOL_CALLS_EXCEEDED"
+        },
+        {
+          "phase": "answer",
+          "exit": 0,
+          "provider_requests": 1,
+          "stop_reason": "MAX_TOOL_CALLS_EXCEEDED"
+        }
+      ],
+      "tool_invocation_names": [
+        "ask_user"
+      ]
+    },
+    {
+      "model_cap": 3,
+      "tool_cap": 2,
+      "total_model_requests": 3,
+      "case": "current_limits",
+      "status": "not_normal_completion",
+      "local_evidence": "evidence-boundaries/current_limits",
+      "phases": [
+        {
+          "phase": "idle",
+          "exit": 0,
+          "provider_requests": 0,
+          "stop_reason": null
+        },
+        {
+          "phase": "question",
+          "exit": 0,
+          "provider_requests": 2,
+          "stop_reason": "UNSPECIFIED"
+        },
+        {
+          "phase": "answer",
+          "exit": 0,
+          "provider_requests": 1,
+          "stop_reason": "MAX_MODEL_CALLS_EXCEEDED"
+        }
+      ],
+      "tool_invocation_names": [
+        "ask_user",
+        "write_output"
+      ],
+      "artifact": {
+        "bytes": 14,
+        "sha256": "e9bb7eee801cdc8bcdbf61c7d352325bf4320bd2b2b120ad68ac83657e2d4cad"
+      }
+    },
+    {
+      "model_cap": 5,
+      "tool_cap": 3,
+      "total_model_requests": 2,
+      "case": "missing_session",
+      "status": "passed",
+      "local_evidence": "evidence-boundaries/missing_session",
+      "phases": [
+        {
+          "phase": "idle",
+          "exit": 0,
+          "provider_requests": 0,
+          "stop_reason": null
+        },
+        {
+          "phase": "question",
+          "exit": 0,
+          "provider_requests": 2,
+          "stop_reason": "UNSPECIFIED"
+        },
+        {
+          "phase": "missing",
+          "exit": 0,
+          "provider_requests": 0,
+          "stop_reason": null,
+          "error_type": "RuntimeError"
+        }
+      ],
+      "tool_invocation_names": [
+        "ask_user"
+      ]
+    },
+    {
+      "model_cap": 5,
+      "tool_cap": 3,
+      "total_model_requests": 1,
+      "case": "provider_error",
+      "status": "passed",
+      "local_evidence": "evidence-terminal-checked/provider_error",
+      "phases": [
+        {
+          "phase": "idle",
+          "exit": 0,
+          "provider_requests": 0,
+          "stop_reason": null
+        },
+        {
+          "phase": "question",
+          "exit": 0,
+          "provider_requests": 1,
+          "stop_reason": null,
+          "error_type": "AntigravityExecutionError"
+        }
+      ],
+      "tool_invocation_names": []
+    },
+    {
+      "case": "hook_stop",
+      "status": "unconfirmed_no_resume",
+      "local_evidence": "evidence-terminal-checked/hook_stop",
+      "phases": [
+        {
+          "phase": "idle",
+          "exit": 0,
+          "provider_requests": 0,
+          "stop_reason": null
+        },
+        {
+          "phase": "question",
+          "exit": 0,
+          "provider_requests": 1,
+          "stop_reason": null,
+          "error_type": "AntigravityCancelledError"
+        }
+      ],
+      "tool_invocation_names": [
+        "ask_user"
+      ],
+      "sdk_tool_completion_confirmed": false,
+      "tool_evidence": "tool-calls.jsonl records ask_user once; SDK DONE unconfirmed does not mean no effects."
+    },
+    {
+      "model_cap": 3,
+      "tool_cap": 2,
+      "total_model_requests": 2,
+      "case": "terminal",
+      "status": "not_normal_completion",
+      "local_evidence": "evidence-finish-policy/terminal",
+      "phases": [
+        {
+          "phase": "idle",
+          "exit": 0,
+          "provider_requests": 0,
+          "stop_reason": null
+        },
+        {
+          "phase": "question",
+          "exit": 0,
+          "provider_requests": 1,
+          "stop_reason": "UNSPECIFIED"
+        },
+        {
+          "phase": "answer",
+          "exit": 0,
+          "provider_requests": 1,
+          "stop_reason": "MAX_TOOL_CALLS_EXCEEDED"
+        }
+      ],
+      "tool_invocation_names": [
+        "ask_user",
+        "write_output"
+      ],
+      "artifact": {
+        "bytes": 14,
+        "sha256": "e9bb7eee801cdc8bcdbf61c7d352325bf4320bd2b2b120ad68ac83657e2d4cad"
+      },
+      "note": "Application dispatch after SDK finish, not custom-tool terminal semantics; final SDK result remains budget stop."
+    }
+  ]
+}

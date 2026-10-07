@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -16,6 +17,7 @@ func main() { os.Exit(run()) }
 func run() int {
 	path := flag.String("config", os.Getenv("AX_EXECUTION_CONFIG"), "configuration file path")
 	guest := flag.Bool("guest", false, "observe direct guest TLS, ProcessService and fixed runner status")
+	interactive := flag.Bool("interactive", false, "observe the configured credential-free interactive atespace")
 	flag.Parse()
 	if *path == "" || flag.NArg() != 0 {
 		fmt.Fprintln(os.Stderr, "config_required")
@@ -32,7 +34,7 @@ func run() int {
 		fmt.Fprintln(os.Stderr, "config_invalid")
 		return 2
 	}
-	nativeConfig, err := config.Native()
+	nativeConfig, err := inspectConfig(config, *interactive)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "native_config_invalid")
 		return 2
@@ -68,4 +70,15 @@ func run() int {
 		}
 	}
 	return exit
+}
+
+func inspectConfig(config settings.File, interactive bool) (native.Config, error) {
+	if !interactive {
+		return config.Native()
+	}
+	selected, err := config.InteractiveNative()
+	if err != nil || selected == nil {
+		return native.Config{}, errors.New("interactive_config_required")
+	}
+	return *selected, nil
 }

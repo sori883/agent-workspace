@@ -55,6 +55,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   else error = results[0].reason instanceof RunApiError ? runErrorMessage(results[0].reason.code) : "会話一覧を取得できませんでした。接続を確認してから更新してください。";
   if (results[1].status === "fulfilled") conversation = results[1].value;
   else if (!(results[1].reason instanceof RunApiError && results[1].reason.code === "conversation_not_found")) error = results[1].reason instanceof RunApiError ? runErrorMessage(results[1].reason.code) : "会話を取得できませんでした。接続を確認してから更新してください。";
+  if (conversation?.agent_root_id) return redirect(scopeHref(`/agent?root=${conversation.agent_root_id}`, scope), { headers });
   const head = conversation?.conversation.head_run_id ?? null;
   return data({ scope, workspaceName: await selectedName, csrf: session.csrf, id, key: draftKey(id, head), conversation, conversations, error }, { headers });
 }

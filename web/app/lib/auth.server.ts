@@ -4,6 +4,7 @@ import { AuthenticationError, opaqueId } from "../../server/auth-store";
 import { readConfig } from "../../server/config";
 import { assertLocalRequest, pageHeaders } from "./security.server";
 import { loginDestination } from "../../server/login-destination";
+import { agentsClient } from "./agents.server";
 
 function cookie(kind: "auth" | "login") {
   const config = readConfig();
@@ -77,10 +78,14 @@ export async function finishLogin(request: Request) {
   }
 }
 export async function logout(request: Request) {
-  await requireAuth(request);
+  const user = await requireAuth(request);
   const id = await cookieValue(request, "auth");
   const headers = pageHeaders();
-  try { await authRuntime().store.revoke(id!); }
+  try { await agentsClient(user.accessToken).revokeAll(); }
+  catch { throw new Response("対話の停止受付を確認できず、ログアウトを完了できませんでした。ログイン状態はまだ有効です。時間をおいて再度ログアウトしてください。", { status: 503, headers }); }
+  try {
+    await authRuntime().store.revoke(id!);
+  }
   catch { throw unavailable(); }
   headers.append("Set-Cookie", await cookie("auth").serialize("", { maxAge: 0 }));
   headers.append("Set-Cookie", await cookie("login").serialize("", { maxAge: 0 }));

@@ -8,6 +8,7 @@ export default [
   route("workspaces/:workspaceId", "routes/workspace-manage.tsx"),
   route("join", "routes/join.tsx"),
   index("routes/chat.tsx"),
+  route("agent", "routes/agent.tsx"),
   route("tasks", "routes/workspace.tsx"),
   route("connection", "routes/home.tsx"),
   route("runs/:runId", "routes/run-detail.tsx"),

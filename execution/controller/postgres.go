@@ -179,7 +179,47 @@ func classifyIntentError(err error) error {
 	if errors.As(err, &databaseError) && databaseError.Code == "P0001" && databaseError.Message == "workspace_access_revoked" {
 		return ErrAuthorizationRevoked
 	}
+	if errors.As(err, &databaseError) && databaseError.Code == "P0001" {
+		switch databaseError.Message {
+		case "agent_stopped", "agent_grant_expired", "agent_budget_exhausted":
+			return ErrGatewayDenied
+		}
+	}
 	return errors.New("database_intent_unconfirmed")
+}
+
+func (p *Postgres) Reserve(ctx context.Context, c *Claim, mailbox *native.Mailbox) (Reservation, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	var data []byte
+	if err := p.pool.QueryRow(ctx, p.query("ax_agent_reserve")+"($1,$2,$3,$4,$5::bytea)", c.RunID, c.Generation, p.controllerID, mailbox.Request.Sequence, mailbox.Bytes).Scan(&data); err != nil {
+		return Reservation{}, classifyIntentError(err)
+	}
+	var wire struct {
+		Send     *bool           `json:"send"`
+		Response json.RawMessage `json:"response"`
+	}
+	if len(data) > 128*1024 || json.Unmarshal(data, &wire) != nil || wire.Send == nil || len(wire.Response) == 0 {
+		return Reservation{}, errors.New("invalid_gateway_reservation")
+	}
+	if *wire.Send {
+		if !bytes.Equal(bytes.TrimSpace(wire.Response), []byte("null")) {
+			return Reservation{}, errors.New("invalid_gateway_reservation")
+		}
+	} else if _, err := native.ParseReply(wire.Response, mailbox); err != nil {
+		return Reservation{}, errors.New("invalid_gateway_reservation")
+	}
+	return Reservation{Send: *wire.Send, Response: wire.Response}, nil
+}
+func (p *Postgres) Settle(ctx context.Context, c *Claim, mailbox *native.Mailbox, reply []byte, usage map[string]float64, elapsedMS int) error {
+	if _, err := native.ParseReply(reply, mailbox); err != nil {
+		return errors.New("invalid_gateway_response")
+	}
+	data, err := json.Marshal(usage)
+	if err != nil {
+		return errors.New("invalid_gateway_usage")
+	}
+	return p.exec(ctx, "ax_agent_settle", "($1,$2,$3,$4,$5::jsonb,$6::jsonb,$7)", c.RunID, c.Generation, p.controllerID, mailbox.Request.Sequence, string(reply), string(data), elapsedMS)
 }
 
 func finishFunction(c *Claim) string {

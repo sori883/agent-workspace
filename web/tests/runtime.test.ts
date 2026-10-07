@@ -182,7 +182,7 @@ for (const runtime of ["node", "workerd"] as const) test(`${runtime} Worker adap
     let pid: number | undefined;
     const deadline = Date.now() + 3000;
     while (Date.now() < deadline) {
-      const result = await admin.query<{ pid: number }>("SELECT pid FROM pg_stat_activity WHERE datname=current_database() AND usename=current_user AND application_name=$1 AND state='idle'", [schema]);
+      const result = await admin.query<{ pid: number }>("SELECT pid FROM pg_stat_activity WHERE datname=current_database() AND usename=current_user AND application_name=$1 AND state='idle' AND query LIKE 'SELECT u.id FROM identities%'", [schema]);
       assert.ok(result.rows.length <= 1, "Only the request's isolated test connection can be terminated");
       pid = result.rows[0]?.pid;
       if (pid !== undefined) break;

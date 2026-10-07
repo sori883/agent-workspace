@@ -48,14 +48,16 @@ type Executor interface {
 }
 
 type Controller struct {
-	Store             Store
-	Executor          Executor
-	Image             string
-	PollInterval      time.Duration
-	HeartbeatInterval time.Duration
-	ReadyTimeout      time.Duration
-	ResultTimeout     time.Duration
-	StopTimeout       time.Duration
+	Store               Store
+	Executor            Executor
+	InteractiveExecutor Executor
+	InteractiveImage    string
+	Image               string
+	PollInterval        time.Duration
+	HeartbeatInterval   time.Duration
+	ReadyTimeout        time.Duration
+	ResultTimeout       time.Duration
+	StopTimeout         time.Duration
 }
 
 var ErrHeld = errors.New("execution_held")
@@ -69,6 +71,14 @@ func (c *Controller) RunOnce(ctx context.Context) (bool, error) {
 	claim, err := c.Store.Claim(ctx)
 	if err != nil || claim == nil {
 		return false, err
+	}
+	if claim.Request.Adapter == "interactive" {
+		if c.InteractiveExecutor == nil || c.InteractiveImage == "" {
+			return true, errors.New("interactive_executor_unavailable")
+		}
+		selected := *c
+		selected.Executor, selected.Image = c.InteractiveExecutor, c.InteractiveImage
+		c = &selected
 	}
 	work, cancel := context.WithCancel(ctx)
 	beatDone := make(chan struct{})
@@ -94,7 +104,7 @@ func (c *Controller) RunOnce(ctx context.Context) (bool, error) {
 		}
 	}()
 	err = c.process(work, claim)
-	if errors.Is(err, ErrAuthorizationRevoked) && work.Err() == nil {
+	if (errors.Is(err, ErrAuthorizationRevoked) || errors.Is(err, ErrGatewayDenied)) && work.Err() == nil {
 		if len(claim.Effects) == 0 {
 			err = nil
 		} else {
@@ -127,6 +137,7 @@ func (c *Controller) RunOnce(ctx context.Context) (bool, error) {
 }
 
 func (c *Controller) process(ctx context.Context, claim *Claim) error {
+	activeStarted := time.Now()
 	if claim.Request.Validate() != nil || claim.RunID != claim.Request.RunID || claim.Image != c.Image || claim.Generation <= 0 || (claim.Kind != "execute" && claim.Kind != "recovery") {
 		return errors.New("invalid_claim")
 	}
@@ -173,6 +184,7 @@ func (c *Controller) process(ctx context.Context, claim *Claim) error {
 				return err
 			}
 		}
+		activeStarted = time.Now()
 		if err := c.effect(ctx, claim, native.StartOperation, func() error { return c.Executor.Start(ctx, claim.RunID) }); err != nil {
 			return err
 		}
@@ -189,14 +201,20 @@ func (c *Controller) process(ctx context.Context, claim *Claim) error {
 					return c.cleanupAndFinish(ctx, claim)
 				}
 			}
-			if err := c.wait(ctx, c.ResultTimeout, func() (bool, error) {
-				state, err := c.Executor.Status(ctx, claim.Request)
-				if err != nil {
-					return false, err
-				}
-				return state.State == "finished", nil
-			}); err != nil {
-				return err
+			var waitError error
+			if claim.Request.Adapter == "interactive" && claim.Kind == "execute" {
+				waitError = c.waitInteractive(ctx, claim, activeStarted)
+			} else {
+				waitError = c.wait(ctx, c.ResultTimeout, func() (bool, error) {
+					state, err := c.Executor.Status(ctx, claim.Request)
+					if err != nil {
+						return false, err
+					}
+					return state.State == "finished", nil
+				})
+			}
+			if waitError != nil {
+				return waitError
 			}
 			collection, err := c.Executor.Collect(ctx, claim.Request)
 			if err != nil {
