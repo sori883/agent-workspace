@@ -8,7 +8,7 @@ const safeIdentifier = z.string().regex(/^[A-Za-z][A-Za-z0-9_.:-]{0,127}$/);
 const protocolIdentifier = z.string().regex(/^[A-Za-z][A-Za-z0-9_.:-]{0,95}$/);
 export const runIdSchema = z.string().regex(/^ax-run-[0-9a-f]{16}$/);
 export const outputNameSchema = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$/);
-const adapterSchema = z.enum(["offline", "antigravity"]);
+const adapterSchema = z.enum(["offline", "antigravity", "interactive"]);
 
 function textSchema(maxBytes: number, allowNull = false) {
   return z.string().refine((value) => (allowNull || !value.includes("\0")) && !Array.from(value).some((character) => {
@@ -48,9 +48,11 @@ export const protocolResultSchema = z.object({
   error_type: protocolIdentifier.nullable(),
   artifact: z.object({ name: outputNameSchema, size_bytes: z.number().int().min(0).max(MAX_ARTIFACT_BYTES), sha256: z.string().regex(/^[0-9a-f]{64}$/) }).strict().nullable(),
 }).strict().refine((value) => {
+  if (value.adapter === "interactive" && value.estimated_usd !== null && value.estimated_usd !== 0) return false;
   if (value.status !== "succeeded") return value.exit_code !== 0;
   if (value.exit_code !== 0 || value.error_type !== null || value.usage === null || value.estimated_usd === null || value.artifact === null) return false;
   if (value.adapter === "offline") return value.stop_reason === "OFFLINE" && value.estimated_usd === 0 && Object.values(value.usage).every((amount) => amount === 0);
+  if (value.adapter === "interactive" && value.estimated_usd !== 0) return false;
   return value.stop_reason === "UNSPECIFIED" && (value.usage.prompt_token_count ?? 0) > 0 && (value.usage.total_token_count ?? 0) > 0;
 });
 

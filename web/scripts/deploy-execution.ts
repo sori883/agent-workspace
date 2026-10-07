@@ -10,7 +10,7 @@ async function run() {
   const root = resolve("../ax-local");
   if (!existsSync(resolve(root, ".state/execution/managed"))) throw new Error("Legacy admission must be retired first.");
   const versions = JSON.parse(readFileSync(resolve(root, "versions.json"), "utf8"));
-  for (const name of ["execution", "worker_controlled", "runner_task"]) if (!/^localhost:5001\/[a-z0-9_./-]+@sha256:[0-9a-f]{64}$/.test(versions[name] ?? "")) throw new Error("Pinned execution images are required.");
+  for (const name of ["execution", "worker_controlled", "runner_task", "ax_server_runtime"]) if (!/^localhost:5001\/[a-z0-9_./-]+@sha256:[0-9a-f]{64}$/.test(versions[name] ?? "")) throw new Error("Pinned execution images are required.");
   const auth = readAuthConfig();
   if (!auth.database.caPath || auth.database.port !== 55432 || !["localhost", "127.0.0.1"].includes(auth.database.host)) throw new Error("This helper targets the local Docker database.");
   const pool = createPool(auth);
@@ -29,6 +29,7 @@ async function run() {
     direct_guest: { ca_path: "/run/podidentity/trust-bundle.pem", client_bundle_path: "/run/podidentity/credential-bundle.pem", server_identity: "spiffe://cluster.local/ns/ax-demo/sa/default" },
     substrate: { address: "api.ate-system.svc:443", server_name: "api.ate-system.svc", ca_path: "/run/servicedns-ca/trust-bundle.pem", bearer_path: "/var/run/secrets/ateapi/token" },
     secret_group_read: true, atespace: "ax-demo", image: versions.runner_task,
+    interactive: { image: versions.runner_task, atespace: "ax-runtime", guest_identity: "spiffe://cluster.local/ns/ax-demo/sa/default" },
     allowed_hosts: ["generativelanguage.googleapis.com"], call_timeout_seconds: 15, lifecycle_timeout_seconds: 180,
     controller_id: "ax-local-controller", database: { host: "host.docker.internal", port: 55432, database: auth.database.database, user: "ax_execution",
       password_path: "/run/execution-database/password", ca_path: "/run/execution-database/ca.pem", server_name: "localhost", schema: "public" },
@@ -52,8 +53,10 @@ async function run() {
   const pod = deployment.spec.template.spec;
   const ax = pod.containers.find((container: { name: string }) => container.name === "ax-server");
   if (!ax) throw new Error("Expected AX container not found.");
+  ax.image = versions.ax_server_runtime;
   ax.args = ax.args.map((argument: string) => argument.startsWith("--addr=") ? "--addr=127.0.0.1:8080" : argument);
-  ax.env = (ax.env ?? []).filter((entry: { name: string }) => !["ADDR", "ATENET_ROUTER_ADDR"].includes(entry.name));
+  ax.env = (ax.env ?? []).filter((entry: { name: string }) => !["ADDR", "ATENET_ROUTER_ADDR", "AX_DISABLE_CREDENTIAL_ATESPACES"].includes(entry.name));
+  ax.env.push({ name: "AX_DISABLE_CREDENTIAL_ATESPACES", value: "ax-runtime" });
   delete ax.readinessProbe;
   delete ax.livenessProbe;
   delete ax.ports;

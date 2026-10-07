@@ -134,6 +134,35 @@ def collect(root, run_id):
     return {"result": result, "artifact_base64": encoded}
 
 
+def mailbox(root, run_id):
+    _request(root, run_id)
+    if __package__:
+        from .mailbox import Mailbox
+    else:
+        from mailbox import Mailbox
+    return Mailbox(root, run_id).pending()
+
+
+def reply(root, encoded):
+    if __package__:
+        from .interactive_protocol import MAX_WIRE_BYTES, load_json
+        from .mailbox import Mailbox
+    else:
+        from interactive_protocol import MAX_WIRE_BYTES, load_json
+        from mailbox import Mailbox
+    if not isinstance(encoded, str) or len(encoded) > 4 * ((MAX_WIRE_BYTES + 2) // 3):
+        raise ProtocolError("MailboxReplyTooLarge")
+    try:
+        value = load_json(base64.b64decode(encoded, validate=True))
+    except ValueError:
+        raise ProtocolError("InvalidMailboxEncoding") from None
+    if not isinstance(value, dict):
+        raise ProtocolError("InvalidMailboxReply")
+    run_id = validate_run_id(value.get("run_id"))
+    _request(root, run_id)
+    return Mailbox(root, run_id).respond(encoded)
+
+
 def _receipt(root):
     try:
         receipt = _read_json(root / "receipt.json")
@@ -165,6 +194,12 @@ def _kill_group(process):
 
 def execute(root, timeout=EXECUTION_TIMEOUT):
     request = _request(root)
+    if request["adapter"] == "interactive":
+        if __package__:
+            from .interactive_protocol import validate_context
+        else:
+            from interactive_protocol import validate_context
+        timeout = min(timeout, validate_context(request)[0]["remaining_ms"] / 1000)
     if _read_bytes(root / "start", 128).decode("ascii") != request["run_id"]:
         raise ProtocolError("StartMismatch")
     _exclusive(root / "attempted")
@@ -200,7 +235,7 @@ def execute(root, timeout=EXECUTION_TIMEOUT):
             result["error_type"] = "AdapterFailed"
         elif result["usage"] is None or result["estimated_usd"] is None:
             result.update(exit_code=1, error_type="UsageUnavailable")
-        elif request["adapter"] == "antigravity" and (result["usage"].get("prompt_token_count", 0) <= 0 or result["usage"].get("total_token_count", 0) <= 0):
+        elif request["adapter"] in ("antigravity", "interactive") and (result["usage"].get("prompt_token_count", 0) <= 0 or result["usage"].get("total_token_count", 0) <= 0):
             result.update(exit_code=1, error_type="UsageUnavailable")
         elif result["stop_reason"] != ("OFFLINE" if request["adapter"] == "offline" else "UNSPECIFIED"):
             result.update(exit_code=1, error_type="AgentStopped")
@@ -231,6 +266,12 @@ def _run_adapter(root, run_id):
         else:
             from adapters.offline import run
         run(request, output, root / "receipt.json")
+    elif request["adapter"] == "interactive":
+        if __package__:
+            from .adapters.interactive import run
+        else:
+            from adapters.interactive import run
+        asyncio.run(run(request, output, root / "receipt.json"))
     else:
         if __package__:
             from .adapters.antigravity import run
@@ -253,7 +294,7 @@ def wait(root):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("/workspace/task"))
-    parser.add_argument("command", choices=("wait", "stage", "start", "status", "collect", "_adapter"))
+    parser.add_argument("command", choices=("wait", "stage", "start", "status", "collect", "mailbox", "reply", "_adapter"))
     parser.add_argument("value", nargs="?")
     args = parser.parse_args()
     root = args.root.absolute()
@@ -268,7 +309,7 @@ def main():
         if args.command == "_adapter":
             _run_adapter(root, args.value)
             return 0
-        result = {"stage": stage, "start": start, "status": status, "collect": collect}[args.command](root, args.value)
+        result = {"stage": stage, "start": start, "status": status, "collect": collect, "mailbox": mailbox, "reply": reply}[args.command](root, args.value)
         print(json.dumps(result, ensure_ascii=False, allow_nan=False))
         return 0
     except BaseException as error:

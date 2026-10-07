@@ -1,0 +1,56 @@
+{
+  "sdk_version": "0.1.20",
+  "image_id": "sha256:1bce740d1ab5a5f7f051d67a7c36c24f7c9a21ffeebd1bb38a77c7d2b95939a5",
+  "external_model_requests": 0,
+  "local_model_requests": 2,
+  "sdk_tool_calls": 0,
+  "planned_runtime_tool_count": 2,
+  "sdk_limits": {
+    "model_calls": 3,
+    "tool_calls": 2
+  },
+  "total_synthetic_tokens": 240,
+  "sdk_state_reused": false,
+  "reports": [
+    {
+      "proposal": {
+        "kind": "ask_user",
+        "question": "What is the code word?"
+      },
+      "stop_reason": "UNSPECIFIED",
+      "usage": {
+        "prompt_token_count": 100,
+        "cached_content_token_count": 0,
+        "candidates_token_count": 20,
+        "thoughts_token_count": 0,
+        "total_token_count": 120,
+        "service_tier": null
+      },
+      "sdk_tool_calls": 0
+    },
+    {
+      "proposal": {
+        "kind": "write_output",
+        "content": "SDK_CONTRACT_OK\n"
+      },
+      "stop_reason": "UNSPECIFIED",
+      "usage": {
+        "prompt_token_count": 100,
+        "cached_content_token_count": 0,
+        "candidates_token_count": 20,
+        "thoughts_token_count": 0,
+        "total_token_count": 120,
+        "service_tier": null
+      },
+      "sdk_tool_calls": 0
+    }
+  ],
+  "confirmed_history_reconstructed": true,
+  "scope": "Actual SDK text-JSON proposals only. Runtime fixed-tool dispatch, root budget gateway, DB and AX not implemented or verified here.",
+  "proposed_artifact": {
+    "bytes": 16,
+    "sha256": "8d7edead21a505239d7ef760c79cde9dfcc96eda0ab84d456d68e837cd16e465"
+  },
+  "source_sha256": "9c16926de9635204b8d861e2c0232300ae5f2b569aa23e515b94bf012120bd51",
+  "assertions_passed": true
+}

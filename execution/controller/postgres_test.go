@@ -33,3 +33,19 @@ func TestFinishUsesNoEffectCancellationOnlyForFreshExecute(t *testing.T) {
 		}
 	}
 }
+
+func TestAgentDenialsRequireExactDatabaseCodes(t *testing.T) {
+	for _, message := range []string{"agent_stopped", "agent_grant_expired", "agent_budget_exhausted"} {
+		if !errors.Is(classifyIntentError(&pgconn.PgError{Code: "P0001", Message: message}), ErrGatewayDenied) {
+			t.Fatal("confirmed denial not recognized")
+		}
+		if errors.Is(classifyIntentError(&pgconn.PgError{Code: "08006", Message: message}), ErrGatewayDenied) {
+			t.Fatal("connection failure treated as denial")
+		}
+	}
+	for _, message := range []string{"agent_operation_unknown", "agent_operation_conflict", "stale_claim"} {
+		if errors.Is(classifyIntentError(&pgconn.PgError{Code: "P0001", Message: message}), ErrGatewayDenied) {
+			t.Fatal("unknown treated as denial")
+		}
+	}
+}

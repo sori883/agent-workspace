@@ -1,3 +1,4 @@
+import { accessTokenFingerprint } from "../shared/access-token";
 import { readAuthConfig } from "./auth-config";
 import { AuthStore, createPool, AuthenticationError } from "./auth-store";
 import { IdentityProvider } from "./oidc";
@@ -16,5 +17,5 @@ export const authenticate: Authenticate = async (token) => {
   if (!token) throw new AuthenticationError("missing_token");
   const { store, idp } = authRuntime();
   const claims = await idp.accessClaims(token);
-  return store.resolve(claims.iss, claims.sub);
+  return { ownerUserId: await store.resolve(claims.iss, claims.sub), expiresAt: claims.exp, tokenFingerprint: await accessTokenFingerprint(token) };
 };

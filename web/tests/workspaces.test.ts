@@ -154,7 +154,7 @@ test("revocation prevents every new external effect while cleanup and terminal s
 });
 
 test("v2 migration retains v1 checksum, has no public functions and runtime grants exclude old entry points", async () => {
-  assert.deepEqual((await pool.query("SELECT version FROM ax_migrations ORDER BY version")).rows.map(x => x.version), [1, 2, 3]);
+  assert.deepEqual((await pool.query("SELECT version FROM ax_migrations ORDER BY version")).rows.map(x => x.version), [1, 2, 3, 4]);
   assert.ok(!apiFunctions.includes("ax_accept")); assert.ok(!executionFunctions.includes("ax_intent_v1"));
   const functions = (await pool.query("SELECT proname,prosecdef,proconfig,proacl::text[] AS acl FROM pg_proc WHERE pronamespace=$1::regnamespace", [schema])).rows;
   for (const fn of functions.filter(x => /^(org_|ax_)/.test(x.proname))) {

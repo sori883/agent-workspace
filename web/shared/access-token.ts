@@ -40,10 +40,15 @@ export class AccessTokenVerifier {
   }
 }
 
+export async function accessTokenFingerprint(token: string): Promise<string> {
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token)));
+  return Array.from(digest, byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
 export function createAuthenticator(settings: IdentitySettings, resolveIdentity: (issuer: string, subject: string) => Promise<string>): Authenticate {
   const verifier = new AccessTokenVerifier(settings);
   return async (token) => {
     const claims = await verifier.verify(token);
-    return resolveIdentity(claims.iss, claims.sub);
+    return { ownerUserId: await resolveIdentity(claims.iss, claims.sub), expiresAt: claims.exp, tokenFingerprint: await accessTokenFingerprint(token) };
   };
 }

@@ -1,3 +1,5 @@
+import * as ac from "../shared/agent-contracts";
+import type { AgentService } from "./agent-service";
 import * as workspaceContracts from "../shared/workspace-contracts";
 import type { WorkspaceService } from "./workspace-service";
 import { Hono, type Context } from "hono";
@@ -11,7 +13,7 @@ import { RunServiceError, type RunService } from "./run-service";
 import type { ChatService } from "./chat-service";
 import { AuthenticationError, type Authenticate } from "../shared/authentication";
 
-export function createApi(config: ApiConfig, onCheck: (id: string) => void = () => {}, runs?: RunService, chats?: ChatService, authenticate: Authenticate = async () => { throw new Error("Authentication is not configured."); }, workspaces?: WorkspaceService) {
+export function createApi(config: ApiConfig, onCheck: (id: string) => void = () => {}, runs?: RunService, chats?: ChatService, authenticate: Authenticate = async () => { throw new Error("Authentication is not configured."); }, workspaces?: WorkspaceService, agents?: AgentService) {
   validateApiConfig(config);
   const encoder = new TextEncoder();
   let credential: Promise<{ key: CryptoKey; signature: ArrayBuffer }> | undefined;
@@ -25,7 +27,7 @@ export function createApi(config: ApiConfig, onCheck: (id: string) => void = () 
     const { key, signature } = await credential;
     return crypto.subtle.verify("HMAC", key, signature, encoder.encode(value));
   }
-  const app = new Hono<{ Variables: { ownerUserId: string } }>();
+  const app = new Hono<{ Variables: { ownerUserId: string; expiresAt: number | null; tokenFingerprint: string | null } }>();
   app.use("*", async (context, next) => {
     if (context.req.header("host") !== new URL(config.apiOrigin).host || context.req.header("origin")) {
       return context.json({ error: "forbidden" }, 403);
@@ -36,7 +38,7 @@ export function createApi(config: ApiConfig, onCheck: (id: string) => void = () 
     context.header("Cache-Control", "no-store");
     context.header("X-Content-Type-Options", "nosniff");
     if (context.req.path !== "/v1/status") {
-      try { context.set("ownerUserId", await authenticate(context.req.header("X-AX-Access-Token") ?? "")); }
+      try { const identity = await authenticate(context.req.header("X-AX-Access-Token") ?? ""); context.set("ownerUserId", typeof identity === "string" ? identity : identity.ownerUserId); context.set("expiresAt", typeof identity === "string" ? null : identity.expiresAt); context.set("tokenFingerprint", typeof identity === "string" ? null : identity.tokenFingerprint); }
       catch (error) {
         return context.json({ error: error instanceof AuthenticationError ? "unauthorized" : "authentication_unavailable" }, error instanceof AuthenticationError ? 401 : 503);
       }
@@ -174,6 +176,15 @@ export function createApi(config: ApiConfig, onCheck: (id: string) => void = () 
     await runBody(c.req.raw, wc.workspaceEmptyInputSchema);
     return workspaceService().respondOwnership(c.get("ownerUserId"), id(c), id(c,"transferId"), action.data);
   }));
+  function agentService() { if (!agents) throw new RunServiceError("bridge_unavailable"); return agents; }
+  function fingerprint(c: Context) { const value:unknown=c.get("tokenFingerprint"); if(typeof value!=="string" || !/^[0-9a-f]{64}$/.test(value)) throw new RunServiceError("agent_grant_expired",401); return value; }
+  function grant(c: Context) { const exp:unknown=c.get("expiresAt"); if(typeof exp!=="number" || !Number.isSafeInteger(exp) || exp<=Date.now()/1000) throw new RunServiceError("agent_grant_expired",401); return exp; }
+  app.get("/v1/agent-roots", c=>runResponse(c,ac.agentListSchema,()=>agentService().list(c.get("ownerUserId"),workspace(c,true)!)));
+  app.post("/v1/agent-roots", c=>runResponse(c,ac.agentSubmitSchema,async()=>agentService().start(c.get("ownerUserId"),workspace(c,true)!,await runBody(c.req.raw,ac.agentStartSchema),grant(c),fingerprint(c)),202));
+  app.post("/v1/agent-roots/revoke-all", c=>runResponse(c,ac.agentMutationSchema,async()=>{await runBody(c.req.raw,emptyRunBodySchema);return agentService().revoke(c.get("ownerUserId"),fingerprint(c));}));
+  app.get("/v1/agent-roots/:id", c=>runResponse(c,ac.agentRootSchema,()=>agentService().get(c.get("ownerUserId"),workspace(c,true)!,id(c))));
+  app.post("/v1/agent-roots/:id/answer", c=>runResponse(c,ac.agentSubmitSchema,async()=>agentService().answer(c.get("ownerUserId"),workspace(c,true)!,id(c),await runBody(c.req.raw,ac.agentAnswerSchema),grant(c),fingerprint(c)),202));
+  app.post("/v1/agent-roots/:id/stop", c=>runResponse(c,ac.agentMutationSchema,async()=>{await runBody(c.req.raw,emptyRunBodySchema);return agentService().stop(c.get("ownerUserId"),workspace(c,true)!,id(c));}));
   app.notFound((context) => context.json({ error: "not_found" }, 404));
   app.onError(() => new Response(JSON.stringify({ error: "internal_error" }), {
     status: 500,

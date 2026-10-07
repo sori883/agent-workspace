@@ -35,7 +35,7 @@ type Request struct {
 }
 
 func (r Request) Validate() error {
-	if r.SchemaVersion != 1 || !runPattern.MatchString(r.RunID) || (r.Adapter != "offline" && r.Adapter != "antigravity") || !namePattern.MatchString(r.OutputName) || r.Inputs == nil || len(r.Inputs) > 4 {
+	if r.SchemaVersion != 1 || !runPattern.MatchString(r.RunID) || (r.Adapter != "offline" && r.Adapter != "antigravity" && r.Adapter != "interactive") || !namePattern.MatchString(r.OutputName) || r.Inputs == nil || len(r.Inputs) > 4 {
 		return errProtocol
 	}
 	if !validText(r.Instruction) || len(r.Instruction) > 2048 || strings.TrimSpace(r.Instruction) == "" {
@@ -50,6 +50,11 @@ func (r Request) Validate() error {
 	}
 	if total > 4096 {
 		return errProtocol
+	}
+	if r.Adapter == "interactive" {
+		if _, err := r.Runtime(); err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -103,3 +103,29 @@ go vet ./...
 `inspect -config <設定>`はstdinのrun ID配列を受け取り、Task・Actor・egressを読み戻します。`-guest`は直接TLSと固定runner statusの診断です。再開は行いません。`ax-controller -healthcheck`は同居controllerのloopback healthを確認しますが、個別Taskの成功を保証しません。
 
 有料経路をこの構成変更の確認に使わず、offlineと模擬障害で検証します。実環境の未確認事項・失敗・清掃結果は[検証記録](../.space/tasks/ax-portable-api/verification.md)を参照してください。
+
+## 無課金の対話preview
+
+`interactive`区間は`ax-runtime`の別Adapterへ振り分ける。旧`ax-demo`のadapterと同じGoプロセス・PGの実行枠を使い、復旧ではmailboxを処理しない。次の任意設定を加える場合、imageは新しい固定runner digestを指定する。
+
+Taskの領域は`ax-runtime`、実行workerは既存の`ax-demo/ax-local` WorkerPoolを共有する。固定Substrateのschedulerはatespaceでworkerを分けないため、接続時に検証するSPIFFE identityも実workerの`ax-demo`に固定する。独立した`ax-runtime` WorkerPoolは配置しない。共有基盤は信頼済みで、workerのnamespaceをTask間の隔離保証とは扱わない。previewは固定toolだけを許可し、鍵を入れないtemplate・TaskごとのgVisor・egress denyを維持する。
+
+```json
+{
+  "interactive": {
+    "atespace": "ax-runtime",
+    "image": "localhost:5001/ax-task-runner@sha256:<実digest>",
+    "guest_identity": "spiffe://cluster.local/ns/ax-demo/sa/default"
+  }
+}
+```
+
+以前の専用worker構成から移す場合は、受付を閉じて対象Actorの実停止・worker未割当と未解決runを確認し、専用poolとそのworkerの退役を完了してから共有worker設定を配置する。旧poolを残したままidentityだけを変えると、schedulerの割当先によって接続できなくなる。別のworker poolを加えるときは、この配置前提とselectorの設計を見直す。
+
+TaskのSDKはloopback proxyへ要求し、固定mailboxに保存する。controllerは既存mTLS guest RPCで元bytes/hashを受け取り、`ax_agent_reserve`でroot予算・権限と一度限りの送信権を取得する。初期GatewayはGo内部の固定模擬providerだけで、HTTP送信先やモデル鍵の設定を持たない。`ax_agent_settle`で応答・模擬usageを保存してからguestへ返す。
+
+応答投入ACK喪失ではPGの確定済み応答を照合し、同じ応答を一度だけ再投入する。予約・確定の応答が不明ならモデル処理を再送せずholdする。確定した失効・停止・予算拒否はdeny/suspendへ進める。root累積3モデル・2tool・token・90秒の正本はPGで、Goも区間の残時間を期限にする。
+
+`mailbox`と`reply`は各64KiBまで。JSON重複キー、不正UTF-8、hash・run・sequence不一致を拒否する。Task側usageの自己申告だけで成功にせず、PGが保存済みGateway usage・許可したtool提案・成果物・cleanupと照合する。
+
+AXには[管理対象領域の注入禁止patch](../ax-local/patches/README.md)が必要。新規Actor不存在、専用templateの固定image/command、`AX_TASK_YAML`以外のenv無し、単一workspace、gVisor、resume前のworker未割当を検査する。生成コード、live provider、任意URL転送はこのpreviewに含まない。

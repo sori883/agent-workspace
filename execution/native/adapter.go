@@ -222,6 +222,11 @@ func (a *Adapter) Create(ctx context.Context, runID string) (TaskObservation, er
 	if !runPattern.MatchString(runID) {
 		return TaskObservation{}, invalid(CreateOperation)
 	}
+	if a.config.Atespace == "ax-runtime" {
+		if err := a.requireFreshActor(ctx, runID); err != nil {
+			return TaskObservation{}, err
+		}
+	}
 	ctx, cancel := a.callContext(ctx, a.config.AX, a.config.LifecycleTimeout, "")
 	defer cancel()
 	task, err := a.ax.CreateTask(ctx, &axpb.CreateTaskRequest{Task: &axpb.Task{ApiVersion: "ax.io/v1alpha1", Kind: "Task", Metadata: &axpb.ObjectMeta{Name: runID, Atespace: a.config.Atespace}, Spec: &axpb.TaskSpec{Image: a.config.Image, Command: slices.Clone(runnerCommand), Debug: true}}})
@@ -231,6 +236,11 @@ func (a *Adapter) Create(ctx context.Context, runID string) (TaskObservation, er
 func (a *Adapter) Resume(ctx context.Context, runID string) (TaskObservation, error) {
 	if !runPattern.MatchString(runID) {
 		return TaskObservation{}, invalid(ResumeOperation)
+	}
+	if a.config.Atespace == "ax-runtime" {
+		if err := a.verifyRuntimeTemplate(ctx, runID); err != nil {
+			return TaskObservation{}, err
+		}
 	}
 	ctx, cancel := a.callContext(ctx, a.config.AX, a.config.LifecycleTimeout, "")
 	defer cancel()
@@ -341,6 +351,9 @@ func (a *Adapter) policy(allow bool) *controlpb.EgressPolicy {
 }
 
 func (a *Adapter) SetEgress(ctx context.Context, runID string, allow bool) (EgressObservation, error) {
+	if a.config.Atespace == "ax-runtime" && allow {
+		return EgressObservation{}, invalid(AllowOperation)
+	}
 	op := DenyOperation
 	if allow {
 		op = AllowOperation
@@ -402,7 +415,7 @@ func (a *Adapter) observeEgress(ctx context.Context, runID string, allow bool) (
 }
 
 func (a *Adapter) Stage(ctx context.Context, request Request) error {
-	if request.Validate() != nil {
+	if request.Validate() != nil || (request.Adapter == "interactive") != (a.config.Atespace == "ax-runtime") {
 		return invalid(StageOperation)
 	}
 	data, err := json.Marshal(request)

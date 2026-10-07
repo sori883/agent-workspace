@@ -1,0 +1,129 @@
+推奨はAです。Agent RuntimeをAX Task内で、作業が進む区間だけ動かし、会話・認可・秘密・費用の正本をAX外に置く構成が、今回の目的に最も合います。
+ただし、候補Aの「必ず親を新しいTaskへ作り直す方式」まで採用する必要はありません。Runtimeの配置と、継続時のTask再利用方法は分けて決めるべきです。
+指定のmain a682948…、AX ac233282…、未コミットの設計資料、指定OKFを照合しました。以下は静的レビューによる判断です。ファイル変更、環境操作、モデル呼出し、実動作試験は行っていません。
+配置の比較は、次のようになります。
+案	利点	負担・今回の判断
+A：必要時にAX内Runtimeを起動	AXをエージェント本体の実行基盤として使える。現在のTask内エージェントから発展させられる	継続状態の保存とTask切替が必要。今回の推奨
+B：AX外の常駐Runtime	コードTaskを待つ間もRuntimeを保持でき、起動・切替の遅延を減らせる	別の常駐実行系を追加する。障害復旧用の状態保存は必要。現時点では、この利点をAX中心という目的より優先する根拠が不足
+Runtimeと生成コードを同じTaskで実行	ファイル共有が容易で、切替が少ない	生成コードからRuntimeの資格情報・状態を守る境界が未実証。初期には採らない
+
+
+Aが必ず安価・高速とは判断できません。起動時間や切替回数が実用上の問題になった場合は、Bを再検討する理由になります。
+前担当の説明では、次の点を訂正・補足する必要があります。
+1. Bを必要とするAX固有の制約は、確認できません。
+   固定版AXは任意のagent commandとrunner拡張を認めています。質問待ちをDBに保存して実行を止める設計はAでも成立します。Bの優位性は、主にTask切替を減らせる実装・運用上の利点です。Bにもstep保存、未確定送信の照合、再起動後の復元が必要であり、保存・復元の負担全体をAだけの欠点として比較すべきではありません。固定版runner契約、[既存比較 (line 65)](/Users/const/sori883/agent-workspace/docs/agent-runtime-design.md:65)
+2. 「カスタムrunner」の層を区別する必要があります。
+   リポジトリ上の構成は、上流のax-task-runnerを含むイメージに、独自Python runnerを追加し、それをTask commandとして動かす形です。一方、現在のTask作成要求にはWorkspaceのbindingがありません。標準の起動・監督機能を活用する余地はありますが、Git・スキル・環境準備を現在利用済みとは言えません。[イメージ構成 (line 8)](/Users/const/sori883/agent-workspace/ax-local/runner/Dockerfile:8)、[Task作成 (line 221)](/Users/const/sori883/agent-workspace/execution/native/adapter.go:221)
+3. 上流資料の「環境準備機能」は、固定版コードに照らして狭く評価すべきです。
+   setupSkillsは指定ディレクトリを作る処理です。確認した標準起動経路には、スキルregistryからの取得やMCP設定の実体化を行う処理が見当たりません。設定型が存在することと、利用可能な連携が完成していることは別です。[Workspace準備 (line 110)](/Users/const/sori883/agent-workspace/ax-local/.sources/ax/internal/workspace/setup.go:110)、[スキル処理 (line 262)](/Users/const/sori883/agent-workspace/ax-local/.sources/ax/internal/workspace/setup.go:262)
+4. 標準のgoal bootstrapを、そのまま製品の準備処理へ採用するのは不適切です。
+   固定版は鍵不足やbootstrap失敗でも処理を続行し、Task commandが起動し得ます。また、bootstrapは環境のモデル鍵と広いtool許可を使い、現在のアプリ側費用管理とは別経路です。「準備失敗なら作業を開始しない」「全モデル要求を同じ予算で管理する」という補強が必要です。[失敗時の処理 (line 273)](/Users/const/sori883/agent-workspace/ax-local/.sources/ax/internal/workspace/setup.go:273)、[bootstrap設定 (line 74)](/Users/const/sori883/agent-workspace/ax-local/.sources/ax/cmd/ax-task-runner/antigravity_bootstrap.py:74)
+推奨構成は以下です。Gatewayと継続処理は追加する設計上の責務であり、実装済みではありません。
+```mermaid
+flowchart LR
+    Web[Web画面] --> API[TypeScript共通API]
+    API <--> DB[(app PostgreSQL)]
+    Controller[既存Go実行管理] <--> DB
+    Controller --> AX[AX / Substrate]
+
+    AX --> Runtime[Runtime Task<br/>会話・スキル・次の作業の判断]
+    AX --> Code[コードTask<br/>生成コード・スキルのscript]
+
+    Runtime --> Gateway[Gateway<br/>認可・秘密・送信・費用]
+    Gateway <--> DB
+    Gateway --> Model[モデルAPI]
+    Gateway -. 将来 .-> Corp[社内API・MCP・RAG]
+
+    Controller -->|開始・回収・停止確認| Runtime
+    Controller -->|開始・回収・停止確認| Code
+```
+図の二種類のTaskは、初期には同時稼働させません。コードTaskへの依頼はGatewayで記録し、親
+
+
+
+
+
+
+A――Agent RuntimeをAX Task内で、必要な実行区間だけ動かす構成を推奨します。 認証・認可・秘密・費用台帳・会話の永続保存はAX外に残します。
+ただし、候補Aの「継続するたびに新しいTaskを作る方式」まで確定する必要はありません。Runtimeの配置と、Taskの再利用方法は別の判断です。
+指定のmain a682948…、AX固定版 ac233282…、未コミットの設計資料、指定されたOKFを照合しました。以下の実装事実は静的読取りによる確認です。試作・稼働検証は実施しておらず、ファイル変更、環境操作、モデル呼出し、コミット・PR作成も行っていません。
+比較すると、今回の目的では次の評価になります。
+案	利点	負担・今回の判断
+A：AX内Runtime＋外部Gateway	AXをエージェント本体の実行基盤として使える。既存のTask内エージェントから発展させられる	待機・コードTaskへの切替に保存と復元が必要。今回の推奨
+B：AX外の常駐Runtime	コードTaskを待つ間に親Taskを停止する必要がなく、起動待ちを減らせる	保存・復旧・認可は依然必要。常駐Runtimeの運用も追加される。今回の目的では優先しない
+Runtimeと任意コードを同じTaskに置く	切替とファイル受渡しが少ない	Runtimeの状態やGateway利用資格を任意コードから守る境界が未実証。初期には採らない
+
+
+Bは不適切な構成ではありません。ただし、現時点の採用理由はAXの本質的な制約より、Task切替の実装と待ち時間を減らす都合です。その利益がAX中心という目的を上回る実測結果は、今回の資料にはありません。
+また、AX内で動かすこと自体が目的の達成を保証するわけではありません。評価すべき成果は、質問・実行・確認・返答までの利用経路です。
+前担当の説明と前提には、次の補正が必要です。
+1. 「会話をTaskの寿命から分ける」ことはAでもできます。
+   会話をapp PostgreSQLへ保存し、Runtimeを必要時に復元すれば成立します。Bでも障害・更新・再起動に備える保存処理は必要です。差は保存の有無ではなく、平常時にTask停止と復元が何回発生するかです。AXは任意のagent commandとrunnerの拡張を認めており、外部常駐を要求していません。固定版runner契約
+2. 現在の「カスタムrunner」は、標準runnerをすべて置き換えた構成ではありません。
+   ソース上は上流runnerを配置したイメージにPython実行コードを追加し、Task commandとしてrunner.py waitを動かしています。一方、現在のTask作成ではWorkspace bindingを渡していません。標準機能の再利用余地はありますが、Git・スキル・環境準備を利用済みとは扱えません。[イメージ構成 (line 8)](/Users/const/sori883/agent-workspace/ax-local/runner/Dockerfile:8)、[Task作成 (line 221)](/Users/const/sori883/agent-workspace/execution/native/adapter.go:221)
+3. 上流資料にある環境準備機能は、実装範囲を狭めて評価すべきです。
+   固定版のsetupSkillsはディレクトリ作成です。WorkspaceにMCP設定の型はありますが、確認した標準起動経路では、その設定を生成して接続する実装を確認できませんでした。さらにgoalによる準備は、失敗・鍵不足でも処理を続け得ます。準備用エージェントは環境変数の鍵と広いツール許可を使い、現在のアプリの費用管理へ統合されていません。標準機能があることと、安全な環境準備が完成していることは分ける必要があります。 [Workspace初期化 (line 110)](/Users/const/sori883/agent-workspace/ax-local/.sources/ax/internal/workspace/setup.go:110)、[スキルとbootstrap処理 (line 262)](/Users/const/sori883/agent-workspace/ax-local/.sources/ax/internal/workspace/setup.go:262)、[準備用SDK設定 (line 74)](/Users/const/sori883/agent-workspace/ax-local/.sources/ax/cmd/ax-task-runner/antigravity_bootstrap.py:74)
+4. 現在の実行管理に、継続機能がそのまま備わっているわけではありません。
+   現runnerは開始済みmarkerで再実行を拒否し、DBの終了処理は成功・失敗を確定して枠を解放します。質問待ちや子処理待ちは新しい契約になります。既存recoverを継続用に転用してはいけません。[開始契約 (line 83)](/Users/const/sori883/agent-workspace/ax-local/task_runtime/runner.py:83)、[DBの終了処理 (line 249)](/Users/const/sori883/agent-workspace/web/data/schema.sql:249)
+推奨する最小構成は次です。 コードTaskは後続で追加し、Runtime Taskと同時に実行しない構成から始めます。
+```mermaid
+flowchart LR
+  Web[Web] --> API[TypeScript共通API]
+  API <--> DB[(app PostgreSQL)]
+  Controller[既存Go実行管理] <--> DB
+  Controller --> AX[AX / Substrate]
+
+  subgraph Tasks[AXが管理するTask]
+    Runtime[Runtime Task<br/>会話・スキル・判断・結果確認]
+    Code[コードTask<br/>生成コード・スキルのscript]
+  end
+
+  AX --> Runtime
+  AX --> Code
+  Runtime --> Gateway[Gateway<br/>認可・秘密・送信・費用]
+  Gateway <--> DB
+  Gateway --> Model[モデルAPI]
+  Gateway -. 将来 .-> Corp[社内API・MCP・RAG]
+```
+担当	責務
+共通API・app DB	本人確認、複数Workspace・Group所属、本人限定履歴、質問への回答受付、継続状態、成果物の公開範囲
+Runtime Task	依頼の理解、不足情報の質問、スキル・道具・環境の選択、許可された操作の要求、結果確認、理由・代案の返答
+Gateway	現在権限の確認、限定した実行資格、接続先の秘密、モデル送信、予算予約・使用量・外部操作記録
+Go実行管理	実行区間の起動、回収、通信遮断、実停止確認、全体実行枠の管理
+AX / Substrate	Task・Actorのライフサイクル、実行環境、volumeとsnapshot
+コードTask	必要な入力だけを受け取り、任意コードを隔離実行して結果を返す
+
+
+Gatewayは設計上追加する窓口で、既存のSubstrateの外向き通信Gatewayとは別です。DBの配置をKubernetes内へ限定する必要もありません。
+AXの再実装を避けるには、Actor配置・Taskライフサイクル・snapshotを独自に作り直さず、現在のGo実行管理をアプリとの接続役として拡張するのがよいです。標準runnerのプロセス監督やWorkspace設定も、適合する部分から使います。
+一方、会話の所有者、質問と回答の対応、操作の送信済み記録、累積予算、業務認可はアプリ固有です。これらを自作することはAXとの重複ではありません。AXのAPIに型が存在するだけで、製品としての会話・承認・費用管理が完成しているとは判断できません。[固定版AX API (line 24)](/Users/const/sori883/agent-workspace/ax-local/.sources/ax/pkg/apis/v1alpha1/ax.proto:24)
+AX内Runtimeの継続は、次の契約を提案します。
+1. 質問するとき
+   質問ID、会話・確認済み結果への参照、次の処理、スキル・Runtimeの版を外側へ保存します。送信中操作と使用量を確定し、Taskの通信遮断・実停止を確認してから実行枠を解放します。質問は先に表示できても、停止未確認を「安全な待機」として扱いません。
+2. 回答が届いたとき
+   本人・所属・質問ID・状態の版を確認し、回答を一度だけ受理します。Runtimeは保存した状態から継続します。送信済み操作の再実行権を与えず、結果不明なら照合へ戻します。
+3. Taskを再利用するとき
+   同じTaskのsuspend/resumeでも、新Taskへの復元でも、アプリの継続記録は必要です。初期の小さな会話状態には、既存の「1実行1Task」に近い新Task方式を第一候補とします。作業ファイルが増えた段階では、同じTaskのresumeを比較します。毎回新Taskにすることを恒久的な制約にはしません。
+4. サブエージェントを追加するとき
+   最初は同じRuntime Task内の逐次処理でも成立します。ただし、それは権限隔離ではありません。別Taskが必要なら親を保存・停止して子を実行します。親子関係、限定文脈、権限の縮小、合算予算、停止連動はアプリ側で管理します。初期実装には含めません。
+保存する状態はSDKの生メモリではなく、検査可能なデータにします。ただし、SDKが継続に要求するtool-call情報などを保存・復元できるかは未検証です。SDK非依存という目標だけで、その実装負担を小さいとは扱えません。
+環境準備は、まず固定環境と登録済みスキル一つから始めます。Runtimeが必要な機能を判断し、提供できなければ質問または理由・代案を返す形です。将来、AXのWorkspace設定やgoal準備を取り込む際には、準備失敗時の停止、版固定、外部取得、秘密、費用の契約を補います。準備用の別エージェントによるモデル呼出しも同じ予算へ含めます。
+生成コードの別Task隔離は、現状では妥当です。ただし、別Taskにするだけでは不足します。
+秘密をGatewayへ移しても、Runtimeには会話状態や限定的なGateway利用資格があります。同じTaskで任意コードを動かすと、それらへ干渉できる可能性が残ります。信頼済みの固定ツールまで必ず別Taskにする必要はありませんが、生成コードや未信頼のスキルscriptは分離すべきです。
+加えて固定AXは、Task作成時にatespaceのSecret、またはAXサーバー環境からモデル鍵を注入します。コードTaskの設定に鍵を書かないだけでは、鍵なしTaskになりません。 新しい実行経路ではこの注入元と旧template・snapshotを確認する必要があります。[鍵の注入 (line 143)](/Users/const/sori883/agent-workspace/ax-local/.sources/ax/internal/controller/reconciler.go:143)、[鍵の取得元 (line 350)](/Users/const/sori883/agent-workspace/ax-local/.sources/ax/internal/controller/reconciler.go:350)
+全体同時実行1件を維持するなら、親の保存・実停止→コードTask→回収・実停止→親の継続という直列処理は合理的です。ただし、現在のDBは未解決runを保持する構造なので、親を未解決のまま子を既存受付へ投入しても成立しません。会話上の依頼と有限の実行区間を分け、安全な待機だけ枠を解放する変更が必要です。未知usage・未停止時の全体保留は維持します。
+外側に残す権限の境界も配置に左右されません。Workspace管理者へ本人の履歴を自動公開せず、管理権限・業務ロール・接続先権限を分けます。Gatewayは社内システムの認証受け口へ本人性を渡し、最終的な業務認可は接続先が行います。指示やスキルの追加で権限を増やしません。
+最初の実装単位は「質問で止まり、回答後にAX内Runtimeが作業を終える一経路」を勧めます。
+Webから依頼し、不足情報を一問だけ尋ね、安全に待機し、回答後に登録済みスキル一つと信頼済み固定ツールで小さな成果物を作り、検査して本人へ返します。未対応の依頼には理由と代案を返します。
+最初は模擬モデルでこの経路を通し、生成コード、サブエージェント、動的インストール、GitHub・社内接続は後続にします。既存SDKを使えるかは試作で判断し、配置変更だけを理由に全面的なRuntime書換えを始めません。
+実装前の最小試作と、後続機能の開始条件は次のように分けます。いずれも今回未実施です。
+確認事項	最小限の検証
+AX内で質問・継続できるか	固定SDKを模擬providerへ接続し、質問→保存→Task停止→新プロセス→回答後の継続を一度通す。確認済み処理が再実行されないことを確認
+開始・保存境界が安全か	起動だけでは処理せず、開始許可後に動くことを確認。二重回答、保存応答喪失、送信結果不明、停止直前の障害を注入し、再送・予算リセットを防ぐ
+別Task切替が実用的か	親→固定の無課金コードTask→親を一往復し、起動・停止・回収時間を測る。全体枠1と利用者が待てる時間に収まるか評価
+任意コードを公開できるか	code Taskに鍵・Runtime利用資格がないこと、DB・制御系・他Actor等へ到達できないこと、結果改ざんが費用・停止証拠にならないことを実Actor経路で検証
+標準環境準備を採用できるか	採用する機能だけについて、準備失敗、再開時のmarker・ファイル保持、意図しない再準備、費用計測を確認
+
+
+90秒・モデル3回・ツール2回などを実行区間ごとにリセットする設計にはしません。現在の90秒はadapterの実行timeoutなので、対話待ちを含む新しい依頼の時間管理は明示的に定義する必要があります。
+判定は、Aを次の設計の基準に採用し、継続契約と切替の小さな試作を先に行うです。Bへ変更する根拠になるのは、その試作で判明する許容できない起動遅延やSDK上の具体的な制約です。任意コードの隔離不足はA・B共通の問題であり、Bへ移すだけでは解消しません。

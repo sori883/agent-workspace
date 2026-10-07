@@ -32,9 +32,14 @@ type File struct {
 		ClientBundlePath string `json:"client_bundle_path"`
 		ServerIdentity   string `json:"server_identity"`
 	} `json:"direct_guest"`
-	Substrate               Endpoint `json:"substrate"`
-	Atespace                string   `json:"atespace"`
-	Image                   string   `json:"image"`
+	Substrate   Endpoint `json:"substrate"`
+	Atespace    string   `json:"atespace"`
+	Image       string   `json:"image"`
+	Interactive *struct {
+		Image         string `json:"image"`
+		Atespace      string `json:"atespace"`
+		GuestIdentity string `json:"guest_identity"`
+	} `json:"interactive"`
 	AllowedHosts            []string `json:"allowed_hosts"`
 	CallTimeoutSeconds      int      `json:"call_timeout_seconds"`
 	LifecycleTimeoutSeconds int      `json:"lifecycle_timeout_seconds"`
@@ -49,6 +54,26 @@ type File struct {
 		CAPath       string `json:"ca_path"`
 		Schema       string `json:"schema"`
 	} `json:"database"`
+}
+
+func (f File) InteractiveNative() (*native.Config, error) {
+	if f.Interactive == nil {
+		return nil, nil
+	}
+	if f.Interactive.Atespace != "ax-runtime" || f.Interactive.GuestIdentity != "spiffe://cluster.local/ns/ax-demo/sa/default" {
+		return nil, errors.New("invalid_interactive_config")
+	}
+	base, err := f.Native()
+	if err != nil || base.DirectGuest == nil {
+		return nil, errors.New("invalid_interactive_config")
+	}
+	identity := *base.DirectGuest
+	identity.ServerIdentity = f.Interactive.GuestIdentity
+	base.DirectGuest = &identity
+	base.Atespace = f.Interactive.Atespace
+	base.Image = f.Interactive.Image
+	base.AllowedHosts = nil
+	return &base, nil
 }
 
 func Load(path string) (File, error) {

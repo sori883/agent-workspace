@@ -15,7 +15,7 @@ MAX_ENCODED_REQUEST_BYTES = 4 * ((MAX_REQUEST_BYTES + 2) // 3)
 RUN_ID_PATTERN = re.compile(r"ax-run-[0-9a-f]{16}\Z")
 NAME_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}\Z")
 IDENTIFIER_PATTERN = re.compile(r"[A-Za-z][A-Za-z0-9_.:-]{0,95}\Z")
-ADAPTERS = frozenset(("antigravity", "offline"))
+ADAPTERS = frozenset(("antigravity", "offline", "interactive"))
 REQUEST_FIELDS = frozenset(("schema_version", "run_id", "adapter", "instruction", "inputs", "output_name"))
 RESULT_FIELDS = frozenset(("schema_version", "run_id", "adapter", "status", "exit_code", "stop_reason", "usage", "estimated_usd", "error_type", "artifact"))
 
@@ -66,6 +66,12 @@ def validate_request(value):
     if total > MAX_INPUT_BYTES:
         raise ProtocolError("InputTooLarge")
     validate_name(value["output_name"])
+    if value["adapter"] == "interactive":
+        if __package__:
+            from .interactive_protocol import validate_context
+        else:
+            from interactive_protocol import validate_context
+        validate_context(value)
     return value
 
 

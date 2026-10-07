@@ -1,5 +1,18 @@
 ## 2026-10-07
 * **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Update**: [AX Task内の対話型ランタイムと外部の制御基盤](decisions/systems/ax/agent-runtime.md).
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Update**: [AX Task内の対話型ランタイムと外部の制御基盤](decisions/systems/ax/agent-runtime.md).
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Update**: [エージェント制御と隔離コード実行を分ける設計案](decisions/systems/ax/agent-runtime.md).
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Update**: [エージェント制御と隔離コード実行を分ける設計案](decisions/systems/ax/agent-runtime.md).
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Update**: [エージェント制御と隔離コード実行を分ける設計案](decisions/systems/ax/agent-runtime.md).
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
+* **Creation**: [エージェント制御と隔離コード実行を分ける設計案](decisions/systems/ax/agent-runtime.md).
+* **Update**: [AXエージェント実行基盤の構想と検討事項](knowledge/ax-agent-platform-direction.md).
 * **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).
 * **Update**: [組織への所属を権限と業務ロールの境界にする](decisions/systems/ax/workspace-access.md).
 

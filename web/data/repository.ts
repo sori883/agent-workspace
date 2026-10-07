@@ -16,7 +16,7 @@ type Snapshot = z.infer<typeof snapshotSchema>;
 const codes = new Map<string, 400 | 403 | 404 | 409 | 422 | 503>([
   ...["invalid_request", "invalid_owner_user_id", "invalid_run_id", "invalid_conversation_id", "model_not_allowed"].map((code) => [code, 400] as const),
   ...["run_not_found", "artifact_unavailable", "conversation_not_found"].map((code) => [code, 404] as const),
-  ...["idempotency_conflict", "another_cli_running", "unresolved_run", "unknown_paid_usage", "paid_failure_requires_review", "failed_request_already_attempted", "pilot_estimate_limit_reached", "execution_already_claimed", "conversation_conflict", "conversation_busy", "invalid_conversation_state"].map((code) => [code, 409] as const),
+  ...["idempotency_conflict", "another_cli_running", "unresolved_run", "unknown_paid_usage", "paid_failure_requires_review", "failed_request_already_attempted", "pilot_estimate_limit_reached", "execution_already_claimed", "conversation_conflict", "conversation_busy", "invalid_conversation_state", "agent_managed_conversation"].map((code) => [code, 409] as const),
   ["workspace_required", 400], ["workspace_not_found", 404], ["workspace_forbidden", 403], ["conversation_context_full", 422], ["admission_closed", 503], ["invalid_run_ledger", 503], ["artifact_verification_failed", 503],
 ]);
 const ownerId = (value: string) => {
@@ -62,7 +62,7 @@ export class DataRepository {
       if (row.invalid || row.owner_user_id !== owner || row.run_id !== row.request.run_id || row.result && (row.result.run_id !== row.run_id || row.result.adapter !== row.request.adapter)) throw invalid();
       const bytes = unhex(row.request_hex);
       if (await sha256(bytes) !== row.request_hash || canonical(protocolRequestSchema.parse(JSON.parse(decodeUtf8(bytes)))) !== canonical(row.request) || await fingerprint(row.request, row.image) !== row.fingerprint) throw invalid();
-      const manifest = { apiVersion: "ax.io/v1alpha1", kind: "Task", metadata: { name: row.run_id, atespace: "ax-demo" }, spec: { image: row.image, command: ["python3", "/opt/ax-task/runner.py", "wait"], debug: true } };
+      const manifest = { apiVersion: "ax.io/v1alpha1", kind: "Task", metadata: { name: row.run_id, atespace: row.request.adapter === "interactive" ? "ax-runtime" : "ax-demo" }, spec: { image: row.image, command: ["python3", "/opt/ax-task/runner.py", "wait"], debug: true } };
       if (canonical(row.manifest) !== canonical(manifest)) throw invalid();
       return row;
     } catch (error) { if (error instanceof RunServiceError) throw error; throw invalid(); }
@@ -118,7 +118,7 @@ export class DataRepository {
       let parent: string | null = null;
       for (const [index, raw] of saved.runs.entries()) {
         const row = await this.snapshot(raw, owner);
-        if (row.conversation_id !== saved.id || row.sequence !== index + 1 || row.parent_run_id !== parent || row.request.adapter !== "antigravity" || row.request.output_name !== "reply.txt" || Object.keys(row.request.inputs).length !== 1 || row.request.inputs["conversation.json"] !== historyJson(history)) throw invalid();
+        if (row.conversation_id !== saved.id || row.sequence !== index + 1 || row.parent_run_id !== parent || !["antigravity", "interactive"].includes(row.request.adapter) || row.request.output_name !== "reply.txt" || Object.keys(row.request.inputs).length !== (row.request.adapter === "interactive" ? 2 : 1) || row.request.inputs["conversation.json"] !== historyJson(history)) throw invalid();
         let assistant: string | null = null;
         if (row.resolved && row.outcome === "succeeded") {
           if (row.result?.status !== "succeeded" || row.cleanup.egress_denied !== true || row.cleanup.suspended !== true || row.cleanup_errors.length) throw invalid();
@@ -139,6 +139,10 @@ export class DataRepository {
     const value = await this.conversation(await this.query("ax_ws_read_conversation", [owner, cid, workspaceId(workspace)]), owner);
     if (value.conversation.id !== cid) throw invalid();
     if (workspace == null) value.can_send = false;
+    else {
+      const root = z.uuid().nullable().parse(await this.query("ax_agent_read_conversation", [owner, cid, workspaceId(workspace)]));
+      if (root) { value.agent_root_id = root; value.can_send = false; }
+    }
     return value;
   }
   async listConversations(owner: string, workspace?: string | null): Promise<ConversationList> {

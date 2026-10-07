@@ -23,7 +23,7 @@ export const chatInputSchema = z.object({
 }).strict();
 
 const chatRunSummarySchema = runSummarySchema.refine((value) => {
-  if (value.adapter !== "antigravity" || value.accepted_at === null || value.can_recover !== (!value.resolved && !value.active)) return false;
+  if (!["antigravity", "interactive"].includes(value.adapter) || value.accepted_at === null || value.can_recover !== (!value.resolved && !value.active)) return false;
   if (["succeeded", "failed", "not_started"].includes(value.state)) return value.resolved && !value.active;
   if (value.state === "running") return !value.resolved && value.active;
   if (value.state === "needs_recovery") return !value.resolved && !value.active;
@@ -39,6 +39,7 @@ export const conversationSummarySchema = z.object({
 }).strict();
 export const conversationDetailSchema = z.object({
   conversation: conversationSummarySchema,
+  agent_root_id: z.uuid().nullable().optional(),
   turns: z.array(z.object({
     summary: chatRunSummarySchema,
     user: utf8Text(MAX_CHAT_TEXT_BYTES).refine((value) => value.trim().length > 0),

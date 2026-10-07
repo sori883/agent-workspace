@@ -1,7 +1,7 @@
 ---
 type: knowledge
 title: AXエージェント実行基盤の構想と検討事項
-description: Workspace・Group・業務ロールを実装した現在地と、共通APIへの移行経緯・保留中の製品拡張
+description: 組織基盤の実装済み構成と、言語数より依頼に応じた環境準備・対話を優先するエージェントの方向性
 status: draft
 tags: 
   - ax
@@ -10,7 +10,7 @@ tags:
   - egress
 generated: 
   by: agent:codex
-  at: 2026-10-07T01:10:31.447Z
+  at: 2026-10-07T07:47:20.385Z
 sources: 
   - resource: .space/tasks/ax-task-cli/task.md
   - resource: ax-local/task-cli.md
@@ -30,10 +30,44 @@ sources:
   - resource: .space/tasks/ax-portable-api/design.md
   - resource: .space/tasks/ax-workspace-access/task.md
   - resource: .space/tasks/ax-workspace-access/ownership.md
+  - resource: docs/agent-runtime-design.md
+  - resource: .space/tasks/ax-agent-runtime/task.md
+  - resource: .space/tasks/ax-agent-runtime/reviews/external-2026-10-07.txt
+  - resource: .space/tasks/ax-agent-runtime/spike/README.md
+  - resource: .space/tasks/ax-agent-runtime/implementation.md
+  - resource: .space/tasks/ax-agent-runtime/verification.md
 ---
 # AXを中心とするエージェント実行基盤の構想
 
-## 現在地：ワークスペース・グループ・業務ロール（2026-10-07）
+## 現在の方針：AX内の対話型ランタイム（2026-10-07）
+
+利用者提供の独立レビューをコードと照合し、Agent RuntimeをAX Task内で作業中の区間だけ動かすA案へ推奨を変更した。会話・認可・秘密・費用の正本はAX外に置く。当初のAX外常駐案は平常時の切替を減らす利点から選んだものだったが、AXの必須制約ではなく、常駐案にも保存・復旧が必要である。
+
+利用者はランタイム充実の方向を了承し実装を依頼した後、AX外配置に疑問を示してレビューを求めた。実装依頼は維持されている。初期の無課金対話プレビューを実装し、実Keycloak・実Web・実AXで質問→回答→本人の成果物と停止を確認した。固定の模擬providerなので、自由な依頼の推論や有料モデル接続は今回の経路に含まない。詳細は[ランタイムの決定](../decisions/systems/ax/agent-runtime.md)、`docs/agent-runtime-design.md` と `.space/tasks/ax-agent-runtime/task.md`。
+
+現在は上流runnerが独自Python commandを起動する構成である。固定上流のスキル準備はディレクトリ作成にとどまり、MCP設定の実体化は確認した起動経路では未確認。goal bootstrapの失敗時続行やAXのモデル鍵自動注入も移行条件とする。これらを標準機能として利用済み・隔離保証済みとはしない。
+
+初期は「依頼→一問→安全な待機→回答→登録済みスキルと信頼済み固定tool→本人の小成果物/代案」。人待ちは外部保存・全送信とusageの確定・通信遮断と実停止後に全体枠を解放する。会話上のroot依頼と有限の実行区間を分け、旧recoverを再開始へ転用せず、未知usageと未停止のholdを維持する。初期小状態は確認済み会話と台帳から入力を再構成し、区間ごとに新Taskを作る。Taskは鍵を持たず、実SDKの型付き提案を外側のGo GatewayがPG予約して処理する。固定スキルbrief-v1と固定toolだけを公開し、合計3モデル/2toolの範囲で実AXの2区間が通常終了した。workerは既存ax-demoの信頼済poolを共有し、論理atespace ax-runtimeとworker namespaceを混同しない。
+
+## 合意した将来の方向（2026-10-07）
+
+将来、指示・スキル版・接続先・権限・起動条件を持つエージェント定義を画面で登録・有効化し、定期的に依頼を作る方向を想定する。人数や登録数に比例した常駐Runtimeを作る仕様ではない。無人実行の主体・期限・失効・重複・失敗照合は後続で設計する。
+
+標準スキル、画面登録スキル、対話で作成したスキルを、依頼やエージェント定義から指定する利用も将来の方向性に含む。本人・Group・Workspaceの利用範囲、下書きと公開、版を分ける。スキル追加で外部権限を増やさず、本人のチャットを自動共有しない。最初は登録済みスキル、管理画面・作成・公開は後続とする。
+
+## 直近の方針：依頼に応じた環境準備と対話（2026-10-07）
+
+利用者はランタイムの充実を優先する。言語対応を網羅するより、ユーザーの要求を理解して必要な道具と作業環境を判断し、不足情報を会話で補い、準備・実行し、できない場合は理由と代案を伝える機能を求めた。会話、スキル、サブエージェント、コード実行はこの流れを支える。言語数や全環境への対応は初期の完了条件にしない。
+
+社内システムの認証受け口と最終的な業務認可は社内システム側が持つ。エージェント側は合意した方法で本人性を引き継ぐ。将来のGitHub clone・ソース編集・push/PRと、社内API/MCP/RAG接続は想定するが、最初の実装単位へ一括で含めない。固定環境で「依頼→質問→作業→結果/代案」を成立させ、その後に必要な道具を追加準備できるようにする案を設計書へ反映した。mise等の具体的な導入方式は未実装・未実証の候補である。
+
+## 設計の再開：対話型エージェントと社内連携（2026-10-07）
+
+利用者は、Webからスキル・サブエージェント・Python等を使うエージェントの設計を依頼した。社内API・MCP・RAGへの接続を将来実施する要件とし、依頼者の本人性と接続先の権限に応じて閲覧・更新を制限することを求めた。以前保留したWebからのエージェント操作は今回設計を再開する。定期実行の仕様は引き続き未確定。この設計開始時点では実装・接続の実行を含まず、その後の実装依頼と配置の訂正は冒頭の現在方針へ反映した。
+
+当初はAX外の常駐Agent Runtime、Execution Gateway、任意コード用AX Taskを分ける案を整理した。その後、[設計案](../decisions/systems/ax/agent-runtime.md)は冒頭のAX内Runtimeへ変更した。当初は未実装だった。現在の初期プレビューは冒頭の範囲まで実装し、将来の生成コード・サブエージェント・動的環境準備・外部連携と区別する。詳細は `docs/agent-runtime-design.md`。設計だけのPRは作成していない。
+
+## 実装済み：ワークスペース・グループ・業務ロール（2026-10-07）
 
 利用者は会社を最上位のWorkspace、部署やプロジェクト等をGroupとし、Userの複数Workspace・複数Group所属を整理した後、「それで作って」と実装を依頼した。既存共通APIとapp PostgreSQLを正本とする案を採用した。管理権限admin/memberと業務ロールgeneral/developerは各Workspace所属に持ち、別々に判定する。
 
@@ -41,7 +75,7 @@ sources:
 
 画面・API・DBと実行管理へこの境界を実装した。会話はWorkspace所属と本人ownerの両方を要求し、管理者も他人の会話を読めない。旧履歴は本人限定のNULL Workspaceのまま参照・復旧だけを許し、自動割当しない。詳細な理由・制約は[所属の決定](../decisions/systems/ax/workspace-access.md)、実装契約と結果は `.space/tasks/ax-workspace-access/` に残す。
 
-将来のスキル管理、社内システム、RAGの土台であり、それらへの接続、公開自己登録・確認メール配送、Entra/Cognito同期まで実装したものではない。Webからのエージェント操作・定期実行の製品拡張も用途未確定のため保留を維持する。PRは設計の補足ごとに増やさず、実装・文書・検証のまとまりで作成する。
+将来のスキル管理、社内システム、RAGの土台であり、それらへの接続、公開自己登録・確認メール配送、Entra/Cognito同期まで実装したものではない。この実装時点ではWebからのエージェント操作・定期実行の製品拡張を保留していた。その後、上記の依頼で対話型エージェントの設計を再開した。PRは設計の補足ごとに増やさず、実装・文書・検証のまとまりで作成する。
 
 ## 共通APIとPostgreSQLへ移行した時点（2026-10-06）
 
@@ -49,7 +83,7 @@ sources:
 
 Cloudflare Workersは移植性の確認基準で、配置先として選定していない。Nodeと実workerdのAPI契約を実PostgreSQLで確認し、ローカルでは15件の移行と実AX offline、実Keycloakからの全経路を確認した。本番のAPI・DB配置、BFFの移植、全基盤復元は未実施。実装と運用の正本は[Web構成](ax-web-foundation.md)と[移行の決定](../decisions/systems/ax/portable-api-postgres.md)。
 
-利用者は設計の途中や会話の補足ごとにPRを増やさず、今回の構成変更をソース・文書・検証を含む一つの単位へまとめるよう指示した。製品機能としてのエージェント操作・定期実行の拡張は、用途未確定のため引き続き保留する。
+利用者は設計の途中や会話の補足ごとにPRを増やさず、今回の構成変更をソース・文書・検証を含む一つの単位へまとめるよう指示した。この移行時点では製品機能としてのエージェント操作・定期実行の拡張を保留していた。その後の対話プレビューは冒頭に記した範囲で再開した。
 
 ## 経緯：チャットへ認証基盤を接続（2026-10-06）
 
@@ -172,4 +206,3 @@ RAG、長期記憶、社内外ツールの追加接続、独自Web UI、外部AI
 利用者がWebより先にタスク実行の入口を整える方針を承認したため、指示と少量UTF-8入力を受け取るCLIを追加した。1実行1Task、成果物1件、成功・失敗・使用量・通信遮断と停止を記録し、実モデルの正常終了まで確認した。これにより次の指示を1件ずつ実行できる。
 
 初期の責務分離として、CLI・実行契約・開始と回収の制御を共通処理に、SDKとGeminiの使用量確認・固定出力ツールをアダプターに置いた。構想時に未定だった責務の一部を実装したもので、OpenAI・Claude・Bedrock・AzureやWebの接続はまだない。[採用した設計](../decisions/systems/ax/single-task-cli.md)と[実環境の記録](ax-local-kind-environment.md)に根拠と制約を残す。
-
