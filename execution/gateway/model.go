@@ -53,6 +53,7 @@ type Evidence struct {
 type Prepared struct {
 	Payload       []byte
 	SHA256, Phase string
+	Version       int
 }
 type Generated struct {
 	Response json.RawMessage
@@ -80,6 +81,12 @@ func NewGemini(key func() (string, error)) *Gemini {
 func Prepare(request native.Request, mailbox *native.Mailbox, limits Limits) (Prepared, error) {
 	runtime, err := request.Runtime()
 	if err != nil || !limits.Valid() || mailbox == nil || mailbox.Request.Kind != "model" || mailbox.Request.RunID != request.RunID {
+		return Prepared{}, errors.New("model_request_invalid")
+	}
+	return prepareMailbox(mailbox, limits, runtime.Phase, 1)
+}
+func prepareMailbox(mailbox *native.Mailbox, limits Limits, phase string, version int) (Prepared, error) {
+	if version == 1 && !limits.Valid() || version == 2 && (limits.Input != 6000 || limits.Output != 512) {
 		return Prepared{}, errors.New("model_request_invalid")
 	}
 	body := mailbox.Request.Body
@@ -133,18 +140,21 @@ func Prepare(request native.Request, mailbox *native.Mailbox, limits Limits) (Pr
 		}
 	}
 	kinds := []string{"question", "output", "unsupported"}
-	if runtime.Phase == "answer" {
+	if phase == "answer" {
 		kinds = []string{"output", "unsupported"}
 	}
 	config := map[string]any{"candidateCount": 1, "maxOutputTokens": limits.Output, "thinkingConfig": map[string]any{"thinkingLevel": "minimal", "includeThoughts": false},
 		"responseMimeType": "application/json", "responseJsonSchema": map[string]any{"type": "object", "properties": map[string]any{
 			"kind": map[string]any{"type": "string", "enum": kinds}, "text": map[string]any{"type": "string", "minLength": 1, "maxLength": 2048}},
 			"required": []string{"kind", "text"}, "additionalProperties": false}}
+	if version == 2 {
+		config["responseJsonSchema"] = workbenchResponseSchema()
+	}
 	payload, err := json.Marshal(map[string]any{"contents": contents, "systemInstruction": body["systemInstruction"], "generationConfig": config})
 	if err != nil || len(payload) > native.MaxMailboxBytes {
 		return Prepared{}, errors.New("model_request_invalid")
 	}
-	return Prepared{Payload: payload, SHA256: digest(payload), Phase: runtime.Phase}, nil
+	return Prepared{Payload: payload, SHA256: digest(payload), Phase: phase, Version: version}, nil
 }
 
 func textContent(raw []byte, system bool) bool {
@@ -225,7 +235,7 @@ func (g *Gemini) Count(ctx context.Context, p Prepared) (int, error) {
 	return count, nil
 }
 func (g *Gemini) Generate(ctx context.Context, p Prepared, limits Limits) (Generated, error) {
-	if !limits.Valid() || p.SHA256 != digest(p.Payload) {
+	if ((p.Version != 2 && !limits.Valid()) || (p.Version == 2 && (limits.Input != 6000 || limits.Output != 512))) || p.SHA256 != digest(p.Payload) {
 		return Generated{}, errors.New("model_request_invalid")
 	}
 	raw, status, err := g.post(ctx, "generateContent", p.Payload)
@@ -291,9 +301,15 @@ func (g *Gemini) Generate(ctx context.Context, p Prepared, limits Limits) (Gener
 	if json.Unmarshal(parts[0]["text"], &text) != nil {
 		return result, nil
 	}
-	proposal, err := native.ParseProposal([]byte(text))
-	if err != nil || p.Phase == "answer" && proposal.Kind == "question" {
-		return result, nil
+	if p.Version == 2 {
+		if _, err := native.ParseWorkbenchProposal([]byte(text)); err != nil {
+			return result, nil
+		}
+	} else {
+		proposal, err := native.ParseProposal([]byte(text))
+		if err != nil || p.Phase == "answer" && proposal.Kind == "question" {
+			return result, nil
+		}
 	}
 	result.Response, _ = json.Marshal(map[string]any{"candidates": []any{map[string]any{"index": 0, "content": map[string]any{"role": "model", "parts": []any{map[string]string{"text": text}}}, "finishReason": "STOP"}},
 		"usageMetadata": map[string]float64{"promptTokenCount": usage["prompt_token_count"], "candidatesTokenCount": usage["candidates_token_count"], "thoughtsTokenCount": usage["thoughts_token_count"], "totalTokenCount": usage["total_token_count"]}, "modelVersion": Model})
@@ -367,5 +383,5 @@ func ModelReply(mailbox *native.Mailbox, result Generated) ([]byte, error) {
 	} else {
 		body["code"], _ = json.Marshal(result.Evidence.Code)
 	}
-	return json.Marshal(native.MailboxReply{Version: 1, RunID: mailbox.Request.RunID, Sequence: mailbox.Request.Sequence, RequestSHA256: mailbox.SHA256, Status: status, Body: body})
+	return json.Marshal(native.MailboxReply{Version: mailbox.Request.Version, RunID: mailbox.Request.RunID, Sequence: mailbox.Request.Sequence, RequestSHA256: mailbox.SHA256, Status: status, Body: body})
 }

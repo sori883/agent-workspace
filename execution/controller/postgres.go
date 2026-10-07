@@ -91,25 +91,47 @@ func (p *Postgres) Claim(ctx context.Context) (*Claim, error) {
 	if len(data) > 1024*1024 {
 		return nil, errors.New("invalid_database_claim")
 	}
+	return parseClaim(data)
+}
+func parseClaim(data []byte) (*Claim, error) {
+	var fields map[string]json.RawMessage
+	if len(data) > 1024*1024 || json.Unmarshal(data, &fields) != nil {
+		return nil, errors.New("invalid_database_claim")
+	}
+	if raw, ok := fields["workbench"]; ok {
+		var wire struct {
+			RunID      string                      `json:"run_id"`
+			Generation int64                       `json:"generation"`
+			Kind       string                      `json:"kind"`
+			Request    json.RawMessage             `json:"request"`
+			Image      string                      `json:"image"`
+			Manifest   native.TaskManifest         `json:"manifest"`
+			Result     *native.WorkbenchResult     `json:"result"`
+			Effects    map[native.Operation]Effect `json:"effects"`
+			LeaseUntil string                      `json:"lease_until"`
+			Workbench  native.Workbench            `json:"workbench"`
+		}
+		if native.DecodeStrict(data, &wire) != nil || len(raw) == 0 {
+			return nil, errors.New("invalid_database_claim")
+		}
+		request, err := native.ParseWorkbenchRequest(wire.Request)
+		if err != nil || request.RunID != wire.RunID || wire.Workbench.Validate(request) != nil || wire.Manifest.Validate(request, wire.Image) != nil || wire.Generation < 1 || (wire.Kind != "execute" && wire.Kind != "recovery") || wire.Effects == nil || wire.Result != nil && wire.Result.Validate(request) != nil {
+			return nil, errors.New("invalid_database_claim")
+		}
+		return &Claim{RunID: wire.RunID, Generation: wire.Generation, Kind: wire.Kind, Image: wire.Image, Effects: wire.Effects, Workbench: &wire.Workbench, WorkbenchRequest: &request, WorkbenchResult: wire.Result, Manifest: &wire.Manifest}, nil
+	}
 	var claim Claim
 	if json.Unmarshal(data, &claim) != nil || claim.Request.Validate() != nil {
 		return nil, errors.New("invalid_database_claim")
 	}
-	var requestWire struct {
-		Request json.RawMessage `json:"request"`
-		Agent   json.RawMessage `json:"agent"`
-	}
-	if json.Unmarshal(data, &requestWire) != nil {
-		return nil, errors.New("invalid_database_claim")
-	}
-	request, err := native.ParseRequest(requestWire.Request)
+	request, err := native.ParseRequest(fields["request"])
 	if err != nil {
 		return nil, errors.New("invalid_database_claim")
 	}
 	claim.Request = request
 	if request.Adapter == "interactive" {
 		var agent gateway.Agent
-		if native.DecodeStrict(requestWire.Agent, &agent) != nil || !agent.Valid() {
+		if native.DecodeStrict(fields["agent"], &agent) != nil || !agent.Valid() {
 			return nil, errors.New("invalid_database_claim")
 		}
 		claim.Agent = &agent
@@ -118,6 +140,7 @@ func (p *Postgres) Claim(ctx context.Context) (*Claim, error) {
 	}
 	return &claim, nil
 }
+
 func (p *Postgres) Heartbeat(ctx context.Context, c *Claim) error {
 	return p.exec(ctx, "ax_heartbeat", "($1,$2,$3,$4)", c.RunID, c.Generation, p.controllerID, 30)
 }
@@ -192,7 +215,7 @@ func classifyIntentError(err error) error {
 	}
 	if errors.As(err, &databaseError) && databaseError.Code == "P0001" {
 		switch databaseError.Message {
-		case "agent_stopped", "agent_grant_expired", "agent_budget_exhausted", "pilot_estimate_limit_reached":
+		case "agent_stopped", "agent_grant_expired", "agent_budget_exhausted", "pilot_estimate_limit_reached", "agent_grant_revoked", "workbench_disabled", "python_disabled", "definition_archived", "definition_dependency_unavailable", "model_not_allowed":
 			return ErrGatewayDenied
 		}
 	}
@@ -217,7 +240,7 @@ func parseReservation(data []byte, c *Claim, mailbox *native.Mailbox) (Reservati
 		OutputLimit int              `json:"output_limit"`
 		ProfileID   string           `json:"profile_id"`
 	}
-	if native.DecodeStrict(data, &wire) != nil || wire.Send == nil || c.Agent == nil || wire.ProfileID != c.Agent.ProfileID || wire.InputLimit < 0 || wire.InputLimit > 6000 || wire.OutputLimit < 0 || wire.OutputLimit > 256 {
+	if native.DecodeStrict(data, &wire) != nil || wire.Send == nil || !claimAgent(c).Valid() || wire.ProfileID != claimAgent(c).ProfileID || wire.InputLimit < 0 || wire.InputLimit > 6000 || wire.OutputLimit < 0 || wire.OutputLimit > outputLimit(c) {
 		return Reservation{}, errors.New("invalid_gateway_reservation")
 	}
 	response := json.RawMessage("null")
@@ -257,6 +280,9 @@ func (p *Postgres) Settle(ctx context.Context, c *Claim, mailbox *native.Mailbox
 		return errors.New("invalid_gateway_usage")
 	}
 	proof, err := json.Marshal(evidence)
+	if c.Workbench != nil && (c.Workbench.Mode == "preview" || mailbox.Request.Kind == "tool") {
+		proof = []byte("{}")
+	}
 	if err != nil {
 		return errors.New("invalid_gateway_evidence")
 	}

@@ -1,0 +1,39 @@
+{
+  "observed_at": "2026-10-07T18:22:58.778547+00:00",
+  "database": {
+    "accepting": true,
+    "trial_enabled": false,
+    "unresolved": 0,
+    "invalid": 0,
+    "paid_total": 0.006797,
+    "paid_with_reservations": 0.006797
+  },
+  "controller_generation": 38,
+  "observed_generation": 38,
+  "ready": true,
+  "containers": [
+    {
+      "name": "ax-server",
+      "image": "localhost:5001/ax-server-workbench@sha256:e7457bef1d10a1f83e709eb94df19696c21a225dfb5149f93ac25649684a4c17",
+      "mount_names": [
+        "ate-token",
+        "servicedns-ca"
+      ]
+    },
+    {
+      "name": "execution",
+      "image": "localhost:5001/ax-execution-workbench@sha256:81ad9e832568cf2261a21f7c3abcaec7106d3061f6b3a35181b0bf491a6c0145",
+      "mount_names": [
+        "execution-config",
+        "execution-database",
+        "execution-identity",
+        "ate-token",
+        "servicedns-ca"
+      ]
+    }
+  ],
+  "gateway_enabled": false,
+  "workbench_model_enabled": false,
+  "model_secret_exists": false,
+  "model_secret_mounted": false
+}

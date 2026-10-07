@@ -1,0 +1,19 @@
+ARG GO_IMAGE=golang@sha256:8a5910f31396cd4d89662f56c68b3ae31d374308270a1c3bd96672ee5ed43414
+FROM ${GO_IMAGE} AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+ARG TARGETOS
+ARG TARGETARCH
+ARG COMPONENT
+ARG CODE_IMAGE
+RUN case "$COMPONENT" in ateapi|atelet|ateom-gvisor) ;; *) exit 2 ;; esac \
+    && printf '%s\n' "$CODE_IMAGE" | grep -Eq '^[a-zA-Z0-9][a-zA-Z0-9./:_-]*@sha256:[a-f0-9]{64}$' \
+    && CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -trimpath \
+      -ldflags "-X github.com/agent-substrate/substrate/internal/codeprofile.ImageReference=$CODE_IMAGE" \
+      -o /out/server "./cmd/$COMPONENT"
+FROM gcr.io/distroless/static-debian13:latest@sha256:f2ea2709ac8db56323cbd7d014277f32cb572d9ea124b0076f7aafe5980678fe
+COPY --from=build /out/server /server
+USER 0:0
+ENTRYPOINT ["/server"]

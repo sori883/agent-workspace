@@ -1,0 +1,54 @@
+{
+  "image": "localhost:5001/ax-task-runner@sha256:9eb481dc1cd0ad21c12a7f0f10a11f5ffd4a9f5e4ce4eea1483a7ac64cdc9a3f",
+  "tests": {
+    "passed": 16,
+    "skipped": 0,
+    "seconds": 8.247,
+    "network": "none",
+    "product_source_mount": false
+  },
+  "source_matches": {
+    "all_matched": true,
+    "files": {
+      "runner.py": "4ac17a10c52bab6f01c3b9f143f6a67805087ed36e84e0cb19cebb72fa97dcb9",
+      "workbench_mailbox.py": "323a5c0fc909b77db131dd2efcdf38daec005cf3df58a120f1e8bfa9c4930d51",
+      "mailbox.py": "4967a236c7f7ef057b9669873ab3a25e87000eee8c2b2482d04c093ddda7b24c",
+      "workbench_runner.py": "3a9e4aa1d6fd6ff3e43b5d4958f562ad455c79d61c40ca0cde7ee414848c4dae",
+      "interactive_protocol.py": "4f3e55eacce59d8452f51317ab27398855ad54ecc3a10e707c7b6bc98a75cf1c",
+      "__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "protocol.py": "a6652e5e223c7a827cd049875a34087f3b7595ff504c3d23d2b3575b97aac5e6",
+      "workbench_protocol.py": "d9d4807f6584eb4dc763a7fb87c9bb6660ffe24d70459f14273edce0217aad61",
+      "adapters/workbench.py": "4a3fb55c970c97972e9ebfa181e189d84060e3b0074a826526170b41e4d1e198",
+      "adapters/offline.py": "867115dabd711c224d3fc4928596696eb06a39913bb74c2fa43272819edb9433",
+      "adapters/interactive.py": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd",
+      "adapters/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "adapters/antigravity.py": "358982d8cc6ea163928bae68669df0589387da2f753b75f78e68290db0c9d554",
+      "adapters/gemini_meter.py": "fa59f1c4465cf48255e2c75fc04f2e5464129347d290873eb3b79567bea2cb67",
+      "skills/tabular-v1/SKILL.md": "47c67805bf384f4051ad2c7392ef9e18b194dc611c1133775646e5e8f50313d5",
+      "skills/brief-v1/SKILL.md": "d394bcd09724ff69fd758a42247caa323626525316f59c989346ddc3ee8f64fe"
+    }
+  },
+  "change": "Use public CustomSystemInstructions instead of str so SDK adds only System delimiter and no conflicting default agent instructions; protocol/v1/skill/budgets unchanged. Real model selection remains unverified.",
+  "sources": [
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/runtime-custom-build.json",
+      "sha256": "1b4e8482686a208f2b4c114c2b4b196e9cb6cfe9f50466d2d4a98679220a9d24"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/runtime-custom-tests.stderr",
+      "sha256": "cb7aadfec8a29cec021be6a5d4701ce7d5f424804568f3c0d765970f465c1a43"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/runtime-custom-source-match.json",
+      "sha256": "f62f326be1e1fc6edd9f3e28621e47ec0757cd4e92e51ab61e9767e5801ea0ce"
+    },
+    {
+      "path": "ax-local/task_runtime/adapters/workbench.py",
+      "sha256": "4a3fb55c970c97972e9ebfa181e189d84060e3b0074a826526170b41e4d1e198"
+    },
+    {
+      "path": "ax-local/tests/test_workbench_runtime.py",
+      "sha256": "fb85cd8cff9fe68b0d9d37a853c22bc0b85ae17a0ac2813ba85ea39582979d45"
+    }
+  ]
+}

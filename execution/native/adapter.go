@@ -202,7 +202,7 @@ type TaskObservation struct {
 }
 
 func (a *Adapter) taskObservation(task *axpb.Task, runID string) (TaskObservation, error) {
-	if task.GetMetadata().GetName() != runID || task.GetMetadata().GetAtespace() != a.config.Atespace || !proto.Equal(task.GetSpec(), &axpb.TaskSpec{Image: a.config.Image, Command: runnerCommand, Debug: true}) {
+	if task.GetMetadata().GetName() != runID || task.GetMetadata().GetAtespace() != a.config.Atespace || !proto.Equal(task.GetSpec(), &axpb.TaskSpec{Image: a.config.Image, Command: a.taskCommand(), Debug: true}) {
 		return TaskObservation{}, errors.New("task_identity_mismatch")
 	}
 	state := task.GetStatus()
@@ -222,14 +222,14 @@ func (a *Adapter) Create(ctx context.Context, runID string) (TaskObservation, er
 	if !runPattern.MatchString(runID) {
 		return TaskObservation{}, invalid(CreateOperation)
 	}
-	if a.config.Atespace == "ax-runtime" {
+	if a.config.Atespace == "ax-runtime" || a.config.Atespace == "ax-code" {
 		if err := a.requireFreshActor(ctx, runID); err != nil {
 			return TaskObservation{}, err
 		}
 	}
 	ctx, cancel := a.callContext(ctx, a.config.AX, a.config.LifecycleTimeout, "")
 	defer cancel()
-	task, err := a.ax.CreateTask(ctx, &axpb.CreateTaskRequest{Task: &axpb.Task{ApiVersion: "ax.io/v1alpha1", Kind: "Task", Metadata: &axpb.ObjectMeta{Name: runID, Atespace: a.config.Atespace}, Spec: &axpb.TaskSpec{Image: a.config.Image, Command: slices.Clone(runnerCommand), Debug: true}}})
+	task, err := a.ax.CreateTask(ctx, &axpb.CreateTaskRequest{Task: &axpb.Task{ApiVersion: "ax.io/v1alpha1", Kind: "Task", Metadata: &axpb.ObjectMeta{Name: runID, Atespace: a.config.Atespace}, Spec: &axpb.TaskSpec{Image: a.config.Image, Command: a.taskCommand(), Debug: true}}})
 	return a.taskResult(CreateOperation, true, task, runID, err)
 }
 
@@ -237,7 +237,7 @@ func (a *Adapter) Resume(ctx context.Context, runID string) (TaskObservation, er
 	if !runPattern.MatchString(runID) {
 		return TaskObservation{}, invalid(ResumeOperation)
 	}
-	if a.config.Atespace == "ax-runtime" {
+	if a.config.Atespace == "ax-runtime" || a.config.Atespace == "ax-code" {
 		if err := a.verifyRuntimeTemplate(ctx, runID); err != nil {
 			return TaskObservation{}, err
 		}
@@ -351,7 +351,7 @@ func (a *Adapter) policy(allow bool) *controlpb.EgressPolicy {
 }
 
 func (a *Adapter) SetEgress(ctx context.Context, runID string, allow bool) (EgressObservation, error) {
-	if a.config.Atespace == "ax-runtime" && allow {
+	if (a.config.Atespace == "ax-runtime" || a.config.Atespace == "ax-code") && allow {
 		return EgressObservation{}, invalid(AllowOperation)
 	}
 	op := DenyOperation
@@ -415,7 +415,7 @@ func (a *Adapter) observeEgress(ctx context.Context, runID string, allow bool) (
 }
 
 func (a *Adapter) Stage(ctx context.Context, request Request) error {
-	if request.Validate() != nil || (request.Adapter == "interactive") != (a.config.Atespace == "ax-runtime") {
+	if a.config.Atespace == "ax-code" || request.Validate() != nil || (request.Adapter == "interactive") != (a.config.Atespace == "ax-runtime") {
 		return invalid(StageOperation)
 	}
 	data, err := json.Marshal(request)
@@ -479,4 +479,11 @@ func (a *Adapter) Collect(ctx context.Context, request Request) (Collection, err
 		return Collection{}, failure("collect", false, "invalid_runner_protocol")
 	}
 	return result, nil
+}
+
+func (a *Adapter) taskCommand() []string {
+	if a.config.Atespace == "ax-code" {
+		return []string{"python3", "/opt/ax-code/runner.py", "wait"}
+	}
+	return slices.Clone(runnerCommand)
 }

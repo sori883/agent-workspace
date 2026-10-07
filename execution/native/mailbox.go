@@ -68,6 +68,12 @@ func ParseProposal(data []byte) (Proposal, error) {
 	return p, nil
 }
 func ParseMailbox(data []byte, runID string) (*Mailbox, error) {
+	return parseMailboxVersion(data, runID, 1)
+}
+func ParseWorkbenchMailbox(data []byte, runID string) (*Mailbox, error) {
+	return parseMailboxVersion(data, runID, 2)
+}
+func parseMailboxVersion(data []byte, runID string, version int) (*Mailbox, error) {
 	if bytes.Equal(bytes.TrimSpace(data), []byte("null")) {
 		return nil, nil
 	}
@@ -84,20 +90,26 @@ func ParseMailbox(data []byte, runID string) (*Mailbox, error) {
 	}
 	hash := sha256.Sum256(raw)
 	var request MailboxRequest
-	if hex.EncodeToString(hash[:]) != envelope.SHA256 || decodeStrict(raw, &request) != nil || request.Version != 1 || request.RunID != runID || !runPattern.MatchString(runID) || request.Body == nil || !(request.Sequence == 1 && request.Kind == "model" || request.Sequence == 2 && request.Kind == "tool") {
+	if hex.EncodeToString(hash[:]) != envelope.SHA256 || decodeStrict(raw, &request) != nil || request.Version != version || request.RunID != runID || !runPattern.MatchString(runID) || request.Body == nil || !(request.Sequence == 1 && request.Kind == "model" || request.Sequence == 2 && request.Kind == "tool") {
 		return nil, errProtocol
 	}
 	if request.Kind == "tool" {
 		body, _ := json.Marshal(request.Body)
-		if _, err := ParseProposal(body); err != nil {
-			return nil, err
+		if version == 1 {
+			if _, err := ParseProposal(body); err != nil {
+				return nil, err
+			}
+		} else {
+			if _, err := ParseWorkbenchProposal(body); err != nil {
+				return nil, err
+			}
 		}
 	}
 	return &Mailbox{Request: request, Bytes: raw, SHA256: envelope.SHA256}, nil
 }
 func ParseReply(data []byte, mailbox *Mailbox) (MailboxReply, error) {
 	var r MailboxReply
-	if mailbox == nil || len(data) > MaxMailboxBytes || decodeStrict(data, &r) != nil || r.Version != 1 || r.RunID != mailbox.Request.RunID || r.Sequence != mailbox.Request.Sequence || r.RequestSHA256 != mailbox.SHA256 || (r.Status != "ok" && r.Status != "denied") || r.Body == nil {
+	if mailbox == nil || len(data) > MaxMailboxBytes || decodeStrict(data, &r) != nil || (r.Version != 1 && r.Version != 2) || r.Version != mailbox.Request.Version || r.RunID != mailbox.Request.RunID || r.Sequence != mailbox.Request.Sequence || r.RequestSHA256 != mailbox.SHA256 || (r.Status != "ok" && r.Status != "denied") || r.Body == nil {
 		return MailboxReply{}, errProtocol
 	}
 	return r, nil

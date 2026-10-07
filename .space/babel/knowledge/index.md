@@ -3,3 +3,4 @@
 * [AXエージェント実行基盤の構想と検討事項](ax-agent-platform-direction.md) - 組織基盤の実装済み構成と、言語数より依頼に応じた環境準備・対話を優先するエージェントの方向性
 * [デジタル庁デザインスキルをプロジェクト内で参照する](project-design-skill.md) - デザインスキルと公式資料をプロジェクト内に配置し、明示したデータ保存先で参照する構成と更新方法
 * [ローカルWebの境界と非同期実行](ax-web-foundation.md) - Hono共通API・PostgreSQLとWorkspace所属、本人限定の会話、独立Go実行管理、Keycloak認証の現在の構成
+* [隔離Pythonの固定runsc試験とAX統合前の境界](ax-python-isolation-probe.md) - Python試作で確認したchroot・syscall・host quotaと、固定runscの差異、実Actorでは未確認の統合条件

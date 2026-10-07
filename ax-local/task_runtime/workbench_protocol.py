@@ -1,0 +1,245 @@
+import base64
+import binascii
+import hashlib
+import re
+
+if __package__:
+    from .interactive_protocol import UUID_PATTERN, json_bytes, load_json
+    from .protocol import IDENTIFIER_PATTERN, ProtocolError, _text_size, is_nonnegative_number, validate_run_id
+else:
+    from interactive_protocol import UUID_PATTERN, json_bytes, load_json
+    from protocol import IDENTIFIER_PATTERN, ProtocolError, _text_size, is_nonnegative_number, validate_run_id
+
+CHUNK_BYTES = 32768
+DEFINITION_BYTES = 131072
+FILE_BYTES = 8388608
+POLICY = 'workbench-trial-2026-10-07-v1'
+MODEL_PROFILE = 'gemini-3.1-flash-lite-standard-2026-10-07-v1'
+HASH = re.compile(r'[0-9a-f]{64}\Z')
+ALIAS = re.compile(r'[a-z][a-z0-9_]{0,63}\Z')
+OUTPUT = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,58}\.(csv|xlsx)\Z')
+SKILL_PATH = re.compile(r'(references|scripts|assets)/(?:[A-Za-z0-9_-][A-Za-z0-9._-]*/)*[A-Za-z0-9_-][A-Za-z0-9._-]*\Z')
+USAGE_KEYS = {'prompt_token_count', 'candidates_token_count', 'thoughts_token_count', 'total_token_count', 'model_call_count'}
+
+
+def fields(value, names):
+    if not isinstance(value, dict) or set(value) != set(names.split()):
+        raise ProtocolError('InvalidWorkbenchFields')
+    return value
+
+
+def integer(value, low, high):
+    if type(value) is not int or not low <= value <= high:
+        raise ProtocolError('InvalidWorkbenchNumber')
+    return value
+
+
+def text(value, limit, required=True):
+    if _text_size(value) > limit or required and not value.strip():
+        raise ProtocolError('InvalidWorkbenchText')
+    return value
+
+
+def pattern(value, regex):
+    if not isinstance(value, str) or not regex.fullmatch(value):
+        raise ProtocolError('InvalidWorkbenchIdentifier')
+    return value
+
+
+def array(value, maximum):
+    if not isinstance(value, list) or len(value) > maximum:
+        raise ProtocolError('InvalidWorkbenchArray')
+    return value
+
+
+def unique(values):
+    if len(values) != len(set(values)):
+        raise ProtocolError('DuplicateWorkbenchValue')
+
+
+def decode_base64(value, limit):
+    if not isinstance(value, str) or len(value) > 4 * ((limit + 2) // 3):
+        raise ProtocolError('WorkbenchFrameTooLarge')
+    try:
+        raw = base64.b64decode(value, validate=True)
+    except (ValueError, binascii.Error):
+        raise ProtocolError('InvalidWorkbenchEncoding') from None
+    if len(raw) > limit or base64.b64encode(raw).decode('ascii') != value:
+        raise ProtocolError('InvalidWorkbenchEncoding')
+    return raw
+
+
+def decode_frame(encoded):
+    if not isinstance(encoded, str) or len(encoded) > 65536:
+        raise ProtocolError('WorkbenchFrameTooLarge')
+    return load_json(decode_base64(encoded, 49152), 49152)
+
+
+def digest(value):
+    return hashlib.sha256(json_bytes(value)).hexdigest()
+
+
+def validate_request(value):
+    fields(value, 'schema_version run_id root_id adapter checkpoint_revision descriptor_sha256')
+    integer(value['schema_version'], 2, 2)
+    validate_run_id(value['run_id'])
+    pattern(value['root_id'], UUID_PATTERN)
+    if value['adapter'] not in ('interactive', 'python'):
+        raise ProtocolError('InvalidWorkbenchAdapter')
+    integer(value['checkpoint_revision'], 0, 32)
+    pattern(value['descriptor_sha256'], HASH)
+    return value
+
+
+def validate_proposal(value, unused=None):
+    if not isinstance(value, dict):
+        raise ProtocolError('InvalidWorkbenchProposal')
+    if value.get('kind') != 'python':
+        fields(value, 'kind text')
+        if value['kind'] not in ('question', 'output', 'unsupported'):
+            raise ProtocolError('InvalidWorkbenchProposal')
+        text(value['text'], 2048)
+    else:
+        fields(value, 'kind source input_aliases outputs purpose')
+        text(value['source'], 4096)
+        text(value['purpose'], 2048)
+        aliases = array(value['input_aliases'], 4)
+        for alias in aliases:
+            pattern(alias, ALIAS)
+        unique(aliases)
+        outputs = array(value['outputs'], 4)
+        if not outputs:
+            raise ProtocolError('MissingWorkbenchOutput')
+        total = 0
+        for output in outputs:
+            fields(output, 'name size_limit_bytes')
+            pattern(output['name'], OUTPUT)
+            total += integer(output['size_limit_bytes'], 1, FILE_BYTES)
+        unique([output['name'] for output in outputs])
+        if total > FILE_BYTES:
+            raise ProtocolError('WorkbenchOutputTooLarge')
+    return value
+
+
+def validate_envelope(value):
+    fields(value, 'request workbench')
+    request = validate_request(value['request'])
+    workbench = fields(value['workbench'], 'version attempt_kind execution_policy mode profile_id remaining_ms descriptor')
+    integer(workbench['version'], 2, 2)
+    if workbench['execution_policy'] != POLICY:
+        raise ProtocolError('InvalidWorkbenchPolicy')
+    if (workbench['mode'], workbench['profile_id']) not in (('preview', 'preview-v1'), ('model', MODEL_PROFILE)):
+        raise ProtocolError('InvalidWorkbenchMode')
+    integer(workbench['remaining_ms'], 0, 300000)
+    descriptor = fields(workbench['descriptor'], 'version root_id instruction definition_manifest code_profile inputs outputs history code')
+    integer(descriptor['version'], 2, 2)
+    if descriptor['root_id'] != request['root_id'] or len(json_bytes(descriptor)) > 40960 or digest(descriptor) != request['descriptor_sha256']:
+        raise ProtocolError('WorkbenchDescriptorMismatch')
+    text(descriptor['instruction'], 2048)
+    refs = array(descriptor['definition_manifest'], 9)
+    agents = 0
+    for index, ref in enumerate(refs):
+        fields(ref, 'id sha256 size_bytes kind')
+        pattern(ref['id'], UUID_PATTERN)
+        pattern(ref['sha256'], HASH)
+        integer(ref['size_bytes'], 1, DEFINITION_BYTES)
+        if ref['kind'] == 'agent' and index == 0:
+            agents += 1
+        elif ref['kind'] != 'skill':
+            raise ProtocolError('InvalidDefinitionOrder')
+    if len(refs) - agents > 8:
+        raise ProtocolError('TooManySkills')
+    unique([ref['id'] for ref in refs])
+    inputs = array(descriptor['inputs'], 16)
+    for item in inputs:
+        fields(item, 'alias file_id name size_bytes sha256')
+        pattern(item['alias'], ALIAS)
+        pattern(item['file_id'], UUID_PATTERN)
+        pattern(item['sha256'], HASH)
+        text(item['name'], 255)
+        if item['name'].strip() != item['name'] or any(ord(c) < 32 or ord(c) == 127 or c in '/\\' for c in item['name']) or not item['name'].lower().endswith(('.csv', '.xlsx')):
+            raise ProtocolError('InvalidWorkbenchFilename')
+        integer(item['size_bytes'], 1, FILE_BYTES)
+    unique([item['alias'] for item in inputs])
+    unique([item['file_id'] for item in inputs])
+    outputs = array(descriptor['outputs'], 4)
+    for item in outputs:
+        fields(item, 'alias name size_limit_bytes')
+        pattern(item['alias'], ALIAS)
+        pattern(item['name'], OUTPUT)
+        integer(item['size_limit_bytes'], 1, FILE_BYTES)
+    unique([item['alias'] for item in outputs])
+    unique([item['name'] for item in outputs])
+    if sum(item['size_limit_bytes'] for item in outputs) > FILE_BYTES:
+        raise ProtocolError('WorkbenchOutputTooLarge')
+    history = array(descriptor['history'], 17)
+    if len(json_bytes(history)) > 16384:
+        raise ProtocolError('WorkbenchHistoryTooLarge')
+    for item in history:
+        fields(item, 'kind text')
+        pattern(item['kind'], IDENTIFIER_PATTERN)
+        text(item['text'], 8192, False)
+    if workbench['attempt_kind'] == 'runtime':
+        if request['adapter'] != 'interactive' or descriptor['code_profile'] is not None or descriptor['code'] is not None or outputs:
+            raise ProtocolError('InvalidRuntimeDescriptor')
+    elif workbench['attempt_kind'] == 'python':
+        if request['adapter'] != 'python' or descriptor['code_profile'] != 'host-quota-8m-v1' or not outputs or len(inputs) > 4 or sum(item['size_bytes'] for item in inputs) > FILE_BYTES:
+            raise ProtocolError('InvalidCodeDescriptor')
+        proposal = validate_proposal(descriptor['code'])
+        if proposal['kind'] != 'python' or proposal['input_aliases'] != [item['alias'] for item in inputs] or proposal['outputs'] != [{k: item[k] for k in ('name', 'size_limit_bytes')} for item in outputs]:
+            raise ProtocolError('CodeDescriptorMismatch')
+    else:
+        raise ProtocolError('InvalidWorkbenchAttempt')
+    return value
+
+
+def validate_definition(value, kind):
+    if kind == 'agent':
+        fields(value, 'name instructions skill_version_ids allowed_tools')
+        text(value['name'], 256)
+        for version_id in array(value['skill_version_ids'], 8):
+            pattern(version_id, UUID_PATTERN)
+        unique(value['skill_version_ids'])
+        if value['allowed_tools'] not in ([], ['python']):
+            raise ProtocolError('InvalidDefinitionTools')
+    elif kind == 'skill':
+        fields(value, 'name description instructions files')
+        pattern(value['name'], re.compile(r'[a-z0-9]+(?:-[a-z0-9]+)*\Z'))
+        text(value['name'], 64)
+        text(value['description'], 1024, False)
+        for item in array(value['files'], 16):
+            fields(item, 'path content')
+            pattern(item['path'], SKILL_PATH)
+            text(item['path'], 255)
+            text(item['content'], 32768, False)
+        unique([item['path'] for item in value['files']])
+    else:
+        raise ProtocolError('InvalidDefinitionKind')
+    text(value['instructions'], 16384)
+    json_bytes(value, DEFINITION_BYTES)
+    return value
+
+
+def validate_result(value):
+    fields(value, 'schema_version run_id adapter status exit_code error_type summary usage estimated_usd')
+    integer(value['schema_version'], 2, 2)
+    validate_run_id(value['run_id'])
+    if value['adapter'] not in ('interactive', 'python') or value['status'] not in ('succeeded', 'failed', 'timed_out'):
+        raise ProtocolError('InvalidWorkbenchResult')
+    integer(value['exit_code'], 0, 255)
+    text(value['summary'], 8192, False)
+    if value['error_type'] is not None:
+        pattern(value['error_type'], IDENTIFIER_PATTERN)
+    if value['usage'] is not None:
+        if not isinstance(value['usage'], dict) or set(value['usage']) != USAGE_KEYS:
+            raise ProtocolError('InvalidWorkbenchUsage')
+        for count in value['usage'].values():
+            integer(count, 0, 1000000)
+    if value['estimated_usd'] is not None and not is_nonnegative_number(value['estimated_usd']):
+        raise ProtocolError('InvalidWorkbenchCost')
+    if value['status'] == 'succeeded':
+        if value['exit_code'] != 0 or value['error_type'] is not None or value['usage'] is None or value['estimated_usd'] is None:
+            raise ProtocolError('InvalidWorkbenchSuccess')
+    elif value['exit_code'] == 0:
+        raise ProtocolError('InvalidWorkbenchFailure')
+    return value

@@ -1,0 +1,97 @@
+package codeprofile
+
+import (
+	pb "github.com/agent-substrate/substrate/pkg/proto/ateapipb"
+	"google.golang.org/protobuf/proto"
+	"testing"
+)
+
+func profileFixture(t *testing.T) *pb.ActorTemplate {
+	t.Helper()
+	old := ImageReference
+	t.Cleanup(func() { ImageReference = old })
+	ImageReference = "registry.test/code@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	return &pb.ActorTemplate{Metadata: &pb.ResourceMetadata{Atespace: Atespace, Name: "code"}, Containers: []*pb.Container{{Name: "guest", Image: ImageReference, Command: []string{"/usr/local/bin/ax-task-runner", "--task-file", "/opt/ax-code/server-task.json"}, Readyz: &pb.ContainerReadyz{HttpGet: &pb.HTTPGetAction{Path: "/readyz", Port: 80}, TimeoutSeconds: 30}, VolumeMounts: []*pb.VolumeMount{{Name: "workspace", MountPath: "/workspace"}}, SecurityContext: &pb.SecurityContext{Capabilities: &pb.Capabilities{Drop: []string{"ALL"}, Add: []string{"KILL", "SYS_CHROOT", "SETUID", "SETGID", "SETPCAP"}}}}}, Volumes: []*pb.Volume{{Name: "workspace", DurableDir: &pb.DurableDirVolumeSource{}}}, Resources: &pb.Resources{Limits: []*pb.Limits{{Name: "cpu", Quantity: "1"}, {Name: "memory", Quantity: "384Mi"}}}, SandboxConfig: &pb.SandboxConfig{SandboxClass: pb.SandboxClass_SANDBOX_CLASS_GVISOR, ConfigName: "gvisor-default"}, SnapshotsConfig: &pb.SnapshotsConfig{OnPause: pb.SnapshotContentScope_SNAPSHOT_CONTENT_SCOPE_DATA, OnCommit: pb.SnapshotContentScope_SNAPSHOT_CONTENT_SCOPE_DATA, OnResume: &pb.OnResumeConfig{FromData: pb.ResumeSource_RESUME_SOURCE_COLD_BOOT}}}
+}
+func TestFixedTemplate(t *testing.T) {
+	tmpl := profileFixture(t)
+	if e := ValidateTemplate(tmpl); e != nil {
+		t.Fatal(e)
+	}
+	for _, mutate := range []func(*pb.ActorTemplate){func(x *pb.ActorTemplate) { x.Containers[0].Image = "wrong" }, func(x *pb.ActorTemplate) { x.Containers[0].Env = []*pb.EnvVar{{Name: "KEY", Value: "synthetic"}} }, func(x *pb.ActorTemplate) {
+		x.Containers[0].SecurityContext.Capabilities.Add = append(x.Containers[0].SecurityContext.Capabilities.Add, "SYS_ADMIN")
+	}, func(x *pb.ActorTemplate) { x.Resources = nil }, func(x *pb.ActorTemplate) { x.SnapshotsConfig.OnResume.FromData = pb.ResumeSource_RESUME_SOURCE_GOLDEN }} {
+		x := proto.CloneOf(tmpl)
+		mutate(x)
+		if e := ValidateTemplate(x); e == nil {
+			t.Fatal("changed fixed template accepted")
+		}
+	}
+}
+func TestSourceTagAndResumeRejected(t *testing.T) {
+	tmpl := profileFixture(t)
+	actor := &pb.Actor{Metadata: &pb.ResourceMetadata{Atespace: Atespace}}
+	if e := CheckCreate(tmpl, actor); e != nil {
+		t.Fatal(e)
+	}
+	actor.SourceTag = &pb.ObjectRef{Name: "old"}
+	if e := CheckCreate(tmpl, actor); e == nil {
+		t.Fatal("clone accepted")
+	}
+	actor.SourceTag = nil
+	actor.Status = &pb.ActorStatus{CurrentActorTemplateUid: "already-started"}
+	if e := CheckResume(tmpl, actor); e == nil {
+		t.Fatal("repeat accepted")
+	}
+	actor.Status = &pb.ActorStatus{ExternalSnapshot: &pb.ExternalSnapshot{}}
+	if e := CheckResume(tmpl, actor); e == nil {
+		t.Fatal("restore accepted")
+	}
+}
+func TestNormalProfileIsUnchanged(t *testing.T) {
+	profileFixture(t)
+	tmpl := &pb.ActorTemplate{Metadata: &pb.ResourceMetadata{Atespace: "normal"}, Containers: []*pb.Container{{Image: "other:tag"}}}
+	before := proto.CloneOf(tmpl)
+	if e := ValidateTemplate(tmpl); e != nil {
+		t.Fatal(e)
+	}
+	if !proto.Equal(before, tmpl) || IsTemplate(tmpl) {
+		t.Fatal("normal changed")
+	}
+}
+func TestMissingConfigurationFailsClosed(t *testing.T) {
+	tmpl := profileFixture(t)
+	ImageReference = ""
+	if e := ValidateTemplate(tmpl); e == nil {
+		t.Fatal("code enabled without digest")
+	}
+}
+
+func TestCleanupBindsEveryField(t *testing.T) {
+	profileFixture(t)
+	p := &pb.CodeCleanup{ActorUid: "actor-a", WorkerUid: "worker-a", Generation: "11111111-1111-4111-8111-111111111111", ImageDigest: Digest(), Profile: Version, Cleaned: true}
+	if err := ValidateCleanup(p, "actor-a", "worker-a"); err != nil {
+		t.Fatal(err)
+	}
+	mutations := []func(*pb.CodeCleanup){func(p *pb.CodeCleanup) { p.ActorUid = "other" }, func(p *pb.CodeCleanup) { p.WorkerUid = "other" }, func(p *pb.CodeCleanup) { p.Generation = "1" }, func(p *pb.CodeCleanup) { p.ImageDigest = "sha256:other" }, func(p *pb.CodeCleanup) { p.Profile = "host-quota-v1" }, func(p *pb.CodeCleanup) { p.Cleaned = false }, func(p *pb.CodeCleanup) { p.ProtoReflect().SetUnknown([]byte{56, 1}) }}
+	for _, mutate := range mutations {
+		v := proto.CloneOf(p)
+		mutate(v)
+		if ValidateCleanup(v, "actor-a", "worker-a") == nil {
+			t.Fatal("invalid proof accepted")
+		}
+	}
+	if ValidateCleanup(nil, "actor-a", "worker-a") == nil {
+		t.Fatal("missing proof accepted")
+	}
+}
+
+func TestFixedServerConfigurationCannotChange(t *testing.T) {
+	tmpl := profileFixture(t)
+	for _, command := range [][]string{{"/usr/local/bin/ax-task-runner"}, {"/usr/local/bin/ax-task-runner", "--task-file", "/tmp/server-task.json"}, {"/usr/local/bin/ax-task-runner", "--task-file", "/opt/ax-code/server-task.json", "--port", "81"}} {
+		tmpl.Containers[0].Command = command
+		if e := ValidateTemplate(tmpl); e == nil {
+			t.Fatal("changed server configuration accepted")
+		}
+	}
+}

@@ -22,8 +22,25 @@ workerはcontrollerのPod identityだけを許可する固定イメージを使�
 | `controller_id` | claimを所有するcontrollerの識別子 |
 | `allowed_hosts` | モデル接続時だけ許可するホスト |
 | `model_gateway` | 対話実モデル用enabledとapi_key_path。未設定/falseは実モデル送信禁止 |
+| `workbench` | enabled、model_enabled、python_enabled、code_image。code用固定イメージと開始許可 |
 
 DBは外部配置できます。設定にKubernetes内のDBを必須としません。ローカル配備スクリプトだけはDockerの`localhost:55432`を対象とし、Podからは`host.docker.internal`へ接続します。外部DBでは環境に合う設定・資格情報の配備を別途用意してください。
+
+## ファイル処理の配備条件
+
+v8のworkbenchは、`ax-runtime`のモデル判断と`ax-code`のPython実行を交互に使います。同じPG実行枠を共有し、前のTaskの実停止を確認してから次を作ります。生成コードをモデル鍵のあるプロセスへ渡しません。
+
+配備前に、固定AX/Substrateソースへ `ax-local/patches/prepare-code-runtime.sh` でpatchを適用し、code image、AX、ateapi、atelet、worker、controllerを対応する固定digestで揃えます。code imageの固定 `server-task.json` は制御サービスを起動する設定で、利用者のTask commandや資格情報を含みません。コード実行の開始はGoが保存した送信権に基づく一回の操作です。
+
+`versions.json` の `runner_code`、`ateapi_code`、`atelet_code` を追加し、`runner_task`、`execution`、`ax_server_runtime`、`worker_controlled` も確認したdigestへ更新します。ateapi/ateletを先に配備し、旧Podが退役して全対象がReadyになったことを確認します。deploy helperはこの前提を検査しますが、基盤のpatch適用やビルドは行いません。
+
+管理者は受付を閉じ、Web/APIと旧controllerを停止し、DBを保全してから `prepare-execution.ts` でv8と限定関数権限を適用します。続けて `ax_workbench_control` に確認済みのruntime/code image、`code_profile='host-quota-8m-v1'`、`python_enabled=true`、`trial_enabled=false` を設定します。既存の未解決runがある場合は先に回収します。Python許可は実Actorでの隔離・入出力・cleanup確認後に限ります。
+
+`deploy-execution.ts --deploy` はDB設定と固定digestを照合し、両atespaceへのモデル鍵注入を禁止し、モデルGatewayを閉じて配備します。限定した有料検証では、承認済み費用枠の範囲でDBのtrial gateと `--enable-model` を同時に有効にし、終了後に両方を閉じます。既存の2,000円総上限、今回の0.05 USD停止条件を自動で引き上げません。
+
+codeの完了には通常のdeny・停止に加え、正式Actor APIの `code_cleanup` が必要です。actor UID・worker UID・worker起動世代・image・profileを検査し、host上のrunsc、残存process、quota mountの回収証拠をPGへ保存します。workerを失った場合や証拠が欠けた場合は成功にせず保留します。`inspect -code` で正式な停止・cleanupを読み戻せます。
+
+初回結合確認は専用schema/roleと `workbench-probe` を使い、通常受付・モデル送信を閉じたまま行います。これは固定fixtureの診断用で、通常controllerの代わりに常用しません。実測と未完事項は[作業記録](../.space/tasks/ax-agent-workbench/task.md)を参照してください。
 
 ## 初回準備と旧台帳からの移行
 

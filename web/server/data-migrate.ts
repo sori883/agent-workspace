@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import type pg from "pg";
 
 export async function migrateData(pool: pg.Pool) {
-  const migrations = ["schema.sql", "schema-v2.sql", "schema-v3.sql", "schema-v4.sql", "schema-v5.sql"].map((name, index) => {
+  const migrations = ["schema.sql", "schema-v2.sql", "schema-v3.sql", "schema-v4.sql", "schema-v5.sql", "schema-v6.sql", "schema-v7.sql", "schema-v8.sql"].map((name, index) => {
     const source = readFileSync(new URL(`../data/${name}`, import.meta.url), "utf8");
     return { version: index + 1, source, digest: createHash("sha256").update(source).digest("hex") };
   });

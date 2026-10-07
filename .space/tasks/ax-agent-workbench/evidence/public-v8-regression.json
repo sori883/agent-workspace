@@ -1,0 +1,496 @@
+{
+  "verification": {
+    "backup_restored": true,
+    "before_readback_matches_restored_backup": true,
+    "unchanged_original_tables": 29,
+    "migrations_before": 5,
+    "migrations_after": 8,
+    "only_changed_table": [
+      "ax_migrations"
+    ]
+  },
+  "library-live": {
+    "phase": "complete",
+    "passed": true,
+    "workspace": "f36f61ec-d5c5-438d-99d7-fd2185f72b16",
+    "checks": [
+      "member_registered_shared",
+      "admin_edited_member_definition",
+      "creator_can_edit_and_observe_version2",
+      "personal_hidden_from_same_workspace_member",
+      "shared_visible_to_member",
+      "agent_pins_skill_version2",
+      "reload_preserves_definition"
+    ],
+    "shared_url": "http://127.0.0.1:3100/library/8b8a6283-1da9-4e70-b595-e00cf919f128?workspace=f36f61ec-d5c5-438d-99d7-fd2185f72b16",
+    "personal_url": "http://127.0.0.1:3100/library/084ebeb3-f524-4246-9b45-b903e0e07bc2?workspace=f36f61ec-d5c5-438d-99d7-fd2185f72b16",
+    "agent_url": "http://127.0.0.1:3100/library/c885afd8-a70c-43d4-827f-bb4940798d06?workspace=f36f61ec-d5c5-438d-99d7-fd2185f72b16"
+  },
+  "offline-live": {
+    "passed": true,
+    "workspace": "f36f61ec-d5c5-438d-99d7-fd2185f72b16",
+    "run_id": "ax-run-f64ffc1728a301d1",
+    "start_count": 1,
+    "external_model": false,
+    "sha256": "2c9d882ff83bde879ab280604b2f65806447e27b362e0500fa2cc3edce0b4981"
+  },
+  "offline-server": {
+    "run_id": "ax-run-f64ffc1728a301d1",
+    "resolved": true,
+    "invalid": false,
+    "phase": "finished",
+    "cleanup": {
+      "suspended": true,
+      "egress_denied": true
+    },
+    "cleanup_errors": [],
+    "status": "succeeded",
+    "estimated_usd": 0,
+    "paid_total": 0.004226,
+    "paid_with_reservations": 0.004226
+  },
+  "registered-agent-live": {
+    "passed": true,
+    "workspace": "f36f61ec-d5c5-438d-99d7-fd2185f72b16",
+    "agent_version": "40dd1e19-fe5a-48ab-af4d-59c12d56a496",
+    "root_id": "bc9fa8bd-b453-4848-a08d-da7bbac99d42",
+    "starts": 1,
+    "answers": 1,
+    "mode": "preview",
+    "external_model": false
+  },
+  "registered-agent-pins": {
+    "manifest": [
+      {
+        "id": "40dd1e19-fe5a-48ab-af4d-59c12d56a496",
+        "kind": "agent",
+        "sha256": "c7b52ac4090e751f72b692cfb1be118edc6aa7a1dded6e306baf058ffa8829b0",
+        "size_bytes": 215
+      },
+      {
+        "id": "0a768aa0-0a40-4b59-90bd-875e1f429eeb",
+        "kind": "skill",
+        "sha256": "01be09c6d7508f06e2666c7d5e39c9e32d59a6f8f62e5a2dff3def52adac9f74",
+        "size_bytes": 189
+      }
+    ],
+    "definition_version_id": "40dd1e19-fe5a-48ab-af4d-59c12d56a496",
+    "versions_match": true
+  },
+  "v1-preview-server": {
+    "root": {
+      "id": "263f917f-a77e-48d6-8bac-869b4d6e3825",
+      "runtime_version": 1,
+      "mode": "preview",
+      "state": "succeeded",
+      "model_calls": 2,
+      "tool_calls": 2,
+      "active_ms": 21416
+    },
+    "runs": [
+      {
+        "run_id": "ax-run-4e7c840b5eec5b68",
+        "resolved": true,
+        "invalid": false,
+        "phase": "finished",
+        "cleanup": {
+          "suspended": true,
+          "egress_denied": true
+        },
+        "cleanup_errors": [],
+        "status": "succeeded",
+        "estimated_usd": 0
+      },
+      {
+        "run_id": "ax-run-edd965fbb670d8cd",
+        "resolved": true,
+        "invalid": false,
+        "phase": "finished",
+        "cleanup": {
+          "suspended": true,
+          "egress_denied": true
+        },
+        "cleanup_errors": [],
+        "status": "succeeded",
+        "estimated_usd": 0
+      }
+    ],
+    "paid_total": 0.004226,
+    "reserved_total": 0.004226
+  },
+  "offline-inspect": [
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-f64ffc1728a301d1",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    }
+  ],
+  "v1-preview-inspect": [
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-4e7c840b5eec5b68",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    },
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-edd965fbb670d8cd",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    }
+  ],
+  "v1-preview-ui": {
+    "version": 1,
+    "observed_at": "2026-10-07T17:29:45.200Z",
+    "phase": "complete",
+    "passed": true,
+    "failure": null,
+    "observations": {
+      "mock_preview_only": true,
+      "model_consent_submissions": 0,
+      "server_paid_usage_verified": false,
+      "workspace_id": "434f66fa-fbf8-4a8d-a697-e7f044c66717",
+      "conversation_id": "d0b3fac4-d836-4c56-bd46-a89a397b98ce",
+      "root_id": "263f917f-a77e-48d6-8bac-869b4d6e3825",
+      "run_ids": [
+        "ax-run-4e7c840b5eec5b68",
+        "ax-run-edd965fbb670d8cd"
+      ],
+      "workspace_created": false,
+      "question_verified": true,
+      "reload_preserved_question": true,
+      "artifact_matches_answer": true,
+      "bob_cannot_view": true,
+      "bob_artifact_status": 404,
+      "blocked_requests": 0,
+      "page_error_count": 0,
+      "last_state": "succeeded",
+      "artifact_matches_request_and_answer": false,
+      "artifact_bytes": 95,
+      "artifact_sha256": "74d511c3ba589ffce22dccd6a7e5cdd5503971b063afc57224abe3baa8ffd786"
+    },
+    "mutations": {
+      "workspace": 0,
+      "start": 1,
+      "answer": 1
+    },
+    "screenshot": "completed.png",
+    "limitations": [
+      "Browser evidence does not prove server-side billing or Actor stop; verify those independently.",
+      "A failed or uncertain submission is not retried or automatically stopped. Inspect root_id before another run.",
+      "Test workspace and runs are retained. Browser contexts are closed without revoking unrelated user work."
+    ]
+  },
+  "registered-agent-server": {
+    "observed_at": "2026-10-07T17:53:38.265437+00:00",
+    "root": {
+      "id": "bc9fa8bd-b453-4848-a08d-da7bbac99d42",
+      "runtime_version": 2,
+      "mode": "preview",
+      "state": "succeeded",
+      "model_calls": 2,
+      "tool_calls": 2,
+      "python_calls": 0,
+      "active_ms": 50916,
+      "image": "localhost:5001/ax-task-runner@sha256:fa9f1b4e42ac06963552f0ddb4a4c49a41e5e46739c2bbd26508d959220dd52d",
+      "code_image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+      "code_profile": "host-quota-8m-v1"
+    },
+    "runs": [
+      {
+        "run_id": "ax-run-a76b242ca981d0f2",
+        "kind": "runtime",
+        "sequence": 1,
+        "predecessor": null,
+        "image": "localhost:5001/ax-task-runner@sha256:fa9f1b4e42ac06963552f0ddb4a4c49a41e5e46739c2bbd26508d959220dd52d",
+        "resolved": true,
+        "invalid": false,
+        "phase": "finished",
+        "job_state": "done",
+        "cleanup": {
+          "suspended": true,
+          "egress_denied": true
+        },
+        "cleanup_errors": [],
+        "status": "succeeded",
+        "error_type": null,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 120,
+          "prompt_token_count": 100,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 20
+        },
+        "estimated_usd": 0.0,
+        "host_cleanup": null
+      },
+      {
+        "run_id": "ax-run-cfaccda1a91b8ec9",
+        "kind": "runtime",
+        "sequence": 2,
+        "predecessor": "ax-run-a76b242ca981d0f2",
+        "image": "localhost:5001/ax-task-runner@sha256:fa9f1b4e42ac06963552f0ddb4a4c49a41e5e46739c2bbd26508d959220dd52d",
+        "resolved": true,
+        "invalid": false,
+        "phase": "finished",
+        "job_state": "done",
+        "cleanup": {
+          "suspended": true,
+          "egress_denied": true
+        },
+        "cleanup_errors": [],
+        "status": "succeeded",
+        "error_type": null,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 120,
+          "prompt_token_count": 100,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 20
+        },
+        "estimated_usd": 0.0,
+        "host_cleanup": null
+      }
+    ],
+    "operations": [
+      {
+        "run_id": "ax-run-a76b242ca981d0f2",
+        "sequence": 1,
+        "kind": "model",
+        "settled": true,
+        "generation_started": false,
+        "actual_usd": 0.0,
+        "reserved_usd": 0.0,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 120,
+          "prompt_token_count": 100,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 20
+        },
+        "outcome": "ok"
+      },
+      {
+        "run_id": "ax-run-a76b242ca981d0f2",
+        "sequence": 2,
+        "kind": "tool",
+        "settled": true,
+        "generation_started": false,
+        "actual_usd": 0,
+        "reserved_usd": 0,
+        "usage": {},
+        "outcome": "ok"
+      },
+      {
+        "run_id": "ax-run-cfaccda1a91b8ec9",
+        "sequence": 1,
+        "kind": "model",
+        "settled": true,
+        "generation_started": false,
+        "actual_usd": 0.0,
+        "reserved_usd": 0.0,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 120,
+          "prompt_token_count": 100,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 20
+        },
+        "outcome": "ok"
+      },
+      {
+        "run_id": "ax-run-cfaccda1a91b8ec9",
+        "sequence": 2,
+        "kind": "tool",
+        "settled": true,
+        "generation_started": false,
+        "actual_usd": 0,
+        "reserved_usd": 0,
+        "usage": {},
+        "outcome": "ok"
+      }
+    ],
+    "effects": [
+      {
+        "run_id": "ax-run-a76b242ca981d0f2",
+        "operation": "create",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-a76b242ca981d0f2",
+        "operation": "egress_deny",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-a76b242ca981d0f2",
+        "operation": "egress_prepare",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-a76b242ca981d0f2",
+        "operation": "resume",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-a76b242ca981d0f2",
+        "operation": "stage",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-a76b242ca981d0f2",
+        "operation": "start",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-a76b242ca981d0f2",
+        "operation": "suspend",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-cfaccda1a91b8ec9",
+        "operation": "create",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-cfaccda1a91b8ec9",
+        "operation": "egress_deny",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-cfaccda1a91b8ec9",
+        "operation": "egress_prepare",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-cfaccda1a91b8ec9",
+        "operation": "resume",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-cfaccda1a91b8ec9",
+        "operation": "stage",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-cfaccda1a91b8ec9",
+        "operation": "start",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-cfaccda1a91b8ec9",
+        "operation": "suspend",
+        "confirmed": true
+      }
+    ],
+    "paid_total": 0.0046665,
+    "paid_with_reservations": 0.0046665,
+    "root_cost": 0.0,
+    "root_with_reservations": 0.0,
+    "slot": {
+      "id": true,
+      "run_id": null,
+      "hold_reason": null
+    },
+    "public_unresolved": 0,
+    "public_invalid": 0
+  },
+  "registered-agent-inspect": [
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-a76b242ca981d0f2",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    },
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-cfaccda1a91b8ec9",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    }
+  ],
+  "sources": [
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/verification.json",
+      "sha256": "127735b2c3238706c89eb397ed2c6d69ff80866f985eba9b34d196a52be88afc"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/library-live.json",
+      "sha256": "2488c4e7147794542690d358f2c3dad4e3c76b771f66c5cb83a98edb24774994"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/offline-live.json",
+      "sha256": "686fb7507b125bedf57d6089a792a8ca9efc4570c214ddf66e642859db48bec3"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/offline-server.json",
+      "sha256": "36c310b76aba30d2e5ef1abbec33a5cb1115a591af8209a31370b16760bdb89e"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/registered-agent-live.json",
+      "sha256": "a483998556368f852ba6be8857ebe7ec86f3cc91369dc39cadf977f8039b1735"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/registered-agent-pins.json",
+      "sha256": "eaeb63bbb6961732d9b6a91d4b8a1d01384c2c6b1636c33668d8557cd9881bf0"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/v1-preview-server.json",
+      "sha256": "b36d41617ac054d84030dbdd60e09e4df34189bd148f6925b40b8cf8b9b188b4"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/offline-inspect.jsonl",
+      "sha256": "022a7abd8ac25c9ba463e5f39794862ff2e1d058df62eef7a2d2175bbeb3d352"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/v1-preview-inspect.jsonl",
+      "sha256": "90c57edf64f6a144798c1a801fdbbb86da09e1a64ad4dd1315e093dceedc1019"
+    },
+    {
+      "path": "ax-local/.state/verification/interactive-2026-10-07T17-28-45-888Z-b878854f/result.json",
+      "sha256": "4de0d8a0ca692579acd3efe96117c6dedf47f88bc2f9512251647b6814522ca2"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/root-bc9fa8bd-b453-4848-a08d-da7bbac99d42/server.json",
+      "sha256": "3db911285093b311437ec40f927e722d18066861edeea087428b2c98603d7030"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/root-bc9fa8bd-b453-4848-a08d-da7bbac99d42/runtime-inspect.jsonl",
+      "sha256": "5591dc05d068e861a0021fc3cf06aaea90697e364e7a23ee995135f35eaab3ac"
+    }
+  ],
+  "limitations": [
+    "Registered definition selection and continuation use synthetic preview model, not real generation.",
+    "Free live regression runtime was fa9; later narrow prompt image is separately verified."
+  ]
+}

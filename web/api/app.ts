@@ -1,5 +1,14 @@
+import type { WorkbenchService } from "./workbench-service";
+import * as bc from "../shared/workbench-contracts";
+import { MAX_WORKBENCH_RESPONSE_BYTES } from "../shared/workbench-transfer";
 import * as ac from "../shared/agent-contracts";
 import type { AgentService } from "./agent-service";
+import type { FileService } from "./file-service";
+import type { DefinitionService } from "./definition-service";
+import * as dc from "../shared/definition-contracts";
+import { MAX_DEFINITION_REQUEST_BYTES } from "../shared/definition-transfer";
+import * as fc from "../shared/file-contracts";
+import { decodeFileChunk, encodeFileChunk, fileChunkIndexSchema, fileChunkSchema } from "../shared/file-transfer";
 import * as workspaceContracts from "../shared/workspace-contracts";
 import type { WorkspaceService } from "./workspace-service";
 import { Hono, type Context } from "hono";
@@ -13,7 +22,7 @@ import { RunServiceError, type RunService } from "./run-service";
 import type { ChatService } from "./chat-service";
 import { AuthenticationError, type Authenticate } from "../shared/authentication";
 
-export function createApi(config: ApiConfig, onCheck: (id: string) => void = () => {}, runs?: RunService, chats?: ChatService, authenticate: Authenticate = async () => { throw new Error("Authentication is not configured."); }, workspaces?: WorkspaceService, agents?: AgentService) {
+export function createApi(config: ApiConfig, onCheck: (id: string) => void = () => {}, runs?: RunService, chats?: ChatService, authenticate: Authenticate = async () => { throw new Error("Authentication is not configured."); }, workspaces?: WorkspaceService, agents?: AgentService, files?: FileService, definitions?: DefinitionService, workbench?: WorkbenchService) {
   validateApiConfig(config);
   const encoder = new TextEncoder();
   let credential: Promise<{ key: CryptoKey; signature: ArrayBuffer }> | undefined;
@@ -93,10 +102,10 @@ export function createApi(config: ApiConfig, onCheck: (id: string) => void = () 
     if (!parsed.success) throw new RunServiceError("invalid_conversation_id", 400);
     return parsed.data;
   }
-  async function runBody<T>(request: Request, schema: z.ZodType<T>): Promise<T> {
+  async function runBody<T>(request: Request, schema: z.ZodType<T>, maxBytes = MAX_RUN_REQUEST_BYTES): Promise<T> {
     if (request.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() !== "application/json") throw new RunServiceError("unsupported_content_type", 415);
     let value: unknown;
-    try { value = JSON.parse(await readLimitedText(request, MAX_RUN_REQUEST_BYTES)); }
+    try { value = JSON.parse(await readLimitedText(request, maxBytes)); }
     catch (error) {
       if (error instanceof Response && error.status === 413) throw new RunServiceError("request_too_large", 413);
       throw new RunServiceError("invalid_json", 400);
@@ -155,6 +164,66 @@ export function createApi(config: ApiConfig, onCheck: (id: string) => void = () 
     return parsed.data;
   }
   const wc = workspaceContracts;
+  function definitionService() { if (!definitions) throw new RunServiceError("bridge_unavailable"); return definitions; }
+  app.get("/v1/definitions", c => runResponse(c, dc.definitionListSchema, () => {
+    const query = new URL(c.req.url).searchParams;
+    if ([...query.keys()].some(key => !["kind", "filter", "before", "limit", "include_archived"].includes(key) || query.getAll(key).length !== 1)) throw new RunServiceError("invalid_request", 400);
+    if (query.has("limit") && !/^(?:[1-9]|[1-4][0-9]|50)$/.test(query.get("limit")!)) throw new RunServiceError("invalid_request", 400);
+    if (query.has("include_archived") && !["true", "false"].includes(query.get("include_archived")!)) throw new RunServiceError("invalid_request", 400);
+    const options = dc.definitionListOptionsSchema.safeParse({ ...Object.fromEntries(query), ...(query.has("limit") ? { limit: Number(query.get("limit")) } : {}), ...(query.has("include_archived") ? { include_archived: query.get("include_archived") === "true" } : {}) });
+    if (!options.success) throw new RunServiceError("invalid_request", 400);
+    return definitionService().list(c.get("ownerUserId"), workspace(c, true)!, options.data);
+  }));
+  app.post("/v1/definitions", c => runResponse(c, dc.definitionMutationResultSchema, async () => definitionService().create(c.get("ownerUserId"), workspace(c, true)!, await runBody(c.req.raw, dc.definitionCreateSchema, MAX_DEFINITION_REQUEST_BYTES))));
+  app.get("/v1/definitions/:id", c => runResponse(c, dc.definitionDetailSchema, async () => {
+    const definitionId = id(c);
+    const value = await definitionService().get(c.get("ownerUserId"), workspace(c, true)!, definitionId);
+    if (value.definition.id !== definitionId) throw new RunServiceError("invalid_bridge_response");
+    return value;
+  }));
+  app.post("/v1/definitions/:id/draft", c => runResponse(c, dc.definitionMutationResultSchema, async () => definitionService().updateDraft(c.get("ownerUserId"), workspace(c, true)!, id(c), await runBody(c.req.raw, dc.definitionUpdateSchema, MAX_DEFINITION_REQUEST_BYTES))));
+  app.post("/v1/definitions/:id/publish", c => runResponse(c, dc.definitionMutationResultSchema, async () => definitionService().publish(c.get("ownerUserId"), workspace(c, true)!, id(c), await runBody(c.req.raw, dc.definitionRevisionInputSchema))));
+  app.post("/v1/definitions/:id/archive", c => runResponse(c, dc.definitionMutationResultSchema, async () => definitionService().archive(c.get("ownerUserId"), workspace(c, true)!, id(c), await runBody(c.req.raw, dc.definitionRevisionInputSchema))));
+  app.get("/v1/definition-versions/:id", c => runResponse(c, dc.definitionVersionSchema, async () => {
+    const versionId = id(c);
+    const value = await definitionService().getVersion(c.get("ownerUserId"), workspace(c, true)!, versionId);
+    if (value.id !== versionId) throw new RunServiceError("invalid_bridge_response");
+    return value;
+  }));
+  function fileService() { if (!files) throw new RunServiceError("bridge_unavailable"); return files; }
+  function chunkIndex(c: Context) {
+    const value = c.req.param("index");
+    if (!/^(0|[1-9][0-9]{0,2})$/.test(value ?? "")) throw new RunServiceError("invalid_request", 400);
+    const parsed = fileChunkIndexSchema.safeParse(Number(value));
+    if (!parsed.success) throw new RunServiceError("invalid_request", 400);
+    return parsed.data;
+  }
+  app.get("/v1/files", c => runResponse(c, fc.fileListSchema, () => {
+    const query = new URL(c.req.url).searchParams;
+    if ([...query.keys()].some(key => key !== "before") || query.getAll("before").length > 1) throw new RunServiceError("invalid_request", 400);
+    const before = query.get("before");
+    if (before !== null && !z.uuid().safeParse(before).success) throw new RunServiceError("invalid_request", 400);
+    return fileService().list(c.get("ownerUserId"), workspace(c, true)!, { ...(before ? { before } : {}), limit: 50 });
+  }));
+  app.post("/v1/files", c => runResponse(c, fc.fileWriteResultSchema, async () => fileService().begin(c.get("ownerUserId"), workspace(c, true)!, await runBody(c.req.raw, fc.fileBeginSchema))));
+  app.post("/v1/files/cancel-unavailable", c => runResponse(c, fc.fileCancelUnavailableSchema, async () => {
+    await runBody(c.req.raw, emptyRunBodySchema);
+    return fileService().cancelUnavailable(c.get("ownerUserId"), workspace(c, true)!);
+  }));
+  app.get("/v1/files/:id", c => runResponse(c, fc.fileInfoSchema, () => fileService().get(c.get("ownerUserId"), workspace(c, true)!, id(c))));
+  app.get("/v1/files/:id/chunks/:index", c => runResponse(c, fileChunkSchema, async () => ({ content_base64: encodeFileChunk(await fileService().readChunk(c.get("ownerUserId"), workspace(c, true)!, id(c), chunkIndex(c))) })));
+  app.post("/v1/files/:id/chunks/:index", c => runResponse(c, fc.fileMutationSchema, async () => {
+    const input = await runBody(c.req.raw, fileChunkSchema);
+    return fileService().putChunk(c.get("ownerUserId"), workspace(c, true)!, id(c), chunkIndex(c), decodeFileChunk(input.content_base64));
+  }));
+  app.post("/v1/files/:id/seal", c => runResponse(c, fc.fileWriteResultSchema, async () => {
+    await runBody(c.req.raw, emptyRunBodySchema);
+    return fileService().seal(c.get("ownerUserId"), workspace(c, true)!, id(c));
+  }));
+  app.post("/v1/files/:id/cancel", c => runResponse(c, fc.fileMutationSchema, async () => {
+    await runBody(c.req.raw, emptyRunBodySchema);
+    return fileService().cancel(c.get("ownerUserId"), workspace(c, true)!, id(c));
+  }));
   app.get("/v1/workspaces", c => runResponse(c, wc.workspaceListSchema, () => workspaceService().list(c.get("ownerUserId"))));
   app.post("/v1/workspaces", c => runResponse(c, wc.workspaceCreateResultSchema, async () => workspaceService().create(c.get("ownerUserId"), await runBody(c.req.raw, wc.workspaceCreateInputSchema))));
   app.get("/v1/workspaces/:id", c => runResponse(c, wc.workspaceDetailSchema, () => workspaceService().get(c.get("ownerUserId"), id(c))));
@@ -185,6 +254,24 @@ export function createApi(config: ApiConfig, onCheck: (id: string) => void = () 
   app.get("/v1/agent-roots/:id", c=>runResponse(c,ac.agentRootSchema,()=>agentService().get(c.get("ownerUserId"),workspace(c,true)!,id(c))));
   app.post("/v1/agent-roots/:id/answer", c=>runResponse(c,ac.agentSubmitSchema,async()=>agentService().answer(c.get("ownerUserId"),workspace(c,true)!,id(c),await runBody(c.req.raw,ac.agentAnswerSchema),grant(c),fingerprint(c)),202));
   app.post("/v1/agent-roots/:id/stop", c=>runResponse(c,ac.agentMutationSchema,async()=>{await runBody(c.req.raw,emptyRunBodySchema);return agentService().stop(c.get("ownerUserId"),workspace(c,true)!,id(c));}));
+  function workbenchService() { if (!workbench) throw new RunServiceError("bridge_unavailable"); return workbench; }
+  app.get("/v1/workbench", c => runResponse(c, bc.workbenchListSchema, () => {
+    const query = new URL(c.req.url).searchParams;
+    if ([...query.keys()].some(key => key !== "before") || query.getAll("before").length > 1) throw new RunServiceError("invalid_request", 400);
+    const before = query.get("before");
+    if (before !== null && !z.uuid().safeParse(before).success) throw new RunServiceError("invalid_request", 400);
+    return workbenchService().list(c.get("ownerUserId"), workspace(c, true)!, before);
+  }, 200, MAX_WORKBENCH_RESPONSE_BYTES));
+  app.post("/v1/workbench", c => runResponse(c, bc.workbenchSubmitSchema, async () => workbenchService().start(c.get("ownerUserId"), workspace(c, true)!, await runBody(c.req.raw, bc.workbenchStartSchema), grant(c), fingerprint(c)), 202));
+  app.get("/v1/workbench/:id", c => runResponse(c, bc.workbenchRootSchema, async () => {
+    const rootId = id(c);
+    const value = await workbenchService().get(c.get("ownerUserId"), workspace(c, true)!, rootId);
+    if (value.id !== rootId) throw new RunServiceError("invalid_bridge_response");
+    return value;
+  }, 200, MAX_WORKBENCH_RESPONSE_BYTES));
+  app.post("/v1/workbench/:id/answer", c => runResponse(c, bc.workbenchSubmitSchema, async () => workbenchService().answer(c.get("ownerUserId"), workspace(c, true)!, id(c), await runBody(c.req.raw, bc.workbenchAnswerSchema), grant(c), fingerprint(c)), 202));
+  app.post("/v1/workbench/:id/stop", c => runResponse(c, bc.workbenchMutationSchema, async () => { await runBody(c.req.raw, emptyRunBodySchema); return workbenchService().stop(c.get("ownerUserId"), workspace(c, true)!, id(c)); }));
+  app.post("/v1/workbench/:id/recover", c => runResponse(c, bc.workbenchMutationSchema, async () => { await runBody(c.req.raw, emptyRunBodySchema); return workbenchService().recover(c.get("ownerUserId"), workspace(c, true)!, id(c)); }));
   app.notFound((context) => context.json({ error: "not_found" }, 404));
   app.onError(() => new Response(JSON.stringify({ error: "internal_error" }), {
     status: 500,

@@ -1,0 +1,435 @@
+{
+  "ui": {
+    "version": 1,
+    "observed_at": "2026-10-07T18:18:06.955Z",
+    "phase": "complete",
+    "passed": true,
+    "failure": null,
+    "observations": {
+      "workspace_id": "f36f61ec-d5c5-438d-99d7-fd2185f72b16",
+      "root_id": "bee233e5-d345-4bd2-91c4-5b863afcbd8a",
+      "initial_run_id": "ax-run-2eed047d79c9d71d",
+      "input_file_id": "7d5aedab-89d6-4f2d-a870-c0a4c8bbe02d",
+      "output_file_id": "f2f32f3b-8ead-4ccd-8a7a-fca158c7799d",
+      "input_bytes": 15,
+      "input_sha256": "ff0174ca0f09ea443111c05063a51d00cee3dc79d0e836a2f9965e4b7198ed1b",
+      "output_bytes": 14,
+      "output_sha256": "b31792907d72d269a67776498cac94ddcd5f3fd825258518bf705dad94829fd4",
+      "workspace_created": false,
+      "csv_total_verified": true,
+      "reload_preserved_result": true,
+      "bob_workspace_membership_verified": true,
+      "bob_root_denied": true,
+      "bob_input_denied": true,
+      "bob_output_denied": true,
+      "last_state": "succeeded",
+      "last_stage": null,
+      "wait_elapsed_ms": 77372,
+      "server_model_calls": null,
+      "server_tool_calls": null,
+      "server_python_calls": null,
+      "server_cleanup_verified": false,
+      "server_paid_usage_verified": false,
+      "bob_input_get_status": 404,
+      "bob_input_read_status": 404,
+      "bob_output_get_status": 404,
+      "bob_output_read_status": 404
+    },
+    "counters": {
+      "workspace": 0,
+      "file_begin": 1,
+      "file_put": 1,
+      "file_seal": 1,
+      "file_list": 0,
+      "start": 1,
+      "answer": 0,
+      "stop": 0,
+      "recover": 0,
+      "output_get": 1,
+      "output_read": 1,
+      "isolation_reads": 4,
+      "blocked_requests": 0,
+      "page_errors": 0
+    },
+    "screenshot": "completed.png",
+    "limitations": [
+      "The DOM and one submission receipt expose only the initial run ID; join all runs, server counters, costs and cleanup evidence independently by root_id.",
+      "Bob must already be a member of the dedicated workspace. Missing membership stops before upload or model submission; this script never invites or joins users.",
+      "Failed, unknown, waiting-input or timed-out work is never resubmitted, answered, stopped or recovered by this script.",
+      "CSV bytes are checked in memory; no token, browser trace, storage state, response body or downloaded CSV is saved to evidence.",
+      "Test workspace, files and run records are retained. Closing the browser is not proof that a server task has stopped."
+    ]
+  },
+  "server": {
+    "observed_at": "2026-10-07T18:18:19.407368+00:00",
+    "root": {
+      "id": "bee233e5-d345-4bd2-91c4-5b863afcbd8a",
+      "runtime_version": 2,
+      "mode": "model",
+      "state": "succeeded",
+      "model_calls": 2,
+      "tool_calls": 2,
+      "python_calls": 1,
+      "active_ms": 72281,
+      "image": "localhost:5001/ax-task-runner@sha256:9eb481dc1cd0ad21c12a7f0f10a11f5ffd4a9f5e4ce4eea1483a7ac64cdc9a3f",
+      "code_image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+      "code_profile": "host-quota-8m-v1"
+    },
+    "runs": [
+      {
+        "run_id": "ax-run-2eed047d79c9d71d",
+        "kind": "runtime",
+        "sequence": 1,
+        "predecessor": null,
+        "image": "localhost:5001/ax-task-runner@sha256:9eb481dc1cd0ad21c12a7f0f10a11f5ffd4a9f5e4ce4eea1483a7ac64cdc9a3f",
+        "resolved": true,
+        "invalid": false,
+        "phase": "finished",
+        "job_state": "done",
+        "cleanup": {
+          "suspended": true,
+          "egress_denied": true
+        },
+        "cleanup_errors": [],
+        "status": "succeeded",
+        "error_type": null,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 1642,
+          "prompt_token_count": 1393,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 249
+        },
+        "estimated_usd": 0.00072175,
+        "host_cleanup": null
+      },
+      {
+        "run_id": "ax-run-662ae88128434a51",
+        "kind": "python",
+        "sequence": 2,
+        "predecessor": "ax-run-2eed047d79c9d71d",
+        "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+        "resolved": true,
+        "invalid": false,
+        "phase": "finished",
+        "job_state": "done",
+        "cleanup": {
+          "suspended": true,
+          "egress_denied": true
+        },
+        "cleanup_errors": [],
+        "status": "succeeded",
+        "error_type": null,
+        "usage": {
+          "model_call_count": 0,
+          "total_token_count": 0,
+          "prompt_token_count": 0,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 0
+        },
+        "estimated_usd": 0,
+        "host_cleanup": {
+          "actor": "ax-run-662ae88128434a51",
+          "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+          "cleaned": true,
+          "profile": "host-quota-8m-v1",
+          "actor_uid": "0b6805d6-dde5-4f7a-80f6-4b9b9ceea56b",
+          "generation": "8ff4b5bc-578c-45eb-bbe1-3c9ecc5a3e76",
+          "worker_uid": "0a06d1c4-de9c-44a2-a622-274ace811301"
+        }
+      },
+      {
+        "run_id": "ax-run-b49254dc76b24db2",
+        "kind": "runtime",
+        "sequence": 3,
+        "predecessor": "ax-run-662ae88128434a51",
+        "image": "localhost:5001/ax-task-runner@sha256:9eb481dc1cd0ad21c12a7f0f10a11f5ffd4a9f5e4ce4eea1483a7ac64cdc9a3f",
+        "resolved": true,
+        "invalid": false,
+        "phase": "finished",
+        "job_state": "done",
+        "cleanup": {
+          "suspended": true,
+          "egress_denied": true
+        },
+        "cleanup_errors": [],
+        "status": "succeeded",
+        "error_type": null,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 1677,
+          "prompt_token_count": 1634,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 43
+        },
+        "estimated_usd": 0.000473,
+        "host_cleanup": null
+      }
+    ],
+    "operations": [
+      {
+        "run_id": "ax-run-2eed047d79c9d71d",
+        "sequence": 1,
+        "kind": "model",
+        "settled": true,
+        "generation_started": true,
+        "actual_usd": 0.00072175,
+        "reserved_usd": 0.002268,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 1642,
+          "prompt_token_count": 1393,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 249
+        },
+        "outcome": "ok"
+      },
+      {
+        "run_id": "ax-run-2eed047d79c9d71d",
+        "sequence": 2,
+        "kind": "tool",
+        "settled": true,
+        "generation_started": false,
+        "actual_usd": 0,
+        "reserved_usd": 0,
+        "usage": {},
+        "outcome": "ok"
+      },
+      {
+        "run_id": "ax-run-b49254dc76b24db2",
+        "sequence": 1,
+        "kind": "model",
+        "settled": true,
+        "generation_started": true,
+        "actual_usd": 0.000473,
+        "reserved_usd": 0.002268,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 1677,
+          "prompt_token_count": 1634,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 43
+        },
+        "outcome": "ok"
+      },
+      {
+        "run_id": "ax-run-b49254dc76b24db2",
+        "sequence": 2,
+        "kind": "tool",
+        "settled": true,
+        "generation_started": false,
+        "actual_usd": 0,
+        "reserved_usd": 0,
+        "usage": {},
+        "outcome": "ok"
+      }
+    ],
+    "effects": [
+      {
+        "run_id": "ax-run-2eed047d79c9d71d",
+        "operation": "create",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-2eed047d79c9d71d",
+        "operation": "egress_deny",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-2eed047d79c9d71d",
+        "operation": "egress_prepare",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-2eed047d79c9d71d",
+        "operation": "resume",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-2eed047d79c9d71d",
+        "operation": "stage",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-2eed047d79c9d71d",
+        "operation": "start",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-2eed047d79c9d71d",
+        "operation": "suspend",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-662ae88128434a51",
+        "operation": "create",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-662ae88128434a51",
+        "operation": "egress_deny",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-662ae88128434a51",
+        "operation": "egress_prepare",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-662ae88128434a51",
+        "operation": "resume",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-662ae88128434a51",
+        "operation": "stage",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-662ae88128434a51",
+        "operation": "start",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-662ae88128434a51",
+        "operation": "suspend",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-b49254dc76b24db2",
+        "operation": "create",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-b49254dc76b24db2",
+        "operation": "egress_deny",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-b49254dc76b24db2",
+        "operation": "egress_prepare",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-b49254dc76b24db2",
+        "operation": "resume",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-b49254dc76b24db2",
+        "operation": "stage",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-b49254dc76b24db2",
+        "operation": "start",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-b49254dc76b24db2",
+        "operation": "suspend",
+        "confirmed": true
+      }
+    ],
+    "paid_total": 0.006797,
+    "paid_with_reservations": 0.006797,
+    "root_cost": 0.00119475,
+    "root_with_reservations": 0.00119475,
+    "slot": {
+      "id": true,
+      "run_id": null,
+      "hold_reason": null
+    },
+    "public_unresolved": 0,
+    "public_invalid": 0
+  },
+  "actor_inspect": [
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-2eed047d79c9d71d",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    },
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-b49254dc76b24db2",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    },
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": {
+        "actor": "ax-run-662ae88128434a51",
+        "actor_uid": "0b6805d6-dde5-4f7a-80f6-4b9b9ceea56b",
+        "worker_uid": "0a06d1c4-de9c-44a2-a622-274ace811301",
+        "generation": "8ff4b5bc-578c-45eb-bbe1-3c9ecc5a3e76",
+        "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+        "profile": "host-quota-8m-v1",
+        "cleaned": true
+      },
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-662ae88128434a51",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    }
+  ],
+  "parent_verified": {
+    "all_runs_resolved": true,
+    "all_usage_settled": true,
+    "all_stopped_denied_unassigned": true,
+    "same_generation_code_cleanup_matches_pg": true,
+    "csv_total": 300,
+    "trial_enabled": false,
+    "gateway_enabled": false,
+    "key_mount": false,
+    "gateway_secret_deleted": true,
+    "free_admission_reopened": true
+  },
+  "workbench_trials": {
+    "roots": 4,
+    "generated_model_calls": 5,
+    "estimated_usd": 0.002571,
+    "historic_failures_preserved": true,
+    "automatic_retries": 0
+  },
+  "meaning": "Real model chose Python; actual isolated code read selected CSV and produced summary.csv; next runtime completed. UI verified sum300, download/reload and Bob same-workspace root/input/output denial. Stop/cost verified separately. No further paid trials after success.",
+  "limitations": [
+    "Only one successful real-model CSV fixture, not proof all natural-language tasks succeed.",
+    "Excel/8MiB/boundaries validated separately using fixed model proposals, no paid Excel trial.",
+    "Scheduling version policy awaiting human answer; scheduling unimplemented."
+  ],
+  "sources": [
+    {
+      "path": "ax-local/.state/verification/workbench-2026-10-07T18-16-45-624Z-538f8972/result.json",
+      "sha256": "5e5b7ae1fcd6e7937c05f0a00ed1c4f815e0777d862be3ed2d7647b4224372ec"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/root-bee233e5-d345-4bd2-91c4-5b863afcbd8a/server.json",
+      "sha256": "c07a2ea201f54a9b885d2653145b1a81b92074996b06cf790a096d392835694a"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/root-bee233e5-d345-4bd2-91c4-5b863afcbd8a/runtime-inspect.jsonl",
+      "sha256": "16a2895824186c6cbc6d4bdea2fc00bd9556e7d4d6a077c8cfe0d97ef4729bae"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/root-bee233e5-d345-4bd2-91c4-5b863afcbd8a/python-inspect.jsonl",
+      "sha256": "71f544cf93a866ae350158df51d787aab7dea20abf5cb5c5ae1aa0d91b849683"
+    }
+  ]
+}

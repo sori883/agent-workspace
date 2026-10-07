@@ -86,3 +86,18 @@ func TestProjectedTokenReplacementIsObserved(t *testing.T) {
 		t.Fatal("unsafe rotation accepted")
 	}
 }
+
+func TestWorkbenchGatesDefaultClosed(t *testing.T) {
+	f := File{}
+	if c, e := f.CodeNative(); e != nil || c != nil {
+		t.Fatal("absent gate configured code")
+	}
+	f.Workbench = &WorkbenchConfig{}
+	if c, e := f.CodeNative(); e != nil || c != nil {
+		t.Fatal("false gate configured code")
+	}
+	f.Workbench.PythonEnabled = true
+	if _, e := f.CodeNative(); e == nil {
+		t.Fatal("python enabled without explicit config")
+	}
+}

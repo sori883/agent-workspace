@@ -1,0 +1,287 @@
+//go:build linux
+
+package main
+
+import (
+	"context"
+	"errors"
+	"github.com/agent-substrate/substrate/internal/ateompath"
+	"github.com/agent-substrate/substrate/internal/atunnel"
+	"github.com/agent-substrate/substrate/internal/codeprofile"
+	"github.com/agent-substrate/substrate/internal/codequota"
+	"github.com/agent-substrate/substrate/internal/imagecache"
+	"github.com/agent-substrate/substrate/internal/ocispec"
+	"github.com/agent-substrate/substrate/internal/proto/ateompb"
+	"github.com/agent-substrate/substrate/internal/resources"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+)
+
+type codeFakeRuntime struct {
+	ids        []string
+	failDelete bool
+	failList   bool
+	lists      int
+}
+
+func (f *codeFakeRuntime) cmdList(context.Context) ([]string, error) {
+	f.lists++
+	if f.failList {
+		return nil, errors.New("list unknown")
+	}
+	return append([]string(nil), f.ids...), nil
+}
+func (f *codeFakeRuntime) cmdDelete(_ context.Context, n string) error {
+	if f.failDelete {
+		return errors.New("delete unknown")
+	}
+	for i, s := range f.ids {
+		if s == n {
+			f.ids = append(f.ids[:i], f.ids[i+1:]...)
+			break
+		}
+	}
+	return nil
+}
+func (f *codeFakeRuntime) cmdKill(context.Context, string, string) error { return nil }
+func (f *codeFakeRuntime) cmdWait(context.Context, string) error         { return nil }
+func (f *codeFakeRuntime) cmdState(context.Context, string) error        { return nil }
+func TestCodeCleanupRequiresEachProof(t *testing.T) {
+	for _, fail := range []string{"delete", "process", "unmount", "complete", ""} {
+		t.Run(fail, func(t *testing.T) {
+			r := &codeFakeRuntime{ids: []string{"guest", "_pause"}, failDelete: fail == "delete"}
+			var steps []string
+			op := func(n string) func() error {
+				return func() error {
+					steps = append(steps, n)
+					if fail == n {
+						return errors.New(n)
+					}
+					return nil
+				}
+			}
+			e := finishCodeCleanup(context.Background(), r, op("process"), op("unmount"), op("complete"))
+			if (e == nil) != (fail == "") {
+				t.Fatal(e)
+			}
+			for i, n := range steps {
+				if n == fail && i != len(steps)-1 {
+					t.Fatal("continued after failed proof")
+				}
+			}
+			if fail == "delete" && len(steps) != 0 {
+				t.Fatal("deleted evidence after unknown")
+			}
+		})
+	}
+}
+func TestCodeEmptyListAloneCannotComplete(t *testing.T) {
+	r := &codeFakeRuntime{}
+	called := false
+	if e := finishCodeCleanup(context.Background(), r, func() error { return errors.New("process remains") }, func() error { called = true; return nil }, func() error { called = true; return nil }); e == nil || called {
+		t.Fatal("NotFound/list empty used alone")
+	}
+}
+func TestCodeOrphanBlocksNormalAndRestoreBeforeEffects(t *testing.T) {
+	store := codequota.Store{Root: filepath.Join(t.TempDir(), "quota")}
+	w, e := store.OpenWorker("worker-a")
+	if e != nil {
+		t.Fatal(e)
+	}
+	if _, e = w.Begin("actor-a", "image", "bundle"); e != nil {
+		t.Fatal(e)
+	}
+	other, e := store.OpenWorker("worker-b")
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer other.Close()
+	w.Close()
+	s := &AteomService{lock: newCancelableMutex(), codeWorker: other}
+	if _, e = s.RunWorkload(context.Background(), &ateompb.RunWorkloadRequest{Atespace: "normal"}); e == nil {
+		t.Fatal("normal work accepted")
+	}
+	if _, e = s.RestoreWorkload(context.Background(), &ateompb.RestoreWorkloadRequest{Atespace: "normal"}); e == nil {
+		t.Fatal("normal restore accepted")
+	}
+}
+func TestCodeRestoreRejectedWithoutEffects(t *testing.T) {
+	s := &AteomService{lock: newCancelableMutex()}
+	if _, e := s.RestoreWorkload(context.Background(), &ateompb.RestoreWorkloadRequest{Atespace: codeprofile.Atespace}); e == nil {
+		t.Fatal("code restore accepted")
+	}
+}
+
+func TestCodePublicProofOnlyAfterDurableComplete(t *testing.T) {
+	old := codeprofile.ImageReference
+	t.Cleanup(func() { codeprofile.ImageReference = old })
+	codeprofile.ImageReference = "registry.test/code@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	store := codequota.Store{Root: filepath.Join(t.TempDir(), "quota")}
+	w, e := store.OpenWorker("worker-a")
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer w.Close()
+	s := &AteomService{codeWorker: w}
+	r, e := w.Begin("actor-a", codeprofile.Digest(), "bundle")
+	if e != nil {
+		t.Fatal(e)
+	}
+	if _, e = s.completedCode("actor-a"); e == nil {
+		t.Fatal("pending proof")
+	}
+	if e = w.Complete(r); e != nil {
+		t.Fatal(e)
+	}
+	proof, e := s.completedCode("actor-a")
+	if e != nil || proof.Generation != w.Generation || !proof.Cleaned {
+		t.Fatal(e)
+	}
+	if _, e = s.completedCode("missing"); e == nil {
+		t.Fatal("NotFound proof")
+	}
+}
+
+func codeBeginFixture(t *testing.T) (*AteomService, *ateompb.RunWorkloadRequest, string) {
+	t.Helper()
+	oldImage, oldActors := codeprofile.ImageReference, ateompath.ActorsDir
+	codeprofile.ImageReference = "registry.test/code@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	ateompath.ActorsDir = t.TempDir()
+	t.Cleanup(func() { codeprofile.ImageReference, ateompath.ActorsDir = oldImage, oldActors })
+	store := codequota.Store{Root: filepath.Join(t.TempDir(), "quota")}
+	w, e := store.OpenWorker("worker-a")
+	if e != nil {
+		t.Fatal(e)
+	}
+	t.Cleanup(func() { w.Close() })
+	req := &ateompb.RunWorkloadRequest{Atespace: codeprofile.Atespace, ActorUid: "actor-a", RunscPath: filepath.Join(ateompath.StaticFilesDir, "gvisor-a64916f9813ce7e4841a30480a599337f7dda07b421c6bf0123db2212aa7d1df", "runsc"), CpuMilli: 1000, MemoryBytes: 384 * 1024 * 1024, Spec: &ateompb.WorkloadSpec{Containers: []*ateompb.Container{{Name: "guest"}}}}
+	bundle := ateompath.OCIBundlePath(req.ActorUid, "guest")
+	if e = os.MkdirAll(bundle, 0700); e != nil {
+		t.Fatal(e)
+	}
+	if e = imagecache.WriteSpec(bundle, &imagecache.OverlaySpec{ImageDigest: codeprofile.Digest(), Layers: []string{"/fixed/layer"}}); e != nil {
+		t.Fatal(e)
+	}
+	spec := ocispec.Build(ocispec.Options{ActorUID: req.ActorUid, ContainerName: "guest", Args: []string{"/usr/local/bin/ax-task-runner", "--task-file", "/opt/ax-code/server-task.json"}, Capabilities: codequota.Caps, Env: []string{"UNTRUSTED_ENV=reject"}})
+	if e = ocispec.Save(bundle, spec); e != nil {
+		t.Fatal(e)
+	}
+	return &AteomService{codeWorker: w}, req, bundle
+}
+func TestCodeSpecRejectionRetainsSameGenerationMarker(t *testing.T) {
+	s, req, bundle := codeBeginFixture(t)
+	code, e := s.beginCode(req)
+	if e == nil {
+		t.Fatal("invalid spec accepted")
+	}
+	r, markerErr := s.codeWorker.Current(req.ActorUid)
+	if !code || markerErr != nil || r.Bundle != bundle || r.Image != codeprofile.Digest() || r.Generation != s.codeWorker.Generation {
+		t.Fatalf("spec rejected without same-generation recovery marker: code=%v marker=%v", code, markerErr)
+	}
+	if e = s.codeWorker.Guard(); e == nil {
+		t.Fatal("pending worker accepted new work")
+	}
+	if _, e = s.completedCode(req.ActorUid); e == nil {
+		t.Fatal("pending exposed as cleaned")
+	}
+}
+func TestCodeWrongImageCannotCreateRecoveryMarker(t *testing.T) {
+	s, req, bundle := codeBeginFixture(t)
+	if e := imagecache.WriteSpec(bundle, &imagecache.OverlaySpec{ImageDigest: "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}); e != nil {
+		t.Fatal(e)
+	}
+	if code, e := s.beginCode(req); e == nil || code {
+		t.Fatal("untrusted image registered")
+	}
+	if _, e := s.codeWorker.Current(req.ActorUid); e == nil {
+		t.Fatal("untrusted image obtained marker")
+	}
+}
+func TestCodeCompletedTerminationReobservesSameGeneration(t *testing.T) {
+	if os.Getpid() != 1 {
+		t.Skip("private PID namespace test runs in offline Linux container")
+	}
+	s, req, bundle := codeBeginFixture(t)
+	r, e := s.codeWorker.Begin(req.ActorUid, codeprofile.Digest(), bundle)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = s.codeWorker.Complete(r); e != nil {
+		t.Fatal(e)
+	}
+	for i := 0; i < 2; i++ {
+		if e = s.stopCode(context.Background(), resources.ActorRef{}, req.ActorUid, "/bin/true", req.Spec.Containers); e != nil {
+			t.Fatalf("completed stop not repeatable: %v", e)
+		}
+		proof, e := s.completedCode(req.ActorUid)
+		if e != nil || proof.Generation != r.Generation {
+			t.Fatalf("lost existing evidence: %v", e)
+		}
+	}
+	s.codeWorker.Generation = "different-generation"
+	if e = s.stopCode(context.Background(), resources.ActorRef{}, req.ActorUid, "/bin/true", req.Spec.Containers); e == nil {
+		t.Fatal("different generation recovered old marker")
+	}
+}
+
+func TestCodeCompletedReadbackRequiresEveryObservation(t *testing.T) {
+	for _, fail := range []string{"list", "container", "process", "mount", ""} {
+		t.Run(fail, func(t *testing.T) {
+			r := &codeFakeRuntime{failList: fail == "list"}
+			if fail == "container" {
+				r.ids = []string{"guest"}
+			}
+			var steps []string
+			check := func(name string) func() error {
+				return func() error {
+					steps = append(steps, name)
+					if fail == name {
+						return errors.New(name)
+					}
+					return nil
+				}
+			}
+			e := observeCodeCleanup(context.Background(), r, check("process"), check("mount"))
+			if (e == nil) != (fail == "") {
+				t.Fatal(e)
+			}
+			if fail == "container" && len(r.ids) != 1 {
+				t.Fatal("readback modified runtime")
+			}
+			if (fail == "list" || fail == "container") && len(steps) != 0 {
+				t.Fatal("continued after runtime unknown")
+			}
+			if fail == "process" && len(steps) != 1 {
+				t.Fatal("continued after process unknown")
+			}
+		})
+	}
+}
+func TestCodeMarkerlessCannotBecomeCompleted(t *testing.T) {
+	s, req, _ := codeBeginFixture(t)
+	if e := s.stopCode(context.Background(), resources.ActorRef{}, req.ActorUid, "/bin/true", req.Spec.Containers); e == nil {
+		t.Fatal("markerless termination succeeded")
+	}
+	if _, e := s.completedCode(req.ActorUid); e == nil {
+		t.Fatal("markerless public proof")
+	}
+}
+
+func TestCodeStartValidationFailureAttemptsCleanupAndKeepsUnknown(t *testing.T) {
+	s, req, _ := codeBeginFixture(t)
+	s.lock = newCancelableMutex()
+	s.atunnelIngress = &atunnel.Server{}
+	s.atunnelEgress = &atunnel.Egress{}
+	_, e := s.RunWorkload(context.Background(), req)
+	if e == nil || !strings.Contains(e.Error(), "runsc list") {
+		t.Fatalf("no cleanup observation after validation failure: %v", e)
+	}
+	if _, e = s.codeWorker.Current(req.ActorUid); e != nil {
+		t.Fatal("unconfirmed cleanup discarded pending")
+	}
+	if _, e = s.completedCode(req.ActorUid); e == nil {
+		t.Fatal("unconfirmed cleanup published proof")
+	}
+}

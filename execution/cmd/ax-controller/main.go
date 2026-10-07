@@ -89,6 +89,31 @@ func run() int {
 		defer interactive.Close()
 		runner.InteractiveExecutor = interactive
 		runner.InteractiveImage = interactiveConfig.Image
+		if config.Workbench != nil && config.Workbench.Enabled {
+			runner.WorkbenchRuntime = interactive
+			runner.WorkbenchRuntimeImage = interactiveConfig.Image
+			runner.WorkbenchModelEnabled = config.Workbench.ModelEnabled && runner.ModelProvider != nil
+			runner.WorkbenchPythonEnabled = config.Workbench.PythonEnabled
+		}
+	}
+	codeConfig, err := config.CodeNative()
+	if err != nil {
+		report("workbench_config_invalid")
+		return 2
+	}
+	if config.Workbench != nil && config.Workbench.Enabled && runner.WorkbenchRuntime == nil {
+		report("workbench_config_invalid")
+		return 2
+	}
+	if codeConfig != nil {
+		code, err := native.Dial(*codeConfig)
+		if err != nil {
+			report("workbench_config_invalid")
+			return 2
+		}
+		defer code.Close()
+		runner.WorkbenchCode = code
+		runner.WorkbenchCodeImage = codeConfig.Image
 	}
 	server := &http.Server{Addr: "127.0.0.1:9092", ReadHeaderTimeout: 2 * time.Second, Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/healthz" || r.Method != http.MethodGet {

@@ -1,0 +1,62 @@
+package substrate
+
+import (
+	pb "github.com/agent-substrate/substrate/pkg/proto/ateapipb"
+	"google.golang.org/protobuf/proto"
+	"slices"
+	"testing"
+)
+
+const syntheticImage = "registry.test/code@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
+func TestCodeTemplate(t *testing.T) {
+	t.Setenv("AX_CODE_IMAGE", syntheticImage)
+	tmpl := BuildActorTemplate(CodeAtespace, "code", syntheticImage, nil, nil, "")
+	if !slices.Equal(tmpl.Containers[0].Command, []string{"/usr/local/bin/ax-task-runner", "--task-file", "/opt/ax-code/server-task.json"}) {
+		t.Fatal("missing fixed debug server configuration")
+	}
+	if len(tmpl.Containers[0].SecurityContext.Capabilities.Add) != 5 || tmpl.SnapshotsConfig.OnResume.FromData != pb.ResumeSource_RESUME_SOURCE_COLD_BOOT || len(tmpl.Resources.Limits) != 2 {
+		t.Fatal("code profile missing")
+	}
+	if err := ValidateCodeTask(CodeAtespace, syntheticImage); err != nil {
+		t.Fatal(err)
+	}
+}
+func TestCodeConfigRejectsUnknownAndWrongScope(t *testing.T) {
+	for _, ref := range []string{"", "registry.test/code:latest", syntheticImage} {
+		t.Setenv("AX_CODE_IMAGE", ref)
+		for _, test := range [][2]string{{CodeAtespace, "wrong"}, {"ax-runtime", syntheticImage}} {
+			if ref == "" && test[0] != "ax-code" {
+				continue
+			}
+			if ref != "" && ref != syntheticImage && test[0] != "ax-code" {
+				continue
+			}
+			if e := ValidateCodeTask(test[0], test[1]); e == nil {
+				t.Fatal(test)
+			}
+		}
+	}
+}
+func TestNormalTemplateUnchanged(t *testing.T) {
+	t.Setenv("AX_CODE_IMAGE", syntheticImage)
+	tmpl := BuildActorTemplate("ax-runtime", "runtime", "image:old", map[string]string{"AX_TASK_YAML": "test"}, nil, "")
+	before := proto.Clone(tmpl)
+	applyCodeProfile(tmpl)
+	if !proto.Equal(before, tmpl) || tmpl.Resources != nil || tmpl.Containers[0].SecurityContext != nil || tmpl.SnapshotsConfig.OnResume.FromData != pb.ResumeSource_RESUME_SOURCE_GOLDEN {
+		t.Fatal("normal template changed")
+	}
+}
+
+func TestCodeCommandIsExplicitAndFixed(t *testing.T) {
+	command := []string{"python3", "/opt/ax-code/runner.py", "wait"}
+	if ValidateCodeCommand(CodeAtespace, command, true) != nil {
+		t.Fatal("fixed command refused")
+	}
+	if ValidateCodeCommand(CodeAtespace, command, false) == nil || ValidateCodeCommand(CodeAtespace, []string{"/usr/local/bin/ax-task-runner"}, true) == nil {
+		t.Fatal("wrong command accepted")
+	}
+	if ValidateCodeCommand("ax-runtime", []string{"old"}, false) != nil {
+		t.Fatal("normal changed")
+	}
+}

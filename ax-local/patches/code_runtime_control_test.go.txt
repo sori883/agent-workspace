@@ -1,0 +1,77 @@
+package controlapi
+
+import (
+	"context"
+	"github.com/agent-substrate/substrate/cmd/ateapi/internal/store"
+	"github.com/agent-substrate/substrate/internal/codeprofile"
+	"github.com/agent-substrate/substrate/internal/resources"
+	pb "github.com/agent-substrate/substrate/pkg/proto/ateapipb"
+	"google.golang.org/protobuf/proto"
+	"testing"
+)
+
+func codeFixture(t *testing.T) *pb.ActorTemplate {
+	t.Helper()
+	old := codeprofile.ImageReference
+	t.Cleanup(func() { codeprofile.ImageReference = old })
+	codeprofile.ImageReference = "registry.test/code@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	return &pb.ActorTemplate{Metadata: &pb.ResourceMetadata{Atespace: codeprofile.Atespace, Name: "code"}, Containers: []*pb.Container{{Name: "guest", Image: codeprofile.ImageReference, Command: []string{"/usr/local/bin/ax-task-runner", "--task-file", "/opt/ax-code/server-task.json"}, Readyz: &pb.ContainerReadyz{HttpGet: &pb.HTTPGetAction{Path: "/readyz", Port: 80}, TimeoutSeconds: 30}, VolumeMounts: []*pb.VolumeMount{{Name: "workspace", MountPath: "/workspace"}}, SecurityContext: &pb.SecurityContext{Capabilities: &pb.Capabilities{Drop: []string{"ALL"}, Add: []string{"KILL", "SYS_CHROOT", "SETUID", "SETGID", "SETPCAP"}}}}}, Volumes: []*pb.Volume{{Name: "workspace", DurableDir: &pb.DurableDirVolumeSource{}}}, Resources: &pb.Resources{Limits: []*pb.Limits{{Name: "cpu", Quantity: "1"}, {Name: "memory", Quantity: "384Mi"}}}, SandboxConfig: &pb.SandboxConfig{SandboxClass: pb.SandboxClass_SANDBOX_CLASS_GVISOR, ConfigName: "gvisor-default"}, SnapshotsConfig: &pb.SnapshotsConfig{OnPause: pb.SnapshotContentScope_SNAPSHOT_CONTENT_SCOPE_DATA, OnCommit: pb.SnapshotContentScope_SNAPSHOT_CONTENT_SCOPE_DATA, OnResume: &pb.OnResumeConfig{FromData: pb.ResumeSource_RESUME_SOURCE_COLD_BOOT}}}
+}
+
+func TestCodeGoldenSkip(t *testing.T) {
+	tmpl := codeFixture(t)
+	tmpl.Metadata.Uid = "code-uid"
+	st := newFakeTemplateStore(tmpl)
+	control := &fakeGoldenControl{}
+	r := newTestTemplateReconciler(st, control)
+	after, e := r.reconcileOne(context.Background(), resources.ActorTemplateRefFromActorTemplate(tmpl))
+	if e != nil || after != 0 {
+		t.Fatal(e)
+	}
+	if len(control.createReqs) != 0 || len(control.resumeReqs) != 0 || len(control.suspendReqs) != 0 {
+		t.Fatal("code golden lifecycle started")
+	}
+}
+
+func TestCleanupSavedOnlyForAssignedActor(t *testing.T) {
+	codeFixture(t)
+	ctx := context.Background()
+	st := newTestPersistence(t)
+	ref := resources.ActorRef{Atespace: codeprofile.Atespace, Name: "code-actor"}
+	seedWorkflowActor(t, ctx, st, ref, "ns", "tmpl", pb.ActorState_ACTOR_STATE_SUSPENDING)
+	actor, e := st.GetActor(ctx, ref)
+	if e != nil {
+		t.Fatal(e)
+	}
+	actor, e = st.UpdateActor(ctx, ref, store.PreconditionFrom(actor), func(a *pb.Actor) error {
+		a.Status.WorkerAssignment = &pb.WorkerAssignment{WorkerPodUid: "worker-a"}
+		return nil
+	})
+	if e != nil {
+		t.Fatal(e)
+	}
+	w := &ActorWorkflow{store: st}
+	proof := &pb.CodeCleanup{ActorUid: actor.Metadata.Uid, WorkerUid: "worker-a", Generation: "11111111-1111-4111-8111-111111111111", ImageDigest: codeprofile.Digest(), Profile: codeprofile.Version, Cleaned: true}
+	if e = w.saveCodeCleanup(ctx, actor, nil); e == nil {
+		t.Fatal("missing proof saved")
+	}
+	bad := proto.CloneOf(proof)
+	bad.WorkerUid = "worker-b"
+	if e = w.saveCodeCleanup(ctx, actor, bad); e == nil {
+		t.Fatal("other worker proof saved")
+	}
+	if e = w.saveCodeCleanup(ctx, actor, proof); e != nil {
+		t.Fatal(e)
+	}
+	saved, e := st.GetActor(ctx, ref)
+	if e != nil || !proto.Equal(saved.GetStatus().GetCodeCleanup(), proof) {
+		t.Fatal(e)
+	}
+	_, e = st.UpdateActor(ctx, ref, store.PreconditionFrom(saved), func(a *pb.Actor) error { a.Status.WorkerAssignment = nil; return nil })
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = w.saveCodeCleanup(ctx, actor, proof); e == nil {
+		t.Fatal("unassigned actor accepted delayed proof")
+	}
+}

@@ -1,0 +1,206 @@
+diff --git a/internal/controller/reconciler.go b/internal/controller/reconciler.go
+index 0692867..31f9cb8 100644
+--- a/internal/controller/reconciler.go
++++ b/internal/controller/reconciler.go
+@@ -133,14 +133,27 @@ func (r *TaskReconciler) Reconcile(ctx context.Context, task *v1alpha1.Task, wor
+ 		task.Status.Id = fmt.Sprintf("task-%s-%d", task.Metadata.Name, now.Unix())
+ 	}
+ 
++	if err := substrate.ValidateCodeTask(atespace, task.Spec.Image); err != nil {
++		return task, err
++	}
++	if err := substrate.ValidateCodeCommand(atespace, task.Spec.Command, task.Spec.Debug); err != nil {
++		return task, err
++	}
+ 	credentialsDisabled := r.credentialsDisabled(atespace)
++	if atespace == substrate.CodeAtespace && !credentialsDisabled {
++		return task, errors.New("code_credentials_must_be_disabled")
++	}
+ 	if credentialsDisabled && task.Status.Phase == "Suspended" {
+ 		if _, err := r.client.GetActor(ctx, atespace, actorName); err == nil {
+-			if err := r.client.SuspendActor(ctx, atespace, actorName); err != nil { return task, err }
++			if err := r.client.SuspendActor(ctx, atespace, actorName); err != nil {
++				return task, err
++			}
+ 			task.Status.WorkerIp = ""
+ 			r.setCondition(task, condReady, "False", "TaskSuspended", "Task is suspended", now)
+ 			return task, nil
+-		} else if status.Code(err) != codes.NotFound { return task, err }
++		} else if status.Code(err) != codes.NotFound {
++			return task, err
++		}
+ 	}
+ 	if credentialsDisabled && (len(task.Spec.Env) != 0 || len(workspaces) != 0) {
+ 		return task, errors.New("credential-free task configuration rejected")
+@@ -182,28 +195,35 @@ func (r *TaskReconciler) Reconcile(ctx context.Context, task *v1alpha1.Task, wor
+ 	}
+ 
+ 	// If a custom image, workspace, or extra environment is specified, provision or use a dedicated ActorTemplate
++	if atespace == substrate.CodeAtespace {
++		clear(extraEnv)
++	}
+ 	if task.Spec != nil && (task.Spec.Image != "" || len(extraEnv) > 0) {
+ 		slog.Info("ensuring custom ActorTemplate for task", "image", task.Spec.Image)
+ 		customTemplateName := taskTemplateName(task.Metadata.Name, task.Spec.Image, extraEnv)
+ 
+ 		tmpl, err := r.client.EnsureActorTemplateWithImage(ctx, templateAtespace, templateName, atespace, customTemplateName, task.Spec.Image, extraEnv)
+ 		if err != nil {
+-			if credentialsDisabled { return task, errors.New("credential-free template unavailable") }
++			if credentialsDisabled {
++				return task, errors.New("credential-free template unavailable")
++			}
+ 			slog.Warn("could not create custom ActorTemplate, falling back to default template", "error", err)
+ 		} else if tmpl != nil && tmpl.Metadata != nil {
+ 			if credentialsDisabled {
+ 				expected := substrate.BuildActorTemplate(atespace, customTemplateName, task.Spec.Image, extraEnv, nil, "")
+ 				expected.Containers[0].Readyz.TimeoutSeconds = 30
+ 				if tmpl.Metadata.Atespace != atespace || tmpl.Metadata.Name != customTemplateName ||
+-					!proto.Equal(&ateapipb.ActorTemplate{Containers: tmpl.Containers, Volumes: tmpl.Volumes, SandboxConfig: tmpl.SandboxConfig, SnapshotsConfig: tmpl.SnapshotsConfig},
+-					&ateapipb.ActorTemplate{Containers: expected.Containers, Volumes: expected.Volumes, SandboxConfig: expected.SandboxConfig, SnapshotsConfig: expected.SnapshotsConfig}) {
++					!proto.Equal(&ateapipb.ActorTemplate{Containers: tmpl.Containers, Volumes: tmpl.Volumes, SandboxConfig: tmpl.SandboxConfig, SnapshotsConfig: tmpl.SnapshotsConfig, Resources: tmpl.Resources},
++						&ateapipb.ActorTemplate{Containers: expected.Containers, Volumes: expected.Volumes, SandboxConfig: expected.SandboxConfig, SnapshotsConfig: expected.SnapshotsConfig, Resources: expected.Resources}) {
+ 					return task, errors.New("credential-free template mismatch")
+ 				}
+ 			}
+ 			templateAtespace = tmpl.Metadata.Atespace
+ 			templateName = tmpl.Metadata.Name
+ 			slog.Info("using custom ActorTemplate for actor", "templateAtespace", templateAtespace, "templateName", templateName)
+-		} else if credentialsDisabled { return task, errors.New("credential-free template unavailable") }
++		} else if credentialsDisabled {
++			return task, errors.New("credential-free template unavailable")
++		}
+ 	}
+ 
+ 	var err error
+@@ -211,13 +231,16 @@ func (r *TaskReconciler) Reconcile(ctx context.Context, task *v1alpha1.Task, wor
+ 		existing, getErr := r.client.GetActor(ctx, atespace, actorName)
+ 		if status.Code(getErr) == codes.NotFound {
+ 			err = r.client.CreateActorWithoutRecovery(ctx, atespace, actorName, templateAtespace, templateName)
+-		} else if getErr != nil { err = getErr
++		} else if getErr != nil {
++			err = getErr
+ 		} else if existing.GetMetadata().GetName() != actorName || existing.GetMetadata().GetAtespace() != atespace ||
+ 			existing.GetActorTemplate().GetName() != templateName || existing.GetActorTemplate().GetAtespace() != templateAtespace ||
+ 			(existing.GetStatus().GetState() != ateapipb.ActorState_ACTOR_STATE_SUSPENDED && existing.GetStatus().GetState() != ateapipb.ActorState_ACTOR_STATE_RUNNING) {
+ 			err = errors.New("credential-free actor mismatch")
+ 		}
+-	} else { _, err = r.client.EnsureActor(ctx, atespace, actorName, templateAtespace, templateName) }
++	} else {
++		_, err = r.client.EnsureActor(ctx, atespace, actorName, templateAtespace, templateName)
++	}
+ 	if err != nil {
+ 		r.setNotReady(task, "ActorCreationFailed", err.Error(), now)
+ 		task.Status.Phase = "Failed"
+@@ -387,13 +410,17 @@ func (r *TaskReconciler) setCondition(task *v1alpha1.Task, condType, status, rea
+ // environment. It returns "" when neither source has a value.
+ func (r *TaskReconciler) credentialsDisabled(atespace string) bool {
+ 	for _, value := range strings.Split(os.Getenv("AX_DISABLE_CREDENTIAL_ATESPACES"), ",") {
+-		if strings.TrimSpace(value) == atespace { return true }
++		if strings.TrimSpace(value) == atespace {
++			return true
++		}
+ 	}
+ 	return false
+ }
+ 
+ func (r *TaskReconciler) lookupGeminiKey(ctx context.Context, atespace string) string {
+-	if r.credentialsDisabled(atespace) { return "" }
++	if r.credentialsDisabled(atespace) {
++		return ""
++	}
+ 	if r.SecretResolver != nil {
+ 		lookupCtx, cancel := context.WithTimeout(ctx, secretLookupTimeout)
+ 		defer cancel()
+diff --git a/internal/substrate/client.go b/internal/substrate/client.go
+index 967c812..8a1bcd0 100644
+--- a/internal/substrate/client.go
++++ b/internal/substrate/client.go
+@@ -235,7 +235,7 @@ func BuildActorTemplate(atespace, name, image string, envMap map[string]string,
+ 		})
+ 	}
+ 
+-	return &ateapipb.ActorTemplate{
++	template := &ateapipb.ActorTemplate{
+ 		Metadata: &ateapipb.ResourceMetadata{
+ 			Name:     name,
+ 			Atespace: atespace,
+@@ -273,10 +273,15 @@ func BuildActorTemplate(atespace, name, image string, envMap map[string]string,
+ 			ConfigName:   "gvisor-default",
+ 		},
+ 	}
++	applyCodeProfile(template)
++	return template
+ }
+ 
+ // EnsureActorTemplateWithImage creates an ActorTemplate using the specified container image and optional environment variables.
+ func (c *Client) EnsureActorTemplateWithImage(ctx context.Context, baseAtespace, baseTemplate, targetAtespace, targetTemplate, image string, extraEnv ...map[string]string) (*ateapipb.ActorTemplate, error) {
++	if err := ValidateCodeTask(targetAtespace, image); err != nil {
++		return nil, err
++	}
+ 	existing, err := c.GetActorTemplate(ctx, targetAtespace, targetTemplate)
+ 	if err == nil && existing != nil {
+ 		return existing, nil
+@@ -506,12 +511,10 @@ func (c *Client) DeleteActorTemplate(ctx context.Context, atespace, templateName
+ 	return nil
+ }
+ 
+-
+-
+ func (c *Client) CreateActorWithoutRecovery(ctx context.Context, atespace, actorName, templateAtespace, templateName string) error {
+- _, err := c.control.CreateActor(ctx, &ateapipb.CreateActorRequest{Actor: &ateapipb.Actor{
+-  Metadata: &ateapipb.ResourceMetadata{Name: actorName, Atespace: atespace},
+-  ActorTemplate: &ateapipb.ObjectRef{Atespace: templateAtespace, Name: templateName},
+- }})
+- return err
++	_, err := c.control.CreateActor(ctx, &ateapipb.CreateActorRequest{Actor: &ateapipb.Actor{
++		Metadata:      &ateapipb.ResourceMetadata{Name: actorName, Atespace: atespace},
++		ActorTemplate: &ateapipb.ObjectRef{Atespace: templateAtespace, Name: templateName},
++	}})
++	return err
+ }
+diff --git a/internal/substrate/code_profile.go b/internal/substrate/code_profile.go
+new file mode 100644
+index 0000000..f1b3981
+--- /dev/null
++++ b/internal/substrate/code_profile.go
+@@ -0,0 +1,40 @@
++package substrate
++
++import (
++	"errors"
++	pb "github.com/agent-substrate/substrate/pkg/proto/ateapipb"
++	"os"
++	"regexp"
++	"slices"
++)
++
++const CodeAtespace = "ax-code"
++
++var codeImagePattern = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9./:_-]*@sha256:[a-f0-9]{64}$`)
++
++func CodeImage() string { return os.Getenv("AX_CODE_IMAGE") }
++func ValidateCodeTask(atespace, image string) error {
++	if atespace != CodeAtespace && (CodeImage() == "" || image != CodeImage()) {
++		return nil
++	}
++	if atespace != CodeAtespace || !codeImagePattern.MatchString(CodeImage()) || image != CodeImage() {
++		return errors.New("code_profile_rejected")
++	}
++	return nil
++}
++func applyCodeProfile(t *pb.ActorTemplate) {
++	if t.GetMetadata().GetAtespace() != CodeAtespace {
++		return
++	}
++	t.Containers[0].Command = []string{"/usr/local/bin/ax-task-runner", "--task-file", "/opt/ax-code/server-task.json"}
++	t.Containers[0].SecurityContext = &pb.SecurityContext{Capabilities: &pb.Capabilities{Drop: []string{"ALL"}, Add: []string{"KILL", "SYS_CHROOT", "SETUID", "SETGID", "SETPCAP"}}}
++	t.Resources = &pb.Resources{Limits: []*pb.Limits{{Name: "cpu", Quantity: "1"}, {Name: "memory", Quantity: "384Mi"}}}
++	t.SnapshotsConfig.OnResume.FromData = pb.ResumeSource_RESUME_SOURCE_COLD_BOOT
++}
++
++func ValidateCodeCommand(atespace string, command []string, debug bool) error {
++	if atespace == CodeAtespace && (!debug || !slices.Equal(command, []string{"python3", "/opt/ax-code/runner.py", "wait"})) {
++		return errors.New("code_command_rejected")
++	}
++	return nil
++}

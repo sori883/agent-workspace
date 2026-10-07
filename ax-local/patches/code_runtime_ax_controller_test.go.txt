@@ -1,0 +1,36 @@
+package controller_test
+
+import (
+	"context"
+	"github.com/google/ax/internal/substrate"
+	"testing"
+)
+
+func TestCodeReconcileHasNoEnvironmentAndNoSecretLookup(t *testing.T) {
+	r, s, task, calls := credentialFixture(t)
+	image := "registry.test/code@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	t.Setenv("AX_CODE_IMAGE", image)
+	t.Setenv("AX_DISABLE_CREDENTIAL_ATESPACES", "ax-runtime,ax-code")
+	task.Metadata.Atespace = substrate.CodeAtespace
+	task.Spec.Image = image
+	task.Spec.Command = []string{"python3", "/opt/ax-code/runner.py", "wait"}
+	task.Spec.Debug = true
+	if _, e := r.Reconcile(context.Background(), task); e != nil {
+		t.Fatal(e)
+	}
+	if *calls != 0 || len(s.template.Containers[0].Env) != 0 || len(s.template.Containers[0].SecurityContext.Capabilities.Add) != 5 {
+		t.Fatal("code boundary missing")
+	}
+}
+func TestCodeReconcileFailsClosedWithoutCredentialsPolicy(t *testing.T) {
+	r, s, task, calls := credentialFixture(t)
+	image := "registry.test/code@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	t.Setenv("AX_CODE_IMAGE", image)
+	task.Metadata.Atespace = substrate.CodeAtespace
+	task.Spec.Image = image
+	task.Spec.Command = []string{"python3", "/opt/ax-code/runner.py", "wait"}
+	task.Spec.Debug = true
+	if _, e := r.Reconcile(context.Background(), task); e == nil || s.template != nil || *calls != 0 {
+		t.Fatal("code accepted before configuration")
+	}
+}

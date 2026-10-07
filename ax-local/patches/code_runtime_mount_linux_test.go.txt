@@ -1,0 +1,253 @@
+package codequota
+
+import (
+	"errors"
+	"github.com/agent-substrate/substrate/internal/codeprofile"
+	"github.com/agent-substrate/substrate/internal/imagecache"
+	"github.com/agent-substrate/substrate/internal/ocispec"
+	"github.com/agent-substrate/substrate/internal/proto/ateletpb"
+	"golang.org/x/sys/unix"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"testing"
+)
+
+func bundleFixture(t *testing.T) string {
+	t.Helper()
+	old := codeprofile.ImageReference
+	codeprofile.ImageReference = "registry.test/code@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	t.Cleanup(func() { codeprofile.ImageReference = old })
+	bundle := t.TempDir()
+	os.Chmod(bundle, 0700)
+	if e := imagecache.WriteSpec(bundle, &imagecache.OverlaySpec{ImageDigest: codeprofile.Digest(), Layers: []string{"/fixed/layer"}}); e != nil {
+		t.Fatal(e)
+	}
+	spec := ocispec.Build(ocispec.Options{ActorUID: "actor-a", ContainerName: "guest", Args: []string{"/usr/local/bin/ax-task-runner", "--task-file", "/opt/ax-code/server-task.json"}, Capabilities: Caps, Volumes: []*ateletpb.Volume{{Name: "workspace", Source: &ateletpb.Volume_DurableDir{DurableDir: &ateletpb.DurableDirVolume{}}}}, VolumeMounts: []*ateletpb.VolumeMount{{Name: "workspace", MountPath: "/workspace"}}})
+	if e := ocispec.Save(bundle, spec); e != nil {
+		t.Fatal(e)
+	}
+	return bundle
+}
+func fakeMounts(t *testing.T) (*[]Mount, *int) {
+	t.Helper()
+	oldMount, oldUnmount, oldInspect, oldList := mountFS, unmountFS, inspectMount, listMounts
+	t.Cleanup(func() { mountFS, unmountFS, inspectMount, listMounts = oldMount, oldUnmount, oldInspect, oldList })
+	ms := new([]Mount)
+	calls := new(int)
+	mountFS = func(src, target, typ string, f uintptr, data string) error {
+		*calls++
+		if f != flags || src != "tmpfs" || typ != "tmpfs" {
+			t.Fatal("unsafe mount flags")
+		}
+		*ms = append(*ms, Mount{Path: target, Type: typ, Options: []string{"nosuid", "nodev", "noexec"}})
+		return nil
+	}
+	unmountFS = func(p string, f int) error {
+		if f != 0 {
+			t.Fatal("lazy detach used")
+		}
+		for i, m := range *ms {
+			if m.Path == p {
+				*ms = append((*ms)[:i], (*ms)[i+1:]...)
+				return nil
+			}
+		}
+		return unix.EINVAL
+	}
+	inspectMount = func(string, Quota, bool) error { return nil }
+	listMounts = func() ([]Mount, error) { return append([]Mount(nil), (*ms)...), nil }
+	return ms, calls
+}
+func TestPrepareChecksDigestBeforeMount(t *testing.T) {
+	b := bundleFixture(t)
+	_, calls := fakeMounts(t)
+	sp, e := imagecache.ReadSpec(b)
+	if e != nil {
+		t.Fatal(e)
+	}
+	sp.ImageDigest = "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+	imagecache.WriteSpec(b, sp)
+	if e = Prepare(b); e == nil || *calls != 0 {
+		t.Fatal("bad digest mounted")
+	}
+}
+func TestFixedFourMountsAndShapedVerification(t *testing.T) {
+	b := bundleFixture(t)
+	_, calls := fakeMounts(t)
+	if e := Prepare(b); e != nil {
+		t.Fatal(e)
+	}
+	if *calls != 4 {
+		t.Fatal(*calls)
+	}
+	spec, e := ocispec.Load(b)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = VerifyShaped(b, spec); e != nil {
+		t.Fatal(e)
+	}
+	spec.Mounts = append(spec.Mounts, spec.Mounts[len(spec.Mounts)-1])
+	if e = VerifyShaped(b, spec); e == nil {
+		t.Fatal("duplicate mount accepted")
+	}
+}
+func TestPartialPrepareKeepsPendingRecord(t *testing.T) {
+	b := bundleFixture(t)
+	_, w := fixture(t)
+	_, e := w.Begin("actor-a", codeprofile.Digest(), b)
+	if e != nil {
+		t.Fatal(e)
+	}
+	ms, calls := fakeMounts(t)
+	original := mountFS
+	mountFS = func(src, target, typ string, f uintptr, data string) error {
+		if *calls == 2 {
+			return errors.New("injected mount failure")
+		}
+		return original(src, target, typ, f, data)
+	}
+	if e = Prepare(b); e == nil {
+		t.Fatal("failure swallowed")
+	}
+	if len(*ms) != 2 {
+		t.Fatal(len(*ms))
+	}
+	if _, e = w.Current("actor-a"); e != nil {
+		t.Fatal("pending marker lost")
+	}
+	if e = w.Guard(); e == nil {
+		t.Fatal("worker reused after mount failure")
+	}
+}
+func TestUnmountFailureDoesNotClearMountOrRecord(t *testing.T) {
+	b := bundleFixture(t)
+	_, w := fixture(t)
+	if _, e := w.Begin("actor-a", codeprofile.Digest(), b); e != nil {
+		t.Fatal(e)
+	}
+	ms, _ := fakeMounts(t)
+	if e := Prepare(b); e != nil {
+		t.Fatal(e)
+	}
+	unmountFS = func(string, int) error { return unix.EBUSY }
+	if e := Remove(b); e == nil {
+		t.Fatal("busy accepted")
+	}
+	if len(*ms) != 4 {
+		t.Fatal("mount vanished")
+	}
+	if _, e := w.Current("actor-a"); e != nil {
+		t.Fatal(e)
+	}
+}
+func TestNoSymlinkQuotaAndWrongMountRejected(t *testing.T) {
+	b := bundleFixture(t)
+	_, calls := fakeMounts(t)
+	if e := os.Symlink(t.TempDir(), filepath.Join(b, "code-quota")); e != nil {
+		t.Fatal(e)
+	}
+	if e := Prepare(b); e == nil || *calls != 0 {
+		t.Fatal("symlink accepted")
+	}
+}
+func TestPreparedMountMismatchStopsBeforeCreate(t *testing.T) {
+	b := bundleFixture(t)
+	_, _ = fakeMounts(t)
+	inspectMount = func(string, Quota, bool) error { return ErrHold }
+	if e := Prepare(b); e == nil {
+		t.Fatal("mount mismatch accepted")
+	}
+}
+
+func TestPrivateWorkerRejectsAnyRemainingExecutable(t *testing.T) {
+	if os.Getpid() != 1 {
+		if e := NoRuntimeProcesses("/fixed/runsc"); e == nil {
+			t.Fatal("unproven PID namespace accepted")
+		}
+		return
+	}
+	child := exec.Command("/bin/sleep", "10")
+	if e := child.Start(); e != nil {
+		t.Fatal(e)
+	}
+	if e := NoRuntimeProcesses("/fixed/runsc"); e == nil {
+		child.Process.Kill()
+		child.Wait()
+		t.Fatal("remaining executable ignored")
+	}
+	child.Process.Kill()
+	child.Wait()
+	if e := NoRuntimeProcesses("/fixed/runsc"); e != nil {
+		t.Fatal(e)
+	}
+}
+
+func TestFixedImageEnvironmentBeforeQuotaPrepare(t *testing.T) {
+	b := bundleFixture(t)
+	_, calls := fakeMounts(t)
+	spec, e := ocispec.Load(b)
+	if e != nil {
+		t.Fatal(e)
+	}
+	spec.Process.Env = []string{"PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin", "LANG=C.UTF-8", "GPG_KEY=fixed-image-key-id", "PYTHON_VERSION=3.13.7", "PYTHON_SHA256=fixed-image-source-hash", "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt", "REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"}
+	if e = ocispec.Save(b, spec); e != nil {
+		t.Fatal(e)
+	}
+	if e = ValidateBundle(b); e != nil {
+		t.Fatalf("fixed code image environment rejected: %v", e)
+	}
+	if *calls != 0 {
+		t.Fatal("validation mounted quota")
+	}
+	for _, key := range []string{"GEMINI_API_KEY", "AX_TASK_YAML", "PYTHONPATH"} {
+		spec.Process.Env = append(spec.Process.Env, key+"=untrusted")
+		if e = ocispec.Save(b, spec); e != nil {
+			t.Fatal(e)
+		}
+		if e = ValidateBundle(b); e == nil {
+			t.Fatalf("untrusted environment key %s accepted", key)
+		}
+		spec.Process.Env = spec.Process.Env[:len(spec.Process.Env)-1]
+	}
+}
+
+func TestCompletedBundleMountObservationDoesNotUnmount(t *testing.T) {
+	ms, calls := fakeMounts(t)
+	unmountFS = func(string, int) error { t.Fatal("readback attempted unmount"); return nil }
+	for _, path := range []string{"/fixed/bundles", "/fixed/bundles/guest/rootfs", "/fixed/bundles/guest/code-quota/input"} {
+		*ms = []Mount{{Path: path, Type: "tmpfs"}}
+		if e := VerifyUnmounted("/fixed/bundles"); e == nil {
+			t.Fatal("residual mount accepted")
+		}
+	}
+	*ms = []Mount{{Path: "/fixed/another-actor", Type: "tmpfs"}}
+	if e := VerifyUnmounted("/fixed/bundles"); e != nil {
+		t.Fatal(e)
+	}
+	if *calls != 0 {
+		t.Fatal("readback mounted")
+	}
+	listMounts = func() ([]Mount, error) { return nil, errors.New("mountinfo unknown") }
+	if e := VerifyUnmounted("/fixed/bundles"); e == nil {
+		t.Fatal("mountinfo unknown accepted")
+	}
+}
+
+func TestBundleRequiresFixedServerConfiguration(t *testing.T) {
+	b := bundleFixture(t)
+	spec, e := ocispec.Load(b)
+	if e != nil {
+		t.Fatal(e)
+	}
+	for _, command := range [][]string{{"/usr/local/bin/ax-task-runner"}, {"/usr/local/bin/ax-task-runner", "--task-file", "/tmp/server-task.json"}} {
+		spec.Process.Args = command
+		if e := ocispec.Save(b, spec); e != nil {
+			t.Fatal(e)
+		}
+		if e := ValidateBundle(b); e == nil {
+			t.Fatal("unregistered guest server shape accepted")
+		}
+	}
+}
