@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 21,
+  "revision": 25,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "parent",
     "session": "model-parent-1"
   },
   "createdAt": "2026-10-07T09:17:08.024Z",
-  "updatedAt": "2026-10-07T10:08:03.229Z",
+  "updatedAt": "2026-10-07T10:10:00.996Z",
   "units": [
     {
       "id": "model",
@@ -44,18 +44,31 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 2,
+      "version": 6,
       "contractVersion": 1,
       "attempts": [
         {
           "number": 1,
-          "state": "running",
+          "state": "completed",
           "stages": {
             "implement": {
               "selection": "execute",
-              "reason": "依頼の実装・独立レビュー",
-              "state": "pending",
-              "refs": []
+              "reason": "実装・実経路検証・独立レビュー・OKF保存を完了しPR #19へ提出。マージ完了の判断はGitHub状態確認後に行う。",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-model/task.md",
+                  "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-model/verification.md",
+                  "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+                },
+                {
+                  "ref": "https://github.com/sori883/agent-workspace/pull/19",
+                  "digest": null
+                }
+              ]
             }
           },
           "inputs": {
@@ -70,7 +83,7 @@
         }
       ],
       "currentAttempt": 1,
-      "currentSubmission": null,
+      "currentSubmission": "f8da983e-50ad-4f08-b766-58a44fa639ed",
       "contractHistory": []
     },
     {
@@ -532,6 +545,251 @@
       "reusedFrom": null,
       "reuseReason": "",
       "at": "2026-10-07T10:07:30.366Z"
+    },
+    {
+      "id": "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e",
+      "unit": "model",
+      "attempt": 1,
+      "condition": "delivery",
+      "target": {
+        "id": "result",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": ".github/workflows/web.yml",
+            "digest": "f1547cb05b0db3db4f026dbd101fa4de5b05322545fdb4cda797527a092b2270"
+          },
+          {
+            "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+            "digest": "18984b81ab82911f01d7312c8102d1f924871871861d2c4cca2e402b2cfe2f87"
+          },
+          {
+            "ref": ".space/babel/decisions/systems/ax/index.md",
+            "digest": "240b3ab7da36336956b22285bed1ca3fb2c117fcaab7d1b74160d83a127d4cbc"
+          },
+          {
+            "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+            "digest": "dc21923048e78470bba5690422cb320ac05fa376334face7e7e3fce8c5121359"
+          },
+          {
+            "ref": ".space/babel/log.md",
+            "digest": "fec141b9abdcd086d6e0003c3a35cbbe5ce780f07c49568e1651ea135f39a65f"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/contract.md",
+            "digest": "a5e9ba64665b5b18ac3d166f93db7bdb2d1d31f6d98cc4a07b5970c6fbd77796"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/design-review.md",
+            "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/task.md",
+            "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/ui-review.md",
+            "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": "README.md",
+            "digest": "4e8a1db03a99b696130934f97b65dd316dbb19c75235700541ccf6bdb9c37c89"
+          },
+          {
+            "ref": "ax-local/task_runtime/adapters/interactive.py",
+            "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+          },
+          {
+            "ref": "ax-local/task_runtime/mailbox.py",
+            "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+          },
+          {
+            "ref": "ax-local/tests/test_interactive.py",
+            "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+          },
+          {
+            "ref": "ax-local/tests/test_interactive_model.py",
+            "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+          },
+          {
+            "ref": "ax-local/versions.json",
+            "digest": "b5aa25fb7f53c101f265f853d091df03dfa814425b01e4f24d4fa14aa2aef8b9"
+          },
+          {
+            "ref": "docs/agent-runtime-design.md",
+            "digest": "096d44b820754599cda265a893c6d46929befcaa1316c33d6c0752dbc352c916"
+          },
+          {
+            "ref": "execution/Dockerfile",
+            "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+          },
+          {
+            "ref": "execution/README.md",
+            "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+          },
+          {
+            "ref": "execution/cmd/ax-controller/main.go",
+            "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+          },
+          {
+            "ref": "execution/controller/controller.go",
+            "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+          },
+          {
+            "ref": "execution/controller/interactive.go",
+            "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+          },
+          {
+            "ref": "execution/controller/interactive_test.go",
+            "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+          },
+          {
+            "ref": "execution/controller/model_test.go",
+            "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+          },
+          {
+            "ref": "execution/controller/postgres.go",
+            "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+          },
+          {
+            "ref": "execution/controller/reservation_test.go",
+            "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+          },
+          {
+            "ref": "execution/gateway/model.go",
+            "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+          },
+          {
+            "ref": "execution/gateway/model_test.go",
+            "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+          },
+          {
+            "ref": "execution/native/protocol.go",
+            "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+          },
+          {
+            "ref": "execution/settings/settings.go",
+            "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+          },
+          {
+            "ref": "execution/settings/settings_test.go",
+            "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+          },
+          {
+            "ref": "web/README.md",
+            "digest": "6a333b99a98b6f7c334123b1b147fb368e0678a250dbfdb6aa1aa2c4585c2e75"
+          },
+          {
+            "ref": "web/app/app.css",
+            "digest": "39e01c5e119a473c968e71cd720597c279322f882da83c3f1d75b91b7aac3ce9"
+          },
+          {
+            "ref": "web/app/components/workspace.tsx",
+            "digest": "d1284203208326f76caa620bdb08f37de489710f3f8a1c782d3dc18228fa2320"
+          },
+          {
+            "ref": "web/app/routes/agent.tsx",
+            "digest": "bba0b9861b93003ab75826c106207ff7afb694875d71a64f76e720ddc4643e27"
+          },
+          {
+            "ref": "web/app/routes/run-detail.tsx",
+            "digest": "15dd2b0851b281925e9cd0affe0eac9b42aab1907eb3cbc0eebdf31bc2425814"
+          },
+          {
+            "ref": "web/data/agents.ts",
+            "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+          },
+          {
+            "ref": "web/data/db.ts",
+            "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+          },
+          {
+            "ref": "web/data/permissions.ts",
+            "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+          },
+          {
+            "ref": "web/data/repository.ts",
+            "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+          },
+          {
+            "ref": "web/data/schema-v5.sql",
+            "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+          },
+          {
+            "ref": "web/scripts/deploy-execution.ts",
+            "digest": "5f94e3e7b6ced1d4c2ede1f3175e6259269a0cc795a9d590547f71867b993407"
+          },
+          {
+            "ref": "web/scripts/verify-interactive-local.ts",
+            "digest": "55d48e13b7fa185133318be7a39919e16703f41896ba37d9212809b7f3baeb5f"
+          },
+          {
+            "ref": "web/server/data-migrate.ts",
+            "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+          },
+          {
+            "ref": "web/shared/agent-contracts.ts",
+            "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+          },
+          {
+            "ref": "web/shared/run-contracts.ts",
+            "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+          },
+          {
+            "ref": "web/tests/agents.test.ts",
+            "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+          },
+          {
+            "ref": "web/tests/browser/agent-fixture.ts",
+            "digest": "68dfcd8742a74d88ec70be19239382bc1528e64d262aadb71509480a2d3bf2cf"
+          },
+          {
+            "ref": "web/tests/browser/agent.spec.ts",
+            "digest": "f234b4af2f4a5d6e368aaa9c2f8f69a94dd5f369a1ace8904b631b158fc56fe9"
+          },
+          {
+            "ref": "web/tests/workspaces.test.ts",
+            "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+          }
+        ],
+        "version": "2079baaf9fb1cf5776c6642c001fcc9360dd4b296bd6acb56e0ed390985c58be"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-agent-model/verification.md",
+          "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-model/integration-review.md",
+          "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/19",
+          "digest": null
+        }
+      ],
+      "reason": "",
+      "method": "Webから実モデルの対話・成果物と本人限定、外部台帳・費用・実停止、閉鎖後previewの回帰を検証。関連テストと独立レビューに残件なく、同一差分を一つのPRへ提出したことを確認。PRの最終CIとマージは引き渡し後の親の操作として継続する。",
+      "environment": "ローカルkind/AX・Docker PostgreSQL・実Keycloak/Web・Gemini 2生成、およびPR #19 head f77b12f。マージ前の提出成果物評価。",
+      "observedAt": "2026-10-07T10:10:00.802272+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-07T10:10:00.855Z"
     }
   ],
   "submissions": [
@@ -814,6 +1072,275 @@
         "reason": "親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
         "at": "2026-10-07T10:08:03.229Z"
       }
+    },
+    {
+      "id": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+      "unit": "model",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e"
+      ],
+      "outputs": [
+        {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".github/workflows/web.yml",
+              "digest": "f1547cb05b0db3db4f026dbd101fa4de5b05322545fdb4cda797527a092b2270"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+              "digest": "18984b81ab82911f01d7312c8102d1f924871871861d2c4cca2e402b2cfe2f87"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/index.md",
+              "digest": "240b3ab7da36336956b22285bed1ca3fb2c117fcaab7d1b74160d83a127d4cbc"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+              "digest": "dc21923048e78470bba5690422cb320ac05fa376334face7e7e3fce8c5121359"
+            },
+            {
+              "ref": ".space/babel/log.md",
+              "digest": "fec141b9abdcd086d6e0003c3a35cbbe5ce780f07c49568e1651ea135f39a65f"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/contract.md",
+              "digest": "a5e9ba64665b5b18ac3d166f93db7bdb2d1d31f6d98cc4a07b5970c6fbd77796"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/design-review.md",
+              "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/integration-review.md",
+              "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/task.md",
+              "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/ui-review.md",
+              "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/verification.md",
+              "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+            },
+            {
+              "ref": "README.md",
+              "digest": "4e8a1db03a99b696130934f97b65dd316dbb19c75235700541ccf6bdb9c37c89"
+            },
+            {
+              "ref": "ax-local/task_runtime/adapters/interactive.py",
+              "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+            },
+            {
+              "ref": "ax-local/task_runtime/mailbox.py",
+              "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive.py",
+              "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive_model.py",
+              "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "b5aa25fb7f53c101f265f853d091df03dfa814425b01e4f24d4fa14aa2aef8b9"
+            },
+            {
+              "ref": "docs/agent-runtime-design.md",
+              "digest": "096d44b820754599cda265a893c6d46929befcaa1316c33d6c0752dbc352c916"
+            },
+            {
+              "ref": "execution/Dockerfile",
+              "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+            },
+            {
+              "ref": "execution/README.md",
+              "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+            },
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+            },
+            {
+              "ref": "execution/controller/interactive.go",
+              "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+            },
+            {
+              "ref": "execution/controller/interactive_test.go",
+              "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+            },
+            {
+              "ref": "execution/controller/model_test.go",
+              "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+            },
+            {
+              "ref": "execution/controller/reservation_test.go",
+              "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+            },
+            {
+              "ref": "execution/gateway/model.go",
+              "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+            },
+            {
+              "ref": "execution/gateway/model_test.go",
+              "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+            },
+            {
+              "ref": "execution/settings/settings.go",
+              "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+            },
+            {
+              "ref": "execution/settings/settings_test.go",
+              "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+            },
+            {
+              "ref": "web/README.md",
+              "digest": "6a333b99a98b6f7c334123b1b147fb368e0678a250dbfdb6aa1aa2c4585c2e75"
+            },
+            {
+              "ref": "web/app/app.css",
+              "digest": "39e01c5e119a473c968e71cd720597c279322f882da83c3f1d75b91b7aac3ce9"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "d1284203208326f76caa620bdb08f37de489710f3f8a1c782d3dc18228fa2320"
+            },
+            {
+              "ref": "web/app/routes/agent.tsx",
+              "digest": "bba0b9861b93003ab75826c106207ff7afb694875d71a64f76e720ddc4643e27"
+            },
+            {
+              "ref": "web/app/routes/run-detail.tsx",
+              "digest": "15dd2b0851b281925e9cd0affe0eac9b42aab1907eb3cbc0eebdf31bc2425814"
+            },
+            {
+              "ref": "web/data/agents.ts",
+              "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+            },
+            {
+              "ref": "web/data/db.ts",
+              "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+            },
+            {
+              "ref": "web/data/permissions.ts",
+              "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+            },
+            {
+              "ref": "web/data/schema-v5.sql",
+              "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+            },
+            {
+              "ref": "web/scripts/deploy-execution.ts",
+              "digest": "5f94e3e7b6ced1d4c2ede1f3175e6259269a0cc795a9d590547f71867b993407"
+            },
+            {
+              "ref": "web/scripts/verify-interactive-local.ts",
+              "digest": "55d48e13b7fa185133318be7a39919e16703f41896ba37d9212809b7f3baeb5f"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+            },
+            {
+              "ref": "web/shared/agent-contracts.ts",
+              "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+            },
+            {
+              "ref": "web/tests/agents.test.ts",
+              "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+            },
+            {
+              "ref": "web/tests/browser/agent-fixture.ts",
+              "digest": "68dfcd8742a74d88ec70be19239382bc1528e64d262aadb71509480a2d3bf2cf"
+            },
+            {
+              "ref": "web/tests/browser/agent.spec.ts",
+              "digest": "f234b4af2f4a5d6e368aaa9c2f8f69a94dd5f369a1ace8904b631b158fc56fe9"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+            }
+          ],
+          "version": "2079baaf9fb1cf5776c6642c001fcc9360dd4b296bd6acb56e0ed390985c58be"
+        }
+      ],
+      "report": "実装・検証・独立レビュー・知識保存の成果をPR #19へ統合提出。子3件の受け入れを照合済み。最終CIとマージは親が続行し、GitHub側の結果確認前にマージ済みとは報告しない。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-model/task.md",
+          "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/19",
+          "digest": null
+        }
+      ],
+      "children": [
+        {
+          "unit": "gateway",
+          "submission": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3"
+        },
+        {
+          "unit": "ledger",
+          "submission": "9221ecb8-32b6-4211-a831-1fba215e68db"
+        },
+        {
+          "unit": "review",
+          "submission": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38"
+        }
+      ],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "at": "2026-10-07T10:10:00.920Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "reason": "現在の成果物と子3件の受け入れ、実モデルとpreviewの実機検証、単一PRへの提出を確認して受領。最終CI・マージ操作は親が継続し、その結果を利用者へ報告する。",
+        "at": "2026-10-07T10:10:00.996Z"
+      }
     }
   ],
   "messages": [
@@ -894,6 +1421,32 @@
       "state": "processed",
       "resolution": "accepted: 親が現在の差分・検証記録・独立レビュー・実経路証拠を照合し、担当範囲の受け入れ条件を満たすと判断。",
       "at": "2026-10-07T10:07:50.897Z"
+    },
+    {
+      "id": "ca9180d1-bee6-4edb-b26e-713b6aeee16e",
+      "unit": "model",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "実装・検証・独立レビュー・知識保存の成果をPR #19へ統合提出。子3件の受け入れを照合済み。最終CIとマージは親が続行し、GitHub側の結果確認前にマージ済みとは報告しない。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-model/task.md",
+          "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/19",
+          "digest": null
+        }
+      ],
+      "submission": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+      "state": "processed",
+      "resolution": "accepted: 現在の成果物と子3件の受け入れ、実モデルとpreviewの実機検証、単一PRへの提出を確認して受領。最終CI・マージ操作は親が継続し、その結果を利用者へ報告する。",
+      "at": "2026-10-07T10:10:00.920Z"
     }
   ],
   "gates": [],
@@ -3194,6 +3747,1053 @@
         }
       },
       "at": "2026-10-07T10:08:03.229Z"
+    },
+    {
+      "id": "finish-model-stage-191000745614",
+      "hash": "9298700ef1e1061239924de612d1ae4a1fe40ec745e9c6eecf92e996f22cb36c",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "model",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-model-stage-191000745614",
+        "input": {
+          "selection": "execute",
+          "reason": "実装・実経路検証・独立レビュー・OKF保存を完了しPR #19へ提出。マージ完了の判断はGitHub状態確認後に行う。",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-agent-model/task.md",
+            ".space/tasks/ax-agent-model/verification.md",
+            "https://github.com/sori883/agent-workspace/pull/19"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "model"
+      ],
+      "evidence": [],
+      "revision": 22,
+      "data": {
+        "id": "model",
+        "parent": null,
+        "size": "standard",
+        "purpose": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "全体統合/UI/配備/検証/納品"
+        ],
+        "taskRef": ".space/tasks/ax-agent-model/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "Webから実モデルの対話と成果物まで使える状態を検証し一つのPRで納品する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "実装・実経路検証・独立レビュー・OKF保存を完了しPR #19へ提出。マージ完了の判断はGitHub状態確認後に行う。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-model/task.md",
+                    "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-model/verification.md",
+                    "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+                  },
+                  {
+                    "ref": "https://github.com/sori883/agent-workspace/pull/19",
+                    "digest": null
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T09:18:43.893Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T10:10:00.775Z"
+    },
+    {
+      "id": "finish-model-record-191000826763",
+      "hash": "86b5a9f00f4ddda002fc0ad4e50752e7ecc2354a0f9d3e801f461cf8aaa5281f",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "model",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-model-record-191000826763",
+        "input": {
+          "condition": "delivery",
+          "verdict": "pass",
+          "target": {
+            "id": "result",
+            "kind": "files",
+            "files": [
+              ".github/workflows/web.yml",
+              ".space/babel/decisions/systems/ax/agent-runtime.md",
+              ".space/babel/decisions/systems/ax/index.md",
+              ".space/babel/knowledge/ax-agent-platform-direction.md",
+              ".space/babel/log.md",
+              ".space/tasks/ax-agent-model/contract.md",
+              ".space/tasks/ax-agent-model/design-review.md",
+              ".space/tasks/ax-agent-model/integration-review.md",
+              ".space/tasks/ax-agent-model/task.md",
+              ".space/tasks/ax-agent-model/ui-review.md",
+              ".space/tasks/ax-agent-model/verification.md",
+              "README.md",
+              "ax-local/task_runtime/adapters/interactive.py",
+              "ax-local/task_runtime/mailbox.py",
+              "ax-local/tests/test_interactive.py",
+              "ax-local/tests/test_interactive_model.py",
+              "ax-local/versions.json",
+              "docs/agent-runtime-design.md",
+              "execution/Dockerfile",
+              "execution/README.md",
+              "execution/cmd/ax-controller/main.go",
+              "execution/controller/controller.go",
+              "execution/controller/interactive.go",
+              "execution/controller/interactive_test.go",
+              "execution/controller/model_test.go",
+              "execution/controller/postgres.go",
+              "execution/controller/reservation_test.go",
+              "execution/gateway/model.go",
+              "execution/gateway/model_test.go",
+              "execution/native/protocol.go",
+              "execution/settings/settings.go",
+              "execution/settings/settings_test.go",
+              "web/README.md",
+              "web/app/app.css",
+              "web/app/components/workspace.tsx",
+              "web/app/routes/agent.tsx",
+              "web/app/routes/run-detail.tsx",
+              "web/data/agents.ts",
+              "web/data/db.ts",
+              "web/data/permissions.ts",
+              "web/data/repository.ts",
+              "web/data/schema-v5.sql",
+              "web/scripts/deploy-execution.ts",
+              "web/scripts/verify-interactive-local.ts",
+              "web/server/data-migrate.ts",
+              "web/shared/agent-contracts.ts",
+              "web/shared/run-contracts.ts",
+              "web/tests/agents.test.ts",
+              "web/tests/browser/agent-fixture.ts",
+              "web/tests/browser/agent.spec.ts",
+              "web/tests/workspaces.test.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-agent-model/verification.md",
+            ".space/tasks/ax-agent-model/integration-review.md",
+            "https://github.com/sori883/agent-workspace/pull/19"
+          ],
+          "method": "Webから実モデルの対話・成果物と本人限定、外部台帳・費用・実停止、閉鎖後previewの回帰を検証。関連テストと独立レビューに残件なく、同一差分を一つのPRへ提出したことを確認。PRの最終CIとマージは引き渡し後の親の操作として継続する。",
+          "environment": "ローカルkind/AX・Docker PostgreSQL・実Keycloak/Web・Gemini 2生成、およびPR #19 head f77b12f。マージ前の提出成果物評価。",
+          "observedAt": "2026-10-07T10:10:00.802272+00:00"
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "model"
+      ],
+      "evidence": [],
+      "revision": 23,
+      "data": {
+        "id": "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e",
+        "unit": "model",
+        "attempt": 1,
+        "condition": "delivery",
+        "target": {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".github/workflows/web.yml",
+              "digest": "f1547cb05b0db3db4f026dbd101fa4de5b05322545fdb4cda797527a092b2270"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+              "digest": "18984b81ab82911f01d7312c8102d1f924871871861d2c4cca2e402b2cfe2f87"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/index.md",
+              "digest": "240b3ab7da36336956b22285bed1ca3fb2c117fcaab7d1b74160d83a127d4cbc"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+              "digest": "dc21923048e78470bba5690422cb320ac05fa376334face7e7e3fce8c5121359"
+            },
+            {
+              "ref": ".space/babel/log.md",
+              "digest": "fec141b9abdcd086d6e0003c3a35cbbe5ce780f07c49568e1651ea135f39a65f"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/contract.md",
+              "digest": "a5e9ba64665b5b18ac3d166f93db7bdb2d1d31f6d98cc4a07b5970c6fbd77796"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/design-review.md",
+              "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/integration-review.md",
+              "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/task.md",
+              "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/ui-review.md",
+              "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-model/verification.md",
+              "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+            },
+            {
+              "ref": "README.md",
+              "digest": "4e8a1db03a99b696130934f97b65dd316dbb19c75235700541ccf6bdb9c37c89"
+            },
+            {
+              "ref": "ax-local/task_runtime/adapters/interactive.py",
+              "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+            },
+            {
+              "ref": "ax-local/task_runtime/mailbox.py",
+              "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive.py",
+              "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive_model.py",
+              "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "b5aa25fb7f53c101f265f853d091df03dfa814425b01e4f24d4fa14aa2aef8b9"
+            },
+            {
+              "ref": "docs/agent-runtime-design.md",
+              "digest": "096d44b820754599cda265a893c6d46929befcaa1316c33d6c0752dbc352c916"
+            },
+            {
+              "ref": "execution/Dockerfile",
+              "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+            },
+            {
+              "ref": "execution/README.md",
+              "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+            },
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+            },
+            {
+              "ref": "execution/controller/interactive.go",
+              "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+            },
+            {
+              "ref": "execution/controller/interactive_test.go",
+              "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+            },
+            {
+              "ref": "execution/controller/model_test.go",
+              "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+            },
+            {
+              "ref": "execution/controller/reservation_test.go",
+              "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+            },
+            {
+              "ref": "execution/gateway/model.go",
+              "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+            },
+            {
+              "ref": "execution/gateway/model_test.go",
+              "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+            },
+            {
+              "ref": "execution/settings/settings.go",
+              "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+            },
+            {
+              "ref": "execution/settings/settings_test.go",
+              "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+            },
+            {
+              "ref": "web/README.md",
+              "digest": "6a333b99a98b6f7c334123b1b147fb368e0678a250dbfdb6aa1aa2c4585c2e75"
+            },
+            {
+              "ref": "web/app/app.css",
+              "digest": "39e01c5e119a473c968e71cd720597c279322f882da83c3f1d75b91b7aac3ce9"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "d1284203208326f76caa620bdb08f37de489710f3f8a1c782d3dc18228fa2320"
+            },
+            {
+              "ref": "web/app/routes/agent.tsx",
+              "digest": "bba0b9861b93003ab75826c106207ff7afb694875d71a64f76e720ddc4643e27"
+            },
+            {
+              "ref": "web/app/routes/run-detail.tsx",
+              "digest": "15dd2b0851b281925e9cd0affe0eac9b42aab1907eb3cbc0eebdf31bc2425814"
+            },
+            {
+              "ref": "web/data/agents.ts",
+              "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+            },
+            {
+              "ref": "web/data/db.ts",
+              "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+            },
+            {
+              "ref": "web/data/permissions.ts",
+              "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+            },
+            {
+              "ref": "web/data/schema-v5.sql",
+              "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+            },
+            {
+              "ref": "web/scripts/deploy-execution.ts",
+              "digest": "5f94e3e7b6ced1d4c2ede1f3175e6259269a0cc795a9d590547f71867b993407"
+            },
+            {
+              "ref": "web/scripts/verify-interactive-local.ts",
+              "digest": "55d48e13b7fa185133318be7a39919e16703f41896ba37d9212809b7f3baeb5f"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+            },
+            {
+              "ref": "web/shared/agent-contracts.ts",
+              "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+            },
+            {
+              "ref": "web/tests/agents.test.ts",
+              "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+            },
+            {
+              "ref": "web/tests/browser/agent-fixture.ts",
+              "digest": "68dfcd8742a74d88ec70be19239382bc1528e64d262aadb71509480a2d3bf2cf"
+            },
+            {
+              "ref": "web/tests/browser/agent.spec.ts",
+              "digest": "f234b4af2f4a5d6e368aaa9c2f8f69a94dd5f369a1ace8904b631b158fc56fe9"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+            }
+          ],
+          "version": "2079baaf9fb1cf5776c6642c001fcc9360dd4b296bd6acb56e0ed390985c58be"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-agent-model/verification.md",
+            "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-model/integration-review.md",
+            "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/19",
+            "digest": null
+          }
+        ],
+        "reason": "",
+        "method": "Webから実モデルの対話・成果物と本人限定、外部台帳・費用・実停止、閉鎖後previewの回帰を検証。関連テストと独立レビューに残件なく、同一差分を一つのPRへ提出したことを確認。PRの最終CIとマージは引き渡し後の親の操作として継続する。",
+        "environment": "ローカルkind/AX・Docker PostgreSQL・実Keycloak/Web・Gemini 2生成、およびPR #19 head f77b12f。マージ前の提出成果物評価。",
+        "observedAt": "2026-10-07T10:10:00.802272+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-07T10:10:00.855Z"
+      },
+      "at": "2026-10-07T10:10:00.855Z"
+    },
+    {
+      "id": "finish-model-submit-191000890630",
+      "hash": "bd8a9964b257370ab1567f104a42ee3c9cfd9b19ccea36e3fb0b3cc4c17cefe8",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "model",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-model-submit-191000890630",
+        "input": {
+          "checks": [
+            "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e"
+          ],
+          "report": "実装・検証・独立レビュー・知識保存の成果をPR #19へ統合提出。子3件の受け入れを照合済み。最終CIとマージは親が続行し、GitHub側の結果確認前にマージ済みとは報告しない。",
+          "refs": [
+            ".space/tasks/ax-agent-model/task.md",
+            "https://github.com/sori883/agent-workspace/pull/19"
+          ]
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "model"
+      ],
+      "evidence": [],
+      "revision": 24,
+      "data": {
+        "id": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+        "unit": "model",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".github/workflows/web.yml",
+                "digest": "f1547cb05b0db3db4f026dbd101fa4de5b05322545fdb4cda797527a092b2270"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+                "digest": "18984b81ab82911f01d7312c8102d1f924871871861d2c4cca2e402b2cfe2f87"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/index.md",
+                "digest": "240b3ab7da36336956b22285bed1ca3fb2c117fcaab7d1b74160d83a127d4cbc"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+                "digest": "dc21923048e78470bba5690422cb320ac05fa376334face7e7e3fce8c5121359"
+              },
+              {
+                "ref": ".space/babel/log.md",
+                "digest": "fec141b9abdcd086d6e0003c3a35cbbe5ce780f07c49568e1651ea135f39a65f"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/contract.md",
+                "digest": "a5e9ba64665b5b18ac3d166f93db7bdb2d1d31f6d98cc4a07b5970c6fbd77796"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/design-review.md",
+                "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/task.md",
+                "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/ui-review.md",
+                "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/verification.md",
+                "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+              },
+              {
+                "ref": "README.md",
+                "digest": "4e8a1db03a99b696130934f97b65dd316dbb19c75235700541ccf6bdb9c37c89"
+              },
+              {
+                "ref": "ax-local/task_runtime/adapters/interactive.py",
+                "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+              },
+              {
+                "ref": "ax-local/task_runtime/mailbox.py",
+                "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive.py",
+                "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive_model.py",
+                "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "b5aa25fb7f53c101f265f853d091df03dfa814425b01e4f24d4fa14aa2aef8b9"
+              },
+              {
+                "ref": "docs/agent-runtime-design.md",
+                "digest": "096d44b820754599cda265a893c6d46929befcaa1316c33d6c0752dbc352c916"
+              },
+              {
+                "ref": "execution/Dockerfile",
+                "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+              },
+              {
+                "ref": "execution/README.md",
+                "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+              },
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+              },
+              {
+                "ref": "execution/controller/interactive.go",
+                "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+              },
+              {
+                "ref": "execution/controller/interactive_test.go",
+                "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+              },
+              {
+                "ref": "execution/controller/model_test.go",
+                "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+              },
+              {
+                "ref": "execution/controller/reservation_test.go",
+                "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+              },
+              {
+                "ref": "execution/gateway/model.go",
+                "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+              },
+              {
+                "ref": "execution/gateway/model_test.go",
+                "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+              },
+              {
+                "ref": "execution/settings/settings.go",
+                "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+              },
+              {
+                "ref": "execution/settings/settings_test.go",
+                "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+              },
+              {
+                "ref": "web/README.md",
+                "digest": "6a333b99a98b6f7c334123b1b147fb368e0678a250dbfdb6aa1aa2c4585c2e75"
+              },
+              {
+                "ref": "web/app/app.css",
+                "digest": "39e01c5e119a473c968e71cd720597c279322f882da83c3f1d75b91b7aac3ce9"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "d1284203208326f76caa620bdb08f37de489710f3f8a1c782d3dc18228fa2320"
+              },
+              {
+                "ref": "web/app/routes/agent.tsx",
+                "digest": "bba0b9861b93003ab75826c106207ff7afb694875d71a64f76e720ddc4643e27"
+              },
+              {
+                "ref": "web/app/routes/run-detail.tsx",
+                "digest": "15dd2b0851b281925e9cd0affe0eac9b42aab1907eb3cbc0eebdf31bc2425814"
+              },
+              {
+                "ref": "web/data/agents.ts",
+                "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+              },
+              {
+                "ref": "web/data/db.ts",
+                "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+              },
+              {
+                "ref": "web/data/permissions.ts",
+                "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+              },
+              {
+                "ref": "web/data/schema-v5.sql",
+                "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+              },
+              {
+                "ref": "web/scripts/deploy-execution.ts",
+                "digest": "5f94e3e7b6ced1d4c2ede1f3175e6259269a0cc795a9d590547f71867b993407"
+              },
+              {
+                "ref": "web/scripts/verify-interactive-local.ts",
+                "digest": "55d48e13b7fa185133318be7a39919e16703f41896ba37d9212809b7f3baeb5f"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+              },
+              {
+                "ref": "web/shared/agent-contracts.ts",
+                "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+              },
+              {
+                "ref": "web/tests/agents.test.ts",
+                "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+              },
+              {
+                "ref": "web/tests/browser/agent-fixture.ts",
+                "digest": "68dfcd8742a74d88ec70be19239382bc1528e64d262aadb71509480a2d3bf2cf"
+              },
+              {
+                "ref": "web/tests/browser/agent.spec.ts",
+                "digest": "f234b4af2f4a5d6e368aaa9c2f8f69a94dd5f369a1ace8904b631b158fc56fe9"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+              }
+            ],
+            "version": "2079baaf9fb1cf5776c6642c001fcc9360dd4b296bd6acb56e0ed390985c58be"
+          }
+        ],
+        "report": "実装・検証・独立レビュー・知識保存の成果をPR #19へ統合提出。子3件の受け入れを照合済み。最終CIとマージは親が続行し、GitHub側の結果確認前にマージ済みとは報告しない。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/task.md",
+            "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/19",
+            "digest": null
+          }
+        ],
+        "children": [
+          {
+            "unit": "gateway",
+            "submission": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3"
+          },
+          {
+            "unit": "ledger",
+            "submission": "9221ecb8-32b6-4211-a831-1fba215e68db"
+          },
+          {
+            "unit": "review",
+            "submission": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38"
+          }
+        ],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "at": "2026-10-07T10:10:00.920Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-07T10:10:00.920Z"
+    },
+    {
+      "id": "finish-model-accept-191000964243",
+      "hash": "1ef3a179c5eca28d1630528cb2d20efa936a50bf682ac482d754f5b316118275",
+      "actor": {
+        "actor": "parent",
+        "session": "model-parent-1"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "model",
+        "actor": "parent",
+        "session": "model-parent-1",
+        "operationId": "finish-model-accept-191000964243",
+        "input": {
+          "submission": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+          "reason": "現在の成果物と子3件の受け入れ、実モデルとpreviewの実機検証、単一PRへの提出を確認して受領。最終CI・マージ操作は親が継続し、その結果を利用者へ報告する。"
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "model"
+      ],
+      "evidence": [],
+      "revision": 25,
+      "data": {
+        "id": "f8da983e-50ad-4f08-b766-58a44fa639ed",
+        "unit": "model",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "bdd1ad15-2bc9-4027-9725-3c95ad1dbd7e"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".github/workflows/web.yml",
+                "digest": "f1547cb05b0db3db4f026dbd101fa4de5b05322545fdb4cda797527a092b2270"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+                "digest": "18984b81ab82911f01d7312c8102d1f924871871861d2c4cca2e402b2cfe2f87"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/index.md",
+                "digest": "240b3ab7da36336956b22285bed1ca3fb2c117fcaab7d1b74160d83a127d4cbc"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+                "digest": "dc21923048e78470bba5690422cb320ac05fa376334face7e7e3fce8c5121359"
+              },
+              {
+                "ref": ".space/babel/log.md",
+                "digest": "fec141b9abdcd086d6e0003c3a35cbbe5ce780f07c49568e1651ea135f39a65f"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/contract.md",
+                "digest": "a5e9ba64665b5b18ac3d166f93db7bdb2d1d31f6d98cc4a07b5970c6fbd77796"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/design-review.md",
+                "digest": "ee8911a962c50b7f889c19e9af23a1e149f78e3ce0c30c03daa5c3769f2f24b6"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/integration-review.md",
+                "digest": "d4832d43da6f7ac7a0373eff43966eef09e2719108419fca1e10c1ac93ce9ec7"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/task.md",
+                "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/ui-review.md",
+                "digest": "d113fbe7715738ffe12cb4624a23636e2d13ed4f84be68e8f32764f4bae5720e"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-model/verification.md",
+                "digest": "771590727a6ed913849af6e20bf64191a31a7cad38f2006e43b00b88307d78bf"
+              },
+              {
+                "ref": "README.md",
+                "digest": "4e8a1db03a99b696130934f97b65dd316dbb19c75235700541ccf6bdb9c37c89"
+              },
+              {
+                "ref": "ax-local/task_runtime/adapters/interactive.py",
+                "digest": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd"
+              },
+              {
+                "ref": "ax-local/task_runtime/mailbox.py",
+                "digest": "80216599665d4a66484e245bf9fd1b9cf894cb3ffe4e6cd08df0ad36c00f5623"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive.py",
+                "digest": "5fc6c08e08fe3a4b1ebda97918bec09314e2e1639ee0366135d39efe329d84cb"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive_model.py",
+                "digest": "28cd46c8d1146e2e9cf74f2ed9222cb00485f402822c8bb90ac8dc462ecfa218"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "b5aa25fb7f53c101f265f853d091df03dfa814425b01e4f24d4fa14aa2aef8b9"
+              },
+              {
+                "ref": "docs/agent-runtime-design.md",
+                "digest": "096d44b820754599cda265a893c6d46929befcaa1316c33d6c0752dbc352c916"
+              },
+              {
+                "ref": "execution/Dockerfile",
+                "digest": "ff3fcd2c300978082349569c6a8a6925e0174ba36a9212139af681901ff7c9fe"
+              },
+              {
+                "ref": "execution/README.md",
+                "digest": "e14bb0f6b9a39bde9d91145da799d9d44d7424d3ed22c2f6a9e8b238634a890e"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "20f6054444d0f71d79380e5ba555bfe9ba994bba156ded13d3fb7debd0b19138"
+              },
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "689568d7ff3a758870ff2d6a1d61bc6a548274519163c27af58fa16508dc6dfc"
+              },
+              {
+                "ref": "execution/controller/interactive.go",
+                "digest": "3acb73a71ee1f05617978a23cae9b9c72f687908ecc6db156d5013c2238d1210"
+              },
+              {
+                "ref": "execution/controller/interactive_test.go",
+                "digest": "ad18deaf9ebfad2f947568eb5d2e427151de95b996e578fb38b0b5357cf3fa10"
+              },
+              {
+                "ref": "execution/controller/model_test.go",
+                "digest": "b33d886ee667a29a1caf7d113d3f17763ffc53dc0900b41709b0d160da812e3b"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "ca32cb557c347f86a118f74bb647a6f00d55f906fff6e0afa15ca660e8450ca4"
+              },
+              {
+                "ref": "execution/controller/reservation_test.go",
+                "digest": "42c9729c381980595631a5f4fac0225c2537bda03fdde58feebb6f51f1299069"
+              },
+              {
+                "ref": "execution/gateway/model.go",
+                "digest": "c9d6652459bee27911a3803f07b5e2405f06b37be4838daab6a1cad5b61a3091"
+              },
+              {
+                "ref": "execution/gateway/model_test.go",
+                "digest": "c0da18d82dc47e2b7fb6c0fc975a1f3b5ff9a11fa3580ba641990dd9e450cc93"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "1d736e5c7240bce7f7b561a19362c77f74f8730deca417f7780a18a3263f8f41"
+              },
+              {
+                "ref": "execution/settings/settings.go",
+                "digest": "032453125279b844ddba489bbd472fd5b8cad31b014aeab88ec504b2aa2b813b"
+              },
+              {
+                "ref": "execution/settings/settings_test.go",
+                "digest": "e5ffd8255d3f5c91a7b66f59751e924897c5118c84d9ce524b1c5f5ca8f28087"
+              },
+              {
+                "ref": "web/README.md",
+                "digest": "6a333b99a98b6f7c334123b1b147fb368e0678a250dbfdb6aa1aa2c4585c2e75"
+              },
+              {
+                "ref": "web/app/app.css",
+                "digest": "39e01c5e119a473c968e71cd720597c279322f882da83c3f1d75b91b7aac3ce9"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "d1284203208326f76caa620bdb08f37de489710f3f8a1c782d3dc18228fa2320"
+              },
+              {
+                "ref": "web/app/routes/agent.tsx",
+                "digest": "bba0b9861b93003ab75826c106207ff7afb694875d71a64f76e720ddc4643e27"
+              },
+              {
+                "ref": "web/app/routes/run-detail.tsx",
+                "digest": "15dd2b0851b281925e9cd0affe0eac9b42aab1907eb3cbc0eebdf31bc2425814"
+              },
+              {
+                "ref": "web/data/agents.ts",
+                "digest": "dfbffbfd2aadbb8b9ef5e5a61c16b4bc1a084c0f1568998f15f61c9686d97bb4"
+              },
+              {
+                "ref": "web/data/db.ts",
+                "digest": "d0e75f8ee8ebea512fba27a690bdf6c5b61f7c502062acd02897ba28e2a53f11"
+              },
+              {
+                "ref": "web/data/permissions.ts",
+                "digest": "aa67c74b36de7e453d727286233b56900f51b8ccfbdeeab168d99da7a8767c03"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "cca3da4a2f2fb42c70ed40b384222361c1143a25fa7f581465717fc965002c71"
+              },
+              {
+                "ref": "web/data/schema-v5.sql",
+                "digest": "a1c37fb0787727acef8f1325dc5e14e4b1e623fb953744a23a1342f3cf6b82e2"
+              },
+              {
+                "ref": "web/scripts/deploy-execution.ts",
+                "digest": "5f94e3e7b6ced1d4c2ede1f3175e6259269a0cc795a9d590547f71867b993407"
+              },
+              {
+                "ref": "web/scripts/verify-interactive-local.ts",
+                "digest": "55d48e13b7fa185133318be7a39919e16703f41896ba37d9212809b7f3baeb5f"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "d143db11cf1e33da00b6d37f84a5437aa4c87c6cf1069740e481d60818c44181"
+              },
+              {
+                "ref": "web/shared/agent-contracts.ts",
+                "digest": "fd310a6af33ef88cf61670bcce064dc1b668a6b4622802089c293662ca81a692"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "020dd27960be87472ce706a85ffe384fafa0662609fd04f0a25e4698a1eda9e7"
+              },
+              {
+                "ref": "web/tests/agents.test.ts",
+                "digest": "b0f8c8944be1fe38714e5438905c277e50668a7391fa723a3a78bccafa4308fa"
+              },
+              {
+                "ref": "web/tests/browser/agent-fixture.ts",
+                "digest": "68dfcd8742a74d88ec70be19239382bc1528e64d262aadb71509480a2d3bf2cf"
+              },
+              {
+                "ref": "web/tests/browser/agent.spec.ts",
+                "digest": "f234b4af2f4a5d6e368aaa9c2f8f69a94dd5f369a1ace8904b631b158fc56fe9"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "e8afe8e3b23921ad7d16b0fbf7933e01fec2afbba3e119629b9fb80913b13812"
+              }
+            ],
+            "version": "2079baaf9fb1cf5776c6642c001fcc9360dd4b296bd6acb56e0ed390985c58be"
+          }
+        ],
+        "report": "実装・検証・独立レビュー・知識保存の成果をPR #19へ統合提出。子3件の受け入れを照合済み。最終CIとマージは親が続行し、GitHub側の結果確認前にマージ済みとは報告しない。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-model/task.md",
+            "digest": "f42fb79a56c3a414918dfa264a62cea537a023559a788014b33bf814a6a57824"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/19",
+            "digest": null
+          }
+        ],
+        "children": [
+          {
+            "unit": "gateway",
+            "submission": "ee7c3782-c9d4-461e-b7ad-a7d2b53d35a3"
+          },
+          {
+            "unit": "ledger",
+            "submission": "9221ecb8-32b6-4211-a831-1fba215e68db"
+          },
+          {
+            "unit": "review",
+            "submission": "00c2f586-ea72-48aa-9b4a-cac2c87a7d38"
+          }
+        ],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "model-parent-1"
+        },
+        "at": "2026-10-07T10:10:00.920Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "model-parent-1"
+          },
+          "reason": "現在の成果物と子3件の受け入れ、実モデルとpreviewの実機検証、単一PRへの提出を確認して受領。最終CI・マージ操作は親が継続し、その結果を利用者へ報告する。",
+          "at": "2026-10-07T10:10:00.996Z"
+        }
+      },
+      "at": "2026-10-07T10:10:00.996Z"
     }
   ]
 }

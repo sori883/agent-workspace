@@ -33,4 +33,4 @@
 
 OKFの `decisions/systems/ax/agent-runtime` と `knowledge/ax-agent-platform-direction` を更新し、読戻しとstrict/drift検証を通した。秘密を含む私有証拠やDB backupはGit除外内に保管した。
 
-実装・検証は完了し、PRでの納品を進める。マージ済みという結果はGitHub側で確認する。
+実装・検証を受け入れ、[PR #19](https://github.com/sori883/agent-workspace/pull/19)へ一つの変更として提出した。台帳の受け入れは提出済み成果物の判定であり、マージ成功を先取りする記録ではない。最終CI・マージの結果はPR側を正本とし、親が確認してから利用者へ完了報告する。
