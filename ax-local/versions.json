@@ -3,8 +3,8 @@
   "substrate": "944abe3278b895ccbf5d45555a49dd0f2f6ceae7",
   "go": "1.27.1",
   "execution_go_image": "golang@sha256:8a5910f31396cd4d89662f56c68b3ae31d374308270a1c3bd96672ee5ed43414",
-  "execution": "localhost:5001/ax-execution@sha256:cf5775c1bc8720cce9376fdd2acc0d9c5628505e70d4c5c2cefb15dddd65cc49",
-  "worker_controlled": "localhost:5001/ax-worker-controlled@sha256:35c939bf561a380e0f4f82bd7111ce778547b31f4d2a5eba7f19b280664b7b32",
+  "execution": "localhost:5001/ax-execution-workbench@sha256:81ad9e832568cf2261a21f7c3abcaec7106d3061f6b3a35181b0bf491a6c0145",
+  "worker_controlled": "localhost:5001/ax-worker-workbench@sha256:70f6b73a5cf5863be259173fdf1c3e3a9b4ff573a1b8115ee51064c24724b4cd",
   "ko": "0.19.1",
   "platform": "linux/arm64",
   "registry": "registry:3@sha256:ddf754342cfc8acc51a56d5d0ab6af06826461864460636d8bd5c546dab2a7b8",
@@ -14,6 +14,9 @@
   "runner_budget": "localhost:5001/ax-task-runner@sha256:6f4f48e64ae1eab1a9d1755d24675f676b0164e936d316d76ab64fa0246a2cad",
   "ax_server": "localhost:5001/ax-server-340c3583cc4a989b584acf55b1619e8e@sha256:2987fd43a36f9fd0ffbed7654f5d2466045bc8aa9f1578af066a4c56b9333ce9",
   "worker": "localhost:5001/ateom-gvisor-715889664656de67e44382a8d6ab981d@sha256:f42bf8b3a46e8212fada0ac3cd47a1e97d8818d1d614601b92be58af4a78f4c6",
-  "runner_task": "localhost:5001/ax-task-runner@sha256:d91ff58c268fd2dde8138027a37317b708dbf9a8bbf4aa00565bedfeaabbc4bd",
-  "ax_server_runtime": "localhost:5001/ax-server-credential-free@sha256:46469f275052acb4715ec5068ddb56471677f3db6d5ac7dd2f0da9d520988b59"
+  "runner_task": "localhost:5001/ax-task-runner@sha256:9eb481dc1cd0ad21c12a7f0f10a11f5ffd4a9f5e4ce4eea1483a7ac64cdc9a3f",
+  "ax_server_runtime": "localhost:5001/ax-server-workbench@sha256:e7457bef1d10a1f83e709eb94df19696c21a225dfb5149f93ac25649684a4c17",
+  "runner_code": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+  "ateapi_code": "localhost:5001/ateapi-workbench@sha256:ad361cbc2a40695973a438b4a2a503840f468ebe2843e5473684b2477e5e79dd",
+  "atelet_code": "localhost:5001/atelet-workbench@sha256:ab4e9f125550ceec21add207a5b2a489f3e47ed537d28616098f8bde1f836436"
 }

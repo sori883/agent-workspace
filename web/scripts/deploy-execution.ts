@@ -11,7 +11,7 @@ async function run() {
   const root = resolve("../ax-local");
   if (!existsSync(resolve(root, ".state/execution/managed"))) throw new Error("Legacy admission must be retired first.");
   const versions = JSON.parse(readFileSync(resolve(root, "versions.json"), "utf8"));
-  for (const name of ["execution", "worker_controlled", "runner_task", "ax_server_runtime"]) if (!/^localhost:5001\/[a-z0-9_./-]+@sha256:[0-9a-f]{64}$/.test(versions[name] ?? "")) throw new Error("Pinned execution images are required.");
+  for (const name of ["execution", "worker_controlled", "runner_task", "runner_code", "ax_server_runtime", "ateapi_code", "atelet_code"]) if (!/^localhost:5001\/[a-z0-9_./-]+@sha256:[0-9a-f]{64}$/.test(versions[name] ?? "")) throw new Error("Pinned execution images are required.");
   const auth = readAuthConfig();
   if (!auth.database.caPath || auth.database.port !== 55432 || !["localhost", "127.0.0.1"].includes(auth.database.host)) throw new Error("This helper targets the local Docker database.");
   const pool = createPool(auth);
@@ -20,17 +20,37 @@ async function run() {
     if (rows.length !== 1 || rows[0].accepting) throw new Error("Application admission must be closed.");
     const unresolved = await pool.query("SELECT 1 FROM ax_runs WHERE NOT resolved OR invalid LIMIT 1");
     if (unresolved.rows.length) throw new Error("Unresolved executions require the separate retirement and recovery procedure.");
+    const workbench = await pool.query("SELECT runtime_image,code_image,code_profile,python_enabled,trial_enabled FROM ax_workbench_control WHERE id");
+    const control = workbench.rows[0];
+    if (workbench.rows.length !== 1 || control.runtime_image !== versions.runner_task || control.code_image !== versions.runner_code || control.code_profile !== "host-quota-8m-v1" || !control.python_enabled || control.trial_enabled !== enableModel) throw new Error("Workbench database settings must match the reviewed deployment and model gate.");
   } finally { await pool.end(); }
   const kubectl = (args: string[], input?: unknown) => execFileSync("kubectl", ["--context", "kind-ax-local", ...args], {
     env: { ...process.env, KUBECONFIG: resolve(root, "kubeconfig") },
     input: input === undefined ? undefined : JSON.stringify(input), encoding: "utf8", stdio: ["pipe", "pipe", "pipe"],
   });
+  for (const [resource, name, container, expected] of [
+    ["deployment", "ate-api-server", "ate-api-server", versions.ateapi_code],
+    ["daemonset", `atelet-${versions.substrate.slice(0, 8)}`, "atelet", versions.atelet_code],
+  ]) {
+    const infrastructure = JSON.parse(kubectl(["-n", "ate-system", "get", resource, name, "-o", "json"]));
+    if (infrastructure.spec.template.spec.containers.find((entry: { name: string }) => entry.name === container)?.image !== expected) throw new Error("Reviewed code runtime infrastructure must be installed before deploying execution.");
+    const status = infrastructure.status ?? {};
+    const desired = resource === "deployment" ? infrastructure.spec.replicas : status.desiredNumberScheduled;
+    const complete = resource === "deployment"
+      ? status.replicas === desired && status.updatedReplicas === desired && status.readyReplicas === desired && status.availableReplicas === desired
+      : status.currentNumberScheduled === desired && status.updatedNumberScheduled === desired && status.numberReady === desired && status.numberAvailable === desired && !status.numberMisscheduled;
+    if (!(desired > 0) || status.observedGeneration !== infrastructure.metadata.generation || !complete) throw new Error("Code runtime infrastructure rollout must finish first.");
+    const selector = Object.entries(infrastructure.spec.selector.matchLabels).map(([key, value]) => `${key}=${value}`).join(",");
+    const pods = JSON.parse(kubectl(["-n", "ate-system", "get", "pods", "-l", selector, "-o", "json"])).items;
+    if (pods.length !== desired || pods.some((entry: any) => entry.metadata.deletionTimestamp || entry.spec.containers.find((value: any) => value.name === container)?.image !== expected || !entry.status.containerStatuses?.find((value: any) => value.name === container)?.ready)) throw new Error("Previous infrastructure pods must retire before deploying execution.");
+  }
   const configuration = {
     ax: { address: "127.0.0.1:8080", plaintext_loopback: true },
     direct_guest: { ca_path: "/run/podidentity/trust-bundle.pem", client_bundle_path: "/run/podidentity/credential-bundle.pem", server_identity: "spiffe://cluster.local/ns/ax-demo/sa/default" },
     substrate: { address: "api.ate-system.svc:443", server_name: "api.ate-system.svc", ca_path: "/run/servicedns-ca/trust-bundle.pem", bearer_path: "/var/run/secrets/ateapi/token" },
     secret_group_read: true, atespace: "ax-demo", image: versions.runner_task,
     interactive: { image: versions.runner_task, atespace: "ax-runtime", guest_identity: "spiffe://cluster.local/ns/ax-demo/sa/default" },
+    workbench: { enabled: true, model_enabled: enableModel, python_enabled: true, code_image: versions.runner_code },
     model_gateway: { enabled: enableModel, api_key_path: "/run/model-gateway/GEMINI_API_KEY" },
     allowed_hosts: ["generativelanguage.googleapis.com"], call_timeout_seconds: 15, lifecycle_timeout_seconds: 180,
     controller_id: "ax-local-controller", database: { host: "host.docker.internal", port: 55432, database: auth.database.database, user: "ax_execution",
@@ -63,8 +83,8 @@ async function run() {
   if (!ax) throw new Error("Expected AX container not found.");
   ax.image = versions.ax_server_runtime;
   ax.args = ax.args.map((argument: string) => argument.startsWith("--addr=") ? "--addr=127.0.0.1:8080" : argument);
-  ax.env = (ax.env ?? []).filter((entry: { name: string }) => !["ADDR", "ATENET_ROUTER_ADDR", "AX_DISABLE_CREDENTIAL_ATESPACES"].includes(entry.name));
-  ax.env.push({ name: "AX_DISABLE_CREDENTIAL_ATESPACES", value: "ax-runtime" });
+  ax.env = (ax.env ?? []).filter((entry: { name: string }) => !["ADDR", "ATENET_ROUTER_ADDR", "AX_DISABLE_CREDENTIAL_ATESPACES", "AX_CODE_IMAGE"].includes(entry.name));
+  ax.env.push({ name: "AX_DISABLE_CREDENTIAL_ATESPACES", value: "ax-runtime,ax-code" }, { name: "AX_CODE_IMAGE", value: versions.runner_code });
   delete ax.readinessProbe;
   delete ax.livenessProbe;
   delete ax.ports;
@@ -86,7 +106,7 @@ async function run() {
   pod.securityContext = { ...pod.securityContext, fsGroup: 65532 };
   pod.terminationGracePeriodSeconds = 30;
   for (const volume of pod.volumes) if (volume.name === "ate-token") volume.projected.defaultMode = 0o440;
-  pod.volumes = pod.volumes.filter((volume: { name: string }) => !["execution-config", "execution-database", "execution-identity", "model-gateway"].includes(volume.name));
+  pod.volumes = pod.volumes.filter((volume: { name: string }) => !["execution-config", "execution-database", "execution-identity", "model-gateway", "workbench-probe-config"].includes(volume.name));
   pod.volumes.push(
     { name: "execution-config", configMap: { name: "ax-execution" } },
     { name: "execution-database", secret: { secretName: "ax-execution-database", defaultMode: 0o440 } },

@@ -1,0 +1,234 @@
+{
+  "ui": {
+    "version": 1,
+    "observed_at": "2026-10-07T17:54:53.803Z",
+    "phase": "waiting",
+    "passed": false,
+    "failure": "workbench_waiting_input_no_retry",
+    "observations": {
+      "workspace_id": "f36f61ec-d5c5-438d-99d7-fd2185f72b16",
+      "root_id": "ace6d772-46bc-4506-928f-97e739a55ed0",
+      "initial_run_id": "ax-run-58f54b697eddc012",
+      "input_file_id": "ae8c41c0-296f-45b9-8d4a-9e69a2e45c7f",
+      "output_file_id": null,
+      "input_bytes": 15,
+      "input_sha256": "ff0174ca0f09ea443111c05063a51d00cee3dc79d0e836a2f9965e4b7198ed1b",
+      "output_bytes": null,
+      "output_sha256": null,
+      "workspace_created": false,
+      "csv_total_verified": false,
+      "reload_preserved_result": false,
+      "bob_workspace_membership_verified": true,
+      "bob_root_denied": false,
+      "bob_input_denied": false,
+      "bob_output_denied": false,
+      "last_state": "waiting_input",
+      "last_stage": null,
+      "wait_elapsed_ms": 28559,
+      "server_model_calls": null,
+      "server_tool_calls": null,
+      "server_python_calls": null,
+      "server_cleanup_verified": false,
+      "server_paid_usage_verified": false
+    },
+    "counters": {
+      "workspace": 0,
+      "file_begin": 1,
+      "file_put": 1,
+      "file_seal": 1,
+      "file_list": 0,
+      "start": 1,
+      "answer": 0,
+      "stop": 0,
+      "recover": 0,
+      "output_get": 0,
+      "output_read": 0,
+      "isolation_reads": 0,
+      "blocked_requests": 0,
+      "page_errors": 0
+    },
+    "screenshot": "failure.png",
+    "limitations": [
+      "The DOM and one submission receipt expose only the initial run ID; join all runs, server counters, costs and cleanup evidence independently by root_id.",
+      "Bob must already be a member of the dedicated workspace. Missing membership stops before upload or model submission; this script never invites or joins users.",
+      "Failed, unknown, waiting-input or timed-out work is never resubmitted, answered, stopped or recovered by this script.",
+      "CSV bytes are checked in memory; no token, browser trace, storage state, response body or downloaded CSV is saved to evidence.",
+      "Test workspace, files and run records are retained. Closing the browser is not proof that a server task has stopped."
+    ]
+  },
+  "server": {
+    "observed_at": "2026-10-07T17:57:46.889339+00:00",
+    "root": {
+      "id": "ace6d772-46bc-4506-928f-97e739a55ed0",
+      "runtime_version": 2,
+      "mode": "model",
+      "state": "waiting_input",
+      "model_calls": 1,
+      "tool_calls": 1,
+      "python_calls": 0,
+      "active_ms": 26720,
+      "image": "localhost:5001/ax-task-runner@sha256:745e2f4527f80c0fe64a7d292514357444ab27f7f3ccbf9116dc36ea2a0815de",
+      "code_image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+      "code_profile": "host-quota-8m-v1"
+    },
+    "runs": [
+      {
+        "run_id": "ax-run-58f54b697eddc012",
+        "kind": "runtime",
+        "sequence": 1,
+        "predecessor": null,
+        "image": "localhost:5001/ax-task-runner@sha256:745e2f4527f80c0fe64a7d292514357444ab27f7f3ccbf9116dc36ea2a0815de",
+        "resolved": true,
+        "invalid": false,
+        "phase": "finished",
+        "job_state": "done",
+        "cleanup": {
+          "suspended": true,
+          "egress_denied": true
+        },
+        "cleanup_errors": [],
+        "status": "succeeded",
+        "error_type": null,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 1873,
+          "prompt_token_count": 1821,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 52
+        },
+        "estimated_usd": 0.00053325,
+        "host_cleanup": null
+      }
+    ],
+    "operations": [
+      {
+        "run_id": "ax-run-58f54b697eddc012",
+        "sequence": 1,
+        "kind": "model",
+        "settled": true,
+        "generation_started": true,
+        "actual_usd": 0.00053325,
+        "reserved_usd": 0.002268,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 1873,
+          "prompt_token_count": 1821,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 52
+        },
+        "outcome": "ok"
+      },
+      {
+        "run_id": "ax-run-58f54b697eddc012",
+        "sequence": 2,
+        "kind": "tool",
+        "settled": true,
+        "generation_started": false,
+        "actual_usd": 0,
+        "reserved_usd": 0,
+        "usage": {},
+        "outcome": "ok"
+      }
+    ],
+    "effects": [
+      {
+        "run_id": "ax-run-58f54b697eddc012",
+        "operation": "create",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-58f54b697eddc012",
+        "operation": "egress_deny",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-58f54b697eddc012",
+        "operation": "egress_prepare",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-58f54b697eddc012",
+        "operation": "resume",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-58f54b697eddc012",
+        "operation": "stage",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-58f54b697eddc012",
+        "operation": "start",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-58f54b697eddc012",
+        "operation": "suspend",
+        "confirmed": true
+      }
+    ],
+    "paid_total": 0.00519975,
+    "paid_with_reservations": 0.00519975,
+    "root_cost": 0.00053325,
+    "root_with_reservations": 0.00053325,
+    "slot": {
+      "id": true,
+      "run_id": null,
+      "hold_reason": null
+    },
+    "public_unresolved": 0,
+    "public_invalid": 0
+  },
+  "actor_inspect": [
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-58f54b697eddc012",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    }
+  ],
+  "stop": {
+    "root": "ace6d772-46bc-4506-928f-97e739a55ed0",
+    "passed": true,
+    "stop_submissions": 1
+  },
+  "final": {
+    "root_state": "stopped",
+    "unresolved": 0,
+    "paid_total_usd": 0.00519975,
+    "increment_usd": 0.00053325,
+    "trial_enabled": false,
+    "gateway_enabled": false,
+    "key_mount": false,
+    "gateway_secret_deleted": true
+  },
+  "meaning": "Trial failed to aggregate again: model claimed uninspected file empty or missing amount and asked a question. Input descriptor and current prompt reached the SDK mailbox; provider payload correspondence is being investigated. No answer or automatic retry.",
+  "sources": [
+    {
+      "path": "ax-local/.state/verification/workbench-2026-10-07T17-54-23-016Z-a4ce7ec6/result.json",
+      "sha256": "3037e700c50022b0e1a99a1e6c8a225a697e507bf4ceff419c90ddc4c57e6efd"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/root-ace6d772-46bc-4506-928f-97e739a55ed0/server.json",
+      "sha256": "4d709cda08951255b3b980b12f76a961b7fb337fc941c634de64fda315a0ac22"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/root-ace6d772-46bc-4506-928f-97e739a55ed0/runtime-inspect.jsonl",
+      "sha256": "8b8991d443efb5768934f0c191b07e661c7b749946a99c33b0e5a860b2dc1fb8"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/stop-trial2.json",
+      "sha256": "03280c1a4d555a9face82cd645f95a1a2907eeb0751f970a308faa816308847c"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/public-v8/trial2-model-request.json",
+      "sha256": "0df70fa210dd0b144864c0d10afff060e1dddead57954a5e7cbcf03cc1b0a253"
+    }
+  ]
+}

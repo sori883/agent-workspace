@@ -15,14 +15,18 @@ type Effect struct {
 }
 
 type Claim struct {
-	RunID      string                      `json:"run_id"`
-	Generation int64                       `json:"generation"`
-	Kind       string                      `json:"kind"`
-	Request    native.Request              `json:"request"`
-	Image      string                      `json:"image"`
-	Result     *native.Result              `json:"result"`
-	Effects    map[native.Operation]Effect `json:"effects"`
-	Agent      *gateway.Agent              `json:"agent"`
+	Workbench        *native.Workbench           `json:"-"`
+	WorkbenchRequest *native.WorkbenchRequest    `json:"-"`
+	WorkbenchResult  *native.WorkbenchResult     `json:"-"`
+	Manifest         *native.TaskManifest        `json:"-"`
+	RunID            string                      `json:"run_id"`
+	Generation       int64                       `json:"generation"`
+	Kind             string                      `json:"kind"`
+	Request          native.Request              `json:"request"`
+	Image            string                      `json:"image"`
+	Result           *native.Result              `json:"result"`
+	Effects          map[native.Operation]Effect `json:"effects"`
+	Agent            *gateway.Agent              `json:"agent"`
 }
 
 type Store interface {
@@ -50,17 +54,23 @@ type Executor interface {
 }
 
 type Controller struct {
-	Store               Store
-	Executor            Executor
-	InteractiveExecutor Executor
-	InteractiveImage    string
-	ModelProvider       gateway.Provider
-	Image               string
-	PollInterval        time.Duration
-	HeartbeatInterval   time.Duration
-	ReadyTimeout        time.Duration
-	ResultTimeout       time.Duration
-	StopTimeout         time.Duration
+	WorkbenchRuntime       Executor
+	WorkbenchCode          Executor
+	WorkbenchRuntimeImage  string
+	WorkbenchCodeImage     string
+	WorkbenchModelEnabled  bool
+	WorkbenchPythonEnabled bool
+	Store                  Store
+	Executor               Executor
+	InteractiveExecutor    Executor
+	InteractiveImage       string
+	ModelProvider          gateway.Provider
+	Image                  string
+	PollInterval           time.Duration
+	HeartbeatInterval      time.Duration
+	ReadyTimeout           time.Duration
+	ResultTimeout          time.Duration
+	StopTimeout            time.Duration
 }
 
 var ErrHeld = errors.New("execution_held")
@@ -75,7 +85,16 @@ func (c *Controller) RunOnce(ctx context.Context) (bool, error) {
 	if err != nil || claim == nil {
 		return false, err
 	}
-	if claim.Request.Adapter == "interactive" {
+	if claim.Workbench != nil {
+		selected, e := c.selectWorkbench(claim)
+		if e != nil {
+			failedCtx, stop := context.WithTimeout(ctx, 5*time.Second)
+			defer stop()
+			_ = c.Store.Fail(failedCtx, claim, "invalid_workbench_configuration")
+			return true, e
+		}
+		c = selected
+	} else if claim.Request.Adapter == "interactive" {
 		if c.InteractiveExecutor == nil || c.InteractiveImage == "" || claim.Agent == nil || !claim.Agent.Valid() {
 			return true, errors.New("interactive_executor_unavailable")
 		}
@@ -108,12 +127,16 @@ func (c *Controller) RunOnce(ctx context.Context) (bool, error) {
 	}()
 	err = c.process(work, claim)
 	start := claim.Effects[native.StartOperation]
-	unknownCompletedModel := errors.Is(err, ErrModelUsageUnknown) && claim.Request.Adapter == "interactive" && claim.Kind == "execute" && start.Evidence["confirmed"] == true && start.Evidence["actor"] == claim.RunID
+	unknownCompletedModel := errors.Is(err, ErrModelUsageUnknown) && (claim.Request.Adapter == "interactive" || claim.Workbench != nil && claim.Workbench.AttemptKind == "runtime") && claim.Kind == "execute" && start.Evidence["confirmed"] == true && start.Evidence["actor"] == claim.RunID
 	if (errors.Is(err, ErrAuthorizationRevoked) || errors.Is(err, ErrGatewayDenied) || unknownCompletedModel) && work.Err() == nil {
 		if len(claim.Effects) == 0 {
 			err = nil
 		} else {
-			err = c.cleanupAndFinish(work, claim)
+			if claim.Workbench != nil {
+				err = c.cleanupWorkbench(work, claim)
+			} else {
+				err = c.cleanupAndFinish(work, claim)
+			}
 		}
 	}
 	cancel()
@@ -127,6 +150,11 @@ func (c *Controller) RunOnce(ctx context.Context) (bool, error) {
 	}
 	if err == nil {
 		err = c.Store.Finish(ctx, claim)
+		if err != nil && claim.Workbench != nil && !errors.Is(err, ErrHeld) && ctx.Err() == nil {
+			readback, stop := context.WithTimeout(ctx, 5*time.Second)
+			err = c.Store.Finish(readback, claim)
+			stop()
+		}
 	}
 	if errors.Is(err, ErrHeld) {
 		return true, err
@@ -142,6 +170,9 @@ func (c *Controller) RunOnce(ctx context.Context) (bool, error) {
 }
 
 func (c *Controller) process(ctx context.Context, claim *Claim) error {
+	if claim.Workbench != nil {
+		return c.processWorkbench(ctx, claim)
+	}
 	activeStarted := time.Now()
 	if claim.Request.Validate() != nil || claim.RunID != claim.Request.RunID || claim.Image != c.Image || claim.Generation <= 0 || (claim.Kind != "execute" && claim.Kind != "recovery") {
 		return errors.New("invalid_claim")

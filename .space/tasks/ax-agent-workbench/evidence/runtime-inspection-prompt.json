@@ -1,0 +1,47 @@
+{
+  "runtime": "localhost:5001/ax-task-runner@sha256:745e2f4527f80c0fe64a7d292514357444ab27f7f3ccbf9116dc36ea2a0815de",
+  "source_match": {
+    "all_matched": true,
+    "files": {
+      "workbench_protocol.py": "d9d4807f6584eb4dc763a7fb87c9bb6660ffe24d70459f14273edce0217aad61",
+      "runner.py": "4ac17a10c52bab6f01c3b9f143f6a67805087ed36e84e0cb19cebb72fa97dcb9",
+      "interactive_protocol.py": "4f3e55eacce59d8452f51317ab27398855ad54ecc3a10e707c7b6bc98a75cf1c",
+      "workbench_runner.py": "3a9e4aa1d6fd6ff3e43b5d4958f562ad455c79d61c40ca0cde7ee414848c4dae",
+      "protocol.py": "a6652e5e223c7a827cd049875a34087f3b7595ff504c3d23d2b3575b97aac5e6",
+      "__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "workbench_mailbox.py": "323a5c0fc909b77db131dd2efcdf38daec005cf3df58a120f1e8bfa9c4930d51",
+      "mailbox.py": "4967a236c7f7ef057b9669873ab3a25e87000eee8c2b2482d04c093ddda7b24c",
+      "adapters/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "adapters/offline.py": "867115dabd711c224d3fc4928596696eb06a39913bb74c2fa43272819edb9433",
+      "adapters/workbench.py": "3390a5df665ae44428a101fc2c020c2a6beeeac1bcc54ea14135af28b23004fb",
+      "adapters/interactive.py": "5fba7521d3734a290a5aa935557bf8b0cc33046f3bb8ec74eeadf732e2c9f7bd",
+      "adapters/gemini_meter.py": "fa59f1c4465cf48255e2c75fc04f2e5464129347d290873eb3b79567bea2cb67",
+      "adapters/antigravity.py": "358982d8cc6ea163928bae68669df0589387da2f753b75f78e68290db0c9d554",
+      "skills/tabular-v1/SKILL.md": "47c67805bf384f4051ad2c7392ef9e18b194dc611c1133775646e5e8f50313d5",
+      "skills/brief-v1/SKILL.md": "d394bcd09724ff69fd758a42247caa323626525316f59c989346ddc3ee8f64fe"
+    }
+  },
+  "tests": {
+    "count": 15,
+    "passed": 15,
+    "skipped": 0,
+    "seconds": 9.136,
+    "network": "none",
+    "source_mount": false,
+    "real_model": false
+  },
+  "sources": [
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/runtime-inspect-build.json",
+      "sha256": "83d77fd09a2e428f68374b8ea9e97724eaf3690622645c855cfb2cf517c5ad0e"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/runtime-inspect-tests.stderr",
+      "sha256": "4871610742fb85315c91051463e64d7353b0cfa2f27c2cd5ad6b2b9b6c0278a9"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/runtime-inspect-source-match.json",
+      "sha256": "afa80fc62aa16c92967b4365888ccead1f0f87ab74f812f57ce50d78ed54d702"
+    }
+  ]
+}

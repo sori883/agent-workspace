@@ -1,0 +1,5 @@
+FROM localhost:5001/ax-task-runner@sha256:6f4f48e64ae1eab1a9d1755d24675f676b0164e936d316d76ab64fa0246a2cad
+COPY code_runtime/requirements.lock /opt/ax-code/requirements.lock
+RUN pip install --no-cache-dir --no-deps --only-binary=:all: --require-hashes --target /code-deps -r /opt/ax-code/requirements.lock
+COPY code_runtime/ /opt/ax-code/
+RUN python3 /opt/ax-code/build_sandbox.py && mkdir -p /var/lib/ax-code && chmod 700 /var/lib/ax-code

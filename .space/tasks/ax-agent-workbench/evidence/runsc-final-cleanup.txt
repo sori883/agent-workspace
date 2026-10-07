@@ -1,0 +1,6 @@
+test_csv_aggregation (test_code_runtime_runsc.RunscCodeRuntimeTests.test_csv_aggregation) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.544s
+
+OK

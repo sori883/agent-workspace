@@ -1,0 +1,40 @@
+package main
+
+import (
+	"github.com/agent-substrate/substrate/internal/ateompath"
+	"github.com/agent-substrate/substrate/internal/codequota"
+	"os"
+	"path/filepath"
+	"testing"
+)
+
+func TestCodeResetPreservesUnresolvedEvidence(t *testing.T) {
+	useTempNodeDirs(t)
+	root := filepath.Dir(ateompath.ActorsDir)
+	store := codequota.Store{Root: filepath.Join(root, "code-quota")}
+	w, e := store.OpenWorker("worker-a")
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer w.Close()
+	if _, e = w.Begin("actor-a", "digest", "bundle"); e != nil {
+		t.Fatal(e)
+	}
+	dir := ateompath.OCIBundleDir("actor-a")
+	if e = os.MkdirAll(dir, 0700); e != nil {
+		t.Fatal(e)
+	}
+	file := filepath.Join(dir, "preserve")
+	if e = os.WriteFile(file, []byte("proof"), 0600); e != nil {
+		t.Fatal(e)
+	}
+	if e = resetActorDirs("actor-a"); e == nil {
+		t.Fatal("reset accepted")
+	}
+	if b, e := os.ReadFile(file); e != nil || string(b) != "proof" {
+		t.Fatal("evidence lost")
+	}
+	if e = removeActorDirs("actor-a"); e == nil {
+		t.Fatal("remove accepted")
+	}
+}

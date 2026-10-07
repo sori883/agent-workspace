@@ -1,0 +1,42 @@
+{
+  "image": "localhost:5001/ax-execution-workbench@sha256:81ad9e832568cf2261a21f7c3abcaec7106d3061f6b3a35181b0bf491a6c0145",
+  "change": "Preserve property order with structs: both anyOf branches start with kind; parsed JSON Schema identical to old schema.",
+  "verification": {
+    "author_gateway_race_tests": 12,
+    "author_gateway_race_seconds": 1.525,
+    "independent_gateway_race_seconds": 1.513,
+    "independent_final_transport_race_seconds": 1.502,
+    "vet_passed": true,
+    "wire_order_red_green": true,
+    "schema_semantic_equivalence": true,
+    "count_generate_payload_sha_identity": true
+  },
+  "source": "https://ai.google.dev/gemini-api/docs/generate-content/structured-output?hl=en",
+  "limitations": "The model decision failure is a plausible consequence of asymmetric key order, not an observed decoder internal state. Paid functional verification pending. Initial offline image build stopped at dependency download and did not deploy; standard pinned dependency build succeeded.",
+  "sources": [
+    {
+      "path": "execution/gateway/workbench.go",
+      "sha256": "97810e232e1e464cf2295ceb34fb6e387109c909ba3953cd32cfce22625f0d60"
+    },
+    {
+      "path": "execution/gateway/workbench_test.go",
+      "sha256": "9b2a98a87c5414f35d2c67c3edf76e17d79e63929f695c850cd8101303e18aa2"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/execution-schema-order-build.json",
+      "sha256": "bd247dd2a7128aef9fbb75352575312236434cf081d6a32cc29e7adcb1bbca16"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/execution-schema-order-build.log",
+      "sha256": "480eb593d8e4cee6604de17c753c73d9f985b69ea81d4eb43c38fbf142523b6f"
+    },
+    {
+      "path": "ax-local/.state/workbench-build-arg973la/execution-schema-order-sources.json",
+      "sha256": "998e0a7486e55d39c3beb92eb65417d9c167ec764602eafaa632f5cacc0b30ea"
+    },
+    {
+      "path": ".space/tasks/ax-agent-workbench/workbench-gateway-order-review.md",
+      "sha256": "597b42f63649b3ec8a8171421ecf28034f885db7ee1bbfa94471be69771fccbb"
+    }
+  ]
+}

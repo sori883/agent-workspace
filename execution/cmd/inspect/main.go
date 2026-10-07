@@ -17,9 +17,10 @@ func main() { os.Exit(run()) }
 func run() int {
 	path := flag.String("config", os.Getenv("AX_EXECUTION_CONFIG"), "configuration file path")
 	guest := flag.Bool("guest", false, "observe direct guest TLS, ProcessService and fixed runner status")
+	code := flag.Bool("code", false, "observe code atespace and server-owned host cleanup")
 	interactive := flag.Bool("interactive", false, "observe the configured credential-free interactive atespace")
 	flag.Parse()
-	if *path == "" || flag.NArg() != 0 {
+	if *path == "" || flag.NArg() != 0 || *code && (*interactive || *guest) {
 		fmt.Fprintln(os.Stderr, "config_required")
 		return 2
 	}
@@ -35,6 +36,15 @@ func run() int {
 		return 2
 	}
 	nativeConfig, err := inspectConfig(config, *interactive)
+	if *code {
+		selected, e := config.CodeNative()
+		if e != nil || selected == nil {
+			err = errors.New("code_config_required")
+		} else {
+			nativeConfig = *selected
+			err = nil
+		}
+	}
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "native_config_invalid")
 		return 2
@@ -62,10 +72,18 @@ func run() int {
 		actor, actorErr := adapter.ObserveStop(context.Background(), id)
 		egress, egressErr := adapter.ObserveEgress(context.Background(), id, false)
 		verified := taskErr == nil && task.Phase == "Suspended" && actorErr == nil && actor.Stopped && egressErr == nil && egress.Denied && egress.Matches
+		var cleanup *native.CodeCleanup
+		if *code {
+			proof, e := adapter.ObserveCodeCleanup(context.Background(), id)
+			verified = verified && e == nil && proof.Cleaned
+			if e == nil && proof.Cleaned {
+				cleanup = &proof
+			}
+		}
 		if !verified {
 			exit = 1
 		}
-		if encoder.Encode(map[string]any{"run_id": id, "task_observed": taskErr == nil, "ax_suspended": taskErr == nil && task.Phase == "Suspended", "actor_observed": actorErr == nil, "actor_stopped": actorErr == nil && actor.Stopped, "worker_unassigned": actorErr == nil && !actor.HasWorker, "egress_observed": egressErr == nil, "egress_denied": egressErr == nil && egress.Denied && egress.Matches, "verified_stopped_and_denied": verified}) != nil {
+		if encoder.Encode(map[string]any{"run_id": id, "task_observed": taskErr == nil, "ax_suspended": taskErr == nil && task.Phase == "Suspended", "actor_observed": actorErr == nil, "actor_stopped": actorErr == nil && actor.Stopped, "worker_unassigned": actorErr == nil && !actor.HasWorker, "egress_observed": egressErr == nil, "egress_denied": egressErr == nil && egress.Denied && egress.Matches, "verified_stopped_and_denied": verified, "code_cleanup": cleanup}) != nil {
 			return 1
 		}
 	}

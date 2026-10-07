@@ -1,0 +1,184 @@
+package codequota
+
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
+
+func fixture(t *testing.T) (Store, *Worker) {
+	t.Helper()
+	base, e := filepath.EvalSymlinks(t.TempDir())
+	if e != nil {
+		t.Fatal(e)
+	}
+	store := Store{Root: filepath.Join(base, "quota")}
+	w, e := store.OpenWorker("worker-a")
+	if e != nil {
+		t.Fatal(e)
+	}
+	t.Cleanup(func() { w.Close() })
+	return store, w
+}
+func TestLiveOtherWorkerDoesNotBlock(t *testing.T) {
+	s, w := fixture(t)
+	if _, e := w.Begin("actor-a", "sha256:abc", "/fixed"); e != nil {
+		t.Fatal(e)
+	}
+	other, e := s.OpenWorker("worker-b")
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer other.Close()
+	if e = other.Guard(); e != nil {
+		t.Fatal(e)
+	}
+	if e = w.Guard(); e == nil {
+		t.Fatal("busy worker admitted a new workload")
+	}
+	if e = s.GuardActor("actor-a"); e == nil {
+		t.Fatal("reset permitted")
+	}
+}
+func TestOrphanHoldsNodeWithoutPIDGuess(t *testing.T) {
+	s, w := fixture(t)
+	if _, e := w.Begin("actor-a", "sha256:abc", "/fixed"); e != nil {
+		t.Fatal(e)
+	}
+	w.Close()
+	if e := s.GuardNode(); e == nil {
+		t.Fatal("orphan accepted")
+	}
+	if _, e := s.OpenWorker("new-pod-uid"); e == nil {
+		t.Fatal("replacement pod accepted orphan")
+	}
+}
+func TestRestartSameWorkerCannotTakeover(t *testing.T) {
+	s, w := fixture(t)
+	if _, e := w.Begin("actor-a", "sha256:abc", "/fixed"); e != nil {
+		t.Fatal(e)
+	}
+	w.Close()
+	if _, e := s.OpenWorker("worker-a"); e == nil {
+		t.Fatal("restart took over old marker")
+	}
+}
+func TestCompletionRetainsAtMostOnce(t *testing.T) {
+	s, w := fixture(t)
+	r, e := w.Begin("actor-a", "sha256:abc", "/fixed")
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = w.Complete(r); e != nil {
+		t.Fatal(e)
+	}
+	if e = s.GuardActor("actor-a"); e != nil {
+		t.Fatal(e)
+	}
+	if e = w.Guard(); e != nil {
+		t.Fatal(e)
+	}
+	if _, e = w.Begin("actor-a", "sha256:abc", "/fixed"); e == nil {
+		t.Fatal("completed actor repeated")
+	}
+	if _, e = w.Begin("actor-b", "sha256:abc", "/fixed"); e != nil {
+		t.Fatal(e)
+	}
+}
+func TestUnknownGenerationCannotComplete(t *testing.T) {
+	_, w := fixture(t)
+	r, e := w.Begin("actor-a", "sha256:abc", "/fixed")
+	if e != nil {
+		t.Fatal(e)
+	}
+	r.Generation = "other"
+	if e = w.Complete(r); e == nil {
+		t.Fatal("wrong generation cleared")
+	}
+	if e = w.Guard(); e == nil {
+		t.Fatal("pending marker lost")
+	}
+}
+func TestCrashBetweenDoneAndMarkerRemovalHolds(t *testing.T) {
+	s, w := fixture(t)
+	r, e := w.Begin("actor-a", "sha256:abc", "/fixed")
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = publish(s.Root, r.Actor+".done", []byte("{}")); e != nil {
+		t.Fatal(e)
+	}
+	if e = w.Complete(r); e == nil {
+		t.Fatal("incomplete completion replayed")
+	}
+	w.Close()
+	if e = s.GuardNode(); e == nil {
+		t.Fatal("unfinished cleanup ignored")
+	}
+}
+func TestCorruptMarkerAndSymlinkRejected(t *testing.T) {
+	s, _ := fixture(t)
+	if e := os.WriteFile(filepath.Join(s.Root, "actor-a.pending"), []byte("{"), 0600); e != nil {
+		t.Fatal(e)
+	}
+	if e := s.GuardNode(); e == nil {
+		t.Fatal("bad marker ignored")
+	}
+	os.Remove(filepath.Join(s.Root, "actor-a.pending"))
+	if e := os.Symlink("/dev/null", filepath.Join(s.Root, "actor-a.pending")); e != nil {
+		t.Fatal(e)
+	}
+	if e := s.GuardNode(); e == nil {
+		t.Fatal("symlink accepted")
+	}
+}
+func TestActorConcurrentResetExcluded(t *testing.T) {
+	s, _ := fixture(t)
+	unlock, e := s.LockActor("actor-a")
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer unlock()
+	if _, e = s.LockActor("actor-a"); e == nil {
+		t.Fatal("duplicate request entered reset")
+	}
+}
+func TestUnpublishedMarkerHasNoMountAndIsNotOrphan(t *testing.T) {
+	s, _ := fixture(t)
+	if e := os.WriteFile(filepath.Join(s.Root, ".publish-interrupted"), []byte("partial"), 0600); e != nil {
+		t.Fatal(e)
+	}
+	if e := s.GuardNode(); e != nil {
+		t.Fatal(e)
+	}
+}
+
+func TestCompletedRequiresDurableCurrentGeneration(t *testing.T) {
+	s, w := fixture(t)
+	if _, err := w.Completed("actor-a"); err == nil {
+		t.Fatal("missing treated as completed")
+	}
+	r, err := w.Begin("actor-a", "digest", "bundle")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = w.Completed("actor-a"); err == nil {
+		t.Fatal("pending completed")
+	}
+	if err = w.Complete(r); err != nil {
+		t.Fatal(err)
+	}
+	proof, err := w.Completed("actor-a")
+	if err != nil || *proof != *r {
+		t.Fatal(err)
+	}
+	w.Close()
+	replacement, err := s.OpenWorker("worker-a")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer replacement.Close()
+	if _, err = replacement.Completed("actor-a"); err == nil {
+		t.Fatal("new generation minted proof")
+	}
+}

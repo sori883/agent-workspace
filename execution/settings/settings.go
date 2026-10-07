@@ -24,7 +24,15 @@ type Endpoint struct {
 	PlaintextLoopback bool   `json:"plaintext_loopback"`
 }
 
+type WorkbenchConfig struct {
+	Enabled       bool   `json:"enabled"`
+	ModelEnabled  bool   `json:"model_enabled"`
+	PythonEnabled bool   `json:"python_enabled"`
+	CodeImage     string `json:"code_image"`
+}
+
 type File struct {
+	Workbench    *WorkbenchConfig `json:"workbench"`
 	ModelGateway *struct {
 		Enabled    bool   `json:"enabled"`
 		APIKeyPath string `json:"api_key_path"`
@@ -59,6 +67,22 @@ type File struct {
 		CAPath       string `json:"ca_path"`
 		Schema       string `json:"schema"`
 	} `json:"database"`
+}
+
+func (f File) CodeNative() (*native.Config, error) {
+	if f.Workbench == nil || !f.Workbench.Enabled || f.Workbench.CodeImage == "" {
+		if f.Workbench != nil && f.Workbench.PythonEnabled {
+			return nil, errors.New("invalid_workbench_config")
+		}
+		return nil, nil
+	}
+	base, err := f.InteractiveNative()
+	if err != nil || base == nil {
+		return nil, errors.New("invalid_workbench_config")
+	}
+	base.Atespace = "ax-code"
+	base.Image = f.Workbench.CodeImage
+	return base, nil
 }
 
 func (f File) ModelProvider() (gateway.Provider, error) {

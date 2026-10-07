@@ -1,0 +1,9 @@
+# 保存層の独立確認
+
+2026-10-07、親担当。Bの保存層と専用DB16件の結果を照合した。
+
+対象は schema-v7.sql（SHA256 0ede130ab671a38b561491b1dd4840c69429638526cb38864b6a85ee93dd4d34）、definitions.ts、definition-contracts.ts、definitions.test.ts。本人用と共有用の閲覧・編集分岐、Workspace認可lock、公開版の不変trigger、mutation replay時の現在editor認可、依存skillのWorkspace/共有閉包/archive、共通quota lock内の件数・容量判定を確認した。現時点で必須修正なし。
+
+親が共通migration入口をv7に更新後、file/API/workspace/definitionの58件を実行して全件成功。v1〜v6 checksumと既存ファイルのbytes保持、公開API roleのCOMMITとprivate helper拒否も含む。保存層単体の成功であり、エージェント実行や稼働DBの変更を確認したものではない。画面統合は別途検証中。
+
+WebレビューR1を受け、latest_version summaryへ公開時nameを追加した差分も親が照合した。draft名と公開名を分離する投影であり、Bが最終v7で16件を再試験して成功。58件の統合試験はこのname追加前、ファイル保存・Workspace・migration入口はその後変更していない。

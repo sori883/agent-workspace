@@ -8,6 +8,9 @@ import (
 )
 
 func (a *Adapter) runner(ctx context.Context, runID string, op Operation, argument string, mutating bool) ([]byte, error) {
+	return a.runnerPath(ctx, runID, op, argument, mutating, "/opt/ax-task/runner.py", maxResponseBytes)
+}
+func (a *Adapter) runnerPath(ctx context.Context, runID string, op Operation, argument string, mutating bool, path string, limit int) ([]byte, error) {
 	ctx, cancel := a.callContext(ctx, a.config.Guest, a.config.CallTimeout, runID)
 	defer cancel()
 	client, closeClient, err := a.guestClient(ctx, runID)
@@ -15,7 +18,7 @@ func (a *Adapter) runner(ctx context.Context, runID string, op Operation, argume
 		return nil, failure(op, false, "guest_unavailable")
 	}
 	defer closeClient()
-	process, err := client.StartProcess(ctx, &guestpb.StartProcessRequest{Command: []string{"python3", "/opt/ax-task/runner.py", string(op), argument}, Timeout: durationpb.New(a.config.CallTimeout)})
+	process, err := client.StartProcess(ctx, &guestpb.StartProcessRequest{Command: []string{"python3", path, string(op), argument}, Timeout: durationpb.New(a.config.CallTimeout)})
 	if err != nil {
 		return nil, rpcFailure(op, mutating, err)
 	}
@@ -35,7 +38,7 @@ func (a *Adapter) runner(ctx context.Context, runID string, op Operation, argume
 		}
 		switch value := chunk.GetOutput().(type) {
 		case *guestpb.ProcessOutput_Stdout:
-			if len(output)+len(value.Stdout) > maxResponseBytes {
+			if len(output)+len(value.Stdout) > limit {
 				return nil, failure(op, mutating, "process_output_limit")
 			}
 			output = append(output, value.Stdout...)

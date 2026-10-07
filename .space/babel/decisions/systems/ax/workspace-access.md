@@ -17,12 +17,13 @@ sources:
   - resource: .space/tasks/ax-workspace-access/verification.md
   - resource: web/data/schema-v2.sql
   - resource: .space/tasks/ax-workspace-access/ownership.md
+  - resource: .space/tasks/ax-agent-workbench/task.md
 type: decision
 title: 組織への所属を権限と業務ロールの境界にする
 description: 複数Workspace・Group所属、現在所有50個と承諾式譲渡、管理権限・業務ロール、本人限定データの契約と採用理由
 generated: 
   by: agent:codex
-  at: 2026-10-07T01:10:31.322Z
+  at: 2026-10-07T12:39:15.811Z
 ---
 # 組織への所属を権限と業務ロールの境界にする
 
@@ -63,6 +64,12 @@ v1/v2のSQLとchecksumを保持してv3を追加した。作成者が現在activ
 認証基盤の組織機能を所属の正本とする候補と比較し、アプリの会話境界、SQL制約、将来の認証プロバイダー変更を同じ正本で扱える構造を採用した。詳細比較は `.space/tasks/ax-workspace-access/design.md` と候補A/B、実装契約はplan.md、結果と限界はverification.mdおよび担当別証拠に残す。
 
 現ローカルKeycloakは管理者が用意したアカウントを使う。公開自己登録・確認メール配送・Entra/Cognito同期・RAGやスキル権限への接続は本変更に含めない。実装・検証を一つのPRへまとめ、設計の補足ごとにPRを作らない。
+
+## スキル・エージェント登録のWorkspace境界
+
+2026-10-07、利用者は、画面から登録する本人用のスキル・エージェントもWorkspaceごとに分け、なるべくそのWorkspaceに閉じる方針を指定した。共有用は現在の全メンバーが登録でき、作成者とWorkspace管理者が編集できる。共有するのは再利用可能な指示・設定・補助資料であり、実行者の会話・入力ファイル・成果物を共有しない。本人用に対して管理者だから読めるという権限は付けない。
+
+組み込みの基本指示・標準スキルのGit管理は開発時の原本管理を意味する。実行時は製品へ同梱したファイルを読み、Gitサービスを保存基盤として要求しない。画面登録した内容はapp PostgreSQLで版管理し、利用者にGit操作を要求しない。設計・実装契約は `.space/tasks/ax-agent-workbench/registry-contract.md`。この追記時点では登録機能を実装中で、稼働済みの証明ではない。
 
 # Related Concepts
 - [ローカルWebの境界と非同期実行](../../../knowledge/ax-web-foundation.md): 所属境界の採用理由を現在のWeb構成へ対応付ける

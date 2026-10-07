@@ -13,7 +13,7 @@ title: AXローカル実行基盤の構成と確認方法
 description: 外部Docker PostgreSQLと独立実行管理を使うAXローカル基盤の構成・保存・検証と導入履歴
 generated: 
   by: agent:codex
-  at: 2026-10-06T12:27:50.086Z
+  at: 2026-10-07T18:20:47.813Z
 sources: 
   - title: 検証対象AXソース
     resource: https://github.com/google/ax/tree/ac2332829f22360ff97b0ba34d94dd0dd782f17e
@@ -25,6 +25,7 @@ sources:
   - resource: ax-local/verification.md
   - resource: ax-local/postgres/README.md
   - resource: .space/tasks/ax-auth/verification.md
+  - resource: .space/tasks/ax-agent-workbench/evidence/paid-trial4.json
 ---
 # AXのローカル実行基盤
 
@@ -158,4 +159,14 @@ ax-local/taskで少量UTF-8指示・入力から1実行1Taskを作り、成果�
 開始の再送を拒否し、使用量不明・cleanup失敗・未調査の有料失敗後は追加実行を止める。recoverは既存の回収と停止だけでresumeしない。SDKの部分累計を既知にしないため、Gemini要求ごとの使用量を監視する。[採用した設計と理由](../decisions/systems/ax/single-task-cli.md)を参照する。
 
 実AXのoffline2実行とホスト強制終了からの回収、65tests、network noneのSDK12ケース、最終imageと7sourceのSHA一致、独立レビューを確認した。最初の実試験はbuiltinのArtifactMetadataが原因で予算停止となり、上限を増やさずcustom toolへ変更した。修正後のax-run-42a5505a34e292abは通常終了し、AX_INPUT_OK改行12bytesを回収。usage1403/34/0、2要求、概算0.00040175 USD。今回の2試験合計概算は0.00126475 USD。以後追加送信せず、全Taskは通信deny・Suspended。公開検証はax-local/verification.md、詳細は.space/tasks/ax-task-cli/task.md、変更は[PR #2](https://github.com/sori883/agent-workspace/pull/2)。
+
+## Workbench配備と確認済み費用（2026-10-08）
+
+public app DBをv5からv8へ移行し、更新前dumpの別DB復元と旧column projectionで既存29表を照合した。Web/APIは現在のソースで3100/3101に起動。通常Go controller、code専用AX/Substrate patch、host-quota-8m-v1を固定imageで配置した。現在のdigest正本はax-local/versions.jsonとする。過去の専用probeの失敗記録は保存し、旧schema/roleは閉じて再実行しない。
+
+一般メンバーによる共有スキル登録、作成者/管理者の編集、本人用定義の非公開、版を固定した登録エージェントの質問/回答を実Webで確認した。無課金の実AXではCSV/XLSX、単一/4ファイル計8MiB、隔離境界を確認。SDK既定指示とGo応答schema順序の修正後、実モデルがCSVを集計し、正しい300の結果ファイルを本人だけ取得できることを確認した。全Taskの停止/通信deny/worker解放、codeの同一世代cleanupと費用精算を照合済み。
+
+今回の限定有料検証は4依頼・生成5回、追加概算0.002571 USD。過去込み既知累計は0.006797 USD。初めの3依頼は機能未達で、そのusageと結果を保持した。成功後の追加送信なし。有料gateとGatewayを無効化、鍵mountと専用Secretを除去し、無課金受付のみ再開している。確定請求額・円換算の保証ではない。定期実行は版選択の回答待ちで未実装。
+
+詳細は `.space/tasks/ax-agent-workbench/task.md`、恒久的な検証抜粋は同taskの `evidence/actual-ax-fixtures.json`、`public-v8-regression.json`、`paid-trial4.json`。新規定義・プロンプト・ファイルの保存境界は [Agent Runtime](../decisions/systems/ax/agent-runtime.md) と [作業ファイル](../decisions/systems/ax/work-files.md)を参照する。
 

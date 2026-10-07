@@ -49,6 +49,9 @@ func (a *Adapter) runtimeTemplateMatches(t *controlpb.ActorTemplate, runID strin
 	if t.GetMetadata().GetName() != ref.GetName() || t.GetMetadata().GetAtespace() != ref.GetAtespace() || len(t.GetContainers()) != 1 || len(t.GetVolumes()) != 1 || t.GetSandboxConfig().GetSandboxClass() != controlpb.SandboxClass_SANDBOX_CLASS_GVISOR || t.GetSandboxConfig().GetConfigName() != "gvisor-default" {
 		return false
 	}
+	if a.config.Atespace == "ax-code" {
+		return a.codeTemplateMatches(t)
+	}
 	c := t.GetContainers()[0]
 	if c.GetName() != "guest" || c.GetImage() != a.config.Image || !slices.Equal(c.GetCommand(), []string{"/usr/local/bin/ax-task-runner"}) || len(c.GetEnv()) != 1 || c.GetEnv()[0].GetName() != "AX_TASK_YAML" || len(c.GetVolumeMounts()) != 1 {
 		return false
@@ -62,4 +65,13 @@ func (a *Adapter) runtimeTemplateMatches(t *controlpb.ActorTemplate, runID strin
 	}
 	_, err := a.taskObservation(&launch, runID)
 	return err == nil
+}
+
+func (a *Adapter) codeTemplateMatches(t *controlpb.ActorTemplate) bool {
+	expected := &controlpb.Container{Name: "guest", Image: a.config.Image, Command: []string{"/usr/local/bin/ax-task-runner", "--task-file", "/opt/ax-code/server-task.json"}, Readyz: &controlpb.ContainerReadyz{HttpGet: &controlpb.HTTPGetAction{Path: "/readyz", Port: 80}, TimeoutSeconds: 30}, VolumeMounts: []*controlpb.VolumeMount{{Name: "workspace", MountPath: "/workspace"}}, SecurityContext: &controlpb.SecurityContext{Capabilities: &controlpb.Capabilities{Drop: []string{"ALL"}, Add: []string{"KILL", "SYS_CHROOT", "SETUID", "SETGID", "SETPCAP"}}}}
+	if !proto.Equal(t.GetContainers()[0], expected) || !proto.Equal(t.GetVolumes()[0], &controlpb.Volume{Name: "workspace", DurableDir: &controlpb.DurableDirVolumeSource{}}) || !proto.Equal(t.GetResources(), &controlpb.Resources{Limits: []*controlpb.Limits{{Name: "cpu", Quantity: "1"}, {Name: "memory", Quantity: "384Mi"}}}) {
+		return false
+	}
+	cfg := t.GetSnapshotsConfig()
+	return cfg.GetOnPause() == controlpb.SnapshotContentScope_SNAPSHOT_CONTENT_SCOPE_DATA && cfg.GetOnCommit() == controlpb.SnapshotContentScope_SNAPSHOT_CONTENT_SCOPE_DATA && cfg.GetOnResume().GetFromData() == controlpb.ResumeSource_RESUME_SOURCE_COLD_BOOT
 }

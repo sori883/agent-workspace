@@ -52,6 +52,13 @@ def write_once(directory, name, data):
 
 
 class Mailbox:
+    version = 1
+    validate_request = staticmethod(validate_request)
+    validate_proposal = staticmethod(validate_proposal)
+
+    def _phase(self, request):
+        return validate_context(request)[0]["phase"]
+
     def __init__(self, root, run_id):
         self.root = Path(root)
         self.run_id = validate_run_id(run_id)
@@ -61,7 +68,7 @@ class Mailbox:
         root = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
         directory = lock = None
         try:
-            request = validate_request(load_json(read_file(root, "request.json", MAX_REQUEST_BYTES)))
+            request = self.validate_request(load_json(read_file(root, "request.json", MAX_REQUEST_BYTES)))
             if request["run_id"] != self.run_id or request["adapter"] != "interactive":
                 raise ProtocolError("MailboxRunMismatch")
             if create:
@@ -98,14 +105,14 @@ class Mailbox:
         value = load_json(raw)
         if not isinstance(value, dict) or set(value) != {"version", "run_id", "sequence", "kind", "body"}:
             raise ProtocolError("InvalidMailboxRequest")
-        if type(value["version"]) is not int or value["version"] != 1 or value["run_id"] != self.run_id:
+        if type(value["version"]) is not int or value["version"] != self.version or value["run_id"] != self.run_id:
             raise ProtocolError("MailboxRunMismatch")
         if type(value["sequence"]) is not int or (value["sequence"], value["kind"]) not in ((1, "model"), (2, "tool")):
             raise ProtocolError("InvalidMailboxSequence")
         if not isinstance(value["body"], dict):
             raise ProtocolError("InvalidMailboxBody")
         if value["kind"] == "tool":
-            validate_proposal(value["body"], phase)
+            self.validate_proposal(value["body"], phase)
         return value
 
     def _reply(self, raw, request_raw, phase):
@@ -113,7 +120,7 @@ class Mailbox:
         request = self._request(request_raw, phase)
         if not isinstance(value, dict) or set(value) != {"version", "run_id", "sequence", "request_sha256", "status", "body"}:
             raise ProtocolError("InvalidMailboxReply")
-        if (type(value["version"]) is not int or value["version"] != 1 or value["run_id"] != self.run_id
+        if (type(value["version"]) is not int or value["version"] != self.version or value["run_id"] != self.run_id
             or type(value["sequence"]) is not int or value["sequence"] != request["sequence"]
             or value["request_sha256"] != hashlib.sha256(request_raw).hexdigest()):
             raise ProtocolError("MailboxReplyMismatch")
@@ -138,9 +145,9 @@ class Mailbox:
         if kind not in ("model", "tool"):
             raise ProtocolError("InvalidMailboxKind")
         sequence = 1 if kind == "model" else 2
-        raw = json_bytes({"version": 1, "run_id": self.run_id, "sequence": sequence, "kind": kind, "body": body})
+        raw = json_bytes({"version": self.version, "run_id": self.run_id, "sequence": sequence, "kind": kind, "body": body})
         with self._locked(create=True) as (directory, request):
-            phase = validate_context(request)[0]["phase"]
+            phase = self._phase(request)
             self._request(raw, phase)
             if sequence == 2:
                 first = read_file(directory, "1.request.json")
@@ -154,7 +161,7 @@ class Mailbox:
         with self._locked() as (directory, request):
             if directory is None:
                 return None
-            phase = validate_context(request)[0]["phase"]
+            phase = self._phase(request)
             for sequence in (1, 2):
                 raw = maybe_read(directory, f"{sequence}.request.json")
                 if raw is None:
@@ -183,7 +190,7 @@ class Mailbox:
             if directory is None:
                 raise ProtocolError("MailboxRequestMissing")
             original = read_file(directory, f"{sequence}.request.json")
-            self._reply(raw, original, validate_context(request)[0]["phase"])
+            self._reply(raw, original, self._phase(request))
             canonical = json_bytes(value)
             existing = maybe_read(directory, f"{sequence}.reply.json")
             if existing is None:
@@ -203,7 +210,7 @@ class Mailbox:
                     raw = maybe_read(directory, f"{sequence}.reply.json")
                     if raw is not None:
                         original = read_file(directory, f"{sequence}.request.json")
-                        value = self._reply(raw, original, validate_context(request)[0]["phase"])
+                        value = self._reply(raw, original, self._phase(request))
                         if value["status"] != "ok":
                             raise ProtocolError("OperationDenied")
                         return value["body"]

@@ -1,0 +1,1 @@
+{"defaultAction":"SCMP_ACT_ALLOW","syscalls":[{"names":["seccomp"],"action":"SCMP_ACT_ERRNO","errnoRet":1},{"names":["prctl"],"action":"SCMP_ACT_ERRNO","errnoRet":1,"args":[{"index":0,"value":22,"op":"SCMP_CMP_EQ"}]}]}

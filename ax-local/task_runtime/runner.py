@@ -285,7 +285,14 @@ def wait(root):
     while not (root / "start").exists():
         time.sleep(0.1)
     try:
-        execute(root)
+        if _read_json(root / "request.json", MAX_REQUEST_BYTES).get("schema_version") == 2:
+            if __package__:
+                from .workbench_runner import execute as execute_workbench
+            else:
+                from workbench_runner import execute as execute_workbench
+            execute_workbench(root)
+        else:
+            execute(root)
     except FileExistsError:
         if not (root / "attempted").exists():
             raise

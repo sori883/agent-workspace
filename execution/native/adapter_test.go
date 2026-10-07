@@ -44,20 +44,22 @@ type fakeServices struct {
 	axpb.UnimplementedAXServer
 	guestpb.UnimplementedProcessServiceServer
 	controlpb.UnimplementedControlServer
-	mu             sync.Mutex
-	calls          []string
-	createError    error
-	processError   error
-	streamError    error
-	stdout         []byte
-	stderr         []byte
-	omitExit       bool
-	task           *axpb.Task
-	actor          *controlpb.Actor
-	policy         *controlpb.EgressPolicy
-	policyMismatch bool
-	metadataBad    bool
-	command        []string
+	mu               sync.Mutex
+	calls            []string
+	createError      error
+	processError     error
+	processReadError error
+	streamError      error
+	stdout           []byte
+	stderr           []byte
+	omitExit         bool
+	task             *axpb.Task
+	actor            *controlpb.Actor
+	policy           *controlpb.EgressPolicy
+	policyMismatch   bool
+	metadataBad      bool
+	command          []string
+	processTimeout   time.Duration
 }
 
 func setupFake(t *testing.T) (*Adapter, *fakeServices) {
@@ -161,10 +163,22 @@ func (f *fakeServices) UpdateActorEgressPolicy(ctx context.Context, r *controlpb
 func (f *fakeServices) StartProcess(ctx context.Context, r *guestpb.StartProcessRequest) (*guestpb.Process, error) {
 	f.record(ctx, "process:start", "ax-demo/"+testRun)
 	f.command = r.Command
+	f.processTimeout = r.GetTimeout().AsDuration()
 	if f.processError != nil {
 		return nil, f.processError
 	}
 	return &guestpb.Process{ProcessId: "pid-1", State: guestpb.ProcessState_PROCESS_STATE_RUNNING}, nil
+}
+
+func (f *fakeServices) GetProcess(ctx context.Context, r *guestpb.GetProcessRequest) (*guestpb.Process, error) {
+	f.record(ctx, "process:get", "ax-code/"+testRun)
+	if r.ProcessId != "ax-code-readiness-probe" {
+		return nil, status.Error(codes.InvalidArgument, "wrong probe")
+	}
+	if f.processReadError != nil {
+		return nil, f.processReadError
+	}
+	return nil, status.Error(codes.NotFound, "not present")
 }
 func (f *fakeServices) StreamProcessOutput(_ *guestpb.StreamProcessOutputRequest, stream grpc.ServerStreamingServer[guestpb.ProcessOutput]) error {
 	f.record(stream.Context(), "process:stream", "ax-demo/"+testRun)

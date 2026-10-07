@@ -33,7 +33,7 @@ type MailboxExecutor interface {
 
 func (c *Controller) processMailbox(ctx context.Context, claim *Claim) error {
 	store, ok := c.Store.(AgentStore)
-	executor, okExecutor := c.Executor.(MailboxExecutor)
+	executor, okExecutor := c.mailboxExecutor(claim)
 	if !ok || !okExecutor {
 		return errors.New("interactive_gateway_unavailable")
 	}
@@ -46,7 +46,7 @@ func (c *Controller) processMailbox(ctx context.Context, claim *Claim) error {
 	if err != nil {
 		return err
 	}
-	if claim.Agent == nil || !claim.Agent.Valid() || reservation.ProfileID != claim.Agent.ProfileID {
+	if !claimAgent(claim).Valid() || reservation.ProfileID != claimAgent(claim).ProfileID {
 		return errors.New("invalid_gateway_reservation")
 	}
 	reply := []byte(reservation.Response)
@@ -67,7 +67,7 @@ func (c *Controller) processMailbox(ctx context.Context, claim *Claim) error {
 			return err
 		}
 		observed, readErr := store.Reserve(ctx, claim, mailbox)
-		if readErr != nil || observed.Send || observed.ProfileID != claim.Agent.ProfileID {
+		if readErr != nil || observed.Send || observed.ProfileID != claimAgent(claim).ProfileID {
 			return errors.New("gateway_settlement_unconfirmed")
 		}
 		reply = observed.Response
@@ -103,7 +103,11 @@ func (c *Controller) processMailbox(ctx context.Context, claim *Claim) error {
 }
 
 func (c *Controller) respond(ctx context.Context, store AgentStore, claim *Claim, mailbox *native.Mailbox, reservation Reservation) ([]byte, map[string]float64, gateway.Evidence, error) {
-	if claim.Agent.Mode == "preview" || mailbox.Request.Kind == "tool" {
+	if claimAgent(claim).Mode == "preview" || mailbox.Request.Kind == "tool" {
+		if claim.Workbench != nil {
+			reply, usage, e := gateway.RespondWorkbench(*claim.WorkbenchRequest, *claim.Workbench, mailbox)
+			return reply, usage, gateway.Evidence{Outcome: "ok", Code: "ok"}, e
+		}
 		reply, usage, err := gateway.Respond(claim.Request, mailbox)
 		return reply, usage, gateway.Evidence{Outcome: "ok", Code: "ok"}, err
 	}
@@ -118,7 +122,13 @@ func (c *Controller) respond(ctx context.Context, store AgentStore, claim *Claim
 		return noSend("model_not_configured")
 	}
 	limits := gateway.Limits{Input: reservation.InputLimit, Output: reservation.OutputLimit}
-	prepared, err := gateway.Prepare(claim.Request, mailbox, limits)
+	var prepared gateway.Prepared
+	var err error
+	if claim.Workbench != nil {
+		prepared, err = gateway.PrepareWorkbench(*claim.WorkbenchRequest, *claim.Workbench, mailbox, limits)
+	} else {
+		prepared, err = gateway.Prepare(claim.Request, mailbox, limits)
+	}
 	if err != nil {
 		return noSend("model_request_invalid")
 	}

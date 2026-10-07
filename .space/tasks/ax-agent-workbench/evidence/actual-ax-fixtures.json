@@ -1,0 +1,896 @@
+{
+  "observed_at": "2026-10-07T17:30:35.593734+00:00",
+  "scope": "Actual AX free fixtures; synthetic model decisions; not paid UI evidence",
+  "probes": [
+    {
+      "ok": true,
+      "observed_at": "2026-10-07T17:13:42.800Z",
+      "expected_root": "9541c376-76a1-47ea-acfa-56db2926c5a1",
+      "external_model": false,
+      "root": {
+        "id": "9541c376-76a1-47ea-acfa-56db2926c5a1",
+        "state": "succeeded",
+        "revision": 4,
+        "mode": "preview",
+        "model_calls": 2,
+        "tool_calls": 2,
+        "python_calls": 1,
+        "active_ms": 76441,
+        "estimated_usd": 0,
+        "reserved_usd": 0
+      },
+      "runs": [
+        {
+          "run_id": "ax-run-2ddc8a45871cb0fe",
+          "sequence": 1,
+          "kind": "runtime",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        },
+        {
+          "run_id": "ax-run-182fa7078eba4be7",
+          "sequence": 2,
+          "kind": "python",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        },
+        {
+          "run_id": "ax-run-fbb94a2c1cf64c7e",
+          "sequence": 3,
+          "kind": "runtime",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        }
+      ],
+      "host_cleanup": {
+        "actor": "ax-run-182fa7078eba4be7",
+        "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+        "cleaned": true,
+        "profile": "host-quota-8m-v1",
+        "actor_uid": "fa02431e-b746-4384-a879-59e9d12e134b",
+        "generation": "1552eb34-6969-402f-a353-3748460d0d81",
+        "worker_uid": "312925c4-01a3-489f-9d0f-b0eaa7c80d9a"
+      },
+      "ledger": {
+        "model_operations": 2,
+        "tool_operations": 2,
+        "settled_operations": 4,
+        "actual_usd": 0,
+        "reserved_usd": 0,
+        "generation_started": false
+      },
+      "outputs": [
+        {
+          "file_id": "f31a8492-7b81-46df-8f76-4262ea3c9c9c",
+          "name": "summary.csv",
+          "size_bytes": 42,
+          "sha256": "2bbb10c3f1dc86df003df1b80455cff49381b341028c1456051fffd43d4c24c7",
+          "media_type": "text/csv",
+          "owner_get": true,
+          "other_uuid_get_404": true
+        },
+        {
+          "file_id": "e35305f5-e657-432f-a60e-c334e2637446",
+          "name": "summary.xlsx",
+          "size_bytes": 4883,
+          "sha256": "64a34bdf58013b3692fcbb06caf3a4fa2b06d60b4b1e7e5508957359d8cde525",
+          "media_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "owner_get": true,
+          "other_uuid_get_404": true
+        }
+      ],
+      "limitations": [
+        "Stored DB cleanup proof checked; current Actor state must be inspected separately.",
+        "XLSX metadata/hash/ZIP signature checked; cell content must be checked separately.",
+        "Negative private get used a fresh nonexistent UUID, not an active second-user login."
+      ],
+      "checks": [
+        "no_arguments_expected",
+        "seed_size",
+        "seed_scope",
+        "seed_scenario",
+        "seed_fixed_inputs",
+        "explicit_auth_config",
+        "exact_root_owner_workspace",
+        "root_pinned_configuration",
+        "isolated_single_root",
+        "scoped_inspect_targets",
+        "root_succeeded",
+        "exact_operation_counts",
+        "root_zero_cost_and_reservation",
+        "active_time_bound",
+        "input_refs_unchanged",
+        "checkpoints_and_final_reply",
+        "exact_three_runs",
+        "runtime_code_runtime_order",
+        "handoff_chain",
+        "run_id_shape",
+        "run_resolved_success",
+        "run_pinned_image",
+        "run_cost_cleanup",
+        "exact_effects",
+        "no_unknown_effect",
+        "stored_deny_and_stop",
+        "stored_code_host_cleanup",
+        "runtime_has_no_code_proof",
+        "slot_free",
+        "ledger_exact_operations",
+        "ledger_known_no_paid_send",
+        "synthetic_usage",
+        "output_names",
+        "private_output_metadata",
+        "output_bytes_and_hash",
+        "csv_exact_bytes",
+        "other_owner_private_get_rejected",
+        "xlsx_zip_signature"
+      ],
+      "scenario": "csv-xlsx",
+      "inspect": {
+        "runtime": [
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": null,
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-2ddc8a45871cb0fe",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          },
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": null,
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-fbb94a2c1cf64c7e",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          }
+        ],
+        "code": [
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": {
+              "actor": "ax-run-182fa7078eba4be7",
+              "actor_uid": "fa02431e-b746-4384-a879-59e9d12e134b",
+              "worker_uid": "312925c4-01a3-489f-9d0f-b0eaa7c80d9a",
+              "generation": "1552eb34-6969-402f-a353-3748460d0d81",
+              "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+              "profile": "host-quota-8m-v1",
+              "cleaned": true
+            },
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-182fa7078eba4be7",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          }
+        ]
+      },
+      "sources": [
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe5/results-kkiMiV/result.json",
+          "sha256": "714ed0b0f7515c766b21d5f1f9ab0c86af378073b8000d1093b4fea2aa6aa25b"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe5/results-kkiMiV/runtime-inspect.jsonl",
+          "sha256": "b45a42e6083d75da884132860ee7be9bc23edfcf03ccb677b1217d3f8dbab7fc"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe5/results-kkiMiV/code-inspect.jsonl",
+          "sha256": "a68f0de320b05844607c4999c3a862455ae546f92f2cbbc4b41b63e605f48046"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe5/seed.json",
+          "sha256": "fa04f792456a08e7dc62f562d3df41d9ed9ed0952f6a7239aacb50f0e7505890"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe5/run.stdout",
+          "sha256": "54ffd3754fb50f4587b85b3c63f1de3866fbe33c511b71ce0e650b7b5b417d42"
+        }
+      ],
+      "xlsx_cells": {
+        "xlsx_rows": [
+          [
+            "source",
+            "total"
+          ],
+          [
+            "sales.csv",
+            300
+          ],
+          [
+            "sample.xlsx",
+            30
+          ]
+        ],
+        "verified": true
+      },
+      "rootfs_mode": {
+        "actor": "ax-run-182fa7078eba4be7",
+        "actor_uid": "fa02431e-b746-4384-a879-59e9d12e134b",
+        "worker": {
+          "nodeName": "ax-local-control-plane",
+          "worker": {
+            "name": "312925c4-01a3-489f-9d0f-b0eaa7c80d9a"
+          },
+          "workerNamespace": "ax-demo",
+          "workerPod": "ax-local-79fc684c8d-xxt7g",
+          "workerPodIp": "10.244.0.66",
+          "workerPodUid": "312925c4-01a3-489f-9d0f-b0eaa7c80d9a",
+          "workerPool": "ax-local"
+        },
+        "host_pid": 1337805,
+        "rootfs_mode_uid_gid": "700 0 0"
+      }
+    },
+    {
+      "ok": true,
+      "observed_at": "2026-10-07T17:18:53.862Z",
+      "external_model": false,
+      "expected_root": "e84bda14-c725-4cfb-826d-7e56bd9c9b54",
+      "scenario": "copy-8m-1",
+      "schema": "ax_workbench_probe_2108cd007790438d",
+      "root": {
+        "id": "e84bda14-c725-4cfb-826d-7e56bd9c9b54",
+        "state": "succeeded",
+        "revision": 4,
+        "mode": "preview",
+        "model_calls": 2,
+        "tool_calls": 2,
+        "python_calls": 1,
+        "active_ms": 144968,
+        "estimated_usd": 0,
+        "reserved_usd": 0
+      },
+      "runs": [
+        {
+          "run_id": "ax-run-1e0b53c7710a0d4b",
+          "sequence": 1,
+          "kind": "runtime",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        },
+        {
+          "run_id": "ax-run-02c9453a71584156",
+          "sequence": 2,
+          "kind": "python",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        },
+        {
+          "run_id": "ax-run-2c2cc843a16542f4",
+          "sequence": 3,
+          "kind": "runtime",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        }
+      ],
+      "host_cleanup": {
+        "actor": "ax-run-02c9453a71584156",
+        "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+        "cleaned": true,
+        "profile": "host-quota-8m-v1",
+        "actor_uid": "dc253988-f1a1-4eb1-81ab-0f78998b6a35",
+        "generation": "8ff4b5bc-578c-45eb-bbe1-3c9ecc5a3e76",
+        "worker_uid": "0a06d1c4-de9c-44a2-a622-274ace811301"
+      },
+      "ledger": {
+        "model_operations": 2,
+        "tool_operations": 2,
+        "settled_operations": 4,
+        "actual_usd": 0,
+        "reserved_usd": 0,
+        "generation_started": false
+      },
+      "outputs": [
+        {
+          "file_id": "d024fa0f-08b3-428b-9e21-195be0adaa5e",
+          "name": "copy-output-1.csv",
+          "size_bytes": 8388608,
+          "sha256": "3480e36fd09a0e1fb7fc22645b44a0332ee0c2fd9cd6f62ef44fd76522b708fe",
+          "chunks": 256,
+          "owner_get": true,
+          "other_uuid_get_404": true
+        }
+      ],
+      "transfer": {
+        "input_bytes": 8388608,
+        "output_bytes": 8388608,
+        "input_chunks": 256,
+        "output_chunks": 256,
+        "bytes_saved": false
+      },
+      "limitations": [
+        "Stored DB cleanup proof checked; current Actor state must be inspected separately.",
+        "Negative private get used a fresh nonexistent UUID, not an active second-user login."
+      ],
+      "checks": [
+        "explicit_absolute_seed_and_root",
+        "seed_regular_file_size",
+        "seed_size",
+        "seed_scope",
+        "seed_fixed_scenario",
+        "seed_fixture_binding",
+        "seed_input_count",
+        "seed_fixed_input",
+        "fixed_generation_matches_go_hash",
+        "fixed_total_8m",
+        "explicit_auth_config",
+        "exact_root_owner_workspace",
+        "root_pinned_configuration",
+        "isolated_single_root",
+        "scoped_inspect_targets",
+        "root_succeeded",
+        "root_identity_and_revision",
+        "exact_operation_counts",
+        "root_zero_cost_and_reservation",
+        "active_time_bound",
+        "input_refs_unchanged",
+        "checkpoints_and_final_reply",
+        "exact_three_runs",
+        "runtime_code_runtime_order",
+        "seed_initial_run_binding",
+        "handoff_chain",
+        "run_id_shape",
+        "run_resolved_success",
+        "run_pinned_image",
+        "run_cost_cleanup",
+        "exact_effects",
+        "no_unknown_effect",
+        "stored_deny_and_stop",
+        "stored_code_host_cleanup",
+        "runtime_has_no_code_proof",
+        "slot_free",
+        "ledger_exact_operations",
+        "ledger_known_no_paid_send",
+        "synthetic_usage",
+        "output_count",
+        "private_input_metadata",
+        "exact_chunk_length",
+        "input_actual_bytes_and_hash",
+        "other_owner_private_get_rejected",
+        "output_fixed_copy_reference",
+        "private_output_metadata",
+        "output_actual_bytes_and_hash"
+      ],
+      "inspect": {
+        "runtime": [
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": null,
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-1e0b53c7710a0d4b",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          },
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": null,
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-2c2cc843a16542f4",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          }
+        ],
+        "code": [
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": {
+              "actor": "ax-run-02c9453a71584156",
+              "actor_uid": "dc253988-f1a1-4eb1-81ab-0f78998b6a35",
+              "worker_uid": "0a06d1c4-de9c-44a2-a622-274ace811301",
+              "generation": "8ff4b5bc-578c-45eb-bbe1-3c9ecc5a3e76",
+              "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+              "profile": "host-quota-8m-v1",
+              "cleaned": true
+            },
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-02c9453a71584156",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          }
+        ]
+      },
+      "sources": [
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/results-8m-rfUkac/result.json",
+          "sha256": "9cafbf731433ffe1c9048573b0e8b6a36c9cd44b90598e24686e2c0c6a01559c"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/results-8m-rfUkac/runtime-inspect.jsonl",
+          "sha256": "6e3076084ce72f96f3b93f0ebd580b1c96514075de9137c050b7c2cc8a657493"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/results-8m-rfUkac/code-inspect.jsonl",
+          "sha256": "4b0b1aece2f014309b44e1c0694037e185a81650f0e11c8401c40ec945dbe21d"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe6/seed.json",
+          "sha256": "5e96a5013c5c00fbc4a285466355e2555f03de4ac12af0b14fdbc624a874dcef"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe6/run.stdout",
+          "sha256": "54ffd3754fb50f4587b85b3c63f1de3866fbe33c511b71ce0e650b7b5b417d42"
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "observed_at": "2026-10-07T17:23:44.766Z",
+      "external_model": false,
+      "expected_root": "dc3f5217-8b9d-4ef5-94ce-5c095b8279ba",
+      "scenario": "copy-8m-4",
+      "schema": "ax_workbench_probe_2cce9e0812e3748e",
+      "root": {
+        "id": "dc3f5217-8b9d-4ef5-94ce-5c095b8279ba",
+        "state": "succeeded",
+        "revision": 4,
+        "mode": "preview",
+        "model_calls": 2,
+        "tool_calls": 2,
+        "python_calls": 1,
+        "active_ms": 153213,
+        "estimated_usd": 0,
+        "reserved_usd": 0
+      },
+      "runs": [
+        {
+          "run_id": "ax-run-0bd769cde4487c25",
+          "sequence": 1,
+          "kind": "runtime",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        },
+        {
+          "run_id": "ax-run-20d1d62d07454cd4",
+          "sequence": 2,
+          "kind": "python",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        },
+        {
+          "run_id": "ax-run-e4f31a1d2ccd4530",
+          "sequence": 3,
+          "kind": "runtime",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        }
+      ],
+      "host_cleanup": {
+        "actor": "ax-run-20d1d62d07454cd4",
+        "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+        "cleaned": true,
+        "profile": "host-quota-8m-v1",
+        "actor_uid": "94775d44-d94a-43a6-8cfb-e86f8f87358f",
+        "generation": "8ff4b5bc-578c-45eb-bbe1-3c9ecc5a3e76",
+        "worker_uid": "0a06d1c4-de9c-44a2-a622-274ace811301"
+      },
+      "ledger": {
+        "model_operations": 2,
+        "tool_operations": 2,
+        "settled_operations": 4,
+        "actual_usd": 0,
+        "reserved_usd": 0,
+        "generation_started": false
+      },
+      "outputs": [
+        {
+          "file_id": "b4cdc3bb-a09e-4c72-aa4e-fecdb5836b79",
+          "name": "copy-output-1.csv",
+          "size_bytes": 1048577,
+          "sha256": "e3888e3f3a005c89dfc8b9ace9330602fc2ddc0b7ea37f777b1c3a58d3c7bd57",
+          "chunks": 33,
+          "owner_get": true,
+          "other_uuid_get_404": true
+        },
+        {
+          "file_id": "0d5e6e62-ab62-42bb-a3a4-578158e43cc4",
+          "name": "copy-output-2.csv",
+          "size_bytes": 2097155,
+          "sha256": "9dccddd4b541c44b1a02bb92152155d0cc64435925bb1e126b2d70495f655edb",
+          "chunks": 65,
+          "owner_get": true,
+          "other_uuid_get_404": true
+        },
+        {
+          "file_id": "d6b77a50-1f3b-4b51-b54a-86b252f4dadd",
+          "name": "copy-output-3.csv",
+          "size_bytes": 3145733,
+          "sha256": "c2f3640378220cf9790b5ca0ad29ba5dcf36e3e246b80f9b298654be3f8c1542",
+          "chunks": 97,
+          "owner_get": true,
+          "other_uuid_get_404": true
+        },
+        {
+          "file_id": "08798ae8-2b47-4bfd-aa3d-aa34248d42ca",
+          "name": "copy-output-4.csv",
+          "size_bytes": 2097143,
+          "sha256": "55e281daef11c8c13845a4f8825613a8eaf8eab5eaf680443a20109feb585c06",
+          "chunks": 64,
+          "owner_get": true,
+          "other_uuid_get_404": true
+        }
+      ],
+      "transfer": {
+        "input_bytes": 8388608,
+        "output_bytes": 8388608,
+        "input_chunks": 259,
+        "output_chunks": 259,
+        "bytes_saved": false
+      },
+      "limitations": [
+        "Stored DB cleanup proof checked; current Actor state must be inspected separately.",
+        "Negative private get used a fresh nonexistent UUID, not an active second-user login."
+      ],
+      "checks": [
+        "explicit_absolute_seed_and_root",
+        "seed_regular_file_size",
+        "seed_size",
+        "seed_scope",
+        "seed_fixed_scenario",
+        "seed_fixture_binding",
+        "seed_input_count",
+        "seed_fixed_input",
+        "fixed_generation_matches_go_hash",
+        "fixed_total_8m",
+        "explicit_auth_config",
+        "exact_root_owner_workspace",
+        "root_pinned_configuration",
+        "isolated_single_root",
+        "scoped_inspect_targets",
+        "root_succeeded",
+        "root_identity_and_revision",
+        "exact_operation_counts",
+        "root_zero_cost_and_reservation",
+        "active_time_bound",
+        "input_refs_unchanged",
+        "checkpoints_and_final_reply",
+        "exact_three_runs",
+        "runtime_code_runtime_order",
+        "seed_initial_run_binding",
+        "handoff_chain",
+        "run_id_shape",
+        "run_resolved_success",
+        "run_pinned_image",
+        "run_cost_cleanup",
+        "exact_effects",
+        "no_unknown_effect",
+        "stored_deny_and_stop",
+        "stored_code_host_cleanup",
+        "runtime_has_no_code_proof",
+        "slot_free",
+        "ledger_exact_operations",
+        "ledger_known_no_paid_send",
+        "synthetic_usage",
+        "output_count",
+        "private_input_metadata",
+        "exact_chunk_length",
+        "input_actual_bytes_and_hash",
+        "other_owner_private_get_rejected",
+        "output_fixed_copy_reference",
+        "private_output_metadata",
+        "output_actual_bytes_and_hash"
+      ],
+      "inspect": {
+        "runtime": [
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": null,
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-0bd769cde4487c25",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          },
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": null,
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-e4f31a1d2ccd4530",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          }
+        ],
+        "code": [
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": {
+              "actor": "ax-run-20d1d62d07454cd4",
+              "actor_uid": "94775d44-d94a-43a6-8cfb-e86f8f87358f",
+              "worker_uid": "0a06d1c4-de9c-44a2-a622-274ace811301",
+              "generation": "8ff4b5bc-578c-45eb-bbe1-3c9ecc5a3e76",
+              "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+              "profile": "host-quota-8m-v1",
+              "cleaned": true
+            },
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-20d1d62d07454cd4",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          }
+        ]
+      },
+      "sources": [
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/results-8m-wZ5Q85/result.json",
+          "sha256": "d5322152cbdbef638021e3579b7a4ec4bd623f2103dec6f438d3584dddc3148a"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/results-8m-wZ5Q85/runtime-inspect.jsonl",
+          "sha256": "d5bbbf24edcafde32a78b79168c4629a24e15e1741861ddf2792de5929421642"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/results-8m-wZ5Q85/code-inspect.jsonl",
+          "sha256": "668c7a410b41db9a0eb74e030995e0247e495a221eaa7466776123cf98d5eeaa"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe7/seed.json",
+          "sha256": "94a8106f8c7cad9ed0b4beb11e963c8fa9a7ff8b1d0579b2aedaf315a218928f"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe7/run.stdout",
+          "sha256": "54ffd3754fb50f4587b85b3c63f1de3866fbe33c511b71ce0e650b7b5b417d42"
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "observed_at": "2026-10-07T17:26:02.333Z",
+      "external_model": false,
+      "expected_root": "6e9bda18-8328-49ae-9781-30699bb08abb",
+      "scenario": "isolation-boundary",
+      "schema": "ax_workbench_probe_e1cb3b00b894e386",
+      "root": {
+        "id": "6e9bda18-8328-49ae-9781-30699bb08abb",
+        "state": "succeeded",
+        "revision": 4,
+        "mode": "preview",
+        "model_calls": 2,
+        "tool_calls": 2,
+        "python_calls": 1,
+        "active_ms": 66426,
+        "estimated_usd": 0,
+        "reserved_usd": 0
+      },
+      "runs": [
+        {
+          "run_id": "ax-run-523ea716285130fa",
+          "sequence": 1,
+          "kind": "runtime",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        },
+        {
+          "run_id": "ax-run-8d56a7a8a3364dd5",
+          "sequence": 2,
+          "kind": "python",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        },
+        {
+          "run_id": "ax-run-d09eec2e101d4794",
+          "sequence": 3,
+          "kind": "runtime",
+          "phase": "finished",
+          "job_state": "done",
+          "resolved": true
+        }
+      ],
+      "host_cleanup": {
+        "actor": "ax-run-8d56a7a8a3364dd5",
+        "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+        "cleaned": true,
+        "profile": "host-quota-8m-v1",
+        "actor_uid": "7e8cae17-aa21-4a99-a890-448a22aec895",
+        "generation": "8ff4b5bc-578c-45eb-bbe1-3c9ecc5a3e76",
+        "worker_uid": "0a06d1c4-de9c-44a2-a622-274ace811301"
+      },
+      "ledger": {
+        "model_operations": 2,
+        "tool_operations": 2,
+        "settled_operations": 4,
+        "actual_usd": 0,
+        "reserved_usd": 0,
+        "generation_started": false
+      },
+      "inputs": [
+        {
+          "file_id": "dd32ea28-6859-49e6-9ca7-1cffe3ce720c",
+          "name": "sales.csv",
+          "size_bytes": 15,
+          "sha256": "ff0174ca0f09ea443111c05063a51d00cee3dc79d0e836a2f9965e4b7198ed1b",
+          "chunks": 1,
+          "owner_get": true,
+          "other_uuid_get_404": true
+        }
+      ],
+      "outputs": [
+        {
+          "file_id": "503a347f-6416-44b6-91cb-86e904b96f88",
+          "name": "boundary.csv",
+          "size_bytes": 186,
+          "sha256": "6cd526de64285084849bb028668f3906f52a357d03c9f9c1d3d4640db8885d0c",
+          "chunks": 1,
+          "owner_get": true,
+          "other_uuid_get_404": true
+        }
+      ],
+      "transfer": {
+        "input_bytes": 15,
+        "output_bytes": 186,
+        "input_chunks": 1,
+        "output_chunks": 1,
+        "bytes_saved": false
+      },
+      "limitations": [
+        "Stored DB cleanup proof checked; current Actor state must be inspected separately.",
+        "Negative private get used a fresh nonexistent UUID, not an active second-user login.",
+        "The output records untrusted fixed-code assertions. Actual capability=0 and NNP=1 rely on trusted bootstrap checks before seccomp; the probe checks privilege-change denial."
+      ],
+      "checks": [
+        "explicit_absolute_seed_and_root",
+        "seed_regular_file_size",
+        "seed_size",
+        "seed_scope",
+        "seed_fixed_scenario",
+        "seed_fixture_binding",
+        "seed_input_count",
+        "seed_fixed_input",
+        "fixed_content_matches_go_hash",
+        "explicit_auth_config",
+        "exact_root_owner_workspace",
+        "root_pinned_configuration",
+        "isolated_single_root",
+        "scoped_inspect_targets",
+        "root_succeeded",
+        "root_identity_and_revision",
+        "exact_operation_counts",
+        "root_zero_cost_and_reservation",
+        "active_time_bound",
+        "input_refs_unchanged",
+        "checkpoints_and_final_reply",
+        "exact_three_runs",
+        "runtime_code_runtime_order",
+        "seed_initial_run_binding",
+        "handoff_chain",
+        "run_id_shape",
+        "run_resolved_success",
+        "run_pinned_image",
+        "run_cost_cleanup",
+        "exact_effects",
+        "no_unknown_effect",
+        "stored_deny_and_stop",
+        "stored_code_host_cleanup",
+        "runtime_has_no_code_proof",
+        "slot_free",
+        "ledger_exact_operations",
+        "ledger_known_no_paid_send",
+        "synthetic_usage",
+        "output_count",
+        "private_input_metadata",
+        "exact_chunk_length",
+        "fixed_content_exact_bytes",
+        "input_actual_bytes_and_hash",
+        "other_owner_private_get_rejected",
+        "output_fixed_boundary_reference",
+        "private_output_metadata",
+        "output_actual_bytes_and_hash"
+      ],
+      "inspect": {
+        "runtime": [
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": null,
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-523ea716285130fa",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          },
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": null,
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-d09eec2e101d4794",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          }
+        ],
+        "code": [
+          {
+            "actor_observed": true,
+            "actor_stopped": true,
+            "ax_suspended": true,
+            "code_cleanup": {
+              "actor": "ax-run-8d56a7a8a3364dd5",
+              "actor_uid": "7e8cae17-aa21-4a99-a890-448a22aec895",
+              "worker_uid": "0a06d1c4-de9c-44a2-a622-274ace811301",
+              "generation": "8ff4b5bc-578c-45eb-bbe1-3c9ecc5a3e76",
+              "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+              "profile": "host-quota-8m-v1",
+              "cleaned": true
+            },
+            "egress_denied": true,
+            "egress_observed": true,
+            "run_id": "ax-run-8d56a7a8a3364dd5",
+            "task_observed": true,
+            "verified_stopped_and_denied": true,
+            "worker_unassigned": true
+          }
+        ]
+      },
+      "sources": [
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/results-boundary-6iKMA5/result.json",
+          "sha256": "b075b40f3b2f0aa7ba757ebb523799cde588cd5c8f3ef3f3e031c28761a503f4"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/results-boundary-6iKMA5/runtime-inspect.jsonl",
+          "sha256": "77f3981bd7a134b60c7e59ace7f74fb27d71e3dce50d0ec6e9a0c3ad1acca427"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/results-boundary-6iKMA5/code-inspect.jsonl",
+          "sha256": "52ceffbaa284ad7d2f00af8cfafbe1a6ff7075eeebba40fa1755616a6924fe1f"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe8/seed.json",
+          "sha256": "1a69ac5e01fb01bd3246f72e031b35790ddd051add0ceea3c5b04defeac58fe8"
+        },
+        {
+          "path": "ax-local/.state/workbench-build-arg973la/probe8/run.stdout",
+          "sha256": "54ffd3754fb50f4587b85b3c63f1de3866fbe33c511b71ce0e650b7b5b417d42"
+        }
+      ]
+    }
+  ]
+}

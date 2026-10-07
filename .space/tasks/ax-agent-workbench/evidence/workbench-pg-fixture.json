@@ -1,0 +1,88 @@
+{
+  "claim": {
+    "kind": "execute",
+    "image": "localhost:5001/runner@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "result": null,
+    "run_id": "ax-run-6e20f597cc5ca153",
+    "effects": {},
+    "request": {
+      "run_id": "ax-run-6e20f597cc5ca153",
+      "adapter": "interactive",
+      "root_id": "56717915-734b-44dd-9ea4-4ec008e19d18",
+      "schema_version": 2,
+      "descriptor_sha256": "16dfe567d66ddaf61c097c08b610842dc8ebaf227b4b1953f39137b8208579bb",
+      "checkpoint_revision": 1
+    },
+    "manifest": {
+      "kind": "Task",
+      "spec": {
+        "debug": true,
+        "image": "localhost:5001/runner@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "command": [
+          "python3",
+          "/opt/ax-task/runner.py",
+          "wait"
+        ]
+      },
+      "metadata": {
+        "name": "ax-run-6e20f597cc5ca153",
+        "atespace": "ax-runtime"
+      },
+      "apiVersion": "ax.io/v1alpha1"
+    },
+    "workbench": {
+      "mode": "preview",
+      "version": 2,
+      "descriptor": {
+        "code": null,
+        "inputs": [],
+        "history": [],
+        "outputs": [],
+        "root_id": "56717915-734b-44dd-9ea4-4ec008e19d18",
+        "version": 2,
+        "instruction": "集計",
+        "code_profile": null,
+        "definition_manifest": [
+          {
+            "id": "b766ee10-4641-48a7-8cc3-180b7250699c",
+            "kind": "agent",
+            "sha256": "4069781aeec994184d37af699290e5a35e89e2a584d01ebc11fce4c1c3f605b9",
+            "size_bytes": 135
+          },
+          {
+            "id": "e06780c8-76d2-4068-b45b-3c65f53f268f",
+            "kind": "skill",
+            "sha256": "5933cb14ab0313b6a1687dbe3488541426f1d82234bcf3d7253c04df5c66a647",
+            "size_bytes": 78
+          }
+        ]
+      },
+      "profile_id": "preview-v1",
+      "attempt_kind": "runtime",
+      "remaining_ms": 300000,
+      "execution_policy": "workbench-trial-2026-10-07-v1"
+    },
+    "generation": 1,
+    "lease_until": "2026-10-07T13:50:45.503069+00:00"
+  },
+  "definition_chunks": [
+    {
+      "kind": "agent",
+      "index": 0,
+      "sha256": "4069781aeec994184d37af699290e5a35e89e2a584d01ebc11fce4c1c3f605b9",
+      "size_bytes": 135,
+      "version_id": "b766ee10-4641-48a7-8cc3-180b7250699c",
+      "chunk_count": 1,
+      "content_base64": "eyJhbGxvd2VkX3Rvb2xzIjpbInB5dGhvbiJdLCJpbnN0cnVjdGlvbnMiOiLpm4boqIjjgZnjgosiLCJuYW1lIjoi5ouF5b2TIiwic2tpbGxfdmVyc2lvbl9pZHMiOlsiZTA2NzgwYzgtNzZkMi00MDY4LWI0NWItM2M2NWY1M2YyNjhmIl19"
+    },
+    {
+      "kind": "skill",
+      "index": 0,
+      "sha256": "5933cb14ab0313b6a1687dbe3488541426f1d82234bcf3d7253c04df5c66a647",
+      "size_bytes": 78,
+      "version_id": "e06780c8-76d2-4068-b45b-3c65f53f268f",
+      "chunk_count": 1,
+      "content_base64": "eyJkZXNjcmlwdGlvbiI6IumbhuioiCIsImZpbGVzIjpbXSwiaW5zdHJ1Y3Rpb25zIjoiQ1NW44KS6ZuG6KiIIiwibmFtZSI6ImNzdiJ9"
+    }
+  ]
+}
