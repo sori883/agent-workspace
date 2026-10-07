@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 32,
+  "revision": 37,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "parent",
     "session": "runtime-impl-1"
   },
   "createdAt": "2026-10-07T06:37:16.731Z",
-  "updatedAt": "2026-10-07T07:44:42.060Z",
+  "updatedAt": "2026-10-07T07:51:20.282Z",
   "units": [
     {
       "id": "runtime-impl",
@@ -51,24 +51,42 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 2,
+      "version": 7,
       "contractVersion": 1,
       "attempts": [
         {
           "number": 1,
-          "state": "running",
+          "state": "completed",
           "stages": {
             "implement": {
               "selection": "execute",
-              "reason": "利用者の実装依頼",
-              "state": "pending",
-              "refs": []
+              "reason": "AX内の2区間と本人限定UI/成果物、停止/台帳、失敗復旧、旧経路、独立レビューを確認しPR18へ集約",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-runtime/verification.md",
+                  "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+                  "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+                }
+              ]
             },
             "verify": {
               "selection": "execute",
-              "reason": "費用・本人・停止の境界を変更",
-              "state": "pending",
-              "refs": []
+              "reason": "AX内の2区間と本人限定UI/成果物、停止/台帳、失敗復旧、旧経路、独立レビューを確認しPR18へ集約",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-runtime/verification.md",
+                  "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+                  "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+                }
+              ]
             }
           },
           "inputs": {
@@ -83,7 +101,7 @@
         }
       ],
       "currentAttempt": 1,
-      "currentSubmission": null,
+      "currentSubmission": "c9330c60-0ca0-40d0-8188-edaaa3b0adf1",
       "contractHistory": []
     },
     {
@@ -980,6 +998,323 @@
       "reusedFrom": null,
       "reuseReason": "",
       "at": "2026-10-07T07:43:43.227Z"
+    },
+    {
+      "id": "6dd591a2-3f3f-4a2f-8590-b1a2fb829644",
+      "unit": "runtime-impl",
+      "attempt": 1,
+      "condition": "verified",
+      "target": {
+        "id": "artifact",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+            "digest": "28f879ae22c81f883240d14478d284c9338f2f5a2179829c651b50a345aab61e"
+          },
+          {
+            "ref": ".space/babel/decisions/systems/ax/index.md",
+            "digest": "95908322a10a01ab2e235bfe95717b29cc97b7d5f7bac1790727fb96146c2ebf"
+          },
+          {
+            "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+            "digest": "3d51373e8c907852916ddca8014f20fa9f37bde94de3143fb2a975b890e3fd42"
+          },
+          {
+            "ref": ".space/babel/knowledge/index.md",
+            "digest": "e8b371060a0ee2130e2bd3c30061dcb948b0d1f38e40381997f4bcaf4f7d7359"
+          },
+          {
+            "ref": ".space/babel/log.md",
+            "digest": "3263d62ddc0ff22ab8be1fa5ff5e9092f9a8e48517c63e461b115644f113dac5"
+          },
+          {
+            "ref": "ax-local/patches/Dockerfile.ax-server",
+            "digest": "4096bc941b9c81d588ef2dd1cc8d4c1c4dc5335985a49f6946a4b587cddf336c"
+          },
+          {
+            "ref": "ax-local/patches/README.md",
+            "digest": "52da3d745aaa211bf4c30b697b158b92c3169b16c610f153922eb8370c0a5860"
+          },
+          {
+            "ref": "ax-local/patches/credential-free-atespace.patch",
+            "digest": "866b3342b13db166206ddd4f51e3898e6bd7a79d750a30a2cacbb184db17a767"
+          },
+          {
+            "ref": "ax-local/patches/credential_free_test.go.txt",
+            "digest": "6c91810ee5544cb3a948c78085c9aecdd4a63d6e3587c567baebe058a1eae610"
+          },
+          {
+            "ref": "ax-local/patches/prepare-credential-free.sh",
+            "digest": "1206571d66db78487a06a105c15f9fd1d43af6f2652a756bb67b307461097b20"
+          },
+          {
+            "ref": "ax-local/patches/verify-credential-free.sh",
+            "digest": "26e271f7ea4fbd4baa51965d467011d403facfdabac1aa85629e487b98282208"
+          },
+          {
+            "ref": "ax-local/task_runtime/adapters/interactive.py",
+            "digest": "c4fa2eaa187404aa6b1a4d5be1f065e533a06581de5586dabeede9a1c4f1fc1a"
+          },
+          {
+            "ref": "ax-local/task_runtime/interactive_protocol.py",
+            "digest": "4f3e55eacce59d8452f51317ab27398855ad54ecc3a10e707c7b6bc98a75cf1c"
+          },
+          {
+            "ref": "ax-local/task_runtime/mailbox.py",
+            "digest": "52c9c4cdd5d02a58394f1fef23f7d1ef5b3fb2dff9a163211c7cf639a0660586"
+          },
+          {
+            "ref": "ax-local/task_runtime/protocol.py",
+            "digest": "a6652e5e223c7a827cd049875a34087f3b7595ff504c3d23d2b3575b97aac5e6"
+          },
+          {
+            "ref": "ax-local/task_runtime/runner.py",
+            "digest": "a6bffcb6bc9eeadd5ec629cea9a62e6dde3529eb4fe55202c296f318196ec497"
+          },
+          {
+            "ref": "ax-local/task_runtime/skills/brief-v1/SKILL.md",
+            "digest": "d394bcd09724ff69fd758a42247caa323626525316f59c989346ddc3ee8f64fe"
+          },
+          {
+            "ref": "ax-local/tests/test_interactive.py",
+            "digest": "e6444f0a5e6352183a32d6f06d5307fe19b4a264e81715f9ccdbf291dca5c351"
+          },
+          {
+            "ref": "ax-local/versions.json",
+            "digest": "47fa39178be006d06b2deeac435b696d348fc1a05dd9365f1bf86021abfc53ef"
+          },
+          {
+            "ref": "docs/agent-runtime-design.md",
+            "digest": "c1c25424b85f8353d4a7cd881596ee18fb7aec682a09baea82d88f5643943680"
+          },
+          {
+            "ref": "execution/README.md",
+            "digest": "8197d68c842582470314afe4d6a005249ecc1f3b1e0f681f99b1246b3dd5f79e"
+          },
+          {
+            "ref": "execution/cmd/ax-controller/main.go",
+            "digest": "465b57e729fd127432abd6bd7fbd3feaf79c3f77bb5a4e577f6e7eb28bff67a0"
+          },
+          {
+            "ref": "execution/cmd/inspect/main.go",
+            "digest": "d011654501628a05fe39f8dd1896e8449d2be08b0dd4dbb0593c24a1beb7be03"
+          },
+          {
+            "ref": "execution/cmd/inspect/main_test.go",
+            "digest": "3d81a4c6655f4d8516960c663142554d7958838b6e2a59f774c6e216cd8719ae"
+          },
+          {
+            "ref": "execution/controller/controller.go",
+            "digest": "d709e090c1061257aaef481860239ae1abaf7f2f620f9b785b8698f8489b8ce4"
+          },
+          {
+            "ref": "execution/controller/interactive.go",
+            "digest": "7296e0c0fefe663971015050d22ef9fb16178b551a561d64f359be8884ff5963"
+          },
+          {
+            "ref": "execution/controller/interactive_test.go",
+            "digest": "bc233bb44eb3095bd658636d0f127865065bc18731c0be4facd332490198f7f6"
+          },
+          {
+            "ref": "execution/controller/postgres.go",
+            "digest": "4e4ebbdfc0bfafcf7a4a41b2cb26cd37515daadfd76a726152aca4a259b7ee4a"
+          },
+          {
+            "ref": "execution/controller/postgres_test.go",
+            "digest": "571c9202da1d666f399eb737db9ea0e7a3a3f9caf9078bd1381b8f2e135d3d7a"
+          },
+          {
+            "ref": "execution/gateway/stub.go",
+            "digest": "39593f61d516d6c79d38001a8b5372e989c7074e0055c6d2a33160a2915b5a25"
+          },
+          {
+            "ref": "execution/gateway/stub_test.go",
+            "digest": "1d8f9a943a6922578868b395f09ce9c16b7e957fa58179daa9b8a3ee155b5922"
+          },
+          {
+            "ref": "execution/native/adapter.go",
+            "digest": "c53dee2d0a151c06cfe89c6c650266d6e0753516b1593f5c277c2d75fa8c3ddd"
+          },
+          {
+            "ref": "execution/native/mailbox.go",
+            "digest": "44fe004ed14a98f8c29f36ccdb5b64a8357593c2fe3aed2a3cfbd005649508f9"
+          },
+          {
+            "ref": "execution/native/mailbox_test.go",
+            "digest": "6951b6fd6c0d946836da92ffc1a097613f100bebe5d95fca41e83e6b64b140a0"
+          },
+          {
+            "ref": "execution/native/protocol.go",
+            "digest": "82807e5d8097cb35a1ecb0e6f11e01980696b8d58f48ae75af0d420552dd971f"
+          },
+          {
+            "ref": "execution/native/runtime_template.go",
+            "digest": "b5bb1e2d14a0af9bf108b9f8a6346ee96c4ec14aa9c0ff3c2de6a17fc5603c39"
+          },
+          {
+            "ref": "execution/settings/settings.go",
+            "digest": "5907e5567948a292a9f32b6ec3c28e16597dfa581481b63b38b2de181442fe81"
+          },
+          {
+            "ref": "web/api/agent-service.ts",
+            "digest": "52c8a68fbd7cb1ba873f656f4a664fb498b716588940b609df91a80fb598c7a3"
+          },
+          {
+            "ref": "web/api/app.ts",
+            "digest": "cf6116eac314b91494761dbf31062bf0211398b03d91b57241970b4b172ef6b0"
+          },
+          {
+            "ref": "web/api/runtime.ts",
+            "digest": "b1d9c53da57f9a92252a84464e8127dab43abf1acc784e67bfb9b593a055ab03"
+          },
+          {
+            "ref": "web/app/components/workspace.tsx",
+            "digest": "448bc20ac4c9b311d2c79bfec7358e6e031c61d1f463290b5445b6b4fa3480b8"
+          },
+          {
+            "ref": "web/app/lib/agents.server.ts",
+            "digest": "48b2423b158ad879c83ced77b50a5394cb084aea268ef5ee7c55496f4ec56c5a"
+          },
+          {
+            "ref": "web/app/lib/auth.server.ts",
+            "digest": "00fedef914134c8ad03935ab55d42016c1b7be97492d6648f4d9de29f9335864"
+          },
+          {
+            "ref": "web/app/routes.ts",
+            "digest": "a74163d8a26bc1d9be2da1ef150af226d06cba1fe260acece28137d4fc34507b"
+          },
+          {
+            "ref": "web/app/routes/account.tsx",
+            "digest": "8a68546281de98d43e208c1714a7b4db34a2c233ea79267fcd3ee0784f8d000f"
+          },
+          {
+            "ref": "web/app/routes/agent.tsx",
+            "digest": "a90ff39d0e3a14386f133fa17c1c418226fbde004e0de870eb054e5026266e45"
+          },
+          {
+            "ref": "web/app/routes/chat.tsx",
+            "digest": "9a7d199429be9d0e2da7e92f532bf2a6d7cac00704ad2abb06ecba9d0d830879"
+          },
+          {
+            "ref": "web/app/routes/run-detail.tsx",
+            "digest": "2001f5a76fdee51693cf0adf39912c6b71e61545dc3493530fec5ffb0d24426a"
+          },
+          {
+            "ref": "web/data/agents.ts",
+            "digest": "bf33157a30243f063046b7098b010608417bdbdadda775bd816f778d685e99ee"
+          },
+          {
+            "ref": "web/data/db.ts",
+            "digest": "5af0e394fdc08078d779e0ad1dd8c695d98d1a2506d84da60b563bfab8bf4099"
+          },
+          {
+            "ref": "web/data/permissions.ts",
+            "digest": "30a23aec69b9b5baf773b6f01ec8be22b6642377535ed710c5c71fe57de93bf1"
+          },
+          {
+            "ref": "web/data/repository.ts",
+            "digest": "1ca08e2c2b299f2ed6895f207e30d7e6e02a1be20a9d04032c2561085776a6ef"
+          },
+          {
+            "ref": "web/data/schema-v4.sql",
+            "digest": "1f3e98fa7e5455aacd329a36f290eda772f456df91c80b1c625d2ff85055ccab"
+          },
+          {
+            "ref": "web/scripts/deploy-execution.ts",
+            "digest": "70ba84541d57d9a88fe85ed3baa13d83c19a0541eaab4fd0143f74f72a7d162b"
+          },
+          {
+            "ref": "web/scripts/verify-interactive-local.ts",
+            "digest": "ebdc316d9d9795e3c930e4bb35a9a130018aed3fbbe424a3c286c582f615f307"
+          },
+          {
+            "ref": "web/server/auth.ts",
+            "digest": "63b187f01bb591723c80c6f4154832ff8dcc40fdf576c6e64dd7014fd6a8fe24"
+          },
+          {
+            "ref": "web/server/data-migrate.ts",
+            "digest": "8291352b52315a5f6adad07256c0742efcdca4bed7051a1aff1b8b9874b27d93"
+          },
+          {
+            "ref": "web/server/login-destination.ts",
+            "digest": "d7a01e28e6f044473dfded5cef503a707c63bd4cc79386cf9a15d00ef8299b07"
+          },
+          {
+            "ref": "web/shared/access-token.ts",
+            "digest": "b707b1039ac74cdf96e17d33e2def54683e03e3fb2ae3138e3977196bed162db"
+          },
+          {
+            "ref": "web/shared/agent-contracts.ts",
+            "digest": "f792162ac04e549c3c4e515ea03d01ee915a3e79d5c3b30c477724225a573d88"
+          },
+          {
+            "ref": "web/shared/authentication.ts",
+            "digest": "28be19b7c0a619fd9620dce916133dc8d265b551d16b4b1fee48ccfce3e85844"
+          },
+          {
+            "ref": "web/shared/chat-contracts.ts",
+            "digest": "82a29d518b24c850746781875f4275c49db682dce6461de8589f59d7b29ae46f"
+          },
+          {
+            "ref": "web/shared/run-contracts.ts",
+            "digest": "5493aaeeff8fbb62018d91ad5589561afd12e7da066c00202c4577e8eac80b25"
+          },
+          {
+            "ref": "web/tests/agents.test.ts",
+            "digest": "cced9ac73d5b574732aaabfd84fe2ffb06baf318c04c204ddc6a6cb3f53a9785"
+          },
+          {
+            "ref": "web/tests/browser/agent-fixture.ts",
+            "digest": "fc03f16f03794a57cf116aa4e47286a52004db9911ca803787c5ef5a3e6ed9b2"
+          },
+          {
+            "ref": "web/tests/browser/agent.spec.ts",
+            "digest": "a36f4d648623648347cecab0c29ab89dce7b1ef0193ecc55615d69edb4aab1d1"
+          },
+          {
+            "ref": "web/tests/browser/serve.ts",
+            "digest": "8077aa88bc94a9282a75aa5c73af7c5a40eef561d92fa1bdb0544cc207a8699b"
+          },
+          {
+            "ref": "web/tests/data.test.ts",
+            "digest": "69cd15766bb9bdf0861d241634c902895784ae001d60a6faaba7066107b0b7ba"
+          },
+          {
+            "ref": "web/tests/runtime.test.ts",
+            "digest": "a46dab1a127b3fbf2800b7e5001c50029bf70d69204008681c34cb7f15b6dc25"
+          },
+          {
+            "ref": "web/tests/workspaces.test.ts",
+            "digest": "d3fed56c44ff37175d8f227a67a92cfdafa980d3461a5f9e508ef5e0a979de83"
+          }
+        ],
+        "version": "4e12ff3f63c9beefb3d696e2c6a0ca9f54da721fceda7b73ec329095e1c4ca1f"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-agent-runtime/verification.md",
+          "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+          "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+        }
+      ],
+      "reason": "",
+      "method": "実Keycloak/Web/AXの操作結果、PG予算/成果物、独立Actor観測、局所失敗境界とA統合レビューを照合。PR18へ一件に集約",
+      "environment": "macOS/Docker kind ax-local、PG v4、versions.json固定image、80d5810と最終文書差分",
+      "observedAt": "2026-10-07T07:51:20.011303+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "runtime-impl-1"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-07T07:51:20.069Z"
     }
   ],
   "submissions": [
@@ -1574,6 +1909,355 @@
         "reason": "C修正と独立A検証を照合。親実AX質問回答両区間も成功し実停止/denyを別観測済。",
         "at": "2026-10-07T07:44:42.060Z"
       }
+    },
+    {
+      "id": "c9330c60-0ca0-40d0-8188-edaaa3b0adf1",
+      "unit": "runtime-impl",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "6dd591a2-3f3f-4a2f-8590-b1a2fb829644"
+      ],
+      "outputs": [
+        {
+          "id": "artifact",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+              "digest": "28f879ae22c81f883240d14478d284c9338f2f5a2179829c651b50a345aab61e"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/index.md",
+              "digest": "95908322a10a01ab2e235bfe95717b29cc97b7d5f7bac1790727fb96146c2ebf"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+              "digest": "3d51373e8c907852916ddca8014f20fa9f37bde94de3143fb2a975b890e3fd42"
+            },
+            {
+              "ref": ".space/babel/knowledge/index.md",
+              "digest": "e8b371060a0ee2130e2bd3c30061dcb948b0d1f38e40381997f4bcaf4f7d7359"
+            },
+            {
+              "ref": ".space/babel/log.md",
+              "digest": "3263d62ddc0ff22ab8be1fa5ff5e9092f9a8e48517c63e461b115644f113dac5"
+            },
+            {
+              "ref": "ax-local/patches/Dockerfile.ax-server",
+              "digest": "4096bc941b9c81d588ef2dd1cc8d4c1c4dc5335985a49f6946a4b587cddf336c"
+            },
+            {
+              "ref": "ax-local/patches/README.md",
+              "digest": "52da3d745aaa211bf4c30b697b158b92c3169b16c610f153922eb8370c0a5860"
+            },
+            {
+              "ref": "ax-local/patches/credential-free-atespace.patch",
+              "digest": "866b3342b13db166206ddd4f51e3898e6bd7a79d750a30a2cacbb184db17a767"
+            },
+            {
+              "ref": "ax-local/patches/credential_free_test.go.txt",
+              "digest": "6c91810ee5544cb3a948c78085c9aecdd4a63d6e3587c567baebe058a1eae610"
+            },
+            {
+              "ref": "ax-local/patches/prepare-credential-free.sh",
+              "digest": "1206571d66db78487a06a105c15f9fd1d43af6f2652a756bb67b307461097b20"
+            },
+            {
+              "ref": "ax-local/patches/verify-credential-free.sh",
+              "digest": "26e271f7ea4fbd4baa51965d467011d403facfdabac1aa85629e487b98282208"
+            },
+            {
+              "ref": "ax-local/task_runtime/adapters/interactive.py",
+              "digest": "c4fa2eaa187404aa6b1a4d5be1f065e533a06581de5586dabeede9a1c4f1fc1a"
+            },
+            {
+              "ref": "ax-local/task_runtime/interactive_protocol.py",
+              "digest": "4f3e55eacce59d8452f51317ab27398855ad54ecc3a10e707c7b6bc98a75cf1c"
+            },
+            {
+              "ref": "ax-local/task_runtime/mailbox.py",
+              "digest": "52c9c4cdd5d02a58394f1fef23f7d1ef5b3fb2dff9a163211c7cf639a0660586"
+            },
+            {
+              "ref": "ax-local/task_runtime/protocol.py",
+              "digest": "a6652e5e223c7a827cd049875a34087f3b7595ff504c3d23d2b3575b97aac5e6"
+            },
+            {
+              "ref": "ax-local/task_runtime/runner.py",
+              "digest": "a6bffcb6bc9eeadd5ec629cea9a62e6dde3529eb4fe55202c296f318196ec497"
+            },
+            {
+              "ref": "ax-local/task_runtime/skills/brief-v1/SKILL.md",
+              "digest": "d394bcd09724ff69fd758a42247caa323626525316f59c989346ddc3ee8f64fe"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive.py",
+              "digest": "e6444f0a5e6352183a32d6f06d5307fe19b4a264e81715f9ccdbf291dca5c351"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "47fa39178be006d06b2deeac435b696d348fc1a05dd9365f1bf86021abfc53ef"
+            },
+            {
+              "ref": "docs/agent-runtime-design.md",
+              "digest": "c1c25424b85f8353d4a7cd881596ee18fb7aec682a09baea82d88f5643943680"
+            },
+            {
+              "ref": "execution/README.md",
+              "digest": "8197d68c842582470314afe4d6a005249ecc1f3b1e0f681f99b1246b3dd5f79e"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "465b57e729fd127432abd6bd7fbd3feaf79c3f77bb5a4e577f6e7eb28bff67a0"
+            },
+            {
+              "ref": "execution/cmd/inspect/main.go",
+              "digest": "d011654501628a05fe39f8dd1896e8449d2be08b0dd4dbb0593c24a1beb7be03"
+            },
+            {
+              "ref": "execution/cmd/inspect/main_test.go",
+              "digest": "3d81a4c6655f4d8516960c663142554d7958838b6e2a59f774c6e216cd8719ae"
+            },
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "d709e090c1061257aaef481860239ae1abaf7f2f620f9b785b8698f8489b8ce4"
+            },
+            {
+              "ref": "execution/controller/interactive.go",
+              "digest": "7296e0c0fefe663971015050d22ef9fb16178b551a561d64f359be8884ff5963"
+            },
+            {
+              "ref": "execution/controller/interactive_test.go",
+              "digest": "bc233bb44eb3095bd658636d0f127865065bc18731c0be4facd332490198f7f6"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "4e4ebbdfc0bfafcf7a4a41b2cb26cd37515daadfd76a726152aca4a259b7ee4a"
+            },
+            {
+              "ref": "execution/controller/postgres_test.go",
+              "digest": "571c9202da1d666f399eb737db9ea0e7a3a3f9caf9078bd1381b8f2e135d3d7a"
+            },
+            {
+              "ref": "execution/gateway/stub.go",
+              "digest": "39593f61d516d6c79d38001a8b5372e989c7074e0055c6d2a33160a2915b5a25"
+            },
+            {
+              "ref": "execution/gateway/stub_test.go",
+              "digest": "1d8f9a943a6922578868b395f09ce9c16b7e957fa58179daa9b8a3ee155b5922"
+            },
+            {
+              "ref": "execution/native/adapter.go",
+              "digest": "c53dee2d0a151c06cfe89c6c650266d6e0753516b1593f5c277c2d75fa8c3ddd"
+            },
+            {
+              "ref": "execution/native/mailbox.go",
+              "digest": "44fe004ed14a98f8c29f36ccdb5b64a8357593c2fe3aed2a3cfbd005649508f9"
+            },
+            {
+              "ref": "execution/native/mailbox_test.go",
+              "digest": "6951b6fd6c0d946836da92ffc1a097613f100bebe5d95fca41e83e6b64b140a0"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "82807e5d8097cb35a1ecb0e6f11e01980696b8d58f48ae75af0d420552dd971f"
+            },
+            {
+              "ref": "execution/native/runtime_template.go",
+              "digest": "b5bb1e2d14a0af9bf108b9f8a6346ee96c4ec14aa9c0ff3c2de6a17fc5603c39"
+            },
+            {
+              "ref": "execution/settings/settings.go",
+              "digest": "5907e5567948a292a9f32b6ec3c28e16597dfa581481b63b38b2de181442fe81"
+            },
+            {
+              "ref": "web/api/agent-service.ts",
+              "digest": "52c8a68fbd7cb1ba873f656f4a664fb498b716588940b609df91a80fb598c7a3"
+            },
+            {
+              "ref": "web/api/app.ts",
+              "digest": "cf6116eac314b91494761dbf31062bf0211398b03d91b57241970b4b172ef6b0"
+            },
+            {
+              "ref": "web/api/runtime.ts",
+              "digest": "b1d9c53da57f9a92252a84464e8127dab43abf1acc784e67bfb9b593a055ab03"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "448bc20ac4c9b311d2c79bfec7358e6e031c61d1f463290b5445b6b4fa3480b8"
+            },
+            {
+              "ref": "web/app/lib/agents.server.ts",
+              "digest": "48b2423b158ad879c83ced77b50a5394cb084aea268ef5ee7c55496f4ec56c5a"
+            },
+            {
+              "ref": "web/app/lib/auth.server.ts",
+              "digest": "00fedef914134c8ad03935ab55d42016c1b7be97492d6648f4d9de29f9335864"
+            },
+            {
+              "ref": "web/app/routes.ts",
+              "digest": "a74163d8a26bc1d9be2da1ef150af226d06cba1fe260acece28137d4fc34507b"
+            },
+            {
+              "ref": "web/app/routes/account.tsx",
+              "digest": "8a68546281de98d43e208c1714a7b4db34a2c233ea79267fcd3ee0784f8d000f"
+            },
+            {
+              "ref": "web/app/routes/agent.tsx",
+              "digest": "a90ff39d0e3a14386f133fa17c1c418226fbde004e0de870eb054e5026266e45"
+            },
+            {
+              "ref": "web/app/routes/chat.tsx",
+              "digest": "9a7d199429be9d0e2da7e92f532bf2a6d7cac00704ad2abb06ecba9d0d830879"
+            },
+            {
+              "ref": "web/app/routes/run-detail.tsx",
+              "digest": "2001f5a76fdee51693cf0adf39912c6b71e61545dc3493530fec5ffb0d24426a"
+            },
+            {
+              "ref": "web/data/agents.ts",
+              "digest": "bf33157a30243f063046b7098b010608417bdbdadda775bd816f778d685e99ee"
+            },
+            {
+              "ref": "web/data/db.ts",
+              "digest": "5af0e394fdc08078d779e0ad1dd8c695d98d1a2506d84da60b563bfab8bf4099"
+            },
+            {
+              "ref": "web/data/permissions.ts",
+              "digest": "30a23aec69b9b5baf773b6f01ec8be22b6642377535ed710c5c71fe57de93bf1"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "1ca08e2c2b299f2ed6895f207e30d7e6e02a1be20a9d04032c2561085776a6ef"
+            },
+            {
+              "ref": "web/data/schema-v4.sql",
+              "digest": "1f3e98fa7e5455aacd329a36f290eda772f456df91c80b1c625d2ff85055ccab"
+            },
+            {
+              "ref": "web/scripts/deploy-execution.ts",
+              "digest": "70ba84541d57d9a88fe85ed3baa13d83c19a0541eaab4fd0143f74f72a7d162b"
+            },
+            {
+              "ref": "web/scripts/verify-interactive-local.ts",
+              "digest": "ebdc316d9d9795e3c930e4bb35a9a130018aed3fbbe424a3c286c582f615f307"
+            },
+            {
+              "ref": "web/server/auth.ts",
+              "digest": "63b187f01bb591723c80c6f4154832ff8dcc40fdf576c6e64dd7014fd6a8fe24"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "8291352b52315a5f6adad07256c0742efcdca4bed7051a1aff1b8b9874b27d93"
+            },
+            {
+              "ref": "web/server/login-destination.ts",
+              "digest": "d7a01e28e6f044473dfded5cef503a707c63bd4cc79386cf9a15d00ef8299b07"
+            },
+            {
+              "ref": "web/shared/access-token.ts",
+              "digest": "b707b1039ac74cdf96e17d33e2def54683e03e3fb2ae3138e3977196bed162db"
+            },
+            {
+              "ref": "web/shared/agent-contracts.ts",
+              "digest": "f792162ac04e549c3c4e515ea03d01ee915a3e79d5c3b30c477724225a573d88"
+            },
+            {
+              "ref": "web/shared/authentication.ts",
+              "digest": "28be19b7c0a619fd9620dce916133dc8d265b551d16b4b1fee48ccfce3e85844"
+            },
+            {
+              "ref": "web/shared/chat-contracts.ts",
+              "digest": "82a29d518b24c850746781875f4275c49db682dce6461de8589f59d7b29ae46f"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "5493aaeeff8fbb62018d91ad5589561afd12e7da066c00202c4577e8eac80b25"
+            },
+            {
+              "ref": "web/tests/agents.test.ts",
+              "digest": "cced9ac73d5b574732aaabfd84fe2ffb06baf318c04c204ddc6a6cb3f53a9785"
+            },
+            {
+              "ref": "web/tests/browser/agent-fixture.ts",
+              "digest": "fc03f16f03794a57cf116aa4e47286a52004db9911ca803787c5ef5a3e6ed9b2"
+            },
+            {
+              "ref": "web/tests/browser/agent.spec.ts",
+              "digest": "a36f4d648623648347cecab0c29ab89dce7b1ef0193ecc55615d69edb4aab1d1"
+            },
+            {
+              "ref": "web/tests/browser/serve.ts",
+              "digest": "8077aa88bc94a9282a75aa5c73af7c5a40eef561d92fa1bdb0544cc207a8699b"
+            },
+            {
+              "ref": "web/tests/data.test.ts",
+              "digest": "69cd15766bb9bdf0861d241634c902895784ae001d60a6faaba7066107b0b7ba"
+            },
+            {
+              "ref": "web/tests/runtime.test.ts",
+              "digest": "a46dab1a127b3fbf2800b7e5001c50029bf70d69204008681c34cb7f15b6dc25"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "d3fed56c44ff37175d8f227a67a92cfdafa980d3461a5f9e508ef5e0a979de83"
+            }
+          ],
+          "version": "4e12ff3f63c9beefb3d696e2c6a0ca9f54da721fceda7b73ec329095e1c4ca1f"
+        }
+      ],
+      "report": "初期無課金previewを実装・検証・独立レビューしPR18へ引き渡した。実モデルや任意コード等は後続。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-runtime/verification.md",
+          "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+          "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/18",
+          "digest": null
+        }
+      ],
+      "children": [
+        {
+          "unit": "sdk-runtime",
+          "submission": "9c8336a8-4de1-4f9e-89c2-080d629468a7"
+        },
+        {
+          "unit": "runtime-data",
+          "submission": "e5e07aa3-8340-4792-9737-5fdfaa842753"
+        },
+        {
+          "unit": "runtime-execution",
+          "submission": "a79b01c3-81d8-4c1f-927b-640f490cd62f"
+        }
+      ],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "runtime-impl-1"
+      },
+      "at": "2026-10-07T07:51:20.143Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "runtime-impl-1"
+        },
+        "reason": "3子unitの有効な受け入れ、実経路と停止、文書/OKF、独立指摘解消、PR18のレビュー可能な成果物を照合した。",
+        "at": "2026-10-07T07:51:20.282Z"
+      }
     }
   ],
   "messages": [
@@ -1664,6 +2348,36 @@
       "state": "processed",
       "resolution": "accepted: C修正と独立A検証を照合。親実AX質問回答両区間も成功し実停止/denyを別観測済。",
       "at": "2026-10-07T07:44:20.375Z"
+    },
+    {
+      "id": "cdde4083-4a57-4370-b0d0-57b906ae641a",
+      "unit": "runtime-impl",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "runtime-impl-1"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "初期無課金previewを実装・検証・独立レビューしPR18へ引き渡した。実モデルや任意コード等は後続。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-runtime/verification.md",
+          "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+          "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/18",
+          "digest": null
+        }
+      ],
+      "submission": "c9330c60-0ca0-40d0-8188-edaaa3b0adf1",
+      "state": "processed",
+      "resolution": "accepted: 3子unitの有効な受け入れ、実経路と停止、文書/OKF、独立指摘解消、PR18のレビュー可能な成果物を照合した。",
+      "at": "2026-10-07T07:51:20.143Z"
     }
   ],
   "gates": [],
@@ -6269,6 +6983,1441 @@
         }
       },
       "at": "2026-10-07T07:44:42.060Z"
+    },
+    {
+      "id": "root-implement-complete",
+      "hash": "0665e2d724f16340e0bf982fa8f7354008d31494928e66f28692f5a158245b52",
+      "actor": {
+        "actor": "parent",
+        "session": "runtime-impl-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "runtime-impl",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "runtime-impl-1",
+        "operationId": "root-implement-complete",
+        "input": {
+          "selection": "execute",
+          "reason": "AX内の2区間と本人限定UI/成果物、停止/台帳、失敗復旧、旧経路、独立レビューを確認しPR18へ集約",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-agent-runtime/verification.md",
+            ".space/tasks/ax-agent-runtime/reviews/integration.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "runtime-impl"
+      ],
+      "evidence": [],
+      "revision": 33,
+      "data": {
+        "id": "runtime-impl",
+        "parent": null,
+        "size": "large",
+        "purpose": "必要な予算・停止境界を満たす対話プレビューをAXと画面で確認し引き渡す",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "runtime-impl-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "runtime-impl-1"
+        },
+        "verifiers": [
+          {
+            "actor": "parent",
+            "session": "runtime-impl-1"
+          }
+        ],
+        "scope": [
+          "統合契約",
+          "web/app/**",
+          "配置・実環境・文書"
+        ],
+        "taskRef": ".space/tasks/ax-agent-runtime/task.md",
+        "planRef": ".space/tasks/ax-agent-runtime/implementation.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "verified",
+            "description": "統合した実経路と失敗境界・独立レビューを確認し引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "artifact"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "AX内の2区間と本人限定UI/成果物、停止/台帳、失敗復旧、旧経路、独立レビューを確認しPR18へ集約",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-runtime/verification.md",
+                    "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+                    "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "費用・本人・停止の境界を変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T06:37:38.767Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T07:51:19.916Z"
+    },
+    {
+      "id": "root-verify-complete",
+      "hash": "ae82934b9dbb3f21d027645b5d10095d8e5cfeff601a786351bbf041aef578b4",
+      "actor": {
+        "actor": "parent",
+        "session": "runtime-impl-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "runtime-impl",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "runtime-impl-1",
+        "operationId": "root-verify-complete",
+        "input": {
+          "selection": "execute",
+          "reason": "AX内の2区間と本人限定UI/成果物、停止/台帳、失敗復旧、旧経路、独立レビューを確認しPR18へ集約",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-agent-runtime/verification.md",
+            ".space/tasks/ax-agent-runtime/reviews/integration.md"
+          ]
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "runtime-impl"
+      ],
+      "evidence": [],
+      "revision": 34,
+      "data": {
+        "id": "runtime-impl",
+        "parent": null,
+        "size": "large",
+        "purpose": "必要な予算・停止境界を満たす対話プレビューをAXと画面で確認し引き渡す",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "runtime-impl-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "runtime-impl-1"
+        },
+        "verifiers": [
+          {
+            "actor": "parent",
+            "session": "runtime-impl-1"
+          }
+        ],
+        "scope": [
+          "統合契約",
+          "web/app/**",
+          "配置・実環境・文書"
+        ],
+        "taskRef": ".space/tasks/ax-agent-runtime/task.md",
+        "planRef": ".space/tasks/ax-agent-runtime/implementation.md",
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "verified",
+            "description": "統合した実経路と失敗境界・独立レビューを確認し引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "artifact"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 4,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "AX内の2区間と本人限定UI/成果物、停止/台帳、失敗復旧、旧経路、独立レビューを確認しPR18へ集約",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-runtime/verification.md",
+                    "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+                    "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "AX内の2区間と本人限定UI/成果物、停止/台帳、失敗復旧、旧経路、独立レビューを確認しPR18へ集約",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-runtime/verification.md",
+                    "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+                    "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-07T06:37:38.767Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-07T07:51:19.978Z"
+    },
+    {
+      "id": "root-ledger-pass",
+      "hash": "b5a318bc198ef12dc3ce5262e9d0d6c8c5bcc7a327a76a343f5514abb429cfb1",
+      "actor": {
+        "actor": "parent",
+        "session": "runtime-impl-1"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "runtime-impl",
+        "actor": "parent",
+        "session": "runtime-impl-1",
+        "operationId": "root-ledger-pass",
+        "input": {
+          "condition": "verified",
+          "verdict": "pass",
+          "target": {
+            "id": "artifact",
+            "kind": "files",
+            "files": [
+              ".space/babel/decisions/systems/ax/agent-runtime.md",
+              ".space/babel/decisions/systems/ax/index.md",
+              ".space/babel/knowledge/ax-agent-platform-direction.md",
+              ".space/babel/knowledge/index.md",
+              ".space/babel/log.md",
+              "ax-local/patches/Dockerfile.ax-server",
+              "ax-local/patches/README.md",
+              "ax-local/patches/credential-free-atespace.patch",
+              "ax-local/patches/credential_free_test.go.txt",
+              "ax-local/patches/prepare-credential-free.sh",
+              "ax-local/patches/verify-credential-free.sh",
+              "ax-local/task_runtime/adapters/interactive.py",
+              "ax-local/task_runtime/interactive_protocol.py",
+              "ax-local/task_runtime/mailbox.py",
+              "ax-local/task_runtime/protocol.py",
+              "ax-local/task_runtime/runner.py",
+              "ax-local/task_runtime/skills/brief-v1/SKILL.md",
+              "ax-local/tests/test_interactive.py",
+              "ax-local/versions.json",
+              "docs/agent-runtime-design.md",
+              "execution/README.md",
+              "execution/cmd/ax-controller/main.go",
+              "execution/cmd/inspect/main.go",
+              "execution/cmd/inspect/main_test.go",
+              "execution/controller/controller.go",
+              "execution/controller/interactive.go",
+              "execution/controller/interactive_test.go",
+              "execution/controller/postgres.go",
+              "execution/controller/postgres_test.go",
+              "execution/gateway/stub.go",
+              "execution/gateway/stub_test.go",
+              "execution/native/adapter.go",
+              "execution/native/mailbox.go",
+              "execution/native/mailbox_test.go",
+              "execution/native/protocol.go",
+              "execution/native/runtime_template.go",
+              "execution/settings/settings.go",
+              "web/api/agent-service.ts",
+              "web/api/app.ts",
+              "web/api/runtime.ts",
+              "web/app/components/workspace.tsx",
+              "web/app/lib/agents.server.ts",
+              "web/app/lib/auth.server.ts",
+              "web/app/routes.ts",
+              "web/app/routes/account.tsx",
+              "web/app/routes/agent.tsx",
+              "web/app/routes/chat.tsx",
+              "web/app/routes/run-detail.tsx",
+              "web/data/agents.ts",
+              "web/data/db.ts",
+              "web/data/permissions.ts",
+              "web/data/repository.ts",
+              "web/data/schema-v4.sql",
+              "web/scripts/deploy-execution.ts",
+              "web/scripts/verify-interactive-local.ts",
+              "web/server/auth.ts",
+              "web/server/data-migrate.ts",
+              "web/server/login-destination.ts",
+              "web/shared/access-token.ts",
+              "web/shared/agent-contracts.ts",
+              "web/shared/authentication.ts",
+              "web/shared/chat-contracts.ts",
+              "web/shared/run-contracts.ts",
+              "web/tests/agents.test.ts",
+              "web/tests/browser/agent-fixture.ts",
+              "web/tests/browser/agent.spec.ts",
+              "web/tests/browser/serve.ts",
+              "web/tests/data.test.ts",
+              "web/tests/runtime.test.ts",
+              "web/tests/workspaces.test.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-agent-runtime/verification.md",
+            ".space/tasks/ax-agent-runtime/reviews/integration.md"
+          ],
+          "method": "実Keycloak/Web/AXの操作結果、PG予算/成果物、独立Actor観測、局所失敗境界とA統合レビューを照合。PR18へ一件に集約",
+          "environment": "macOS/Docker kind ax-local、PG v4、versions.json固定image、80d5810と最終文書差分",
+          "observedAt": "2026-10-07T07:51:20.011303+00:00"
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "runtime-impl"
+      ],
+      "evidence": [],
+      "revision": 35,
+      "data": {
+        "id": "6dd591a2-3f3f-4a2f-8590-b1a2fb829644",
+        "unit": "runtime-impl",
+        "attempt": 1,
+        "condition": "verified",
+        "target": {
+          "id": "artifact",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+              "digest": "28f879ae22c81f883240d14478d284c9338f2f5a2179829c651b50a345aab61e"
+            },
+            {
+              "ref": ".space/babel/decisions/systems/ax/index.md",
+              "digest": "95908322a10a01ab2e235bfe95717b29cc97b7d5f7bac1790727fb96146c2ebf"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+              "digest": "3d51373e8c907852916ddca8014f20fa9f37bde94de3143fb2a975b890e3fd42"
+            },
+            {
+              "ref": ".space/babel/knowledge/index.md",
+              "digest": "e8b371060a0ee2130e2bd3c30061dcb948b0d1f38e40381997f4bcaf4f7d7359"
+            },
+            {
+              "ref": ".space/babel/log.md",
+              "digest": "3263d62ddc0ff22ab8be1fa5ff5e9092f9a8e48517c63e461b115644f113dac5"
+            },
+            {
+              "ref": "ax-local/patches/Dockerfile.ax-server",
+              "digest": "4096bc941b9c81d588ef2dd1cc8d4c1c4dc5335985a49f6946a4b587cddf336c"
+            },
+            {
+              "ref": "ax-local/patches/README.md",
+              "digest": "52da3d745aaa211bf4c30b697b158b92c3169b16c610f153922eb8370c0a5860"
+            },
+            {
+              "ref": "ax-local/patches/credential-free-atespace.patch",
+              "digest": "866b3342b13db166206ddd4f51e3898e6bd7a79d750a30a2cacbb184db17a767"
+            },
+            {
+              "ref": "ax-local/patches/credential_free_test.go.txt",
+              "digest": "6c91810ee5544cb3a948c78085c9aecdd4a63d6e3587c567baebe058a1eae610"
+            },
+            {
+              "ref": "ax-local/patches/prepare-credential-free.sh",
+              "digest": "1206571d66db78487a06a105c15f9fd1d43af6f2652a756bb67b307461097b20"
+            },
+            {
+              "ref": "ax-local/patches/verify-credential-free.sh",
+              "digest": "26e271f7ea4fbd4baa51965d467011d403facfdabac1aa85629e487b98282208"
+            },
+            {
+              "ref": "ax-local/task_runtime/adapters/interactive.py",
+              "digest": "c4fa2eaa187404aa6b1a4d5be1f065e533a06581de5586dabeede9a1c4f1fc1a"
+            },
+            {
+              "ref": "ax-local/task_runtime/interactive_protocol.py",
+              "digest": "4f3e55eacce59d8452f51317ab27398855ad54ecc3a10e707c7b6bc98a75cf1c"
+            },
+            {
+              "ref": "ax-local/task_runtime/mailbox.py",
+              "digest": "52c9c4cdd5d02a58394f1fef23f7d1ef5b3fb2dff9a163211c7cf639a0660586"
+            },
+            {
+              "ref": "ax-local/task_runtime/protocol.py",
+              "digest": "a6652e5e223c7a827cd049875a34087f3b7595ff504c3d23d2b3575b97aac5e6"
+            },
+            {
+              "ref": "ax-local/task_runtime/runner.py",
+              "digest": "a6bffcb6bc9eeadd5ec629cea9a62e6dde3529eb4fe55202c296f318196ec497"
+            },
+            {
+              "ref": "ax-local/task_runtime/skills/brief-v1/SKILL.md",
+              "digest": "d394bcd09724ff69fd758a42247caa323626525316f59c989346ddc3ee8f64fe"
+            },
+            {
+              "ref": "ax-local/tests/test_interactive.py",
+              "digest": "e6444f0a5e6352183a32d6f06d5307fe19b4a264e81715f9ccdbf291dca5c351"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "47fa39178be006d06b2deeac435b696d348fc1a05dd9365f1bf86021abfc53ef"
+            },
+            {
+              "ref": "docs/agent-runtime-design.md",
+              "digest": "c1c25424b85f8353d4a7cd881596ee18fb7aec682a09baea82d88f5643943680"
+            },
+            {
+              "ref": "execution/README.md",
+              "digest": "8197d68c842582470314afe4d6a005249ecc1f3b1e0f681f99b1246b3dd5f79e"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "465b57e729fd127432abd6bd7fbd3feaf79c3f77bb5a4e577f6e7eb28bff67a0"
+            },
+            {
+              "ref": "execution/cmd/inspect/main.go",
+              "digest": "d011654501628a05fe39f8dd1896e8449d2be08b0dd4dbb0593c24a1beb7be03"
+            },
+            {
+              "ref": "execution/cmd/inspect/main_test.go",
+              "digest": "3d81a4c6655f4d8516960c663142554d7958838b6e2a59f774c6e216cd8719ae"
+            },
+            {
+              "ref": "execution/controller/controller.go",
+              "digest": "d709e090c1061257aaef481860239ae1abaf7f2f620f9b785b8698f8489b8ce4"
+            },
+            {
+              "ref": "execution/controller/interactive.go",
+              "digest": "7296e0c0fefe663971015050d22ef9fb16178b551a561d64f359be8884ff5963"
+            },
+            {
+              "ref": "execution/controller/interactive_test.go",
+              "digest": "bc233bb44eb3095bd658636d0f127865065bc18731c0be4facd332490198f7f6"
+            },
+            {
+              "ref": "execution/controller/postgres.go",
+              "digest": "4e4ebbdfc0bfafcf7a4a41b2cb26cd37515daadfd76a726152aca4a259b7ee4a"
+            },
+            {
+              "ref": "execution/controller/postgres_test.go",
+              "digest": "571c9202da1d666f399eb737db9ea0e7a3a3f9caf9078bd1381b8f2e135d3d7a"
+            },
+            {
+              "ref": "execution/gateway/stub.go",
+              "digest": "39593f61d516d6c79d38001a8b5372e989c7074e0055c6d2a33160a2915b5a25"
+            },
+            {
+              "ref": "execution/gateway/stub_test.go",
+              "digest": "1d8f9a943a6922578868b395f09ce9c16b7e957fa58179daa9b8a3ee155b5922"
+            },
+            {
+              "ref": "execution/native/adapter.go",
+              "digest": "c53dee2d0a151c06cfe89c6c650266d6e0753516b1593f5c277c2d75fa8c3ddd"
+            },
+            {
+              "ref": "execution/native/mailbox.go",
+              "digest": "44fe004ed14a98f8c29f36ccdb5b64a8357593c2fe3aed2a3cfbd005649508f9"
+            },
+            {
+              "ref": "execution/native/mailbox_test.go",
+              "digest": "6951b6fd6c0d946836da92ffc1a097613f100bebe5d95fca41e83e6b64b140a0"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "82807e5d8097cb35a1ecb0e6f11e01980696b8d58f48ae75af0d420552dd971f"
+            },
+            {
+              "ref": "execution/native/runtime_template.go",
+              "digest": "b5bb1e2d14a0af9bf108b9f8a6346ee96c4ec14aa9c0ff3c2de6a17fc5603c39"
+            },
+            {
+              "ref": "execution/settings/settings.go",
+              "digest": "5907e5567948a292a9f32b6ec3c28e16597dfa581481b63b38b2de181442fe81"
+            },
+            {
+              "ref": "web/api/agent-service.ts",
+              "digest": "52c8a68fbd7cb1ba873f656f4a664fb498b716588940b609df91a80fb598c7a3"
+            },
+            {
+              "ref": "web/api/app.ts",
+              "digest": "cf6116eac314b91494761dbf31062bf0211398b03d91b57241970b4b172ef6b0"
+            },
+            {
+              "ref": "web/api/runtime.ts",
+              "digest": "b1d9c53da57f9a92252a84464e8127dab43abf1acc784e67bfb9b593a055ab03"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "448bc20ac4c9b311d2c79bfec7358e6e031c61d1f463290b5445b6b4fa3480b8"
+            },
+            {
+              "ref": "web/app/lib/agents.server.ts",
+              "digest": "48b2423b158ad879c83ced77b50a5394cb084aea268ef5ee7c55496f4ec56c5a"
+            },
+            {
+              "ref": "web/app/lib/auth.server.ts",
+              "digest": "00fedef914134c8ad03935ab55d42016c1b7be97492d6648f4d9de29f9335864"
+            },
+            {
+              "ref": "web/app/routes.ts",
+              "digest": "a74163d8a26bc1d9be2da1ef150af226d06cba1fe260acece28137d4fc34507b"
+            },
+            {
+              "ref": "web/app/routes/account.tsx",
+              "digest": "8a68546281de98d43e208c1714a7b4db34a2c233ea79267fcd3ee0784f8d000f"
+            },
+            {
+              "ref": "web/app/routes/agent.tsx",
+              "digest": "a90ff39d0e3a14386f133fa17c1c418226fbde004e0de870eb054e5026266e45"
+            },
+            {
+              "ref": "web/app/routes/chat.tsx",
+              "digest": "9a7d199429be9d0e2da7e92f532bf2a6d7cac00704ad2abb06ecba9d0d830879"
+            },
+            {
+              "ref": "web/app/routes/run-detail.tsx",
+              "digest": "2001f5a76fdee51693cf0adf39912c6b71e61545dc3493530fec5ffb0d24426a"
+            },
+            {
+              "ref": "web/data/agents.ts",
+              "digest": "bf33157a30243f063046b7098b010608417bdbdadda775bd816f778d685e99ee"
+            },
+            {
+              "ref": "web/data/db.ts",
+              "digest": "5af0e394fdc08078d779e0ad1dd8c695d98d1a2506d84da60b563bfab8bf4099"
+            },
+            {
+              "ref": "web/data/permissions.ts",
+              "digest": "30a23aec69b9b5baf773b6f01ec8be22b6642377535ed710c5c71fe57de93bf1"
+            },
+            {
+              "ref": "web/data/repository.ts",
+              "digest": "1ca08e2c2b299f2ed6895f207e30d7e6e02a1be20a9d04032c2561085776a6ef"
+            },
+            {
+              "ref": "web/data/schema-v4.sql",
+              "digest": "1f3e98fa7e5455aacd329a36f290eda772f456df91c80b1c625d2ff85055ccab"
+            },
+            {
+              "ref": "web/scripts/deploy-execution.ts",
+              "digest": "70ba84541d57d9a88fe85ed3baa13d83c19a0541eaab4fd0143f74f72a7d162b"
+            },
+            {
+              "ref": "web/scripts/verify-interactive-local.ts",
+              "digest": "ebdc316d9d9795e3c930e4bb35a9a130018aed3fbbe424a3c286c582f615f307"
+            },
+            {
+              "ref": "web/server/auth.ts",
+              "digest": "63b187f01bb591723c80c6f4154832ff8dcc40fdf576c6e64dd7014fd6a8fe24"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "8291352b52315a5f6adad07256c0742efcdca4bed7051a1aff1b8b9874b27d93"
+            },
+            {
+              "ref": "web/server/login-destination.ts",
+              "digest": "d7a01e28e6f044473dfded5cef503a707c63bd4cc79386cf9a15d00ef8299b07"
+            },
+            {
+              "ref": "web/shared/access-token.ts",
+              "digest": "b707b1039ac74cdf96e17d33e2def54683e03e3fb2ae3138e3977196bed162db"
+            },
+            {
+              "ref": "web/shared/agent-contracts.ts",
+              "digest": "f792162ac04e549c3c4e515ea03d01ee915a3e79d5c3b30c477724225a573d88"
+            },
+            {
+              "ref": "web/shared/authentication.ts",
+              "digest": "28be19b7c0a619fd9620dce916133dc8d265b551d16b4b1fee48ccfce3e85844"
+            },
+            {
+              "ref": "web/shared/chat-contracts.ts",
+              "digest": "82a29d518b24c850746781875f4275c49db682dce6461de8589f59d7b29ae46f"
+            },
+            {
+              "ref": "web/shared/run-contracts.ts",
+              "digest": "5493aaeeff8fbb62018d91ad5589561afd12e7da066c00202c4577e8eac80b25"
+            },
+            {
+              "ref": "web/tests/agents.test.ts",
+              "digest": "cced9ac73d5b574732aaabfd84fe2ffb06baf318c04c204ddc6a6cb3f53a9785"
+            },
+            {
+              "ref": "web/tests/browser/agent-fixture.ts",
+              "digest": "fc03f16f03794a57cf116aa4e47286a52004db9911ca803787c5ef5a3e6ed9b2"
+            },
+            {
+              "ref": "web/tests/browser/agent.spec.ts",
+              "digest": "a36f4d648623648347cecab0c29ab89dce7b1ef0193ecc55615d69edb4aab1d1"
+            },
+            {
+              "ref": "web/tests/browser/serve.ts",
+              "digest": "8077aa88bc94a9282a75aa5c73af7c5a40eef561d92fa1bdb0544cc207a8699b"
+            },
+            {
+              "ref": "web/tests/data.test.ts",
+              "digest": "69cd15766bb9bdf0861d241634c902895784ae001d60a6faaba7066107b0b7ba"
+            },
+            {
+              "ref": "web/tests/runtime.test.ts",
+              "digest": "a46dab1a127b3fbf2800b7e5001c50029bf70d69204008681c34cb7f15b6dc25"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "d3fed56c44ff37175d8f227a67a92cfdafa980d3461a5f9e508ef5e0a979de83"
+            }
+          ],
+          "version": "4e12ff3f63c9beefb3d696e2c6a0ca9f54da721fceda7b73ec329095e1c4ca1f"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-agent-runtime/verification.md",
+            "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+            "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+          }
+        ],
+        "reason": "",
+        "method": "実Keycloak/Web/AXの操作結果、PG予算/成果物、独立Actor観測、局所失敗境界とA統合レビューを照合。PR18へ一件に集約",
+        "environment": "macOS/Docker kind ax-local、PG v4、versions.json固定image、80d5810と最終文書差分",
+        "observedAt": "2026-10-07T07:51:20.011303+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "runtime-impl-1"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-07T07:51:20.069Z"
+      },
+      "at": "2026-10-07T07:51:20.069Z"
+    },
+    {
+      "id": "root-submit",
+      "hash": "61b498b7ff485ded25d63f55fec7554fabeea154d083d0889b35bb12d69e8dfd",
+      "actor": {
+        "actor": "parent",
+        "session": "runtime-impl-1"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "runtime-impl",
+        "actor": "parent",
+        "session": "runtime-impl-1",
+        "operationId": "root-submit",
+        "input": {
+          "checks": [
+            "6dd591a2-3f3f-4a2f-8590-b1a2fb829644"
+          ],
+          "report": "初期無課金previewを実装・検証・独立レビューしPR18へ引き渡した。実モデルや任意コード等は後続。",
+          "refs": [
+            ".space/tasks/ax-agent-runtime/verification.md",
+            ".space/tasks/ax-agent-runtime/reviews/integration.md",
+            "https://github.com/sori883/agent-workspace/pull/18"
+          ]
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "runtime-impl"
+      ],
+      "evidence": [],
+      "revision": 36,
+      "data": {
+        "id": "c9330c60-0ca0-40d0-8188-edaaa3b0adf1",
+        "unit": "runtime-impl",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "6dd591a2-3f3f-4a2f-8590-b1a2fb829644"
+        ],
+        "outputs": [
+          {
+            "id": "artifact",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+                "digest": "28f879ae22c81f883240d14478d284c9338f2f5a2179829c651b50a345aab61e"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/index.md",
+                "digest": "95908322a10a01ab2e235bfe95717b29cc97b7d5f7bac1790727fb96146c2ebf"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+                "digest": "3d51373e8c907852916ddca8014f20fa9f37bde94de3143fb2a975b890e3fd42"
+              },
+              {
+                "ref": ".space/babel/knowledge/index.md",
+                "digest": "e8b371060a0ee2130e2bd3c30061dcb948b0d1f38e40381997f4bcaf4f7d7359"
+              },
+              {
+                "ref": ".space/babel/log.md",
+                "digest": "3263d62ddc0ff22ab8be1fa5ff5e9092f9a8e48517c63e461b115644f113dac5"
+              },
+              {
+                "ref": "ax-local/patches/Dockerfile.ax-server",
+                "digest": "4096bc941b9c81d588ef2dd1cc8d4c1c4dc5335985a49f6946a4b587cddf336c"
+              },
+              {
+                "ref": "ax-local/patches/README.md",
+                "digest": "52da3d745aaa211bf4c30b697b158b92c3169b16c610f153922eb8370c0a5860"
+              },
+              {
+                "ref": "ax-local/patches/credential-free-atespace.patch",
+                "digest": "866b3342b13db166206ddd4f51e3898e6bd7a79d750a30a2cacbb184db17a767"
+              },
+              {
+                "ref": "ax-local/patches/credential_free_test.go.txt",
+                "digest": "6c91810ee5544cb3a948c78085c9aecdd4a63d6e3587c567baebe058a1eae610"
+              },
+              {
+                "ref": "ax-local/patches/prepare-credential-free.sh",
+                "digest": "1206571d66db78487a06a105c15f9fd1d43af6f2652a756bb67b307461097b20"
+              },
+              {
+                "ref": "ax-local/patches/verify-credential-free.sh",
+                "digest": "26e271f7ea4fbd4baa51965d467011d403facfdabac1aa85629e487b98282208"
+              },
+              {
+                "ref": "ax-local/task_runtime/adapters/interactive.py",
+                "digest": "c4fa2eaa187404aa6b1a4d5be1f065e533a06581de5586dabeede9a1c4f1fc1a"
+              },
+              {
+                "ref": "ax-local/task_runtime/interactive_protocol.py",
+                "digest": "4f3e55eacce59d8452f51317ab27398855ad54ecc3a10e707c7b6bc98a75cf1c"
+              },
+              {
+                "ref": "ax-local/task_runtime/mailbox.py",
+                "digest": "52c9c4cdd5d02a58394f1fef23f7d1ef5b3fb2dff9a163211c7cf639a0660586"
+              },
+              {
+                "ref": "ax-local/task_runtime/protocol.py",
+                "digest": "a6652e5e223c7a827cd049875a34087f3b7595ff504c3d23d2b3575b97aac5e6"
+              },
+              {
+                "ref": "ax-local/task_runtime/runner.py",
+                "digest": "a6bffcb6bc9eeadd5ec629cea9a62e6dde3529eb4fe55202c296f318196ec497"
+              },
+              {
+                "ref": "ax-local/task_runtime/skills/brief-v1/SKILL.md",
+                "digest": "d394bcd09724ff69fd758a42247caa323626525316f59c989346ddc3ee8f64fe"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive.py",
+                "digest": "e6444f0a5e6352183a32d6f06d5307fe19b4a264e81715f9ccdbf291dca5c351"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "47fa39178be006d06b2deeac435b696d348fc1a05dd9365f1bf86021abfc53ef"
+              },
+              {
+                "ref": "docs/agent-runtime-design.md",
+                "digest": "c1c25424b85f8353d4a7cd881596ee18fb7aec682a09baea82d88f5643943680"
+              },
+              {
+                "ref": "execution/README.md",
+                "digest": "8197d68c842582470314afe4d6a005249ecc1f3b1e0f681f99b1246b3dd5f79e"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "465b57e729fd127432abd6bd7fbd3feaf79c3f77bb5a4e577f6e7eb28bff67a0"
+              },
+              {
+                "ref": "execution/cmd/inspect/main.go",
+                "digest": "d011654501628a05fe39f8dd1896e8449d2be08b0dd4dbb0593c24a1beb7be03"
+              },
+              {
+                "ref": "execution/cmd/inspect/main_test.go",
+                "digest": "3d81a4c6655f4d8516960c663142554d7958838b6e2a59f774c6e216cd8719ae"
+              },
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "d709e090c1061257aaef481860239ae1abaf7f2f620f9b785b8698f8489b8ce4"
+              },
+              {
+                "ref": "execution/controller/interactive.go",
+                "digest": "7296e0c0fefe663971015050d22ef9fb16178b551a561d64f359be8884ff5963"
+              },
+              {
+                "ref": "execution/controller/interactive_test.go",
+                "digest": "bc233bb44eb3095bd658636d0f127865065bc18731c0be4facd332490198f7f6"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "4e4ebbdfc0bfafcf7a4a41b2cb26cd37515daadfd76a726152aca4a259b7ee4a"
+              },
+              {
+                "ref": "execution/controller/postgres_test.go",
+                "digest": "571c9202da1d666f399eb737db9ea0e7a3a3f9caf9078bd1381b8f2e135d3d7a"
+              },
+              {
+                "ref": "execution/gateway/stub.go",
+                "digest": "39593f61d516d6c79d38001a8b5372e989c7074e0055c6d2a33160a2915b5a25"
+              },
+              {
+                "ref": "execution/gateway/stub_test.go",
+                "digest": "1d8f9a943a6922578868b395f09ce9c16b7e957fa58179daa9b8a3ee155b5922"
+              },
+              {
+                "ref": "execution/native/adapter.go",
+                "digest": "c53dee2d0a151c06cfe89c6c650266d6e0753516b1593f5c277c2d75fa8c3ddd"
+              },
+              {
+                "ref": "execution/native/mailbox.go",
+                "digest": "44fe004ed14a98f8c29f36ccdb5b64a8357593c2fe3aed2a3cfbd005649508f9"
+              },
+              {
+                "ref": "execution/native/mailbox_test.go",
+                "digest": "6951b6fd6c0d946836da92ffc1a097613f100bebe5d95fca41e83e6b64b140a0"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "82807e5d8097cb35a1ecb0e6f11e01980696b8d58f48ae75af0d420552dd971f"
+              },
+              {
+                "ref": "execution/native/runtime_template.go",
+                "digest": "b5bb1e2d14a0af9bf108b9f8a6346ee96c4ec14aa9c0ff3c2de6a17fc5603c39"
+              },
+              {
+                "ref": "execution/settings/settings.go",
+                "digest": "5907e5567948a292a9f32b6ec3c28e16597dfa581481b63b38b2de181442fe81"
+              },
+              {
+                "ref": "web/api/agent-service.ts",
+                "digest": "52c8a68fbd7cb1ba873f656f4a664fb498b716588940b609df91a80fb598c7a3"
+              },
+              {
+                "ref": "web/api/app.ts",
+                "digest": "cf6116eac314b91494761dbf31062bf0211398b03d91b57241970b4b172ef6b0"
+              },
+              {
+                "ref": "web/api/runtime.ts",
+                "digest": "b1d9c53da57f9a92252a84464e8127dab43abf1acc784e67bfb9b593a055ab03"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "448bc20ac4c9b311d2c79bfec7358e6e031c61d1f463290b5445b6b4fa3480b8"
+              },
+              {
+                "ref": "web/app/lib/agents.server.ts",
+                "digest": "48b2423b158ad879c83ced77b50a5394cb084aea268ef5ee7c55496f4ec56c5a"
+              },
+              {
+                "ref": "web/app/lib/auth.server.ts",
+                "digest": "00fedef914134c8ad03935ab55d42016c1b7be97492d6648f4d9de29f9335864"
+              },
+              {
+                "ref": "web/app/routes.ts",
+                "digest": "a74163d8a26bc1d9be2da1ef150af226d06cba1fe260acece28137d4fc34507b"
+              },
+              {
+                "ref": "web/app/routes/account.tsx",
+                "digest": "8a68546281de98d43e208c1714a7b4db34a2c233ea79267fcd3ee0784f8d000f"
+              },
+              {
+                "ref": "web/app/routes/agent.tsx",
+                "digest": "a90ff39d0e3a14386f133fa17c1c418226fbde004e0de870eb054e5026266e45"
+              },
+              {
+                "ref": "web/app/routes/chat.tsx",
+                "digest": "9a7d199429be9d0e2da7e92f532bf2a6d7cac00704ad2abb06ecba9d0d830879"
+              },
+              {
+                "ref": "web/app/routes/run-detail.tsx",
+                "digest": "2001f5a76fdee51693cf0adf39912c6b71e61545dc3493530fec5ffb0d24426a"
+              },
+              {
+                "ref": "web/data/agents.ts",
+                "digest": "bf33157a30243f063046b7098b010608417bdbdadda775bd816f778d685e99ee"
+              },
+              {
+                "ref": "web/data/db.ts",
+                "digest": "5af0e394fdc08078d779e0ad1dd8c695d98d1a2506d84da60b563bfab8bf4099"
+              },
+              {
+                "ref": "web/data/permissions.ts",
+                "digest": "30a23aec69b9b5baf773b6f01ec8be22b6642377535ed710c5c71fe57de93bf1"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "1ca08e2c2b299f2ed6895f207e30d7e6e02a1be20a9d04032c2561085776a6ef"
+              },
+              {
+                "ref": "web/data/schema-v4.sql",
+                "digest": "1f3e98fa7e5455aacd329a36f290eda772f456df91c80b1c625d2ff85055ccab"
+              },
+              {
+                "ref": "web/scripts/deploy-execution.ts",
+                "digest": "70ba84541d57d9a88fe85ed3baa13d83c19a0541eaab4fd0143f74f72a7d162b"
+              },
+              {
+                "ref": "web/scripts/verify-interactive-local.ts",
+                "digest": "ebdc316d9d9795e3c930e4bb35a9a130018aed3fbbe424a3c286c582f615f307"
+              },
+              {
+                "ref": "web/server/auth.ts",
+                "digest": "63b187f01bb591723c80c6f4154832ff8dcc40fdf576c6e64dd7014fd6a8fe24"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "8291352b52315a5f6adad07256c0742efcdca4bed7051a1aff1b8b9874b27d93"
+              },
+              {
+                "ref": "web/server/login-destination.ts",
+                "digest": "d7a01e28e6f044473dfded5cef503a707c63bd4cc79386cf9a15d00ef8299b07"
+              },
+              {
+                "ref": "web/shared/access-token.ts",
+                "digest": "b707b1039ac74cdf96e17d33e2def54683e03e3fb2ae3138e3977196bed162db"
+              },
+              {
+                "ref": "web/shared/agent-contracts.ts",
+                "digest": "f792162ac04e549c3c4e515ea03d01ee915a3e79d5c3b30c477724225a573d88"
+              },
+              {
+                "ref": "web/shared/authentication.ts",
+                "digest": "28be19b7c0a619fd9620dce916133dc8d265b551d16b4b1fee48ccfce3e85844"
+              },
+              {
+                "ref": "web/shared/chat-contracts.ts",
+                "digest": "82a29d518b24c850746781875f4275c49db682dce6461de8589f59d7b29ae46f"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "5493aaeeff8fbb62018d91ad5589561afd12e7da066c00202c4577e8eac80b25"
+              },
+              {
+                "ref": "web/tests/agents.test.ts",
+                "digest": "cced9ac73d5b574732aaabfd84fe2ffb06baf318c04c204ddc6a6cb3f53a9785"
+              },
+              {
+                "ref": "web/tests/browser/agent-fixture.ts",
+                "digest": "fc03f16f03794a57cf116aa4e47286a52004db9911ca803787c5ef5a3e6ed9b2"
+              },
+              {
+                "ref": "web/tests/browser/agent.spec.ts",
+                "digest": "a36f4d648623648347cecab0c29ab89dce7b1ef0193ecc55615d69edb4aab1d1"
+              },
+              {
+                "ref": "web/tests/browser/serve.ts",
+                "digest": "8077aa88bc94a9282a75aa5c73af7c5a40eef561d92fa1bdb0544cc207a8699b"
+              },
+              {
+                "ref": "web/tests/data.test.ts",
+                "digest": "69cd15766bb9bdf0861d241634c902895784ae001d60a6faaba7066107b0b7ba"
+              },
+              {
+                "ref": "web/tests/runtime.test.ts",
+                "digest": "a46dab1a127b3fbf2800b7e5001c50029bf70d69204008681c34cb7f15b6dc25"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "d3fed56c44ff37175d8f227a67a92cfdafa980d3461a5f9e508ef5e0a979de83"
+              }
+            ],
+            "version": "4e12ff3f63c9beefb3d696e2c6a0ca9f54da721fceda7b73ec329095e1c4ca1f"
+          }
+        ],
+        "report": "初期無課金previewを実装・検証・独立レビューしPR18へ引き渡した。実モデルや任意コード等は後続。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-runtime/verification.md",
+            "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+            "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/18",
+            "digest": null
+          }
+        ],
+        "children": [
+          {
+            "unit": "sdk-runtime",
+            "submission": "9c8336a8-4de1-4f9e-89c2-080d629468a7"
+          },
+          {
+            "unit": "runtime-data",
+            "submission": "e5e07aa3-8340-4792-9737-5fdfaa842753"
+          },
+          {
+            "unit": "runtime-execution",
+            "submission": "a79b01c3-81d8-4c1f-927b-640f490cd62f"
+          }
+        ],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "runtime-impl-1"
+        },
+        "at": "2026-10-07T07:51:20.143Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-07T07:51:20.143Z"
+    },
+    {
+      "id": "root-accept",
+      "hash": "4eb3d9858abc2ae43fc3bd289737b6de88b839002003c07dcfc1f24252e2ea3b",
+      "actor": {
+        "actor": "parent",
+        "session": "runtime-impl-1"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "runtime-impl",
+        "actor": "parent",
+        "session": "runtime-impl-1",
+        "operationId": "root-accept",
+        "input": {
+          "submission": "c9330c60-0ca0-40d0-8188-edaaa3b0adf1",
+          "reason": "3子unitの有効な受け入れ、実経路と停止、文書/OKF、独立指摘解消、PR18のレビュー可能な成果物を照合した。"
+        },
+        "ifVersion": 6,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "runtime-impl"
+      ],
+      "evidence": [],
+      "revision": 37,
+      "data": {
+        "id": "c9330c60-0ca0-40d0-8188-edaaa3b0adf1",
+        "unit": "runtime-impl",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "6dd591a2-3f3f-4a2f-8590-b1a2fb829644"
+        ],
+        "outputs": [
+          {
+            "id": "artifact",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+                "digest": "28f879ae22c81f883240d14478d284c9338f2f5a2179829c651b50a345aab61e"
+              },
+              {
+                "ref": ".space/babel/decisions/systems/ax/index.md",
+                "digest": "95908322a10a01ab2e235bfe95717b29cc97b7d5f7bac1790727fb96146c2ebf"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-agent-platform-direction.md",
+                "digest": "3d51373e8c907852916ddca8014f20fa9f37bde94de3143fb2a975b890e3fd42"
+              },
+              {
+                "ref": ".space/babel/knowledge/index.md",
+                "digest": "e8b371060a0ee2130e2bd3c30061dcb948b0d1f38e40381997f4bcaf4f7d7359"
+              },
+              {
+                "ref": ".space/babel/log.md",
+                "digest": "3263d62ddc0ff22ab8be1fa5ff5e9092f9a8e48517c63e461b115644f113dac5"
+              },
+              {
+                "ref": "ax-local/patches/Dockerfile.ax-server",
+                "digest": "4096bc941b9c81d588ef2dd1cc8d4c1c4dc5335985a49f6946a4b587cddf336c"
+              },
+              {
+                "ref": "ax-local/patches/README.md",
+                "digest": "52da3d745aaa211bf4c30b697b158b92c3169b16c610f153922eb8370c0a5860"
+              },
+              {
+                "ref": "ax-local/patches/credential-free-atespace.patch",
+                "digest": "866b3342b13db166206ddd4f51e3898e6bd7a79d750a30a2cacbb184db17a767"
+              },
+              {
+                "ref": "ax-local/patches/credential_free_test.go.txt",
+                "digest": "6c91810ee5544cb3a948c78085c9aecdd4a63d6e3587c567baebe058a1eae610"
+              },
+              {
+                "ref": "ax-local/patches/prepare-credential-free.sh",
+                "digest": "1206571d66db78487a06a105c15f9fd1d43af6f2652a756bb67b307461097b20"
+              },
+              {
+                "ref": "ax-local/patches/verify-credential-free.sh",
+                "digest": "26e271f7ea4fbd4baa51965d467011d403facfdabac1aa85629e487b98282208"
+              },
+              {
+                "ref": "ax-local/task_runtime/adapters/interactive.py",
+                "digest": "c4fa2eaa187404aa6b1a4d5be1f065e533a06581de5586dabeede9a1c4f1fc1a"
+              },
+              {
+                "ref": "ax-local/task_runtime/interactive_protocol.py",
+                "digest": "4f3e55eacce59d8452f51317ab27398855ad54ecc3a10e707c7b6bc98a75cf1c"
+              },
+              {
+                "ref": "ax-local/task_runtime/mailbox.py",
+                "digest": "52c9c4cdd5d02a58394f1fef23f7d1ef5b3fb2dff9a163211c7cf639a0660586"
+              },
+              {
+                "ref": "ax-local/task_runtime/protocol.py",
+                "digest": "a6652e5e223c7a827cd049875a34087f3b7595ff504c3d23d2b3575b97aac5e6"
+              },
+              {
+                "ref": "ax-local/task_runtime/runner.py",
+                "digest": "a6bffcb6bc9eeadd5ec629cea9a62e6dde3529eb4fe55202c296f318196ec497"
+              },
+              {
+                "ref": "ax-local/task_runtime/skills/brief-v1/SKILL.md",
+                "digest": "d394bcd09724ff69fd758a42247caa323626525316f59c989346ddc3ee8f64fe"
+              },
+              {
+                "ref": "ax-local/tests/test_interactive.py",
+                "digest": "e6444f0a5e6352183a32d6f06d5307fe19b4a264e81715f9ccdbf291dca5c351"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "47fa39178be006d06b2deeac435b696d348fc1a05dd9365f1bf86021abfc53ef"
+              },
+              {
+                "ref": "docs/agent-runtime-design.md",
+                "digest": "c1c25424b85f8353d4a7cd881596ee18fb7aec682a09baea82d88f5643943680"
+              },
+              {
+                "ref": "execution/README.md",
+                "digest": "8197d68c842582470314afe4d6a005249ecc1f3b1e0f681f99b1246b3dd5f79e"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "465b57e729fd127432abd6bd7fbd3feaf79c3f77bb5a4e577f6e7eb28bff67a0"
+              },
+              {
+                "ref": "execution/cmd/inspect/main.go",
+                "digest": "d011654501628a05fe39f8dd1896e8449d2be08b0dd4dbb0593c24a1beb7be03"
+              },
+              {
+                "ref": "execution/cmd/inspect/main_test.go",
+                "digest": "3d81a4c6655f4d8516960c663142554d7958838b6e2a59f774c6e216cd8719ae"
+              },
+              {
+                "ref": "execution/controller/controller.go",
+                "digest": "d709e090c1061257aaef481860239ae1abaf7f2f620f9b785b8698f8489b8ce4"
+              },
+              {
+                "ref": "execution/controller/interactive.go",
+                "digest": "7296e0c0fefe663971015050d22ef9fb16178b551a561d64f359be8884ff5963"
+              },
+              {
+                "ref": "execution/controller/interactive_test.go",
+                "digest": "bc233bb44eb3095bd658636d0f127865065bc18731c0be4facd332490198f7f6"
+              },
+              {
+                "ref": "execution/controller/postgres.go",
+                "digest": "4e4ebbdfc0bfafcf7a4a41b2cb26cd37515daadfd76a726152aca4a259b7ee4a"
+              },
+              {
+                "ref": "execution/controller/postgres_test.go",
+                "digest": "571c9202da1d666f399eb737db9ea0e7a3a3f9caf9078bd1381b8f2e135d3d7a"
+              },
+              {
+                "ref": "execution/gateway/stub.go",
+                "digest": "39593f61d516d6c79d38001a8b5372e989c7074e0055c6d2a33160a2915b5a25"
+              },
+              {
+                "ref": "execution/gateway/stub_test.go",
+                "digest": "1d8f9a943a6922578868b395f09ce9c16b7e957fa58179daa9b8a3ee155b5922"
+              },
+              {
+                "ref": "execution/native/adapter.go",
+                "digest": "c53dee2d0a151c06cfe89c6c650266d6e0753516b1593f5c277c2d75fa8c3ddd"
+              },
+              {
+                "ref": "execution/native/mailbox.go",
+                "digest": "44fe004ed14a98f8c29f36ccdb5b64a8357593c2fe3aed2a3cfbd005649508f9"
+              },
+              {
+                "ref": "execution/native/mailbox_test.go",
+                "digest": "6951b6fd6c0d946836da92ffc1a097613f100bebe5d95fca41e83e6b64b140a0"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "82807e5d8097cb35a1ecb0e6f11e01980696b8d58f48ae75af0d420552dd971f"
+              },
+              {
+                "ref": "execution/native/runtime_template.go",
+                "digest": "b5bb1e2d14a0af9bf108b9f8a6346ee96c4ec14aa9c0ff3c2de6a17fc5603c39"
+              },
+              {
+                "ref": "execution/settings/settings.go",
+                "digest": "5907e5567948a292a9f32b6ec3c28e16597dfa581481b63b38b2de181442fe81"
+              },
+              {
+                "ref": "web/api/agent-service.ts",
+                "digest": "52c8a68fbd7cb1ba873f656f4a664fb498b716588940b609df91a80fb598c7a3"
+              },
+              {
+                "ref": "web/api/app.ts",
+                "digest": "cf6116eac314b91494761dbf31062bf0211398b03d91b57241970b4b172ef6b0"
+              },
+              {
+                "ref": "web/api/runtime.ts",
+                "digest": "b1d9c53da57f9a92252a84464e8127dab43abf1acc784e67bfb9b593a055ab03"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "448bc20ac4c9b311d2c79bfec7358e6e031c61d1f463290b5445b6b4fa3480b8"
+              },
+              {
+                "ref": "web/app/lib/agents.server.ts",
+                "digest": "48b2423b158ad879c83ced77b50a5394cb084aea268ef5ee7c55496f4ec56c5a"
+              },
+              {
+                "ref": "web/app/lib/auth.server.ts",
+                "digest": "00fedef914134c8ad03935ab55d42016c1b7be97492d6648f4d9de29f9335864"
+              },
+              {
+                "ref": "web/app/routes.ts",
+                "digest": "a74163d8a26bc1d9be2da1ef150af226d06cba1fe260acece28137d4fc34507b"
+              },
+              {
+                "ref": "web/app/routes/account.tsx",
+                "digest": "8a68546281de98d43e208c1714a7b4db34a2c233ea79267fcd3ee0784f8d000f"
+              },
+              {
+                "ref": "web/app/routes/agent.tsx",
+                "digest": "a90ff39d0e3a14386f133fa17c1c418226fbde004e0de870eb054e5026266e45"
+              },
+              {
+                "ref": "web/app/routes/chat.tsx",
+                "digest": "9a7d199429be9d0e2da7e92f532bf2a6d7cac00704ad2abb06ecba9d0d830879"
+              },
+              {
+                "ref": "web/app/routes/run-detail.tsx",
+                "digest": "2001f5a76fdee51693cf0adf39912c6b71e61545dc3493530fec5ffb0d24426a"
+              },
+              {
+                "ref": "web/data/agents.ts",
+                "digest": "bf33157a30243f063046b7098b010608417bdbdadda775bd816f778d685e99ee"
+              },
+              {
+                "ref": "web/data/db.ts",
+                "digest": "5af0e394fdc08078d779e0ad1dd8c695d98d1a2506d84da60b563bfab8bf4099"
+              },
+              {
+                "ref": "web/data/permissions.ts",
+                "digest": "30a23aec69b9b5baf773b6f01ec8be22b6642377535ed710c5c71fe57de93bf1"
+              },
+              {
+                "ref": "web/data/repository.ts",
+                "digest": "1ca08e2c2b299f2ed6895f207e30d7e6e02a1be20a9d04032c2561085776a6ef"
+              },
+              {
+                "ref": "web/data/schema-v4.sql",
+                "digest": "1f3e98fa7e5455aacd329a36f290eda772f456df91c80b1c625d2ff85055ccab"
+              },
+              {
+                "ref": "web/scripts/deploy-execution.ts",
+                "digest": "70ba84541d57d9a88fe85ed3baa13d83c19a0541eaab4fd0143f74f72a7d162b"
+              },
+              {
+                "ref": "web/scripts/verify-interactive-local.ts",
+                "digest": "ebdc316d9d9795e3c930e4bb35a9a130018aed3fbbe424a3c286c582f615f307"
+              },
+              {
+                "ref": "web/server/auth.ts",
+                "digest": "63b187f01bb591723c80c6f4154832ff8dcc40fdf576c6e64dd7014fd6a8fe24"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "8291352b52315a5f6adad07256c0742efcdca4bed7051a1aff1b8b9874b27d93"
+              },
+              {
+                "ref": "web/server/login-destination.ts",
+                "digest": "d7a01e28e6f044473dfded5cef503a707c63bd4cc79386cf9a15d00ef8299b07"
+              },
+              {
+                "ref": "web/shared/access-token.ts",
+                "digest": "b707b1039ac74cdf96e17d33e2def54683e03e3fb2ae3138e3977196bed162db"
+              },
+              {
+                "ref": "web/shared/agent-contracts.ts",
+                "digest": "f792162ac04e549c3c4e515ea03d01ee915a3e79d5c3b30c477724225a573d88"
+              },
+              {
+                "ref": "web/shared/authentication.ts",
+                "digest": "28be19b7c0a619fd9620dce916133dc8d265b551d16b4b1fee48ccfce3e85844"
+              },
+              {
+                "ref": "web/shared/chat-contracts.ts",
+                "digest": "82a29d518b24c850746781875f4275c49db682dce6461de8589f59d7b29ae46f"
+              },
+              {
+                "ref": "web/shared/run-contracts.ts",
+                "digest": "5493aaeeff8fbb62018d91ad5589561afd12e7da066c00202c4577e8eac80b25"
+              },
+              {
+                "ref": "web/tests/agents.test.ts",
+                "digest": "cced9ac73d5b574732aaabfd84fe2ffb06baf318c04c204ddc6a6cb3f53a9785"
+              },
+              {
+                "ref": "web/tests/browser/agent-fixture.ts",
+                "digest": "fc03f16f03794a57cf116aa4e47286a52004db9911ca803787c5ef5a3e6ed9b2"
+              },
+              {
+                "ref": "web/tests/browser/agent.spec.ts",
+                "digest": "a36f4d648623648347cecab0c29ab89dce7b1ef0193ecc55615d69edb4aab1d1"
+              },
+              {
+                "ref": "web/tests/browser/serve.ts",
+                "digest": "8077aa88bc94a9282a75aa5c73af7c5a40eef561d92fa1bdb0544cc207a8699b"
+              },
+              {
+                "ref": "web/tests/data.test.ts",
+                "digest": "69cd15766bb9bdf0861d241634c902895784ae001d60a6faaba7066107b0b7ba"
+              },
+              {
+                "ref": "web/tests/runtime.test.ts",
+                "digest": "a46dab1a127b3fbf2800b7e5001c50029bf70d69204008681c34cb7f15b6dc25"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "d3fed56c44ff37175d8f227a67a92cfdafa980d3461a5f9e508ef5e0a979de83"
+              }
+            ],
+            "version": "4e12ff3f63c9beefb3d696e2c6a0ca9f54da721fceda7b73ec329095e1c4ca1f"
+          }
+        ],
+        "report": "初期無課金previewを実装・検証・独立レビューしPR18へ引き渡した。実モデルや任意コード等は後続。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-runtime/verification.md",
+            "digest": "b1c2cff329cccadf770990f440689479af627b16036364031e07b9a7acbb6ff5"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-runtime/reviews/integration.md",
+            "digest": "8a29f9004c0a0b2c75302c179901abfd7293d531fe9600d4b1af23497a3e8765"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/18",
+            "digest": null
+          }
+        ],
+        "children": [
+          {
+            "unit": "sdk-runtime",
+            "submission": "9c8336a8-4de1-4f9e-89c2-080d629468a7"
+          },
+          {
+            "unit": "runtime-data",
+            "submission": "e5e07aa3-8340-4792-9737-5fdfaa842753"
+          },
+          {
+            "unit": "runtime-execution",
+            "submission": "a79b01c3-81d8-4c1f-927b-640f490cd62f"
+          }
+        ],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "runtime-impl-1"
+        },
+        "at": "2026-10-07T07:51:20.143Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "runtime-impl-1"
+          },
+          "reason": "3子unitの有効な受け入れ、実経路と停止、文書/OKF、独立指摘解消、PR18のレビュー可能な成果物を照合した。",
+          "at": "2026-10-07T07:51:20.282Z"
+        }
+      },
+      "at": "2026-10-07T07:51:20.282Z"
     }
   ]
 }

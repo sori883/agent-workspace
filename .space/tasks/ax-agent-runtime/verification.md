@@ -67,3 +67,7 @@ Node97件成功。新ブラウザ4件・既存認証7件成功、先行版の旧
 有料provider、生成コード、動的install、サブエージェント、外部GitHub操作、社内API/MCP/RAG、定期実行は今回のプレビューへ実装していない。模擬の質問と回答転記を実モデルによる依頼理解とは表示しない。全通信プロトコルの敵対的隔離や本番運用の保証も、この結果に含めない。
 
 共有pool切替後の旧ax-demo offline診断も `ax-run-b7d201741e9f342a` で成功。output.txt22bytes、費用0、独立inspectでdeny/実停止/worker未割当を確認した。診断はアプリの通常job台帳を使わない独立probeである。最後に未解決0・枠空を条件に受付を開いた。
+
+公開前の全追加ファイルを含む差分検査では、OKF CLIが生成するYAML見出しの末尾空白と、保存したunified patchのcontext接頭辞に空白警告が出た。これらは生成形式を維持し、OKF strict/driftとpatch適用/race/buildで形式を確認した。両形式を除く製品コード・文書のbase差分は空白検査成功。先行の `git diff --check` 成功は未追跡ファイルを含まない時点の結果である。
+
+最終の独立統合レビューは [reviews/integration.md](reviews/integration.md)。初期プレビューについて未解消の必須指摘なし。関連OKF2文書をCLIで保存・読み返し、strict/driftのエラー/警告0件。成果物は [PR #18](https://github.com/sori883/agent-workspace/pull/18) にまとめた。
