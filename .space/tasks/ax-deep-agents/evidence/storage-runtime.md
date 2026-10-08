@@ -14,8 +14,10 @@ Pythonのtrusted runnerはファイルを0444・ディレクトリを0700で配�
 
 - Go全体・race・vetに成功。追加修正後のnative/controller対象群も成功。
 - PGの4境界試験が成功。現在認可、本文と補助資料の段階読込、固定版での新Task入力、旧v9の互換、旧agent選択拒否、モデル未送信時の0費用・失敗理由・実行枠解放を確認。
-- 最新Python34件は、固定SDKを含むDocker内・networkなし・capabilitiesなしで全成功、skipなし。開発ホスト単独ではSDK未導入による11skipがあるため、最終判定はDocker結果を使用。
+- 最新Python35件は、固定SDKを含むDocker内・networkなし・capabilitiesなしで全成功、skipなし。開発ホスト単独ではSDK未導入による11skipがあるため、最終判定はDocker結果を使用。
 - 旧0555ディレクトリの通常削除失敗を再現し、stage・seal・開始後中断・完了後の4状態で0700の削除成功を確認。SKILL.mdを同じサイズの0444別内容へ差し替えてもprompt生成と開始を拒否する。
 - GoのSuspend応答不明では、保存済結果と使用量を保持し、モデル・guest処理を再送せず、正式な停止証拠がなければ保留する回帰を追加。
 
 A/B担当が実装を独立レビューした。BはBOM・path collision・40KiB事前計測と終了時権限の修正後を再確認し、新しい必須指摘なし。実AXでの最終結果と復旧は親の [統合確認](../verification.md) に記録する。
+
+CIのumask 077によるmode差を受け、書込み後のfdをfchmod(0444)で確定する1行を追加した。専用回帰はRED→GREEN、全offline236件（環境依存62skip）とDocker35件（skipなし）が成功。独立レビューBで追加指摘なし。

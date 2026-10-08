@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 73,
+  "revision": 94,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "coordinator",
     "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
   },
   "createdAt": "2026-10-08T11:30:14.506Z",
-  "updatedAt": "2026-10-08T14:26:04.325Z",
+  "updatedAt": "2026-10-08T14:39:00.885Z",
   "units": [
     {
       "id": "DA-ROOT",
@@ -1703,7 +1703,7 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 14,
+      "version": 21,
       "contractVersion": 1,
       "attempts": [
         {
@@ -1787,10 +1787,55 @@
           "next": "",
           "resumeRef": null,
           "createdAt": "2026-10-08T14:25:24.415Z"
+        },
+        {
+          "number": 3,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                  "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                },
+                {
+                  "ref": ".space/tasks/ax-deep-agents/verification.md",
+                  "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                  "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                },
+                {
+                  "ref": ".space/tasks/ax-deep-agents/verification.md",
+                  "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-08T14:38:59.422Z"
         }
       ],
-      "currentAttempt": 2,
-      "currentSubmission": "5a225f09-8b28-4b87-bcbb-cd1116a0d815",
+      "currentAttempt": 3,
+      "currentSubmission": "2919dc72-9f40-4359-88cb-902076f78a87",
       "contractHistory": []
     },
     {
@@ -1831,7 +1876,7 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 7,
+      "version": 14,
       "contractVersion": 1,
       "attempts": [
         {
@@ -1878,10 +1923,55 @@
           "next": "",
           "resumeRef": null,
           "createdAt": "2026-10-08T13:22:36.568Z"
+        },
+        {
+          "number": 2,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                  "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+                },
+                {
+                  "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                  "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                  "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+                },
+                {
+                  "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                  "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-08T14:38:59.898Z"
         }
       ],
-      "currentAttempt": 1,
-      "currentSubmission": "ad9287d4-02ed-4bbc-a67b-dde3e26ed851",
+      "currentAttempt": 2,
+      "currentSubmission": "441f9f44-8678-4c2b-8934-541523c3ce10",
       "contractHistory": []
     },
     {
@@ -1925,7 +2015,7 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 14,
+      "version": 21,
       "contractVersion": 1,
       "attempts": [
         {
@@ -2017,10 +2107,55 @@
           "next": "",
           "resumeRef": null,
           "createdAt": "2026-10-08T14:26:03.858Z"
+        },
+        {
+          "number": 3,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-deep-agents/verification.md",
+                  "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+                },
+                {
+                  "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                  "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-deep-agents/verification.md",
+                  "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+                },
+                {
+                  "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                  "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-08T14:39:00.462Z"
         }
       ],
-      "currentAttempt": 2,
-      "currentSubmission": "72d68287-0309-45d6-8279-5d0a7de69f81",
+      "currentAttempt": 3,
+      "currentSubmission": "c042b0f4-f50a-49e9-ad6b-1305de58cd2b",
       "contractHistory": []
     }
   ],
@@ -2398,6 +2533,197 @@
       "reusedFrom": null,
       "reuseReason": "",
       "at": "2026-10-08T14:26:04.130Z"
+    },
+    {
+      "id": "3a511c7d-225c-4bf5-82e5-07e55d606c2f",
+      "unit": "SS-02",
+      "attempt": 3,
+      "condition": "storage",
+      "target": {
+        "id": "implementation",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "web/api/skill-object-store.ts",
+            "digest": "4611307c823918a2083fcfc00a665bbb6249279d96cdf65b6e1670f1873dbc13"
+          },
+          {
+            "ref": "web/data/definitions.ts",
+            "digest": "89d1188b1ee01b0a55f88ccf0d2728802549da0193e41d72f499db816e917a49"
+          },
+          {
+            "ref": "web/data/schema-v10.sql",
+            "digest": "be0018a76ad15ee7723a743765b1c349832cfb6d4b3193726aa1991f1a9d411f"
+          },
+          {
+            "ref": "web/data/skill-storage.ts",
+            "digest": "a8aa1283b7312d9060bcf331e8cf9c915d2d8d0472da05236291712df2fd81fc"
+          },
+          {
+            "ref": "web/shared/skill-storage-contracts.ts",
+            "digest": "db0aa2afec3d45a04d5dd3fc46fe8a3fdf1d699289877fcc379539fdec76436c"
+          }
+        ],
+        "version": "574893b1629c5f6eef8c189b042965762c4cd22acba16517e3fe9235124f86ae"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+          "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+        },
+        {
+          "ref": ".space/tasks/ax-deep-agents/verification.md",
+          "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+        }
+      ],
+      "reason": "",
+      "method": "umask077回帰・全offline236件・Docker35件・独立レビューと最終実AX成功を照合、既存Web/Go結果を再利用",
+      "environment": "Node/workerd、Docker/RustFS/PostgreSQL、kind/AX、固定SDK、capabilitiesなし",
+      "observedAt": "2026-10-08T14:38:59.645792+00:00",
+      "performer": "coordinator; map_skill_storage_boundaries; review_skill_storage_impl_b",
+      "recordedBy": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-08T14:38:59.698Z"
+    },
+    {
+      "id": "8bef8e23-65cb-4ce8-a9bc-44697f13038f",
+      "unit": "SS-03",
+      "attempt": 2,
+      "condition": "storage",
+      "target": {
+        "id": "implementation",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "ax-local/task_runtime/workbench_runner.py",
+            "digest": "24550bc6a40d66ba76655c3a92371190c000cd65a2fbc2a5478f722969ffd8f8"
+          },
+          {
+            "ref": "ax-local/task_runtime/workbench_skills.py",
+            "digest": "2db9538f3e239b9ca72bf3abf53bdb50d558713600693fec6d6451a3fb8280d8"
+          },
+          {
+            "ref": "ax-local/tests/test_workbench_storage.py",
+            "digest": "6698521a411579d90e52deb88f0b5435be1eeb7d4837df98ff39b4cfe251bfab"
+          },
+          {
+            "ref": "execution/controller/skill_s3.go",
+            "digest": "a6c9ea0389092aee9dd4a22e70a6f6a570940566372f8b47884abf11fe9e0871"
+          },
+          {
+            "ref": "execution/controller/workbench_objects.go",
+            "digest": "70c11a50ae5c5ee3aa450248afb5db68a21865dccfb0217375bb41047096026f"
+          },
+          {
+            "ref": "execution/native/workbench_objects.go",
+            "digest": "2d8e9365fa180f66d808577880f15bd72df24c432e32eb6f31bca72ccb6efec9"
+          },
+          {
+            "ref": "web/data/schema-v11.sql",
+            "digest": "3adc3d7e3ad967f9cf1d88ee58ec6359db74138ff1597ed4900efc6b42e98c3f"
+          }
+        ],
+        "version": "b84f16d8b12e202d9b521ee7bc86f2585a59f167d885e1312b51376390f59e90"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+          "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+        },
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+          "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+        }
+      ],
+      "reason": "",
+      "method": "umask077回帰・全offline236件・Docker35件・独立レビューと最終実AX成功を照合、既存Web/Go結果を再利用",
+      "environment": "Node/workerd、Docker/RustFS/PostgreSQL、kind/AX、固定SDK、capabilitiesなし",
+      "observedAt": "2026-10-08T14:39:00.105519+00:00",
+      "performer": "coordinator; map_skill_storage_boundaries; review_skill_storage_impl_b",
+      "recordedBy": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-08T14:39:00.199Z"
+    },
+    {
+      "id": "be7e2bd4-92f0-450a-817b-2e1968462c5c",
+      "unit": "SS-04",
+      "attempt": 3,
+      "condition": "storage",
+      "target": {
+        "id": "implementation",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": "ax-local/versions.json",
+            "digest": "3552cfe37af28855a2f1b57a9b35995ba51ffeed1ed97ed9ffe5543344a1c981"
+          },
+          {
+            "ref": "execution/cmd/ax-controller/main.go",
+            "digest": "f3721488ba875d1dfce06dfe496d4ea9ac81a2376916a00979b131c434acf6ed"
+          },
+          {
+            "ref": "execution/settings/skill_storage.go",
+            "digest": "5820138ba2f4d76afffbd6b48dc2296c7fa37ab28710ba01a37f16462526dd43"
+          },
+          {
+            "ref": "web/api/runtime.ts",
+            "digest": "956bd0d291a78a077e74ddb90fa6e268e0efdf30a215ebab79a5fa2d62032f5e"
+          },
+          {
+            "ref": "web/api/settings.ts",
+            "digest": "952b1aee14917b0b2680e5acd1838f991713526ce50bda4c50739cdfb6021396"
+          },
+          {
+            "ref": "web/scripts/deploy-execution.ts",
+            "digest": "5264f9b6c4a193f999c6740731fc7c9cdfb2c61a05ee4ad4cc191b5d5e909bcd"
+          },
+          {
+            "ref": "web/scripts/verify-skill-storage-local.ts",
+            "digest": "14016129457927dea6cee8b747ed20be65a302f30188a12c5c271c01512833cf"
+          },
+          {
+            "ref": "web/server/skill-storage-settings.ts",
+            "digest": "975f7be20f38ce0a7cd16b1af01771d02afc84dd97736cd28a61ff8eab7787ea"
+          }
+        ],
+        "version": "700162329dea250549d232778a07c02067bdc5e0772acbacfa720ddbf258e759"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-deep-agents/verification.md",
+          "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+        },
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+          "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+        }
+      ],
+      "reason": "",
+      "method": "umask077回帰・全offline236件・Docker35件・独立レビューと最終実AX成功を照合、既存Web/Go結果を再利用",
+      "environment": "Node/workerd、Docker/RustFS/PostgreSQL、kind/AX、固定SDK、capabilitiesなし",
+      "observedAt": "2026-10-08T14:39:00.670471+00:00",
+      "performer": "coordinator; map_skill_storage_boundaries; review_skill_storage_impl_b",
+      "recordedBy": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-08T14:39:00.731Z"
     }
   ],
   "submissions": [
@@ -2607,9 +2933,9 @@
         }
       ],
       "children": [],
-      "active": true,
-      "obsoleteReason": "",
-      "successor": null,
+      "active": false,
+      "obsoleteReason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+      "successor": "441f9f44-8678-4c2b-8934-541523c3ce10",
       "createdBy": {
         "actor": "coordinator",
         "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
@@ -2763,9 +3089,9 @@
         }
       ],
       "children": [],
-      "active": true,
-      "obsoleteReason": "",
-      "successor": null,
+      "active": false,
+      "obsoleteReason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+      "successor": "2919dc72-9f40-4359-88cb-902076f78a87",
       "createdBy": {
         "actor": "coordinator",
         "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
@@ -2847,9 +3173,9 @@
         }
       ],
       "children": [],
-      "active": true,
-      "obsoleteReason": "",
-      "successor": null,
+      "active": false,
+      "obsoleteReason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+      "successor": "c042b0f4-f50a-49e9-ad6b-1305de58cd2b",
       "createdBy": {
         "actor": "coordinator",
         "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
@@ -2863,6 +3189,242 @@
         },
         "reason": "最終ファイルhashと検証結果が整合する。",
         "at": "2026-10-08T14:26:04.325Z"
+      }
+    },
+    {
+      "id": "2919dc72-9f40-4359-88cb-902076f78a87",
+      "unit": "SS-02",
+      "attempt": 3,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "3a511c7d-225c-4bf5-82e5-07e55d606c2f"
+      ],
+      "outputs": [
+        {
+          "id": "implementation",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/api/skill-object-store.ts",
+              "digest": "4611307c823918a2083fcfc00a665bbb6249279d96cdf65b6e1670f1873dbc13"
+            },
+            {
+              "ref": "web/data/definitions.ts",
+              "digest": "89d1188b1ee01b0a55f88ccf0d2728802549da0193e41d72f499db816e917a49"
+            },
+            {
+              "ref": "web/data/schema-v10.sql",
+              "digest": "be0018a76ad15ee7723a743765b1c349832cfb6d4b3193726aa1991f1a9d411f"
+            },
+            {
+              "ref": "web/data/skill-storage.ts",
+              "digest": "a8aa1283b7312d9060bcf331e8cf9c915d2d8d0472da05236291712df2fd81fc"
+            },
+            {
+              "ref": "web/shared/skill-storage-contracts.ts",
+              "digest": "db0aa2afec3d45a04d5dd3fc46fe8a3fdf1d699289877fcc379539fdec76436c"
+            }
+          ],
+          "version": "574893b1629c5f6eef8c189b042965762c4cd22acba16517e3fe9235124f86ae"
+        }
+      ],
+      "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+          "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+        },
+        {
+          "ref": ".space/tasks/ax-deep-agents/verification.md",
+          "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "at": "2026-10-08T14:38:59.758Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "reason": "最終版・回帰・独立レビュー・実機証拠の対応を確認した。",
+        "at": "2026-10-08T14:38:59.842Z"
+      }
+    },
+    {
+      "id": "441f9f44-8678-4c2b-8934-541523c3ce10",
+      "unit": "SS-03",
+      "attempt": 2,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "8bef8e23-65cb-4ce8-a9bc-44697f13038f"
+      ],
+      "outputs": [
+        {
+          "id": "implementation",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/task_runtime/workbench_runner.py",
+              "digest": "24550bc6a40d66ba76655c3a92371190c000cd65a2fbc2a5478f722969ffd8f8"
+            },
+            {
+              "ref": "ax-local/task_runtime/workbench_skills.py",
+              "digest": "2db9538f3e239b9ca72bf3abf53bdb50d558713600693fec6d6451a3fb8280d8"
+            },
+            {
+              "ref": "ax-local/tests/test_workbench_storage.py",
+              "digest": "6698521a411579d90e52deb88f0b5435be1eeb7d4837df98ff39b4cfe251bfab"
+            },
+            {
+              "ref": "execution/controller/skill_s3.go",
+              "digest": "a6c9ea0389092aee9dd4a22e70a6f6a570940566372f8b47884abf11fe9e0871"
+            },
+            {
+              "ref": "execution/controller/workbench_objects.go",
+              "digest": "70c11a50ae5c5ee3aa450248afb5db68a21865dccfb0217375bb41047096026f"
+            },
+            {
+              "ref": "execution/native/workbench_objects.go",
+              "digest": "2d8e9365fa180f66d808577880f15bd72df24c432e32eb6f31bca72ccb6efec9"
+            },
+            {
+              "ref": "web/data/schema-v11.sql",
+              "digest": "3adc3d7e3ad967f9cf1d88ee58ec6359db74138ff1597ed4900efc6b42e98c3f"
+            }
+          ],
+          "version": "b84f16d8b12e202d9b521ee7bc86f2585a59f167d885e1312b51376390f59e90"
+        }
+      ],
+      "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+          "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+        },
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+          "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "at": "2026-10-08T14:39:00.278Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "reason": "最終版・回帰・独立レビュー・実機証拠の対応を確認した。",
+        "at": "2026-10-08T14:39:00.395Z"
+      }
+    },
+    {
+      "id": "c042b0f4-f50a-49e9-ad6b-1305de58cd2b",
+      "unit": "SS-04",
+      "attempt": 3,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "be7e2bd4-92f0-450a-817b-2e1968462c5c"
+      ],
+      "outputs": [
+        {
+          "id": "implementation",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "3552cfe37af28855a2f1b57a9b35995ba51ffeed1ed97ed9ffe5543344a1c981"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "f3721488ba875d1dfce06dfe496d4ea9ac81a2376916a00979b131c434acf6ed"
+            },
+            {
+              "ref": "execution/settings/skill_storage.go",
+              "digest": "5820138ba2f4d76afffbd6b48dc2296c7fa37ab28710ba01a37f16462526dd43"
+            },
+            {
+              "ref": "web/api/runtime.ts",
+              "digest": "956bd0d291a78a077e74ddb90fa6e268e0efdf30a215ebab79a5fa2d62032f5e"
+            },
+            {
+              "ref": "web/api/settings.ts",
+              "digest": "952b1aee14917b0b2680e5acd1838f991713526ce50bda4c50739cdfb6021396"
+            },
+            {
+              "ref": "web/scripts/deploy-execution.ts",
+              "digest": "5264f9b6c4a193f999c6740731fc7c9cdfb2c61a05ee4ad4cc191b5d5e909bcd"
+            },
+            {
+              "ref": "web/scripts/verify-skill-storage-local.ts",
+              "digest": "14016129457927dea6cee8b747ed20be65a302f30188a12c5c271c01512833cf"
+            },
+            {
+              "ref": "web/server/skill-storage-settings.ts",
+              "digest": "975f7be20f38ce0a7cd16b1af01771d02afc84dd97736cd28a61ff8eab7787ea"
+            }
+          ],
+          "version": "700162329dea250549d232778a07c02067bdc5e0772acbacfa720ddbf258e759"
+        }
+      ],
+      "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-deep-agents/verification.md",
+          "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+        },
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+          "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "at": "2026-10-08T14:39:00.795Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "reason": "最終版・回帰・独立レビュー・実機証拠の対応を確認した。",
+        "at": "2026-10-08T14:39:00.885Z"
       }
     }
   ],
@@ -3022,6 +3584,84 @@
       "state": "processed",
       "resolution": "accepted: 最終ファイルhashと検証結果が整合する。",
       "at": "2026-10-08T14:26:04.197Z"
+    },
+    {
+      "id": "de2ccda8-429f-4c81-b81f-4a528c1fb705",
+      "unit": "SS-02",
+      "attempt": 3,
+      "from": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "to": "coordinator",
+      "kind": "completion",
+      "body": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+          "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+        },
+        {
+          "ref": ".space/tasks/ax-deep-agents/verification.md",
+          "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+        }
+      ],
+      "submission": "2919dc72-9f40-4359-88cb-902076f78a87",
+      "state": "processed",
+      "resolution": "accepted: 最終版・回帰・独立レビュー・実機証拠の対応を確認した。",
+      "at": "2026-10-08T14:38:59.758Z"
+    },
+    {
+      "id": "21c79148-3cfe-4ef9-9856-d24d349b9cb3",
+      "unit": "SS-03",
+      "attempt": 2,
+      "from": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "to": "coordinator",
+      "kind": "completion",
+      "body": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+          "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+        },
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+          "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+        }
+      ],
+      "submission": "441f9f44-8678-4c2b-8934-541523c3ce10",
+      "state": "processed",
+      "resolution": "accepted: 最終版・回帰・独立レビュー・実機証拠の対応を確認した。",
+      "at": "2026-10-08T14:39:00.278Z"
+    },
+    {
+      "id": "13475ebd-6b25-49f6-b21d-eb48514cd6e9",
+      "unit": "SS-04",
+      "attempt": 3,
+      "from": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "to": "coordinator",
+      "kind": "completion",
+      "body": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-deep-agents/verification.md",
+          "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+        },
+        {
+          "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+          "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+        }
+      ],
+      "submission": "c042b0f4-f50a-49e9-ad6b-1305de58cd2b",
+      "state": "processed",
+      "resolution": "accepted: 最終版・回帰・独立レビュー・実機証拠の対応を確認した。",
+      "at": "2026-10-08T14:39:00.795Z"
     }
   ],
   "gates": [],
@@ -13680,6 +14320,3181 @@
         }
       },
       "at": "2026-10-08T14:26:04.325Z"
+    },
+    {
+      "id": "5bf645c7-4b70-4629-b74f-8fe41262971a",
+      "hash": "705a860bc4f173f367875ad30beb601b24ecd481d89ed8b93e02616d42a7db31",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit reopen",
+      "request": {
+        "command": "unit reopen",
+        "id": "SS-02",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "5bf645c7-4b70-4629-b74f-8fe41262971a",
+        "input": {
+          "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。"
+        },
+        "ifVersion": 14,
+        "attempt": 2
+      },
+      "affectedUnits": [
+        "SS-02"
+      ],
+      "evidence": [],
+      "revision": 74,
+      "data": {
+        "id": "SS-02",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "ファイル原本とスキル管理情報",
+        "track": "",
+        "owner": {
+          "actor": "implement_skill_storage_data",
+          "session": "implement_skill_storage_data"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/schema-v10.sql",
+          "web/data/definitions.ts",
+          "web/data/skill-storage.ts",
+          "web/api/skill-object-store.ts",
+          "web/shared/skill-storage-contracts.ts"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "認可・保存公開の部分失敗・版固定・原本整合性と旧版互換性を確認した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 15,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.470Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "検証記録の末尾書式修正後の実ファイルhashで確認を更新する。実測内容・実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:25:24.415Z"
+          },
+          {
+            "number": 3,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:38:59.422Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:38:59.422Z"
+    },
+    {
+      "id": "dcfa605a-285e-4570-9422-62ca27753b4b",
+      "hash": "c5f2ba5e8aff28bf61ed7c17af9d857104d1d94a3cee10c75c6ee020f58d71a2",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "SS-02",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "dcfa605a-285e-4570-9422-62ca27753b4b",
+        "input": {},
+        "ifVersion": 15,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-02"
+      ],
+      "evidence": [],
+      "revision": 75,
+      "data": {
+        "id": "SS-02",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "ファイル原本とスキル管理情報",
+        "track": "",
+        "owner": {
+          "actor": "implement_skill_storage_data",
+          "session": "implement_skill_storage_data"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/schema-v10.sql",
+          "web/data/definitions.ts",
+          "web/data/skill-storage.ts",
+          "web/api/skill-object-store.ts",
+          "web/shared/skill-storage-contracts.ts"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "認可・保存公開の部分失敗・版固定・原本整合性と旧版互換性を確認した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 16,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.470Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "検証記録の末尾書式修正後の実ファイルhashで確認を更新する。実測内容・実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:25:24.415Z"
+          },
+          {
+            "number": 3,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:38:59.422Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:38:59.501Z"
+    },
+    {
+      "id": "d6719560-d64e-482a-b610-3c550461b34a",
+      "hash": "ce3de0d3cee911c2cd5ac96e33a324c3e4109dce79f615b40e90b0e0a489d824",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "SS-02",
+        "stage": "implement",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "d6719560-d64e-482a-b610-3c550461b34a",
+        "input": {
+          "selection": "execute",
+          "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+            ".space/tasks/ax-deep-agents/verification.md"
+          ]
+        },
+        "ifVersion": 16,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-02"
+      ],
+      "evidence": [],
+      "revision": 76,
+      "data": {
+        "id": "SS-02",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "ファイル原本とスキル管理情報",
+        "track": "",
+        "owner": {
+          "actor": "implement_skill_storage_data",
+          "session": "implement_skill_storage_data"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/schema-v10.sql",
+          "web/data/definitions.ts",
+          "web/data/skill-storage.ts",
+          "web/api/skill-object-store.ts",
+          "web/shared/skill-storage-contracts.ts"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "認可・保存公開の部分失敗・版固定・原本整合性と旧版互換性を確認した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 17,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.470Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "検証記録の末尾書式修正後の実ファイルhashで確認を更新する。実測内容・実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:25:24.415Z"
+          },
+          {
+            "number": 3,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:38:59.422Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:38:59.582Z"
+    },
+    {
+      "id": "d4095a75-b26e-4f79-b297-7a1901ea9bb1",
+      "hash": "547bf0ad831be9f95afdcfc909f9b3d39d891bd975d8eef07c5c93843ed1b331",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "SS-02",
+        "stage": "verify",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "d4095a75-b26e-4f79-b297-7a1901ea9bb1",
+        "input": {
+          "selection": "execute",
+          "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+            ".space/tasks/ax-deep-agents/verification.md"
+          ]
+        },
+        "ifVersion": 17,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-02"
+      ],
+      "evidence": [],
+      "revision": 77,
+      "data": {
+        "id": "SS-02",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "ファイル原本とスキル管理情報",
+        "track": "",
+        "owner": {
+          "actor": "implement_skill_storage_data",
+          "session": "implement_skill_storage_data"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/schema-v10.sql",
+          "web/data/definitions.ts",
+          "web/data/skill-storage.ts",
+          "web/api/skill-object-store.ts",
+          "web/shared/skill-storage-contracts.ts"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "認可・保存公開の部分失敗・版固定・原本整合性と旧版互換性を確認した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 18,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.470Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "検証記録の末尾書式修正後の実ファイルhashで確認を更新する。実測内容・実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:25:24.415Z"
+          },
+          {
+            "number": 3,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+                    "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:38:59.422Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:38:59.641Z"
+    },
+    {
+      "id": "5f9c4900-0737-4a5a-9db0-a663b5cc49a3",
+      "hash": "6dd1b910edb8122d23f86ca445d98f804afb6493292c0d6fb0742bdc914bbebf",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "SS-02",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "5f9c4900-0737-4a5a-9db0-a663b5cc49a3",
+        "input": {
+          "condition": "storage",
+          "verdict": "pass",
+          "target": {
+            "id": "implementation",
+            "kind": "files",
+            "files": [
+              "web/data/schema-v10.sql",
+              "web/data/definitions.ts",
+              "web/data/skill-storage.ts",
+              "web/api/skill-object-store.ts",
+              "web/shared/skill-storage-contracts.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+            ".space/tasks/ax-deep-agents/verification.md"
+          ],
+          "method": "umask077回帰・全offline236件・Docker35件・独立レビューと最終実AX成功を照合、既存Web/Go結果を再利用",
+          "environment": "Node/workerd、Docker/RustFS/PostgreSQL、kind/AX、固定SDK、capabilitiesなし",
+          "observedAt": "2026-10-08T14:38:59.645792+00:00",
+          "performer": "coordinator; map_skill_storage_boundaries; review_skill_storage_impl_b"
+        },
+        "ifVersion": 18,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-02"
+      ],
+      "evidence": [],
+      "revision": 78,
+      "data": {
+        "id": "3a511c7d-225c-4bf5-82e5-07e55d606c2f",
+        "unit": "SS-02",
+        "attempt": 3,
+        "condition": "storage",
+        "target": {
+          "id": "implementation",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "web/api/skill-object-store.ts",
+              "digest": "4611307c823918a2083fcfc00a665bbb6249279d96cdf65b6e1670f1873dbc13"
+            },
+            {
+              "ref": "web/data/definitions.ts",
+              "digest": "89d1188b1ee01b0a55f88ccf0d2728802549da0193e41d72f499db816e917a49"
+            },
+            {
+              "ref": "web/data/schema-v10.sql",
+              "digest": "be0018a76ad15ee7723a743765b1c349832cfb6d4b3193726aa1991f1a9d411f"
+            },
+            {
+              "ref": "web/data/skill-storage.ts",
+              "digest": "a8aa1283b7312d9060bcf331e8cf9c915d2d8d0472da05236291712df2fd81fc"
+            },
+            {
+              "ref": "web/shared/skill-storage-contracts.ts",
+              "digest": "db0aa2afec3d45a04d5dd3fc46fe8a3fdf1d699289877fcc379539fdec76436c"
+            }
+          ],
+          "version": "574893b1629c5f6eef8c189b042965762c4cd22acba16517e3fe9235124f86ae"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+            "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+          },
+          {
+            "ref": ".space/tasks/ax-deep-agents/verification.md",
+            "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+          }
+        ],
+        "reason": "",
+        "method": "umask077回帰・全offline236件・Docker35件・独立レビューと最終実AX成功を照合、既存Web/Go結果を再利用",
+        "environment": "Node/workerd、Docker/RustFS/PostgreSQL、kind/AX、固定SDK、capabilitiesなし",
+        "observedAt": "2026-10-08T14:38:59.645792+00:00",
+        "performer": "coordinator; map_skill_storage_boundaries; review_skill_storage_impl_b",
+        "recordedBy": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-08T14:38:59.698Z"
+      },
+      "at": "2026-10-08T14:38:59.698Z"
+    },
+    {
+      "id": "fc5f7046-be53-4224-954b-4075e897a0bc",
+      "hash": "40193726382145968b59ad3cb88f4af4b3fc44777a69e2aa34ce4d4399df9360",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "SS-02",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "fc5f7046-be53-4224-954b-4075e897a0bc",
+        "input": {
+          "checks": [
+            "3a511c7d-225c-4bf5-82e5-07e55d606c2f"
+          ],
+          "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+          "refs": [
+            ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+            ".space/tasks/ax-deep-agents/verification.md"
+          ]
+        },
+        "ifVersion": 19,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-02"
+      ],
+      "evidence": [],
+      "revision": 79,
+      "data": {
+        "id": "2919dc72-9f40-4359-88cb-902076f78a87",
+        "unit": "SS-02",
+        "attempt": 3,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "3a511c7d-225c-4bf5-82e5-07e55d606c2f"
+        ],
+        "outputs": [
+          {
+            "id": "implementation",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/api/skill-object-store.ts",
+                "digest": "4611307c823918a2083fcfc00a665bbb6249279d96cdf65b6e1670f1873dbc13"
+              },
+              {
+                "ref": "web/data/definitions.ts",
+                "digest": "89d1188b1ee01b0a55f88ccf0d2728802549da0193e41d72f499db816e917a49"
+              },
+              {
+                "ref": "web/data/schema-v10.sql",
+                "digest": "be0018a76ad15ee7723a743765b1c349832cfb6d4b3193726aa1991f1a9d411f"
+              },
+              {
+                "ref": "web/data/skill-storage.ts",
+                "digest": "a8aa1283b7312d9060bcf331e8cf9c915d2d8d0472da05236291712df2fd81fc"
+              },
+              {
+                "ref": "web/shared/skill-storage-contracts.ts",
+                "digest": "db0aa2afec3d45a04d5dd3fc46fe8a3fdf1d699289877fcc379539fdec76436c"
+              }
+            ],
+            "version": "574893b1629c5f6eef8c189b042965762c4cd22acba16517e3fe9235124f86ae"
+          }
+        ],
+        "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+            "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+          },
+          {
+            "ref": ".space/tasks/ax-deep-agents/verification.md",
+            "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "at": "2026-10-08T14:38:59.758Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-08T14:38:59.758Z"
+    },
+    {
+      "id": "a7610c76-57f2-4ea0-9fef-d9a54b4210dc",
+      "hash": "7e3e4006e6b318a608e01da6b370ca9b9dfd9128820b2410886e5fa6ad645e43",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "SS-02",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "a7610c76-57f2-4ea0-9fef-d9a54b4210dc",
+        "input": {
+          "submission": "2919dc72-9f40-4359-88cb-902076f78a87",
+          "reason": "最終版・回帰・独立レビュー・実機証拠の対応を確認した。"
+        },
+        "ifVersion": 20,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-02"
+      ],
+      "evidence": [],
+      "revision": 80,
+      "data": {
+        "id": "2919dc72-9f40-4359-88cb-902076f78a87",
+        "unit": "SS-02",
+        "attempt": 3,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "3a511c7d-225c-4bf5-82e5-07e55d606c2f"
+        ],
+        "outputs": [
+          {
+            "id": "implementation",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "web/api/skill-object-store.ts",
+                "digest": "4611307c823918a2083fcfc00a665bbb6249279d96cdf65b6e1670f1873dbc13"
+              },
+              {
+                "ref": "web/data/definitions.ts",
+                "digest": "89d1188b1ee01b0a55f88ccf0d2728802549da0193e41d72f499db816e917a49"
+              },
+              {
+                "ref": "web/data/schema-v10.sql",
+                "digest": "be0018a76ad15ee7723a743765b1c349832cfb6d4b3193726aa1991f1a9d411f"
+              },
+              {
+                "ref": "web/data/skill-storage.ts",
+                "digest": "a8aa1283b7312d9060bcf331e8cf9c915d2d8d0472da05236291712df2fd81fc"
+              },
+              {
+                "ref": "web/shared/skill-storage-contracts.ts",
+                "digest": "db0aa2afec3d45a04d5dd3fc46fe8a3fdf1d699289877fcc379539fdec76436c"
+              }
+            ],
+            "version": "574893b1629c5f6eef8c189b042965762c4cd22acba16517e3fe9235124f86ae"
+          }
+        ],
+        "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-data.md",
+            "digest": "03a661ac6ecebbdc690ad5784a13c33e5724d9997eeec55e89f129b7b973cc88"
+          },
+          {
+            "ref": ".space/tasks/ax-deep-agents/verification.md",
+            "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "at": "2026-10-08T14:38:59.758Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "coordinator",
+            "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+          },
+          "reason": "最終版・回帰・独立レビュー・実機証拠の対応を確認した。",
+          "at": "2026-10-08T14:38:59.842Z"
+        }
+      },
+      "at": "2026-10-08T14:38:59.843Z"
+    },
+    {
+      "id": "d265c7f0-7cd8-4fd0-88ea-2a084dcd375b",
+      "hash": "81ca8c52ba376df223b571a4563d874d500fe9c268f2df409db260855496dbea",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit reopen",
+      "request": {
+        "command": "unit reopen",
+        "id": "SS-03",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "d265c7f0-7cd8-4fd0-88ea-2a084dcd375b",
+        "input": {
+          "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。"
+        },
+        "ifVersion": 7,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "SS-03"
+      ],
+      "evidence": [],
+      "revision": 81,
+      "data": {
+        "id": "SS-03",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "AXへのスキルファイル搬送",
+        "track": "",
+        "owner": {
+          "actor": "map_skill_storage_boundaries",
+          "session": "map_skill_storage_boundaries"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/schema-v11.sql",
+          "execution/controller/workbench*",
+          "execution/native/workbench*",
+          "ax-local/task_runtime/"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "固定版搬送・hash/認可の再検査・readonly配置・旧実行互換を確認した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 8,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "e3f738ad8a83c3c60af3691565941e744325cb2060f6f3abe452d5b56985f40b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "e3f738ad8a83c3c60af3691565941e744325cb2060f6f3abe452d5b56985f40b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.568Z"
+          },
+          {
+            "number": 2,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:38:59.898Z"
+          }
+        ],
+        "currentAttempt": 2,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:38:59.899Z"
+    },
+    {
+      "id": "ee980c95-9a19-45a4-aeca-a6b57943d1fd",
+      "hash": "b321a5d7d82231f99353ef18b49db81da80956199be8c402b88ddb199327a129",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "SS-03",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "ee980c95-9a19-45a4-aeca-a6b57943d1fd",
+        "input": {},
+        "ifVersion": 8,
+        "attempt": 2
+      },
+      "affectedUnits": [
+        "SS-03"
+      ],
+      "evidence": [],
+      "revision": 82,
+      "data": {
+        "id": "SS-03",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "AXへのスキルファイル搬送",
+        "track": "",
+        "owner": {
+          "actor": "map_skill_storage_boundaries",
+          "session": "map_skill_storage_boundaries"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/schema-v11.sql",
+          "execution/controller/workbench*",
+          "execution/native/workbench*",
+          "ax-local/task_runtime/"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "固定版搬送・hash/認可の再検査・readonly配置・旧実行互換を確認した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 9,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "e3f738ad8a83c3c60af3691565941e744325cb2060f6f3abe452d5b56985f40b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "e3f738ad8a83c3c60af3691565941e744325cb2060f6f3abe452d5b56985f40b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.568Z"
+          },
+          {
+            "number": 2,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:38:59.898Z"
+          }
+        ],
+        "currentAttempt": 2,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:38:59.952Z"
+    },
+    {
+      "id": "07f4c0b9-0427-4bdb-b89f-050a7102736b",
+      "hash": "aed63f12f9a6a5aa4b87272b0cfd16dfeff10d4c1a5d342c5e7bdc4854a35ca3",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "SS-03",
+        "stage": "implement",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "07f4c0b9-0427-4bdb-b89f-050a7102736b",
+        "input": {
+          "selection": "execute",
+          "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+            ".space/tasks/ax-deep-agents/evidence/storage-local.json"
+          ]
+        },
+        "ifVersion": 9,
+        "attempt": 2
+      },
+      "affectedUnits": [
+        "SS-03"
+      ],
+      "evidence": [],
+      "revision": 83,
+      "data": {
+        "id": "SS-03",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "AXへのスキルファイル搬送",
+        "track": "",
+        "owner": {
+          "actor": "map_skill_storage_boundaries",
+          "session": "map_skill_storage_boundaries"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/schema-v11.sql",
+          "execution/controller/workbench*",
+          "execution/native/workbench*",
+          "ax-local/task_runtime/"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "固定版搬送・hash/認可の再検査・readonly配置・旧実行互換を確認した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 10,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "e3f738ad8a83c3c60af3691565941e744325cb2060f6f3abe452d5b56985f40b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "e3f738ad8a83c3c60af3691565941e744325cb2060f6f3abe452d5b56985f40b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.568Z"
+          },
+          {
+            "number": 2,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:38:59.898Z"
+          }
+        ],
+        "currentAttempt": 2,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:39:00.014Z"
+    },
+    {
+      "id": "d0b1764d-62e5-4b0f-aa53-d318544ab622",
+      "hash": "b6a95b72bb0b66310eede8959ca4d92d300f2631330fce8b9e6feb04c7579e99",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "SS-03",
+        "stage": "verify",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "d0b1764d-62e5-4b0f-aa53-d318544ab622",
+        "input": {
+          "selection": "execute",
+          "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+            ".space/tasks/ax-deep-agents/evidence/storage-local.json"
+          ]
+        },
+        "ifVersion": 10,
+        "attempt": 2
+      },
+      "affectedUnits": [
+        "SS-03"
+      ],
+      "evidence": [],
+      "revision": 84,
+      "data": {
+        "id": "SS-03",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "AXへのスキルファイル搬送",
+        "track": "",
+        "owner": {
+          "actor": "map_skill_storage_boundaries",
+          "session": "map_skill_storage_boundaries"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/data/schema-v11.sql",
+          "execution/controller/workbench*",
+          "execution/native/workbench*",
+          "ax-local/task_runtime/"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "固定版搬送・hash/認可の再検査・readonly配置・旧実行互換を確認した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 11,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "e3f738ad8a83c3c60af3691565941e744325cb2060f6f3abe452d5b56985f40b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "e3f738ad8a83c3c60af3691565941e744325cb2060f6f3abe452d5b56985f40b"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.568Z"
+          },
+          {
+            "number": 2,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+                    "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:38:59.898Z"
+          }
+        ],
+        "currentAttempt": 2,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:39:00.096Z"
+    },
+    {
+      "id": "26c8e3e3-7687-45b2-a9f1-875d10c0efc8",
+      "hash": "2a40ad094b3115931534a2783242fb49c11f9a005c955b6dee46af8391e09083",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "SS-03",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "26c8e3e3-7687-45b2-a9f1-875d10c0efc8",
+        "input": {
+          "condition": "storage",
+          "verdict": "pass",
+          "target": {
+            "id": "implementation",
+            "kind": "files",
+            "files": [
+              "web/data/schema-v11.sql",
+              "execution/controller/workbench_objects.go",
+              "execution/controller/skill_s3.go",
+              "execution/native/workbench_objects.go",
+              "ax-local/task_runtime/workbench_skills.py",
+              "ax-local/task_runtime/workbench_runner.py",
+              "ax-local/tests/test_workbench_storage.py"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+            ".space/tasks/ax-deep-agents/evidence/storage-local.json"
+          ],
+          "method": "umask077回帰・全offline236件・Docker35件・独立レビューと最終実AX成功を照合、既存Web/Go結果を再利用",
+          "environment": "Node/workerd、Docker/RustFS/PostgreSQL、kind/AX、固定SDK、capabilitiesなし",
+          "observedAt": "2026-10-08T14:39:00.105519+00:00",
+          "performer": "coordinator; map_skill_storage_boundaries; review_skill_storage_impl_b"
+        },
+        "ifVersion": 11,
+        "attempt": 2
+      },
+      "affectedUnits": [
+        "SS-03"
+      ],
+      "evidence": [],
+      "revision": 85,
+      "data": {
+        "id": "8bef8e23-65cb-4ce8-a9bc-44697f13038f",
+        "unit": "SS-03",
+        "attempt": 2,
+        "condition": "storage",
+        "target": {
+          "id": "implementation",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/task_runtime/workbench_runner.py",
+              "digest": "24550bc6a40d66ba76655c3a92371190c000cd65a2fbc2a5478f722969ffd8f8"
+            },
+            {
+              "ref": "ax-local/task_runtime/workbench_skills.py",
+              "digest": "2db9538f3e239b9ca72bf3abf53bdb50d558713600693fec6d6451a3fb8280d8"
+            },
+            {
+              "ref": "ax-local/tests/test_workbench_storage.py",
+              "digest": "6698521a411579d90e52deb88f0b5435be1eeb7d4837df98ff39b4cfe251bfab"
+            },
+            {
+              "ref": "execution/controller/skill_s3.go",
+              "digest": "a6c9ea0389092aee9dd4a22e70a6f6a570940566372f8b47884abf11fe9e0871"
+            },
+            {
+              "ref": "execution/controller/workbench_objects.go",
+              "digest": "70c11a50ae5c5ee3aa450248afb5db68a21865dccfb0217375bb41047096026f"
+            },
+            {
+              "ref": "execution/native/workbench_objects.go",
+              "digest": "2d8e9365fa180f66d808577880f15bd72df24c432e32eb6f31bca72ccb6efec9"
+            },
+            {
+              "ref": "web/data/schema-v11.sql",
+              "digest": "3adc3d7e3ad967f9cf1d88ee58ec6359db74138ff1597ed4900efc6b42e98c3f"
+            }
+          ],
+          "version": "b84f16d8b12e202d9b521ee7bc86f2585a59f167d885e1312b51376390f59e90"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+            "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+          },
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+            "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+          }
+        ],
+        "reason": "",
+        "method": "umask077回帰・全offline236件・Docker35件・独立レビューと最終実AX成功を照合、既存Web/Go結果を再利用",
+        "environment": "Node/workerd、Docker/RustFS/PostgreSQL、kind/AX、固定SDK、capabilitiesなし",
+        "observedAt": "2026-10-08T14:39:00.105519+00:00",
+        "performer": "coordinator; map_skill_storage_boundaries; review_skill_storage_impl_b",
+        "recordedBy": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-08T14:39:00.199Z"
+      },
+      "at": "2026-10-08T14:39:00.199Z"
+    },
+    {
+      "id": "545383ac-0c86-4c9b-8112-9d2702e008fe",
+      "hash": "93791aac8ab68e55c9d69105ca3c456a626caef8b5d1af8cc95eeb7a1ad0f5c8",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "SS-03",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "545383ac-0c86-4c9b-8112-9d2702e008fe",
+        "input": {
+          "checks": [
+            "8bef8e23-65cb-4ce8-a9bc-44697f13038f"
+          ],
+          "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+          "refs": [
+            ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+            ".space/tasks/ax-deep-agents/evidence/storage-local.json"
+          ]
+        },
+        "ifVersion": 12,
+        "attempt": 2
+      },
+      "affectedUnits": [
+        "SS-03"
+      ],
+      "evidence": [],
+      "revision": 86,
+      "data": {
+        "id": "441f9f44-8678-4c2b-8934-541523c3ce10",
+        "unit": "SS-03",
+        "attempt": 2,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "8bef8e23-65cb-4ce8-a9bc-44697f13038f"
+        ],
+        "outputs": [
+          {
+            "id": "implementation",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/task_runtime/workbench_runner.py",
+                "digest": "24550bc6a40d66ba76655c3a92371190c000cd65a2fbc2a5478f722969ffd8f8"
+              },
+              {
+                "ref": "ax-local/task_runtime/workbench_skills.py",
+                "digest": "2db9538f3e239b9ca72bf3abf53bdb50d558713600693fec6d6451a3fb8280d8"
+              },
+              {
+                "ref": "ax-local/tests/test_workbench_storage.py",
+                "digest": "6698521a411579d90e52deb88f0b5435be1eeb7d4837df98ff39b4cfe251bfab"
+              },
+              {
+                "ref": "execution/controller/skill_s3.go",
+                "digest": "a6c9ea0389092aee9dd4a22e70a6f6a570940566372f8b47884abf11fe9e0871"
+              },
+              {
+                "ref": "execution/controller/workbench_objects.go",
+                "digest": "70c11a50ae5c5ee3aa450248afb5db68a21865dccfb0217375bb41047096026f"
+              },
+              {
+                "ref": "execution/native/workbench_objects.go",
+                "digest": "2d8e9365fa180f66d808577880f15bd72df24c432e32eb6f31bca72ccb6efec9"
+              },
+              {
+                "ref": "web/data/schema-v11.sql",
+                "digest": "3adc3d7e3ad967f9cf1d88ee58ec6359db74138ff1597ed4900efc6b42e98c3f"
+              }
+            ],
+            "version": "b84f16d8b12e202d9b521ee7bc86f2585a59f167d885e1312b51376390f59e90"
+          }
+        ],
+        "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+            "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+          },
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+            "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "at": "2026-10-08T14:39:00.278Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-08T14:39:00.278Z"
+    },
+    {
+      "id": "38b622c0-847f-40d4-b8d9-6312e67ce945",
+      "hash": "ca7ea3d933fb5d5675372372aa0caeef0b4a85af945a212f27e20b2785e34277",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "SS-03",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "38b622c0-847f-40d4-b8d9-6312e67ce945",
+        "input": {
+          "submission": "441f9f44-8678-4c2b-8934-541523c3ce10",
+          "reason": "最終版・回帰・独立レビュー・実機証拠の対応を確認した。"
+        },
+        "ifVersion": 13,
+        "attempt": 2
+      },
+      "affectedUnits": [
+        "SS-03"
+      ],
+      "evidence": [],
+      "revision": 87,
+      "data": {
+        "id": "441f9f44-8678-4c2b-8934-541523c3ce10",
+        "unit": "SS-03",
+        "attempt": 2,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "8bef8e23-65cb-4ce8-a9bc-44697f13038f"
+        ],
+        "outputs": [
+          {
+            "id": "implementation",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/task_runtime/workbench_runner.py",
+                "digest": "24550bc6a40d66ba76655c3a92371190c000cd65a2fbc2a5478f722969ffd8f8"
+              },
+              {
+                "ref": "ax-local/task_runtime/workbench_skills.py",
+                "digest": "2db9538f3e239b9ca72bf3abf53bdb50d558713600693fec6d6451a3fb8280d8"
+              },
+              {
+                "ref": "ax-local/tests/test_workbench_storage.py",
+                "digest": "6698521a411579d90e52deb88f0b5435be1eeb7d4837df98ff39b4cfe251bfab"
+              },
+              {
+                "ref": "execution/controller/skill_s3.go",
+                "digest": "a6c9ea0389092aee9dd4a22e70a6f6a570940566372f8b47884abf11fe9e0871"
+              },
+              {
+                "ref": "execution/controller/workbench_objects.go",
+                "digest": "70c11a50ae5c5ee3aa450248afb5db68a21865dccfb0217375bb41047096026f"
+              },
+              {
+                "ref": "execution/native/workbench_objects.go",
+                "digest": "2d8e9365fa180f66d808577880f15bd72df24c432e32eb6f31bca72ccb6efec9"
+              },
+              {
+                "ref": "web/data/schema-v11.sql",
+                "digest": "3adc3d7e3ad967f9cf1d88ee58ec6359db74138ff1597ed4900efc6b42e98c3f"
+              }
+            ],
+            "version": "b84f16d8b12e202d9b521ee7bc86f2585a59f167d885e1312b51376390f59e90"
+          }
+        ],
+        "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-runtime.md",
+            "digest": "30c1abaf8a73cb5dc30a5d77b32b00c22604265f29705ecf99218fb0b76d4746"
+          },
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+            "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "at": "2026-10-08T14:39:00.278Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "coordinator",
+            "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+          },
+          "reason": "最終版・回帰・独立レビュー・実機証拠の対応を確認した。",
+          "at": "2026-10-08T14:39:00.395Z"
+        }
+      },
+      "at": "2026-10-08T14:39:00.395Z"
+    },
+    {
+      "id": "beae2234-2936-4592-9cb3-1998bbb3ad92",
+      "hash": "0568d226c43873b0affb9419238e19d95b42e2b43e07776edac135ad053a6286",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit reopen",
+      "request": {
+        "command": "unit reopen",
+        "id": "SS-04",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "beae2234-2936-4592-9cb3-1998bbb3ad92",
+        "input": {
+          "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。"
+        },
+        "ifVersion": 14,
+        "attempt": 2
+      },
+      "affectedUnits": [
+        "SS-04"
+      ],
+      "evidence": [],
+      "revision": 88,
+      "data": {
+        "id": "SS-04",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "設定・配備と統合確認",
+        "track": "",
+        "owner": {
+          "actor": "coordinator",
+          "session": "coordinator"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/api/settings.ts",
+          "web/api/runtime.ts",
+          "web/server/api-settings.ts",
+          "web/scripts/deploy-execution.ts",
+          "execution/settings/",
+          "execution/cmd/ax-controller/",
+          ".space/tasks/ax-deep-agents/"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "実利用経路・旧データ保持・独立レビュー・配備と復元結果を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 15,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.652Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "検証記録の末尾書式修正後の実ファイルhashで確認を更新する。実測内容・実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:26:03.858Z"
+          },
+          {
+            "number": 3,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:39:00.462Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:39:00.462Z"
+    },
+    {
+      "id": "51940a38-1e0a-4e8e-94d6-c43858dd5dd0",
+      "hash": "3f1b060894545c1bd192ce749cb021d78bcea89df477d19d8a99b100067db753",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "SS-04",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "51940a38-1e0a-4e8e-94d6-c43858dd5dd0",
+        "input": {},
+        "ifVersion": 15,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-04"
+      ],
+      "evidence": [],
+      "revision": 89,
+      "data": {
+        "id": "SS-04",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "設定・配備と統合確認",
+        "track": "",
+        "owner": {
+          "actor": "coordinator",
+          "session": "coordinator"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/api/settings.ts",
+          "web/api/runtime.ts",
+          "web/server/api-settings.ts",
+          "web/scripts/deploy-execution.ts",
+          "execution/settings/",
+          "execution/cmd/ax-controller/",
+          ".space/tasks/ax-deep-agents/"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "実利用経路・旧データ保持・独立レビュー・配備と復元結果を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 16,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.652Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "検証記録の末尾書式修正後の実ファイルhashで確認を更新する。実測内容・実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:26:03.858Z"
+          },
+          {
+            "number": 3,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:39:00.462Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:39:00.531Z"
+    },
+    {
+      "id": "4ef92575-b1c6-4e42-8c92-e1ee6c551bd4",
+      "hash": "624205826f8a4d17c7e34f2d167b5aa12778071b43a53f86c28bb39da20a2b8b",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "SS-04",
+        "stage": "implement",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "4ef92575-b1c6-4e42-8c92-e1ee6c551bd4",
+        "input": {
+          "selection": "execute",
+          "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-deep-agents/verification.md",
+            ".space/tasks/ax-deep-agents/evidence/storage-local.json"
+          ]
+        },
+        "ifVersion": 16,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-04"
+      ],
+      "evidence": [],
+      "revision": 90,
+      "data": {
+        "id": "SS-04",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "設定・配備と統合確認",
+        "track": "",
+        "owner": {
+          "actor": "coordinator",
+          "session": "coordinator"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/api/settings.ts",
+          "web/api/runtime.ts",
+          "web/server/api-settings.ts",
+          "web/scripts/deploy-execution.ts",
+          "execution/settings/",
+          "execution/cmd/ax-controller/",
+          ".space/tasks/ax-deep-agents/"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "実利用経路・旧データ保持・独立レビュー・配備と復元結果を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 17,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.652Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "検証記録の末尾書式修正後の実ファイルhashで確認を更新する。実測内容・実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:26:03.858Z"
+          },
+          {
+            "number": 3,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:39:00.462Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:39:00.601Z"
+    },
+    {
+      "id": "cae24101-92cc-4c9d-a43c-84c8293da722",
+      "hash": "355ca4b728116568f811c84608030cfbb11e113f03f5988a9db509d90f4469e7",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "SS-04",
+        "stage": "verify",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "cae24101-92cc-4c9d-a43c-84c8293da722",
+        "input": {
+          "selection": "execute",
+          "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-deep-agents/verification.md",
+            ".space/tasks/ax-deep-agents/evidence/storage-local.json"
+          ]
+        },
+        "ifVersion": 17,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-04"
+      ],
+      "evidence": [],
+      "revision": 91,
+      "data": {
+        "id": "SS-04",
+        "parent": "DA-ROOT",
+        "size": "standard",
+        "purpose": "設定・配備と統合確認",
+        "track": "",
+        "owner": {
+          "actor": "coordinator",
+          "session": "coordinator"
+        },
+        "recorder": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "verifiers": [],
+        "scope": [
+          "web/api/settings.ts",
+          "web/api/runtime.ts",
+          "web/server/api-settings.ts",
+          "web/scripts/deploy-execution.ts",
+          "execution/settings/",
+          "execution/cmd/ax-controller/",
+          ".space/tasks/ax-deep-agents/"
+        ],
+        "taskRef": ".space/tasks/ax-deep-agents/task.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "storage",
+            "description": "実利用経路・旧データ保持・独立レビュー・配備と復元結果を引き渡した",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "implementation"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 18,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "担当実装と統合後の証拠を照合。保存範囲の全条件を確認した。",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "905acbb5454b48aee325acfefca7961dee2794a6227bdcd4bb2ed1ec57ae13ac"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T13:22:36.652Z"
+          },
+          {
+            "number": 2,
+            "state": "completed",
+            "stages": {
+              "implement": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "reuse",
+                "reason": "同じ実装と試験結果を照合、記録の末尾書式のみ変更",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "161c114e491066e30815f43f6f1952318b5c95037064b05e211756fc64c8976c"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "cf3c399ddedf03aef3da675cc874d98edce7a898871526a8338978c4b18015ea"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "検証記録の末尾書式修正後の実ファイルhashで確認を更新する。実測内容・実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:26:03.858Z"
+          },
+          {
+            "number": 3,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "最終差分の回帰・独立レビュー・実AXの正常停止まで再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/verification.md",
+                    "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+                    "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "CIで判明したumask非依存の0444設定、回帰、最終imageの実AX成功に合わせて対象版と証拠を更新する。SS-02の実装は不変。",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T14:39:00.462Z"
+          }
+        ],
+        "currentAttempt": 3,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T14:39:00.665Z"
+    },
+    {
+      "id": "3bf6d8b5-7501-4775-ac6a-f13e16e0382d",
+      "hash": "10cbca4d793222b043010bcef5e578c20b320b5099c5e7d18bbb9912d06ace1e",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "SS-04",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "3bf6d8b5-7501-4775-ac6a-f13e16e0382d",
+        "input": {
+          "condition": "storage",
+          "verdict": "pass",
+          "target": {
+            "id": "implementation",
+            "kind": "files",
+            "files": [
+              "web/api/settings.ts",
+              "web/api/runtime.ts",
+              "web/server/skill-storage-settings.ts",
+              "web/scripts/deploy-execution.ts",
+              "execution/settings/skill_storage.go",
+              "execution/cmd/ax-controller/main.go",
+              "ax-local/versions.json",
+              "web/scripts/verify-skill-storage-local.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-deep-agents/verification.md",
+            ".space/tasks/ax-deep-agents/evidence/storage-local.json"
+          ],
+          "method": "umask077回帰・全offline236件・Docker35件・独立レビューと最終実AX成功を照合、既存Web/Go結果を再利用",
+          "environment": "Node/workerd、Docker/RustFS/PostgreSQL、kind/AX、固定SDK、capabilitiesなし",
+          "observedAt": "2026-10-08T14:39:00.670471+00:00",
+          "performer": "coordinator; map_skill_storage_boundaries; review_skill_storage_impl_b"
+        },
+        "ifVersion": 18,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-04"
+      ],
+      "evidence": [],
+      "revision": 92,
+      "data": {
+        "id": "be7e2bd4-92f0-450a-817b-2e1968462c5c",
+        "unit": "SS-04",
+        "attempt": 3,
+        "condition": "storage",
+        "target": {
+          "id": "implementation",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "3552cfe37af28855a2f1b57a9b35995ba51ffeed1ed97ed9ffe5543344a1c981"
+            },
+            {
+              "ref": "execution/cmd/ax-controller/main.go",
+              "digest": "f3721488ba875d1dfce06dfe496d4ea9ac81a2376916a00979b131c434acf6ed"
+            },
+            {
+              "ref": "execution/settings/skill_storage.go",
+              "digest": "5820138ba2f4d76afffbd6b48dc2296c7fa37ab28710ba01a37f16462526dd43"
+            },
+            {
+              "ref": "web/api/runtime.ts",
+              "digest": "956bd0d291a78a077e74ddb90fa6e268e0efdf30a215ebab79a5fa2d62032f5e"
+            },
+            {
+              "ref": "web/api/settings.ts",
+              "digest": "952b1aee14917b0b2680e5acd1838f991713526ce50bda4c50739cdfb6021396"
+            },
+            {
+              "ref": "web/scripts/deploy-execution.ts",
+              "digest": "5264f9b6c4a193f999c6740731fc7c9cdfb2c61a05ee4ad4cc191b5d5e909bcd"
+            },
+            {
+              "ref": "web/scripts/verify-skill-storage-local.ts",
+              "digest": "14016129457927dea6cee8b747ed20be65a302f30188a12c5c271c01512833cf"
+            },
+            {
+              "ref": "web/server/skill-storage-settings.ts",
+              "digest": "975f7be20f38ce0a7cd16b1af01771d02afc84dd97736cd28a61ff8eab7787ea"
+            }
+          ],
+          "version": "700162329dea250549d232778a07c02067bdc5e0772acbacfa720ddbf258e759"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-deep-agents/verification.md",
+            "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+          },
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+            "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+          }
+        ],
+        "reason": "",
+        "method": "umask077回帰・全offline236件・Docker35件・独立レビューと最終実AX成功を照合、既存Web/Go結果を再利用",
+        "environment": "Node/workerd、Docker/RustFS/PostgreSQL、kind/AX、固定SDK、capabilitiesなし",
+        "observedAt": "2026-10-08T14:39:00.670471+00:00",
+        "performer": "coordinator; map_skill_storage_boundaries; review_skill_storage_impl_b",
+        "recordedBy": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-08T14:39:00.731Z"
+      },
+      "at": "2026-10-08T14:39:00.731Z"
+    },
+    {
+      "id": "2aacd0b4-f500-4859-b0c2-b62b8ecb950c",
+      "hash": "54d6adf1c9fef78579e6ede18f4381cc789d6d01084bddfd90c37a000ca8104f",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "SS-04",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "2aacd0b4-f500-4859-b0c2-b62b8ecb950c",
+        "input": {
+          "checks": [
+            "be7e2bd4-92f0-450a-817b-2e1968462c5c"
+          ],
+          "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+          "refs": [
+            ".space/tasks/ax-deep-agents/verification.md",
+            ".space/tasks/ax-deep-agents/evidence/storage-local.json"
+          ]
+        },
+        "ifVersion": 19,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-04"
+      ],
+      "evidence": [],
+      "revision": 93,
+      "data": {
+        "id": "c042b0f4-f50a-49e9-ad6b-1305de58cd2b",
+        "unit": "SS-04",
+        "attempt": 3,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "be7e2bd4-92f0-450a-817b-2e1968462c5c"
+        ],
+        "outputs": [
+          {
+            "id": "implementation",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "3552cfe37af28855a2f1b57a9b35995ba51ffeed1ed97ed9ffe5543344a1c981"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "f3721488ba875d1dfce06dfe496d4ea9ac81a2376916a00979b131c434acf6ed"
+              },
+              {
+                "ref": "execution/settings/skill_storage.go",
+                "digest": "5820138ba2f4d76afffbd6b48dc2296c7fa37ab28710ba01a37f16462526dd43"
+              },
+              {
+                "ref": "web/api/runtime.ts",
+                "digest": "956bd0d291a78a077e74ddb90fa6e268e0efdf30a215ebab79a5fa2d62032f5e"
+              },
+              {
+                "ref": "web/api/settings.ts",
+                "digest": "952b1aee14917b0b2680e5acd1838f991713526ce50bda4c50739cdfb6021396"
+              },
+              {
+                "ref": "web/scripts/deploy-execution.ts",
+                "digest": "5264f9b6c4a193f999c6740731fc7c9cdfb2c61a05ee4ad4cc191b5d5e909bcd"
+              },
+              {
+                "ref": "web/scripts/verify-skill-storage-local.ts",
+                "digest": "14016129457927dea6cee8b747ed20be65a302f30188a12c5c271c01512833cf"
+              },
+              {
+                "ref": "web/server/skill-storage-settings.ts",
+                "digest": "975f7be20f38ce0a7cd16b1af01771d02afc84dd97736cd28a61ff8eab7787ea"
+              }
+            ],
+            "version": "700162329dea250549d232778a07c02067bdc5e0772acbacfa720ddbf258e759"
+          }
+        ],
+        "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-deep-agents/verification.md",
+            "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+          },
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+            "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "at": "2026-10-08T14:39:00.795Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-08T14:39:00.795Z"
+    },
+    {
+      "id": "c577ae28-f806-4470-87a9-5024a8b8760b",
+      "hash": "7e23fc52bc908e39fe41373d998bf0f2758c5a3ebc003eae24dfd8969f4be9d0",
+      "actor": {
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "SS-04",
+        "actor": "coordinator",
+        "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e",
+        "operationId": "c577ae28-f806-4470-87a9-5024a8b8760b",
+        "input": {
+          "submission": "c042b0f4-f50a-49e9-ad6b-1305de58cd2b",
+          "reason": "最終版・回帰・独立レビュー・実機証拠の対応を確認した。"
+        },
+        "ifVersion": 20,
+        "attempt": 3
+      },
+      "affectedUnits": [
+        "SS-04"
+      ],
+      "evidence": [],
+      "revision": 94,
+      "data": {
+        "id": "c042b0f4-f50a-49e9-ad6b-1305de58cd2b",
+        "unit": "SS-04",
+        "attempt": 3,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "be7e2bd4-92f0-450a-817b-2e1968462c5c"
+        ],
+        "outputs": [
+          {
+            "id": "implementation",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "3552cfe37af28855a2f1b57a9b35995ba51ffeed1ed97ed9ffe5543344a1c981"
+              },
+              {
+                "ref": "execution/cmd/ax-controller/main.go",
+                "digest": "f3721488ba875d1dfce06dfe496d4ea9ac81a2376916a00979b131c434acf6ed"
+              },
+              {
+                "ref": "execution/settings/skill_storage.go",
+                "digest": "5820138ba2f4d76afffbd6b48dc2296c7fa37ab28710ba01a37f16462526dd43"
+              },
+              {
+                "ref": "web/api/runtime.ts",
+                "digest": "956bd0d291a78a077e74ddb90fa6e268e0efdf30a215ebab79a5fa2d62032f5e"
+              },
+              {
+                "ref": "web/api/settings.ts",
+                "digest": "952b1aee14917b0b2680e5acd1838f991713526ce50bda4c50739cdfb6021396"
+              },
+              {
+                "ref": "web/scripts/deploy-execution.ts",
+                "digest": "5264f9b6c4a193f999c6740731fc7c9cdfb2c61a05ee4ad4cc191b5d5e909bcd"
+              },
+              {
+                "ref": "web/scripts/verify-skill-storage-local.ts",
+                "digest": "14016129457927dea6cee8b747ed20be65a302f30188a12c5c271c01512833cf"
+              },
+              {
+                "ref": "web/server/skill-storage-settings.ts",
+                "digest": "975f7be20f38ce0a7cd16b1af01771d02afc84dd97736cd28a61ff8eab7787ea"
+              }
+            ],
+            "version": "700162329dea250549d232778a07c02067bdc5e0772acbacfa720ddbf258e759"
+          }
+        ],
+        "report": "最終版と実機の正常停止を確認。保存経路の範囲は完了、Deep Agents本体は後続。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-deep-agents/verification.md",
+            "digest": "b5bc5a3af6d8dcd48948e54d6dcae6ab49b442e4159dec5bcb8b03e9aa31d52d"
+          },
+          {
+            "ref": ".space/tasks/ax-deep-agents/evidence/storage-local.json",
+            "digest": "ea2c65abc4bdc2cc86c7af43a5fea199012b0465d1be7c6b1b075a6cea27c0ae"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "coordinator",
+          "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+        },
+        "at": "2026-10-08T14:39:00.795Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "coordinator",
+            "session": "deep-agents-plan-0a513433-c37e-479b-bfb9-584b4893e68e"
+          },
+          "reason": "最終版・回帰・独立レビュー・実機証拠の対応を確認した。",
+          "at": "2026-10-08T14:39:00.885Z"
+        }
+      },
+      "at": "2026-10-08T14:39:00.885Z"
     }
   ]
 }

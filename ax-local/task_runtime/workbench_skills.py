@@ -111,6 +111,7 @@ def materialize(root, saved):
                     with os.fdopen(file, 'wb') as output:
                         output.write(raw)
                         output.flush()
+                        os.fchmod(output.fileno(), 0o444)
                         os.fsync(output.fileno())
                     os.fsync(directory)
                 for length in range(1, len(parts)):

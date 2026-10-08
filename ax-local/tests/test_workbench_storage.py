@@ -98,6 +98,22 @@ class SkillStorageTests(unittest.TestCase):
         with self.assertRaises(ProtocolError):
             prompt_value(saved, [], [])
 
+    def test_skill_file_modes_are_fixed_under_private_umask(self):
+        previous = os.umask(0o077)
+        try:
+            saved, data = self.stage(True)
+            runner.seal(self.root, RUN_ID)
+            folder = self.root / 'skills' / f'skill-{VERSION}'
+            for path in ('SKILL.md', 'references/empty.md'):
+                materialized = folder / path
+                self.assertEqual(stat.S_IMODE(materialized.stat().st_mode), 0o444)
+                self.assertEqual(materialized.read_bytes(), data[path])
+            for path in (self.root / 'skills', folder, folder / 'references'):
+                self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o700)
+            self.assertEqual(hydrate_context(saved, self.root)['loaded_files'][0]['content'], '')
+        finally:
+            os.umask(previous)
+
     def test_path_prefix_collision_is_rejected_before_staging(self):
         saved, _ = object_fixture()
         item = saved['workbench']['descriptor']['skill_context']['objects'][0]
