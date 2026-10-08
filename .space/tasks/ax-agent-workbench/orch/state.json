@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 141,
+  "revision": 143,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "parent",
     "session": "workbench-parent-1"
   },
   "createdAt": "2026-10-07T10:53:37.550Z",
-  "updatedAt": "2026-10-08T01:16:29.150Z",
+  "updatedAt": "2026-10-08T01:18:24.008Z",
   "units": [
     {
       "id": "workbench",
@@ -1609,7 +1609,7 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 4,
+      "version": 6,
       "contractVersion": 1,
       "attempts": [
         {
@@ -1639,6 +1639,28 @@
                 {
                   "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
                   "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+                }
+              ]
+            },
+            "review": {
+              "selection": "execute",
+              "reason": "独立Cの最終差分・証拠レビューで必須指摘なし",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+                  "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+                }
+              ]
+            },
+            "deliver": {
+              "selection": "execute",
+              "reason": "PR #21を作成し、CIと反映を確認する",
+              "state": "running",
+              "refs": [
+                {
+                  "ref": "https://github.com/sori883/agent-workspace/pull/21",
+                  "digest": null
                 }
               ]
             }
@@ -26482,6 +26504,279 @@
         "contractHistory": []
       },
       "at": "2026-10-08T01:16:29.150Z"
+    },
+    {
+      "id": "wb-20261008101823784071",
+      "hash": "a89244fea30ea6aa73b0c924e823c8c9ff5a2cebd9b2b45cdaf3746a52a5f6df",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "general-agent-ui",
+        "stage": "review",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008101823784071",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "独立Cの最終差分・証拠レビューで必須指摘なし",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/general-agent-ui-review.md"
+          ]
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 142,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 5,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+                    "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "独立Cの最終差分・証拠レビューで必須指摘なし",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+                    "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T01:18:23.938Z"
+    },
+    {
+      "id": "wb-20261008101823953545",
+      "hash": "f3ce7f90557bbf9dfdd11a74be0087286d52972d9e4b2a27472bd990b3b41a05",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "general-agent-ui",
+        "stage": "deliver",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008101823953545",
+        "input": {
+          "selection": "execute",
+          "state": "running",
+          "reason": "PR #21を作成し、CIと反映を確認する",
+          "refs": [
+            "https://github.com/sori883/agent-workspace/pull/21"
+          ]
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 143,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 6,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+                    "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "独立Cの最終差分・証拠レビューで必須指摘なし",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+                    "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "PR #21を作成し、CIと反映を確認する",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": "https://github.com/sori883/agent-workspace/pull/21",
+                    "digest": null
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T01:18:24.008Z"
     }
   ]
 }

@@ -61,3 +61,8 @@ Aの固定SDK0.1.20・network none試験は20件成功、skip0。最初の19件�
 終了時はtrial false・Gateway false・鍵mountなし、専用Secret削除、未解決/invalid0、予約0、無料受付を再開。過去を含む全体既知概算0.0071965 USD。証拠は [general-agent-live.json](evidence/general-agent-live.json) と [実応答](evidence/general-agent-live-result.png)。Web/APIは新buildで稼働中（session73190）。実モデルは閉じているため、通常の画面確認は無料操作テストを使う。
 
 前段の登録/ファイル/実行機能の台帳は過去の受け入れ記録として保持する。今回変更したソースの最新判定はgeneral-agent-ui unitと本記録を使い、古いhashで現版全体を確認済みとは扱わない。定期実行と完了依頼間の自動文脈引継ぎは今回の成果に含めない。
+
+
+### 引き渡し
+
+製品差分の独立レビューは [general-agent-ui-review.md](general-agent-ui-review.md) に保存し、追加の必須指摘なし。実装・記録・検証を [PR #21](https://github.com/sori883/agent-workspace/pull/21) へまとめた。既存の承認方針に従い、CI成功を確認してからマージする。設計や記録だけの別PRは作成しない。
