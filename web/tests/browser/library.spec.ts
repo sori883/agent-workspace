@@ -1,6 +1,33 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { login, workspacePath } from "./auth-helper";
+import { builtinCatalog } from "../../app/lib/builtin-catalog";
+
+test("built-in skills describe their automatic use and open a new request without executing it", async ({ page }) => {
+  await login(page);
+  await page.goto(workspacePath(page, "/library"));
+  const builtins = page.getByRole("region", { name: "標準で使える機能", exact: true });
+  await expect(builtins.getByRole("heading", { name: builtinCatalog.defaultAgent.name, exact: true })).toBeVisible();
+  for (const skill of builtinCatalog.skills) {
+    const card = builtins.getByRole("listitem").filter({ has: page.getByRole("heading", { name: skill.name, exact: true }) });
+    await expect(card).toContainText(skill.description);
+    await expect(card).toContainText(skill.when);
+  }
+  await expect(builtins).not.toContainText("brief-v1");
+  await expect(builtins.getByRole("button")).toHaveCount(0);
+  await page.setViewportSize({ width: 320, height: 740 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
+  await page.screenshot({ path: "../.space/tasks/ax-agent-workbench/evidence/general-library-mobile.png", fullPage: true });
+  let starts = 0;
+  page.on("request", request => { if (request.method() === "POST" && request.url().includes("/workbench/transfer") && request.postDataJSON()?.intent === "start") starts++; });
+  const workspace = new URL(page.url()).searchParams.get("workspace");
+  await builtins.getByRole("link", { name: "標準エージェントに依頼する", exact: true }).click();
+  await expect(page).toHaveURL(/\/workbench\?/);
+  expect(new URL(page.url()).searchParams.get("workspace")).toBe(workspace);
+  expect(new URL(page.url()).searchParams.has("root")).toBe(false);
+  expect(starts).toBe(0);
+});
 
 test("skill registration survives a lost receipt, publishes immutable versions, and an agent selects a pinned skill", async ({ page }) => {
   await login(page);
@@ -28,17 +55,32 @@ test("skill registration survives a lost receipt, publishes immutable versions, 
   await expect(page.getByRole("heading", { name: "操作を確認してください" })).toBeVisible();
   await page.getByRole("button", { name: "同じ内容で再確認する", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/library/${id}\\?`));
+  await expect(page.getByRole("link", { name: "この版で依頼する", exact: true })).toHaveCount(0);
+  await expect(page.getByText("下書きを保存したあと、公開すると依頼に使えます。", { exact: false })).toBeVisible();
   await page.getByRole("button", { name: "保存した下書きを公開", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("第1版を公開しました。");
   const firstVersion = version;
+  const editorUrl = page.url();
+  await expect(page.getByRole("link", { name: "この版で依頼する", exact: true })).toHaveJSProperty("href", workspacePath(page, `/workbench?skill=${firstVersion}`));
+  await page.getByRole("link", { name: "この版で依頼する", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`skill=${firstVersion}`));
+  await expect(page.getByLabel("browser-sales-summary（第1版）", { exact: true })).toBeChecked();
+  await page.goto(editorUrl);
   await page.getByLabel("指示", { exact: false }).fill("列名を確かめてから、部門別に売上を合計してください。");
   await expect(page.getByRole("button", { name: "保存した下書きを公開", exact: true })).toBeDisabled();
   await page.getByRole("button", { name: "下書きを保存", exact: true }).click();
   await page.getByRole("button", { name: "保存した下書きを公開", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("第2版を公開しました。");
+  await page.goto(workspacePath(page, `/workbench?skill=${firstVersion}`));
+  await expect(page.getByLabel("browser-sales-summary（第1版）", { exact: true })).toBeChecked();
+  await expect(page.getByLabel("browser-sales-summary（第2版）", { exact: true })).not.toBeChecked();
+  await page.goto(editorUrl);
   await page.getByLabel("スキル名", { exact: false }).fill("unpublished-draft-name");
   await page.getByRole("button", { name: "下書きを保存", exact: true }).click();
   await expect(page.getByRole("status")).toContainText("下書きを保存しました");
+  const secondVersion = version;
+  await expect(page.getByRole("region", { name: "公開した版を使う", exact: true })).toContainText("browser-sales-summary（第2版）");
+  await expect(page.getByRole("link", { name: "この版で依頼する", exact: true })).toHaveJSProperty("href", workspacePath(page, `/workbench?skill=${secondVersion}`));
   const endpoint = workspacePath(page, "/library/transfer");
   const previous = await page.request.post(endpoint, { headers: { origin: new URL(page.url()).origin }, data: { intent: "version", id: firstVersion, csrf } });
   expect(previous.status()).toBe(200);
@@ -48,6 +90,7 @@ test("skill registration survives a lost receipt, publishes immutable versions, 
   }
   await page.getByRole("link", { name: "スキル・エージェント一覧へ", exact: true }).click();
   await expect(page.getByRole("link", { name: "unpublished-draft-name", exact: true })).toHaveCount(1);
+  await expect(page.getByRole("link", { name: /^この版で依頼する\s*：browser-sales-summary（第2版）$/ })).toHaveJSProperty("href", workspacePath(page, `/workbench?skill=${secondVersion}`));
   await page.getByLabel("種類", { exact: true }).selectOption("");
   await page.getByRole("button", { name: "絞り込む", exact: true }).click();
   await expect(page.getByRole("link", { name: "unpublished-draft-name", exact: true })).toBeVisible();
@@ -61,13 +104,29 @@ test("skill registration survives a lost receipt, publishes immutable versions, 
   await page.getByRole("button", { name: "下書きを登録", exact: true }).click();
   await page.getByRole("button", { name: "保存した下書きを公開", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("第1版を公開しました。");
+  const agentVersion = version;
+  const agentEditorUrl = page.url();
+  await expect(page.getByRole("link", { name: "この版で依頼する", exact: true })).toHaveJSProperty("href", workspacePath(page, `/workbench?agent=${agentVersion}`));
+  await page.getByRole("link", { name: "この版で依頼する", exact: true }).click();
+  await expect(page.getByLabel("使用するエージェント", { exact: true })).toHaveValue(agentVersion);
+  await page.getByLabel("画面の操作を試す（無料）", { exact: true }).check();
+  await page.getByLabel("依頼内容", { exact: true }).fill("登録したエージェントの公開版で依頼します。");
+  const started = page.waitForRequest(request => request.method() === "POST" && request.url().includes("/workbench/transfer") && request.postDataJSON()?.intent === "start");
+  await page.getByRole("button", { name: "操作を試す", exact: true }).click();
+  expect((await started).postDataJSON().input).toMatchObject({ mode: "preview", agent_version_id: agentVersion, input_file_ids: [] });
+  await expect(page.getByRole("heading", { name: "あなたの回答を待っています", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "この作業を停止する", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "停止しました", exact: true })).toBeVisible();
+  await page.goto(agentEditorUrl);
   await page.reload();
   await expect(page.locator(".library-selected")).toBeVisible();
   await expect(page.locator(".library-selected")).toContainText("browser-sales-summary（第2版）");
   await page.setViewportSize({ width: 320, height: 740 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
-  await page.screenshot({ path: "../.space/tasks/ax-agent-workbench/evidence/registry-editor-mobile.png", fullPage: true });
+  await page.screenshot({ path: "../.space/tasks/ax-agent-workbench/evidence/general-library-editor-mobile.png", fullPage: true });
+  await page.getByRole("link", { name: "スキル・エージェント一覧へ", exact: true }).click();
+  await expect(page.getByRole("link", { name: /^この版で依頼する\s*：月次レポート担当（第1版）$/ })).toHaveJSProperty("href", workspacePath(page, `/workbench?agent=${agentVersion}`));
 });
 
 test("copy explicitly changes sharing scope, and archive preserves published history", async ({ page }) => {
@@ -83,14 +142,88 @@ test("copy explicitly changes sharing scope, and archive preserves published his
   await page.getByRole("button", { name: "下書きを登録", exact: true }).click();
   await page.getByRole("button", { name: "保存した下書きを公開", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("第1版を公開しました。");
+  const archivedUseUrl = await page.getByRole("link", { name: "この版で依頼する", exact: true }).getAttribute("href");
   await page.getByLabel("この設定の利用を終了する", { exact: true }).check();
   await page.getByRole("button", { name: "利用終了にする", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("この設定の利用を終了しました。");
   await expect(page.getByRole("heading", { name: "保存されている内容", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "この版で依頼する", exact: true })).toHaveCount(0);
   await page.getByRole("link", { name: "スキル・エージェント一覧へ", exact: true }).click();
   await expect(page.getByRole("link", { name: "copy-shared", exact: true })).toHaveCount(0);
   await page.getByLabel("利用終了した設定も表示", { exact: true }).check();
   await page.getByRole("button", { name: "絞り込む", exact: true }).click();
   await expect(page.getByRole("link", { name: "copy-shared", exact: true })).toHaveCount(1);
   await expect(page.getByRole("link", { name: "copy-source", exact: true })).toHaveCount(1);
+  await expect(page.getByRole("link", { name: /^この版で依頼する\s*：copy-shared（第1版）$/ })).toHaveCount(0);
+  let starts = 0;
+  page.on("request", request => { if (request.method() === "POST" && request.url().includes("/workbench/transfer") && request.postDataJSON()?.intent === "start") starts++; });
+  await page.goto(archivedUseUrl!);
+  await expect(page.getByRole("heading", { name: "依頼を表示できません", exact: true })).toBeVisible();
+  await expect(page.getByText("この設定は利用を終了しています。", { exact: false })).toBeVisible();
+  await expect(page.locator("#workbench-text")).toHaveCount(0);
+  expect(starts).toBe(0);
+});
+
+test("selection URLs reject invalid kinds, ambiguous queries and private versions outside their owner and workspace", async ({ page, browser }) => {
+  test.setTimeout(60000);
+  await login(page);
+  const origin = new URL(page.url()).origin;
+  await page.goto(`${origin}/workspaces`);
+  await page.getByLabel("ワークスペース名", { exact: false }).fill("設定の利用権限を確認する会社");
+  await page.getByRole("button", { name: "作成する", exact: true }).click();
+  await expect(page).toHaveURL(/\/workspaces\/[a-f0-9-]+$/);
+  const workspace = new URL(page.url()).pathname.split("/").at(-1)!;
+  await page.goto(`${origin}/library/new?kind=skill&workspace=${workspace}`);
+  await page.getByLabel("スキル名", { exact: false }).fill("owner-only-selection");
+  await page.getByLabel("指示", { exact: false }).fill("本人だけの指示を公開版に固定します。");
+  await page.getByRole("button", { name: "下書きを登録", exact: true }).click();
+  await page.getByRole("button", { name: "保存した下書きを公開", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("第1版を公開しました。");
+  const useUrl = new URL((await page.getByRole("link", { name: "この版で依頼する", exact: true }).getAttribute("href"))!, origin);
+  const version = useUrl.searchParams.get("skill")!;
+  let starts = 0;
+  const trackStarts = (target: Page) => target.on("request", request => { if (request.method() === "POST" && request.url().includes("/workbench/transfer") && request.postDataJSON()?.intent === "start") starts++; });
+  trackStarts(page);
+  async function blocked(target: Page, url: string, badQuery = false, message = "この設定は見つからないか、閲覧できません。") {
+    const response = await target.goto(url);
+    expect(response?.status()).toBe(badQuery ? 400 : 200);
+    if (!badQuery) {
+      await expect(target.getByRole("heading", { name: "依頼を表示できません", exact: true })).toBeVisible();
+      await expect(target.getByText(message, { exact: true })).toBeVisible();
+    }
+    await expect(target.locator("#workbench-text")).toHaveCount(0);
+    await expect(target.getByRole("button", { name: /^(依頼を送る|操作を試す)$/ })).toHaveCount(0);
+    await expect(target.locator("body")).not.toContainText("本人だけの指示を公開版に固定します。");
+    expect(starts).toBe(0);
+  }
+  await blocked(page, `${origin}/workbench?workspace=${workspace}&agent=${version}`, false, "選んだスキルの版は見つからないか、閲覧できません。");
+  await blocked(page, `${useUrl}&agent=${version}`, true);
+  await blocked(page, `${useUrl}&skill=${version}`, true);
+
+  await page.goto(`${origin}/workspaces`);
+  await page.getByLabel("ワークスペース名", { exact: false }).fill("設定を持たない別の会社");
+  await page.getByRole("button", { name: "作成する", exact: true }).click();
+  await expect(page).toHaveURL(/\/workspaces\/[a-f0-9-]+$/);
+  const otherWorkspace = new URL(page.url()).pathname.split("/").at(-1)!;
+  expect(otherWorkspace).not.toBe(workspace);
+  const crossWorkspaceUrl = new URL(useUrl); crossWorkspaceUrl.searchParams.set("workspace", otherWorkspace);
+  await blocked(page, crossWorkspaceUrl.href);
+
+  await page.goto(`${origin}/workspaces/${workspace}`);
+  await page.getByLabel("招待先メールアドレス", { exact: false }).fill("bob@example.test");
+  await page.getByRole("button", { name: "招待リンクを発行", exact: true }).click();
+  await expect(page.getByLabel("今回発行した招待リンク", { exact: true })).toBeVisible();
+  const invitation = await page.getByLabel("今回発行した招待リンク", { exact: true }).inputValue();
+  const context = await browser.newContext();
+  try {
+    const bob = await context.newPage();
+    await login(bob, "bob", origin, false);
+    await bob.goto(invitation);
+    await bob.getByRole("button", { name: "参加する", exact: true }).click();
+    await expect(bob).toHaveURL(`${origin}/workspaces/${workspace}`);
+    await bob.goto(`${origin}/workbench?workspace=${workspace}`);
+    await expect(bob.getByLabel("依頼内容", { exact: true })).toBeVisible();
+    trackStarts(bob);
+    await blocked(bob, useUrl.href);
+  } finally { await context.close(); }
 });

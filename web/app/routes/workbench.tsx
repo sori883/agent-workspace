@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { Route } from "./+types/workbench";
 import { workbenchAnswerSchema, workbenchMutationSchema, workbenchStartSchema, workbenchSubmitSchema, type WorkbenchRoot } from "../../shared/workbench-contracts";
 import { MAX_WORKBENCH_RESPONSE_BYTES } from "../../shared/workbench-transfer";
-import { definitionListSchema, type DefinitionSummary } from "../../shared/definition-contracts";
+import { definitionListSchema, type DefinitionSummary, type DefinitionVersion } from "../../shared/definition-contracts";
 import { fileListSchema, type FileInfo } from "../../shared/file-contracts";
 import { readLimitedText } from "../../shared/http";
 import { runHttpErrorSchema } from "../../shared/run-contracts";
@@ -20,8 +20,10 @@ import { workbenchClient } from "../lib/workbench.server";
 import { workbenchError, workbenchStateLabels } from "../lib/workbench-copy";
 import { scopeHref } from "../lib/workspace-scope";
 import { requireWorkspaceScope, workspaceTitle } from "../lib/workspace-scope.server";
+import { definitionErrorMessage } from "../lib/definition-copy";
+import { builtinCatalog } from "../lib/builtin-catalog";
 
-export function meta() { return [{ title: "ファイルを使って依頼 | AX ワークスペース" }]; }
+export function meta() { return [{ title: "エージェント | AX ワークスペース" }]; }
 function answerKey(id: string, revision: number) {
   const bytes = createHash("sha256").update(`ax-workbench:${id}:${revision}`).digest().subarray(0, 16);
   bytes[6] = (bytes[6]! & 15) | 64; bytes[8] = (bytes[8]! & 63) | 128;
@@ -33,7 +35,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   const session = await loadSession(request), headers = pageHeaders();
   if (session.cookie) headers.set("Set-Cookie", session.cookie);
   const url = new URL(request.url), rootId = url.searchParams.get("root"), draft = url.searchParams.get("draft"), before = url.searchParams.get("before");
-  for (const key of ["root", "draft", "before"]) if (url.searchParams.getAll(key).length > 1 || url.searchParams.has(key) && !z.uuid().safeParse(url.searchParams.get(key)).success) throw new Response("作業一覧から開き直してください。", { status: 400, headers });
+  for (const key of ["root", "draft", "before", "agent", "skill"]) if (url.searchParams.getAll(key).length > 1 || url.searchParams.has(key) && !z.uuid().safeParse(url.searchParams.get(key)).success) throw new Response("依頼またはスキルの一覧から開き直してください。", { status: 400, headers });
+  if (url.searchParams.has("agent") && url.searchParams.has("skill") || rootId && (url.searchParams.has("agent") || url.searchParams.has("skill"))) throw new Response("エージェントかスキルを一つ選んで開いてください。", { status: 400, headers });
   if (!rootId && !draft) { url.searchParams.set("draft", crypto.randomUUID()); throw redirect(url.pathname + url.search, { headers }); }
   const api = workbenchClient(user.accessToken, scope.workspaceId);
   let root: WorkbenchRoot | null = null, roots: WorkbenchRoot[] = [], next: string | null = null, error: string | null = null;
@@ -48,28 +51,46 @@ export async function loader({ request }: Route.LoaderArgs) {
   if (definitionList.status === "fulfilled" && definitionList.value) { definitions = definitionList.value.definitions; definitionNext = definitionList.value.next_cursor; }
   const failed = jobs.find(result => result.status === "rejected");
   if (failed?.status === "rejected") error = workbenchError(failed.reason instanceof RunApiError ? failed.reason.code : "api_unavailable");
-  return data({ scope, workspaceName: await workspaceTitle(user.accessToken, scope), csrf: session.csrf, rootId, root, roots, next, before, error, files, fileNext, definitions, definitionNext, draftKey: root ? answerKey(root.id, root.revision) : draft! }, { headers });
+  let selection: DefinitionVersion | null = null;
+  const selectionKind = url.searchParams.has("agent") ? "agent" : url.searchParams.has("skill") ? "skill" : null;
+  if (selectionKind) {
+    try {
+      const client = definitionsClient(user.accessToken, scope.workspaceId);
+      const version = await client.getVersion(url.searchParams.get(selectionKind)!);
+      if (version.kind !== selectionKind) throw new RunApiError("definition_version_not_found", 404);
+      const detail = await client.get(version.definition_id);
+      if (detail.definition.archived_at) throw new RunApiError("definition_archived", 409);
+      selection = version;
+    } catch (cause) { error = definitionErrorMessage(cause instanceof RunApiError ? cause.code : "api_unavailable"); }
+  }
+  return data({ scope, workspaceName: await workspaceTitle(user.accessToken, scope), csrf: session.csrf, rootId, root, roots, next, before, error, files, fileNext, definitions, definitionNext, selection, draftKey: root ? answerKey(root.id, root.revision) : draft! }, { headers });
 }
 export const headers: Route.HeadersFunction = ({ loaderHeaders, errorHeaders }) => { const value = pageHeaders(); for (const source of [loaderHeaders, errorHeaders]) source?.forEach((v, k) => value.set(k, v)); return value; };
 
 class TransferError extends Error { constructor(readonly code: string, readonly status: number) { super(workbenchError(code)); } }
-export default function WorkbenchPage({ loaderData }: Route.ComponentProps) { return <Workbench key={loaderData.rootId ?? loaderData.draftKey} initial={loaderData} />; }
+export default function WorkbenchPage({ loaderData }: Route.ComponentProps) { return <Workbench key={`${loaderData.scope.workspaceId}:${loaderData.rootId ?? loaderData.draftKey}`} initial={loaderData} />; }
 function Workbench({ initial }: { initial: Route.ComponentProps["loaderData"] }) {
   const { root, scope, csrf } = initial;
   const navigate = useNavigate(), revalidator = useRevalidator();
   const [text, setText] = useState(""), [mode, setMode] = useState<"preview" | "model">("preview"), [consent, setConsent] = useState(false);
   const [files, setFiles] = useState(initial.files), [fileNext, setFileNext] = useState(initial.fileNext), [definitions, setDefinitions] = useState(initial.definitions), [definitionNext, setDefinitionNext] = useState(initial.definitionNext);
-  const [fileIds, setFileIds] = useState<string[]>([]), [skillIds, setSkillIds] = useState<string[]>([]), [agent, setAgent] = useState("");
+  const [fileIds, setFileIds] = useState<string[]>([]), [skillIds, setSkillIds] = useState<string[]>(initial.selection?.kind === "skill" ? [initial.selection.id] : []), [agent, setAgent] = useState(initial.selection?.kind === "agent" ? initial.selection.id : "");
+  const [settingsOpen, setSettingsOpen] = useState(!!initial.selection), [filesOpen, setFilesOpen] = useState(false);
   const [busy, setBusy] = useState(false), [pending, setPending] = useState<object | null>(null), [error, setError] = useState<string | null>(null);
   const errorRef = useRef<HTMLDivElement>(null), gate = useRef(false);
   const revision = useRef(root?.revision);
   useEffect(() => { if (error) errorRef.current?.focus(); }, [error]);
   useEffect(() => {
+    setFiles(prior => [...new Map([...prior, ...initial.files].map(file => [file.id, file])).values()]);
+    setFileNext(initial.fileNext);
+  }, [initial.files, initial.fileNext]);
+  useEffect(() => {
     if (root && revision.current !== root.revision) { revision.current = root.revision; setText(""); setPending(null); setError(null); }
   }, [root]);
   useRunRefresh(!!initial.rootId && (!root || ["running", "stopping", "waiting_input"].includes(root.state)));
   const readonly = busy || pending !== null;
-  const published = definitions.filter(item => item.latest_version && !item.archived_at);
+  const published = definitions.filter(item => item.latest_version && !item.archived_at).map(item => ({ ...item.latest_version!, kind: item.kind }));
+  if (initial.selection && !published.some(item => item.id === initial.selection!.id)) published.push({ id: initial.selection.id, name: initial.selection.content.name, kind: initial.selection.kind, version: initial.selection.version, sha256: initial.selection.sha256, published_at: initial.selection.published_at });
   const selectedBytes = files.filter(file => fileIds.includes(file.id)).reduce((sum, file) => sum + file.size_bytes, 0);
   async function transfer<T>(path: string, packet: object, schema: z.ZodType<T>): Promise<T> {
     try {
@@ -85,7 +106,7 @@ function Workbench({ initial }: { initial: Route.ComponentProps["loaderData"] })
     if (!packet) {
       if (intent === "start") {
         const parsed = workbenchStartSchema.safeParse({ key: initial.draftKey, text, mode, ...(mode === "model" ? { allow_model: consent } : {}), input_file_ids: fileIds, ...(agent ? { agent_version_id: agent } : { skill_version_ids: skillIds }) });
-        if (!parsed.success || selectedBytes > 8388608) { setError("依頼を入力し、ファイルを4件・合計8 MiB以内で選んでください。実モデルでは外部送信と料金への確認も必要です。"); return; }
+        if (!parsed.success || selectedBytes > 8388608) { setError("依頼内容と、AI利用時の外部送信・料金への確認を見直してください。ファイルは任意で、4件・合計8 MiBまで選べます。"); return; }
         packet = { intent, input: parsed.data };
       } else if (intent === "answer") {
         const parsed = workbenchAnswerSchema.safeParse({ key: initial.draftKey, question_id: root?.question_id, expected_revision: root?.revision, text });
@@ -122,35 +143,54 @@ function Workbench({ initial }: { initial: Route.ComponentProps["loaderData"] })
   }
   function toggle(values: string[], id: string, checked: boolean) { return checked ? [...values, id] : values.filter(value => value !== id); }
   const pageIdentity = initial.rootId ? `root=${initial.rootId}` : `draft=${initial.draftKey}`;
-  const sidebar = <div className="chat-history"><a className="new-chat-link" href={scopeHref("/workbench", scope)}>＋ 新しい作業</a><details open><summary>本人の作業履歴</summary><ul>{initial.roots.map(item => <li key={item.id}><a href={scopeHref(`/workbench?root=${item.id}`, scope)} aria-current={root?.id === item.id ? "page" : undefined}><span>{item.messages[0]?.text.slice(0, 45) ?? "ファイルを使う作業"}</span><small>{item.mode === "preview" ? "模擬応答 · " : ""}{workbenchStateLabels[item.state]}</small></a></li>)}</ul></details>{initial.next && <a href={scopeHref(`/workbench?before=${initial.next}&${pageIdentity}`, scope)}>次の50件</a>}{initial.before && <a href={scopeHref(`/workbench?${pageIdentity}`, scope)}>最初のページ</a>}</div>;
-  return <Workspace workspaceName={initial.workspaceName} title="ファイルを使って依頼" intro="CSVやExcelの集計を頼み、結果をファイルで受け取る。" sidebar={sidebar} chat>
-    <div className="chat-shell"><p className="org-private-note">依頼・入力ファイル・実行結果は本人だけが見られます。共有スキルやエージェントを選んでも、作業内容は共有されません。</p>
-      {initial.error && <Notice title="作業を表示できません" error><p>{initial.error}</p><button type="button" className="text-button" onClick={() => void revalidator.revalidate()}>もう一度読み込む</button></Notice>}
-      {root && <><div className="chat-toolbar"><span>{root.mode === "preview" ? "模擬応答 · 無料" : "実モデルでの作業"}</span><button type="button" className="text-button" onClick={() => void revalidator.revalidate()}>作業を更新</button></div>
-        <div className="chat-thread" aria-label="作業の会話">{root.messages.map((message, i) => <article key={`${message.run_id}:${message.kind}:${i}`} className={`chat-message ${message.kind.startsWith("user_") ? "user-message" : "assistant-message"}`} aria-label={message.kind.startsWith("user_") ? "あなたのメッセージ" : "エージェントの返答"}><div className="message-author">{message.kind.startsWith("user_") ? "あなた" : message.kind === "python_result" ? "ファイル処理の結果" : "AX エージェント"}</div><p>{message.text}</p></article>)}</div>
-        <div className="run-status-panel" role="status"><h2>{workbenchStateLabels[root.state]}</h2>{root.state === "running" && <p>{root.stage === "python" ? "選んだファイルを処理しています。" : "依頼内容を確認しています。"}</p>}{root.state === "waiting_input" && <p>{root.can_answer ? "回答すると作業を続けます。" : "回答を続けられる期限や権限を確認できません。"}</p>}{root.state === "blocked_unknown" && <p>実行結果が不明なため、追加の処理を止めています。停止を確認して、回収できる結果を取得してください。</p>}{root.state === "stopping" && <p>実際の停止が確認できるまでお待ちください。</p>}</div>
-        {root.output_files.length > 0 && <section className="org-section" aria-labelledby="workbench-outputs"><h2 id="workbench-outputs">保存済みの結果ファイル</h2>{root.output_files.map(file => <FileDownload key={file.file_id} id={file.file_id} name={file.name} csrf={csrf} scope={scope} />)}</section>}
-        <p className="agent-usage">{root.mode === "preview" ? "外部モデルの利用料金は発生しません。" : `この作業のモデル料金の目安：${root.estimated_usd === null ? "確認中" : `${root.estimated_usd.toFixed(8)} USD`}`}</p>
+  const selectedAgent = published.find(item => item.kind === "agent" && item.id === agent);
+  const selectedSkills = published.filter(item => item.kind === "skill" && skillIds.includes(item.id));
+  const sidebar = <div className="chat-history request-history"><details open><summary>依頼の履歴</summary>{initial.roots.length === 0 && <p className="history-empty">依頼を送ると、ここに履歴が残ります。</p>}<ul>{initial.roots.map(item => <li key={item.id}><a href={scopeHref(`/workbench?root=${item.id}`, scope)} aria-current={root?.id === item.id ? "page" : undefined}><span>{item.messages[0]?.text.slice(0, 45) ?? "エージェントへの依頼"}</span><small>{item.mode === "preview" ? "操作テスト · " : ""}{workbenchStateLabels[item.state]}</small></a></li>)}</ul></details>{initial.next && <a href={scopeHref(`/workbench?before=${initial.next}&${pageIdentity}`, scope)}>次の50件</a>}{initial.before && <a href={scopeHref(`/workbench?${pageIdentity}`, scope)}>最初のページ</a>}</div>;
+  return <Workspace workspaceName={initial.workspaceName} title={root ? "依頼の内容" : "何を手伝いましょうか"} intro={root ? "やり取りと結果は、この依頼に保存されます。" : "相談や文章作成から、計算・ファイル作業まで。"} sidebar={sidebar} chat>
+    <div className="chat-shell workbench-shell">
+      {initial.error && <Notice title="依頼を表示できません" error><p>{initial.error}</p><button type="button" className="text-button" onClick={() => void revalidator.revalidate()}>もう一度読み込む</button><p><a href={scopeHref("/workbench", scope)}>設定を選び直して新しい依頼を開く</a></p></Notice>}
+      {root && <><div className="chat-toolbar"><span>{root.mode === "preview" ? "操作テスト · AIは利用していません" : "エージェントへの依頼"}</span><button type="button" className="text-button" onClick={() => void revalidator.revalidate()}>表示を更新</button></div>
+        <div className="chat-thread" aria-label="作業の会話">{root.messages.map((message, i) => <article key={`${message.run_id}:${message.kind}:${i}`} className={`chat-message ${message.kind.startsWith("user_") ? "user-message" : "assistant-message"}`} aria-label={message.kind.startsWith("user_") ? "あなたのメッセージ" : "エージェントの返答"}><div className="message-author">{message.kind.startsWith("user_") ? "あなた" : message.kind === "python_result" ? "計算・ファイル処理の結果" : "AX エージェント"}</div><p>{message.text}</p></article>)}</div>
+        <div className="run-status-panel" role="status"><h2>{workbenchStateLabels[root.state]}</h2>{root.state === "running" && <p>{root.stage === "python" ? "計算・ファイル処理を進めています。" : "依頼内容を確認しています。"}</p>}{root.state === "waiting_input" && <p>{root.can_answer ? "回答すると依頼を続けます。" : "回答を続けられる期限や権限を確認できません。"}</p>}{root.state === "blocked_unknown" && <p>実行結果が不明なため、追加の処理を止めています。停止を確認して、回収できる結果を取得してください。</p>}{root.state === "stopping" && <p>実際の停止が確認できるまでお待ちください。</p>}</div>
+        {root.output_files.length > 0 && <section className="org-section" aria-labelledby="workbench-outputs"><h2 id="workbench-outputs">結果ファイル</h2>{root.output_files.map(file => <FileDownload key={file.file_id} id={file.file_id} name={file.name} csrf={csrf} scope={scope} />)}</section>}
+        <p className="agent-usage">{root.mode === "preview" ? "外部モデルの利用料金は発生しません。" : `この依頼のモデル料金の目安：${root.estimated_usd === null ? "確認中" : `${root.estimated_usd.toFixed(8)} USD`}`}</p>
+        {["succeeded", "failed", "stopped"].includes(root.state) && <div className="request-next"><a className="button button-primary" href={scopeHref("/workbench", scope)}>新しい依頼を始める</a><p>次の依頼には、このやり取りは自動で引き継がれません。</p></div>}
       </>}
       {error && <div className="result result-error" tabIndex={-1} ref={errorRef}><h2>操作を確認してください</h2><p>{error}</p></div>}
-      {!initial.error && (!root || root.can_answer) && <form className="chat-composer" onSubmit={event => { event.preventDefault(); void submit(root ? "answer" : "start"); }}>
+      {!initial.error && (!root || root.can_answer) && <form className="chat-composer request-composer" onSubmit={event => { event.preventDefault(); void submit(root ? "answer" : "start"); }} onKeyDown={event => {
+        if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing && event.nativeEvent.keyCode !== 229 && !busy) { event.preventDefault(); event.currentTarget.requestSubmit(); }
+      }}>
+        {!root && <div className="request-agent"><span>{selectedAgent ? `${selectedAgent.name}（第${selectedAgent.version}版）` : builtinCatalog.defaultAgent.name}</span><button type="button" className="text-button" disabled={readonly} aria-expanded={settingsOpen} aria-controls="request-settings" onClick={() => setSettingsOpen(value => !value)}>変更・スキルを選ぶ</button></div>}
+        <label htmlFor="workbench-text">{root ? "質問への回答" : "依頼内容"}</label>
+        <p id="workbench-text-hint" className="composer-hint">{root ? "エージェントからの質問に回答してください。" : "相談したいことや、作りたいものを教えてください。ファイルなしでも依頼できます。"}</p>
+        <textarea id="workbench-text" rows={5} value={text} readOnly={readonly} onChange={event => setText(event.target.value)} aria-describedby="workbench-text-hint workbench-text-count" placeholder={root ? undefined : "例：新しい企画のアイデアを一緒に整理したい"} />
+        <div className="composer-meta"><span>Ctrl / ⌘ + Enterで送信</span><span id="workbench-text-count">{new TextEncoder().encode(text).length} / 2,048 バイト</span></div>
         {!root && <>
-          <fieldset className="agent-mode" disabled={readonly}><legend>応答の種類</legend><label><input type="radio" name="workbench-mode" checked={mode === "preview"} onChange={() => setMode("preview")} />模擬応答で操作を試す（無料）</label><label><input type="radio" name="workbench-mode" checked={mode === "model"} onChange={() => setMode("model")} />実モデルで作業を進める</label></fieldset>
-          {mode === "preview" && <p className="field-hint">決まった質問と回答で操作を確認します。選んだファイルの集計は行いません。</p>}
+          <div className="request-tools"><button type="button" className="text-button" disabled={readonly} aria-expanded={filesOpen} aria-controls="request-files" onClick={() => setFilesOpen(value => !value)}>ファイルを添付{fileIds.length > 0 ? `（${fileIds.length}件）` : "（任意）"}</button><a href={scopeHref("/library", scope)}>使えるスキルを見る</a></div>
+          {selectedSkills.length > 0 && <p className="request-selection">追加スキル：{selectedSkills.map(item => `${item.name}（第${item.version}版）`).join("、")}</p>}
+          {fileIds.length > 0 && <p className="request-selection">添付：{files.filter(file => fileIds.includes(file.id)).map(file => file.name).join("、")}</p>}
+          <div id="request-settings" className="request-options" hidden={!settingsOpen}>
+            <div className="definition-field"><label htmlFor="workbench-agent">使用するエージェント</label><select id="workbench-agent" value={agent} disabled={readonly} onChange={event => { setAgent(event.target.value); setSkillIds([]); }}><option value="">{builtinCatalog.defaultAgent.name}</option>{published.filter(item => item.kind === "agent").map(item => <option key={item.id} value={item.id}>{item.name}（第{item.version}版）</option>)}</select><p className="field-hint">{agent ? "このエージェントに登録されたスキルと道具を使います。" : builtinCatalog.defaultAgent.description} 公開済みの版を使用します。</p></div>
+            {!agent && <fieldset className="definition-choice" disabled={readonly}><legend>追加するスキル（任意・8件まで）</legend>{published.filter(item => item.kind === "skill").map(item => <label key={item.id}><input type="checkbox" checked={skillIds.includes(item.id)} disabled={!skillIds.includes(item.id) && skillIds.length >= 8} onChange={event => setSkillIds(toggle(skillIds, item.id, event.target.checked))} /><span>{item.name}（第{item.version}版）</span></label>)}{!published.some(item => item.kind === "skill") && <p>追加できる公開済みスキルはありません。組み込みスキルは登録せずに使えます。</p>}</fieldset>}
+            {definitionNext && <button type="button" className="text-button" disabled={readonly} onClick={() => void more("definitions")}>設定をさらに表示</button>}
+            <p><a href={scopeHref("/library", scope)}>スキル・エージェントを登録・管理する</a></p>
+          </div>
+          <div id="request-files" className="request-options" hidden={!filesOpen}>
+            <fieldset className="definition-choice" disabled={readonly}><legend>使用するファイル（任意・4件、合計8 MiBまで）</legend>{files.filter(file => file.state === "ready").map(file => <label key={file.id}><input type="checkbox" checked={fileIds.includes(file.id)} disabled={!fileIds.includes(file.id) && (fileIds.length >= 4 || selectedBytes + file.size_bytes > 8388608)} onChange={event => setFileIds(toggle(fileIds, file.id, event.target.checked))} /><span>{file.name}（{Math.ceil(file.size_bytes / 1024)} KiB）</span></label>)}{!files.some(file => file.state === "ready") && <p>保存済みのファイルはありません。必要な場合は「作業ファイル」でCSV・Excelを追加してください。</p>}</fieldset>
+            {fileNext && <button type="button" className="text-button" disabled={readonly} onClick={() => void more("files")}>ファイルをさらに表示</button>}
+            <p><a href={scopeHref("/files", scope)} target="_blank" rel="noopener">ファイルを追加・管理する（別タブ）</a></p><button type="button" className="text-button" disabled={readonly} onClick={() => void revalidator.revalidate()}>追加したファイルを読み込む</button>
+          </div>
+          <fieldset className="agent-mode request-mode" disabled={readonly}><legend>利用方法</legend><label><input type="radio" name="workbench-mode" checked={mode === "model"} onChange={() => setMode("model")} />AIに依頼する</label><label><input type="radio" name="workbench-mode" checked={mode === "preview"} onChange={() => setMode("preview")} />画面の操作を試す（無料）</label></fieldset>
+          {mode === "preview" && <p className="field-hint request-mode-note">操作テストでは決まった質問と回答を表示します。AIの回答や計算・ファイル処理は行いません。</p>}
           {mode === "model" && <div className="chat-consent"><label><input type="checkbox" checked={consent} disabled={readonly} onChange={event => setConsent(event.target.checked)} /><span>外部送信とモデル利用料金を確認しました</span></label><p>依頼・選択した設定・ファイル名・処理の要約をGeminiへ送信します。処理で抽出したファイルの内容が要約に含まれる場合があります。</p></div>}
-          <div className="definition-field"><label htmlFor="workbench-agent">使用するエージェント</label><select id="workbench-agent" value={agent} disabled={readonly} onChange={event => { setAgent(event.target.value); setSkillIds([]); }}><option value="">標準のファイル集計</option>{published.filter(item => item.kind === "agent").map(item => <option key={item.id} value={item.latest_version!.id}>{item.latest_version!.name}（第{item.latest_version!.version}版）</option>)}</select><p className="field-hint">公開済みの版を使用します。作業中に設定が変わることはありません。</p></div>
-          {!agent && <fieldset className="definition-choice" disabled={readonly}><legend>追加するスキル（8件まで）</legend>{published.filter(item => item.kind === "skill").map(item => <label key={item.id}><input type="checkbox" checked={skillIds.includes(item.latest_version!.id)} disabled={!skillIds.includes(item.latest_version!.id) && skillIds.length >= 8} onChange={event => setSkillIds(toggle(skillIds, item.latest_version!.id, event.target.checked))} /><span>{item.latest_version!.name}（第{item.latest_version!.version}版）</span></label>)}{!published.some(item => item.kind === "skill") && <p>このページに公開済みのスキルはありません。</p>}</fieldset>}
-          {definitionNext && <button type="button" className="text-button" disabled={readonly} onClick={() => void more("definitions")}>設定をさらに表示</button>}
-          <fieldset className="definition-choice" disabled={readonly}><legend>使用するファイル（4件・合計8 MiBまで）</legend>{files.filter(file => file.state === "ready").map(file => <label key={file.id}><input type="checkbox" checked={fileIds.includes(file.id)} disabled={!fileIds.includes(file.id) && (fileIds.length >= 4 || selectedBytes + file.size_bytes > 8388608)} onChange={event => setFileIds(toggle(fileIds, file.id, event.target.checked))} /><span>{file.name}（{Math.ceil(file.size_bytes / 1024)} KiB）</span></label>)}{!files.some(file => file.state === "ready") && <p>このページに保存済みのファイルはありません。</p>}</fieldset>
-          {fileNext && <button type="button" className="text-button" disabled={readonly} onClick={() => void more("files")}>ファイルをさらに表示</button>}
-          <p><a href={scopeHref("/files", scope)}>ファイルを追加する</a> · <a href={scopeHref("/library", scope)}>スキル・エージェントを登録する</a></p>
         </>}
-        <label htmlFor="workbench-text">{root ? "質問への回答" : "依頼内容"}</label><p id="workbench-text-hint" className="composer-hint">集計したい項目や、作成したいファイルを教えてください。日本語で約680文字までが目安です。</p><textarea id="workbench-text" rows={5} value={text} readOnly={readonly} onChange={event => setText(event.target.value)} aria-describedby="workbench-text-hint" />
-        <div className="composer-actions"><span>{new TextEncoder().encode(text).length} / 2,048 バイト</span><button className="button button-primary" type="submit" disabled={busy}>{pending ? "同じ内容で再確認する" : root ? "回答して続ける" : "作業を始める"}</button></div>
+        <div className="composer-actions"><p>返答は完成すると表示されます。</p><button className="button button-primary" type="submit" disabled={busy}>{pending ? "同じ内容で再確認する" : root ? "回答して続ける" : mode === "preview" ? "操作を試す" : "依頼を送る"}</button></div>
       </form>}
+      {!root && !initial.error && <section className="request-examples" aria-label="依頼の例"><p>例えば、こんなことを頼めます</p><div>{["考えを整理する", "文章を作る・直す", "計算・データをまとめる"].map(example => <button className="example-prompt" type="button" key={example} disabled={readonly} onClick={() => { setText(example === "考えを整理する" ? "新しい企画のアイデアを一緒に整理してください。" : example === "文章を作る・直す" ? "社内向けのお知らせの文章を考えてください。" : "計算やデータ整理を手伝ってください。"); document.getElementById("workbench-text")?.focus(); }}>{example}</button>)}</div></section>}
+      <p className="request-privacy">依頼・ファイル・結果は本人だけが見られます。共有スキルを使っても公開されません。</p>
       {root && ["running", "waiting_input", "blocked_unknown"].includes(root.state) && <div className="org-actions"><button type="button" className="button button-secondary" disabled={busy || pending !== null} onClick={() => void submit("stop")}>この作業を停止する</button>{root.state === "blocked_unknown" && <button type="button" className="button button-secondary" disabled={busy || pending !== null} onClick={() => void submit("recover")}>停止と結果の回収を確認する</button>}</div>}
       {pending && root && !root.can_answer && <button type="button" className="button button-secondary" disabled={busy} onClick={() => void submit("stop")}>同じ内容で再確認する</button>}
-      <noscript><p>作業の送信とファイルのダウンロードにはJavaScriptが必要です。</p></noscript>
+      <noscript><p>依頼の送信とファイルのダウンロードにはJavaScriptが必要です。</p></noscript>
     </div>
   </Workspace>;
 }

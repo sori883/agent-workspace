@@ -70,7 +70,7 @@ export default function ManageWorkspace({ loaderData, actionData }: Route.Compon
   const owner = detail?.workspace.owner_user_id === loaderData.userId;
   const lastAdmin = detail?.members.filter((member) => member.access_level === "admin").length === 1;
   return <Workspace title={detail?.workspace.name ?? "ワークスペース"} intro="メンバー、グループ、参加の設定を確認できます。">
-    <div className="org-actions"><a href="/workspaces">← ワークスペース一覧</a>{detail && <a className="button button-primary" href={`/?workspace=${detail.workspace.id}`}>チャットを開く</a>}</div>
+    <div className="org-actions"><a href="/workspaces">← ワークスペース一覧</a>{detail && <a className="button button-primary" href={`/workbench?workspace=${detail.workspace.id}`}>エージェントを開く</a>}</div>
     <ActionNotice error={actionData?.error ?? loaderData.error} message={actionData?.message} />
     {detail && <>
       <p className="org-private-note">会話と実行履歴は本人だけが閲覧できます。所有者や管理者にも他の人の会話は公開されません。</p>

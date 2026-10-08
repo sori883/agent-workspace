@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 137,
+  "revision": 141,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "parent",
     "session": "workbench-parent-1"
   },
   "createdAt": "2026-10-07T10:53:37.550Z",
-  "updatedAt": "2026-10-07T18:37:51.522Z",
+  "updatedAt": "2026-10-08T01:16:29.150Z",
   "units": [
     {
       "id": "workbench",
@@ -1569,6 +1569,93 @@
       ],
       "currentAttempt": 1,
       "currentSubmission": "aa3b410e-0c91-4aac-865e-3e8ee6f1c41f",
+      "contractHistory": []
+    },
+    {
+      "id": "general-agent-ui",
+      "parent": "workbench",
+      "size": "standard",
+      "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+      "track": "",
+      "owner": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "verifiers": [],
+      "scope": [
+        "Runtime/catalog（A）",
+        "library/登録導線（B）",
+        "依頼画面/nav/CSS/統合/配備（親）",
+        "独立レビュー（C）"
+      ],
+      "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "delivery",
+          "description": "G1〜G5を実動作とレビューで確認する",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "result"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 4,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "running",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                  "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                  "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+                  "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-08T00:50:19.063Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": null,
       "contractHistory": []
     }
   ],
@@ -25958,6 +26045,443 @@
         }
       },
       "at": "2026-10-07T18:37:51.522Z"
+    },
+    {
+      "id": "wb-20261008095018896850",
+      "hash": "9981f17c2e8910666e6476dc5e6b9a44ebdb3e4021df4cc31c24503f7fe9a3fe",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "general-agent-ui",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008095018896850",
+        "input": {
+          "parent": "workbench",
+          "size": "standard",
+          "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+          "scope": [
+            "Runtime/catalog（A）",
+            "library/登録導線（B）",
+            "依頼画面/nav/CSS/統合/配備（親）",
+            "独立レビュー（C）"
+          ],
+          "owner": {
+            "actor": "parent",
+            "session": "workbench-parent-1"
+          },
+          "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+          "conditions": [
+            {
+              "id": "delivery",
+              "description": "G1〜G5を実動作とレビューで確認する",
+              "purpose": "delivery",
+              "required": true,
+              "allowed": [
+                "pass"
+              ],
+              "target": "result"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "既存実装へ汎用化とUI整理を加え、利用経路を検証して1 PRへまとめる"
+            }
+          }
+        }
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 138,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存実装へ汎用化とUI整理を加え、利用経路を検証して1 PRへまとめる",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T00:50:19.063Z"
+    },
+    {
+      "id": "wb-20261008095019101128",
+      "hash": "4372af8033f60041de8ff7967a22f9587cf06f182b5e7bc9d20c8443053c6439",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "general-agent-ui",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008095019101128",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 139,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存実装へ汎用化とUI整理を加え、利用経路を検証して1 PRへまとめる",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T00:50:19.355Z"
+    },
+    {
+      "id": "wb-20261008101628867382",
+      "hash": "68bfc0545a847efb1bb084481e72d2c0e684290c90e714abfea8b866ed2e8044",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "general-agent-ui",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008101628867382",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/general-agent-ui.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 140,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T01:16:29.077Z"
+    },
+    {
+      "id": "wb-20261008101629091663",
+      "hash": "a13ef60e184556f5b849f860cccfc0783dd1b25ff796fa681f437dd4e5dd48ef",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "general-agent-ui",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008101629091663",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+            ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json"
+          ]
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 141,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 4,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+                    "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T01:16:29.150Z"
     }
   ]
 }

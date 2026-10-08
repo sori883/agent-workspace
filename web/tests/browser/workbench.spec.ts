@@ -12,6 +12,41 @@ async function database<T>(action: (pool: pg.Pool) => Promise<T>) {
   try { return await action(pool); } finally { await pool.end(); }
 }
 
+test("the default request accepts text without a file and keeps optional tools out of the way", async ({ page }) => {
+  await login(page);
+  await expect(page).toHaveURL(/\/workbench\?/);
+  await expect(page.getByRole("heading", { name: "何を手伝いましょうか", exact: true })).toBeVisible();
+  await expect(page.locator(".request-agent")).toContainText("標準エージェント");
+  await expect(page.locator("#request-settings")).toBeHidden();
+  await expect(page.locator("#request-files")).toBeHidden();
+  await expect(page.getByText("標準のファイル集計", { exact: false })).toHaveCount(0);
+  await page.screenshot({ path: "../.space/tasks/ax-agent-workbench/evidence/general-agent-desktop.png", fullPage: true });
+  await page.setViewportSize({ width: 320, height: 740 });
+  await page.screenshot({ path: "../.space/tasks/ax-agent-workbench/evidence/general-agent-mobile.png", fullPage: true });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
+  const toggle = page.getByRole("button", { name: "変更・スキルを選ぶ", exact: true });
+  await toggle.focus(); await page.keyboard.press("Enter");
+  await expect(page.getByLabel("使用するエージェント", { exact: true })).toHaveValue("");
+  await toggle.press("Enter");
+  await expect(page.locator("#request-settings")).toBeHidden();
+  await page.getByRole("button", { name: "文章を作る・直す", exact: true }).click();
+  const field = page.getByLabel("依頼内容", { exact: true });
+  await expect(field).toBeFocused();
+  await expect(field).toHaveValue("社内向けのお知らせの文章を考えてください。");
+  const packets: any[] = [];
+  page.on("request", request => { if (request.method() === "POST" && request.url().includes("/workbench/transfer")) packets.push(request.postDataJSON()); });
+  await field.dispatchEvent("keydown", { key: "Enter", ctrlKey: true, isComposing: true, keyCode: 229 });
+  expect(packets).toHaveLength(0);
+  await field.press("Control+Enter");
+  await expect(page.getByRole("heading", { name: "あなたの回答を待っています", exact: true })).toBeVisible();
+  expect(packets).toHaveLength(1);
+  expect(packets[0].input).toMatchObject({ input_file_ids: [], skill_version_ids: [], mode: "preview" });
+  await page.getByRole("button", { name: "この作業を停止する", exact: true }).click();
+  await expect(page.getByRole("link", { name: "新しい依頼を始める", exact: true })).toBeVisible();
+  await expect(page.getByText("次の依頼には、このやり取りは自動で引き継がれません。", { exact: true })).toBeVisible();
+});
+
 test("published skills and private files start a workbench once after a lost receipt, then answer and download", async ({ page }) => {
   await login(page);
   await page.goto(workspacePath(page, "/library/new?kind=skill"));
@@ -25,7 +60,9 @@ test("published skills and private files start a workbench once after a lost rec
   await page.getByRole("button", { name: "保存する", exact: true }).click();
   await expect(page.getByRole("status")).toContainText("sales.csvを保存しました");
   await page.goto(workspacePath(page, "/workbench"));
+  await page.getByRole("button", { name: "変更・スキルを選ぶ", exact: true }).click();
   await page.getByLabel("workbench-sales（第1版）", { exact: true }).check();
+  await page.getByRole("button", { name: "ファイルを添付（任意）", exact: true }).click();
   await page.getByLabel(/sales.csv（/).check();
   await page.getByLabel("依頼内容", { exact: true }).fill("売上を集計してください。");
   const packets: unknown[] = []; let csrf = "", lost = false, root = "";
@@ -40,7 +77,7 @@ test("published skills and private files start a workbench once after a lost rec
     }
     await route.continue();
   });
-  await page.getByRole("button", { name: "作業を始める", exact: true }).click();
+  await page.getByRole("button", { name: "操作を試す", exact: true }).click();
   await expect(page.getByRole("heading", { name: "操作を確認してください", exact: true })).toBeVisible();
   await expect(page.getByLabel("依頼内容", { exact: true })).toHaveAttribute("readonly", "");
   await page.getByRole("button", { name: "同じ内容で再確認する", exact: true }).click();
@@ -64,18 +101,18 @@ test("published skills and private files start a workbench once after a lost rec
   await page.setViewportSize({ width: 320, height: 740 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
-  await page.screenshot({ path: "../.space/tasks/ax-agent-workbench/evidence/workbench-result-mobile.png", fullPage: true });
+  await page.screenshot({ path: "../.space/tasks/ax-agent-workbench/evidence/general-agent-result-mobile.png", fullPage: true });
 });
 
 test("workbench model use requires consent and waiting work can be stopped", async ({ page }) => {
   await login(page); await page.goto(workspacePath(page, "/workbench"));
-  await page.getByLabel("実モデルで作業を進める", { exact: true }).check();
+  await page.getByLabel("AIに依頼する", { exact: true }).check();
   await page.getByLabel("依頼内容", { exact: true }).fill("集計してください。");
   let sent = 0; page.on("request", request => { if (request.url().includes("/workbench/transfer")) sent++; });
-  await page.getByRole("button", { name: "作業を始める", exact: true }).click();
+  await page.getByRole("button", { name: "依頼を送る", exact: true }).click();
   await expect(page.getByRole("heading", { name: "操作を確認してください", exact: true })).toBeVisible(); expect(sent).toBe(0);
-  await page.getByLabel("模擬応答で操作を試す（無料）", { exact: true }).check();
-  await page.getByRole("button", { name: "作業を始める", exact: true }).click();
+  await page.getByLabel("画面の操作を試す（無料）", { exact: true }).check();
+  await page.getByRole("button", { name: "操作を試す", exact: true }).click();
   await expect(page.getByRole("heading", { name: "あなたの回答を待っています", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "この作業を停止する", exact: true }).click();
   await expect(page.getByRole("heading", { name: "停止しました", exact: true })).toBeVisible();
@@ -85,13 +122,13 @@ test("workbench model use requires consent and waiting work can be stopped", asy
 test("answer text and uncertain receipt survive a transient detail failure", async ({ page }) => {
   await login(page); await page.goto(workspacePath(page, "/workbench"));
   await page.getByLabel("依頼内容", { exact: true }).fill("再取得の確認");
-  await page.getByRole("button", { name: "作業を始める", exact: true }).click();
+  await page.getByRole("button", { name: "操作を試す", exact: true }).click();
   await expect(page.getByLabel("質問への回答", { exact: true })).toBeVisible();
   const root = new URL(page.url()).searchParams.get("root")!;
   const fault = () => database(pool => pool.query("INSERT INTO ax_browser_workbench_faults VALUES($1)", [root]));
   await page.getByLabel("質問への回答", { exact: true }).fill("入力を保持する");
-  await fault(); await page.getByRole("button", { name: "作業を更新", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "作業を表示できません", exact: true })).toBeVisible();
+  await fault(); await page.getByRole("button", { name: "表示を更新", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "依頼を表示できません", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "もう一度読み込む", exact: true }).click();
   await expect(page.getByLabel("質問への回答", { exact: true })).toHaveValue("入力を保持する");
   const packets: unknown[] = []; let lost = false;
@@ -105,8 +142,8 @@ test("answer text and uncertain receipt survive a transient detail failure", asy
   });
   await page.getByRole("button", { name: "回答して続ける", exact: true }).click();
   await expect(page.getByRole("button", { name: "同じ内容で再確認する", exact: true })).toBeVisible();
-  await fault(); await page.getByRole("button", { name: "作業を更新", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "作業を表示できません", exact: true })).toBeVisible();
+  await fault(); await page.getByRole("button", { name: "表示を更新", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "依頼を表示できません", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "もう一度読み込む", exact: true }).click();
   await expect(page.getByLabel("質問への回答", { exact: true })).toHaveValue("入力を保持する");
   await expect(page.getByLabel("質問への回答", { exact: true })).toHaveAttribute("readonly", "");
@@ -118,7 +155,7 @@ test("answer text and uncertain receipt survive a transient detail failure", asy
 test("history pagination keeps the open question and never uses its answer key for a new task", async ({ page }) => {
   await login(page); await page.goto(workspacePath(page, "/workbench"));
   await page.getByLabel("依頼内容", { exact: true }).fill("ページ送りの元の質問");
-  await page.getByRole("button", { name: "作業を始める", exact: true }).click();
+  await page.getByRole("button", { name: "操作を試す", exact: true }).click();
   await expect(page.getByLabel("質問への回答", { exact: true })).toBeVisible();
   const original = page.url(), root = new URL(original).searchParams.get("root")!;
   await database(pool => pool.query(`INSERT INTO ax_agent_roots SELECT (jsonb_populate_record(NULL::ax_agent_roots,to_jsonb(a)||jsonb_build_object('id',gen_random_uuid(),'created_at',clock_timestamp()+i*interval '1 second','state','stopped','question',NULL,'wait_expires_at',NULL))).* FROM ax_agent_roots a CROSS JOIN generate_series(1,51) i WHERE a.id=$1`, [root]));
@@ -126,9 +163,9 @@ test("history pagination keeps the open question and never uses its answer key f
   expect(new URL(page.url()).searchParams.get("root")).toBe(root);
   expect(new URL(page.url()).searchParams.has("draft")).toBe(false);
   await expect(page.getByLabel("質問への回答", { exact: true })).toBeVisible();
-  await page.getByRole("link", { name: "＋ 新しい作業", exact: true }).click();
+  await page.getByRole("link", { name: "新しい依頼", exact: true }).click();
   await page.getByLabel("依頼内容", { exact: true }).fill("別の作業");
-  await page.getByRole("button", { name: "作業を始める", exact: true }).click();
+  await page.getByRole("button", { name: "操作を試す", exact: true }).click();
   await expect(page.getByLabel("質問への回答", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "この作業を停止する", exact: true }).click();
   await expect(page.getByRole("heading", { name: "停止しました", exact: true })).toBeVisible();

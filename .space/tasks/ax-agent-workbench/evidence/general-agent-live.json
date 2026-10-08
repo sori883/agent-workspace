@@ -1,0 +1,209 @@
+{
+  "scope": "single general text request, no input files or registered definitions",
+  "browser_initial": {
+    "version": 1,
+    "observed_at": "2026-10-08T01:10:29.245Z",
+    "phase": "result",
+    "passed": false,
+    "failure": "answer_context_mismatch",
+    "observations": {
+      "workspace_id": "f36f61ec-d5c5-438d-99d7-fd2185f72b16",
+      "root_id": "c78be1c4-0cec-4e1d-9bab-0a354eed3e0e",
+      "initial_run_id": "ax-run-44896fe7bbc68624",
+      "draft_key": "bbfea03c-86a2-470a-8711-1c5b25b2ef71",
+      "catalog_sha256": "6da9fa1469c1e6cf4e031203f319479bf82a82681e697b98916aba8025cfcb2d",
+      "builtins_verified": true,
+      "default_agent_verified": true,
+      "submitted_input_files": 0,
+      "submitted_skills": 0,
+      "submitted_agent": false,
+      "last_state": "succeeded",
+      "wait_elapsed_ms": 37695,
+      "python_stage_seen": false,
+      "assistant_messages": 1,
+      "output_files_visible": 0,
+      "answer_characters": 69,
+      "answer_sha256": "d63adcdf265abf439cc16d07a606259ee34b1df63c4931e892b7312673f77583",
+      "answer_context_verified": false,
+      "reload_preserved_result": false,
+      "request_sha256": "6d50e78053eacda0e9fc377c719738df3d8908ff7fab95731ff23ea47bab4ef1",
+      "server_model_calls": null,
+      "server_python_calls": null,
+      "server_cleanup_verified": false
+    },
+    "counters": {
+      "login": 1,
+      "authenticate": 1,
+      "start": 1,
+      "blocked_requests": 0,
+      "page_errors": 0
+    },
+    "screenshot": "failure.png",
+    "limitations": [
+      "One browser start request is allowed. Model/Python call counts, cost and cleanup must be joined independently by root_id; absence of a Python stage in polling is not proof of zero server executions.",
+      "Missing workspace, failed, unknown, waiting-input or timed-out work stops verification. There is no workspace creation, answer, retry, stop or recovery action.",
+      "Only hashes, identifiers, counts and checks are saved as JSON. Screenshots are restricted to this synthetic request or builtin information. No passwords, tokens, storage, trace, HTML or response bodies are saved.",
+      "The created root is retained. Browser shutdown does not prove the server execution has stopped."
+    ]
+  },
+  "readonly_recheck": {
+    "observed_at": "2026-10-08T01:13:58.111Z",
+    "root_id": "c78be1c4-0cec-4e1d-9bab-0a354eed3e0e",
+    "mode": "read_only_existing_result",
+    "new_starts": 0,
+    "denied_requests": 0,
+    "reload_same_answer": true,
+    "answer_sha256": "d63adcdf265abf439cc16d07a606259ee34b1df63c4931e892b7312673f77583",
+    "answer_characters": 69
+  },
+  "server": {
+    "observed_at": "2026-10-08T01:13:55.517258+00:00",
+    "root": {
+      "id": "c78be1c4-0cec-4e1d-9bab-0a354eed3e0e",
+      "runtime_version": 2,
+      "mode": "model",
+      "state": "succeeded",
+      "model_calls": 1,
+      "tool_calls": 1,
+      "python_calls": 0,
+      "active_ms": 33599,
+      "image": "localhost:5001/ax-task-runner@sha256:22a4a52d721ffe36e2caff751cbe1a6c4fd69ed9f7d6c5021fde7b037f364ec9",
+      "code_image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+      "code_profile": "host-quota-8m-v1"
+    },
+    "runs": [
+      {
+        "run_id": "ax-run-44896fe7bbc68624",
+        "kind": "runtime",
+        "sequence": 1,
+        "predecessor": null,
+        "image": "localhost:5001/ax-task-runner@sha256:22a4a52d721ffe36e2caff751cbe1a6c4fd69ed9f7d6c5021fde7b037f364ec9",
+        "resolved": true,
+        "invalid": false,
+        "phase": "finished",
+        "job_state": "done",
+        "cleanup": {
+          "suspended": true,
+          "egress_denied": true
+        },
+        "cleanup_errors": [],
+        "status": "succeeded",
+        "error_type": null,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 1303,
+          "prompt_token_count": 1244,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 59
+        },
+        "estimated_usd": 0.0003995,
+        "host_cleanup": null
+      }
+    ],
+    "operations": [
+      {
+        "run_id": "ax-run-44896fe7bbc68624",
+        "sequence": 1,
+        "kind": "model",
+        "settled": true,
+        "generation_started": true,
+        "actual_usd": 0.0003995,
+        "reserved_usd": 0.002268,
+        "usage": {
+          "model_call_count": 1,
+          "total_token_count": 1303,
+          "prompt_token_count": 1244,
+          "thoughts_token_count": 0,
+          "candidates_token_count": 59
+        },
+        "outcome": "ok"
+      },
+      {
+        "run_id": "ax-run-44896fe7bbc68624",
+        "sequence": 2,
+        "kind": "tool",
+        "settled": true,
+        "generation_started": false,
+        "actual_usd": 0,
+        "reserved_usd": 0,
+        "usage": {},
+        "outcome": "ok"
+      }
+    ],
+    "effects": [
+      {
+        "run_id": "ax-run-44896fe7bbc68624",
+        "operation": "create",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-44896fe7bbc68624",
+        "operation": "egress_deny",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-44896fe7bbc68624",
+        "operation": "egress_prepare",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-44896fe7bbc68624",
+        "operation": "resume",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-44896fe7bbc68624",
+        "operation": "stage",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-44896fe7bbc68624",
+        "operation": "start",
+        "confirmed": true
+      },
+      {
+        "run_id": "ax-run-44896fe7bbc68624",
+        "operation": "suspend",
+        "confirmed": true
+      }
+    ],
+    "paid_total": 0.0071965,
+    "paid_with_reservations": 0.0071965,
+    "root_cost": 0.0003995,
+    "root_with_reservations": 0.0003995,
+    "slot": {
+      "id": true,
+      "run_id": null,
+      "hold_reason": null
+    },
+    "public_unresolved": 0,
+    "public_invalid": 0
+  },
+  "independent_inspect": {
+    "actor_observed": true,
+    "actor_stopped": true,
+    "ax_suspended": true,
+    "code_cleanup": null,
+    "egress_denied": true,
+    "egress_observed": true,
+    "run_id": "ax-run-44896fe7bbc68624",
+    "task_observed": true,
+    "verified_stopped_and_denied": true,
+    "worker_unassigned": true
+  },
+  "closure": {
+    "model_gateway_enabled": false,
+    "workbench_model_enabled": false,
+    "model_key_mount": false,
+    "rollout_ready": true,
+    "runtime_image": "localhost:5001/ax-task-runner@sha256:22a4a52d721ffe36e2caff751cbe1a6c4fd69ed9f7d6c5021fde7b037f364ec9",
+    "admission_open": true,
+    "trial_enabled": false,
+    "model_secret_deleted": true,
+    "unresolved": 0,
+    "invalid": 0,
+    "paid_total_usd": 0.0071965,
+    "paid_with_reservations_usd": 0.0071965
+  },
+  "correction": "Initial browser assertion rejected valid Japanese date followed immediately by time. The predicate was corrected and checked against 11 cases. No second model request was made. Saved result and reload were verified read-only. The initial passed=false evidence remains unchanged."
+}

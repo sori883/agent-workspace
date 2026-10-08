@@ -15,7 +15,7 @@ export async function login(page: Page, user: "alice" | "bob" = "alice", baseUrl
   await page.getByRole("button", { name: user === "alice" ? "Aliceでログイン" : "Bobでログイン", exact: true }).click();
   await expect(page).toHaveURL(`${baseUrl}/workspaces`);
   if (!selectWorkspace) return;
-  const link = page.getByRole("link", { name: "チャットを開く", exact: true }).first();
+  const link = page.getByRole("link", { name: "エージェントを開く", exact: true }).first();
   if (await link.count() === 0) {
     await page.getByLabel("ワークスペース名", { exact: false }).fill(`${user}のブラウザ試験`);
     await page.getByRole("button", { name: "作成する", exact: true }).click();
@@ -25,5 +25,5 @@ export async function login(page: Page, user: "alice" | "bob" = "alice", baseUrl
   const id = new URL(href!, baseUrl).searchParams.get("workspace")!;
   selected.set(page, id);
   await link.click();
-  await expect(page.getByLabel("メッセージ", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("依頼内容", { exact: true })).toBeVisible();
 }

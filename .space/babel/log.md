@@ -1,3 +1,7 @@
+## 2026-10-08
+* **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).
+* **Update**: [AX Task内の対話型ランタイムと外部の制御基盤](decisions/systems/ax/agent-runtime.md).
+
 ## 2026-10-07
 * **Update**: [AXローカル実行基盤の構成と確認方法](knowledge/ax-local-kind-environment.md).
 * **Update**: [AX Task内の対話型ランタイムと外部の制御基盤](decisions/systems/ax/agent-runtime.md).
