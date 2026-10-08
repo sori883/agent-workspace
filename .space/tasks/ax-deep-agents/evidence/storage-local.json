@@ -1,0 +1,30 @@
+{
+  "verified_at": "2026-10-08T14:32:40.026Z",
+  "run_id": "ax-run-370fbd8d2bdb3d14",
+  "root_id": "8626035f-08c9-4032-8968-ca5e60e16995",
+  "external_model": false,
+  "starts": 1,
+  "definition_body_external": true,
+  "descriptor_reference_only": true,
+  "file_content_in_sdk_prompt": true,
+  "synthetic_skill_archived": true,
+  "physical_stop": {
+    "actor_observed": true,
+    "actor_stopped": true,
+    "ax_suspended": true,
+    "code_cleanup": null,
+    "egress_denied": true,
+    "egress_observed": true,
+    "run_id": "ax-run-370fbd8d2bdb3d14",
+    "task_observed": true,
+    "verified_stopped_and_denied": true,
+    "worker_unassigned": true
+  },
+  "runner_image": "localhost:5001/ax-task-skill-storage@sha256:270c05cfbf532c5735b1f1abc4e10f093cc8e65f73143f2d324309fa0d8f575d",
+  "controller_image": "localhost:5001/ax-execution-skill-storage@sha256:90a56b3ded2163f8aa3d2c0deb847c4d6f4d32b2ff013d2a4a72bbbb55c596cf",
+  "migration_preserved_rows": 119,
+  "unresolved_runs_after": 0,
+  "ai_enabled_after": true,
+  "admission_open_after": true,
+  "previous_successful_run_id": "ax-run-0438b7f5f24c2e32"
+}

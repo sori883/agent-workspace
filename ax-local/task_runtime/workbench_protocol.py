@@ -138,8 +138,9 @@ def validate_proposal(value, unused=None):
 
 
 def validate_skill_context(value):
-    fields(value, 'version catalog omitted_count loaded_skills loaded_files builtin_skill_ids')
-    integer(value['version'], 1, 1)
+    version = value.get('version') if isinstance(value, dict) else None
+    fields(value, 'version catalog omitted_count loaded_skills loaded_files builtin_skill_ids' + (' objects' if version == 2 else ''))
+    integer(value['version'], 1, 2)
     integer(value['omitted_count'], 0, 2147483647)
     catalog = array(value['catalog'], 32)
     if len(json_bytes(catalog)) > 8192:
@@ -187,8 +188,60 @@ def validate_skill_context(value):
     if any(item not in BUILTIN_SKILLS for item in builtins):
         raise ProtocolError('UnknownBuiltinSkill')
     unique(builtins)
-    if len(loaded) + ('tabular-v1' in builtins) > 8:
+    objects = array(value['objects'], 8) if version == 2 else []
+    for item in objects:
+        validate_skill_object(item)
+        if item['id'] in summaries and any(item[key] != summaries[item['id']][key] for key in ('name', 'description')):
+            raise ProtocolError('SkillSummaryMismatch')
+    unique([item['id'] for item in loaded + objects])
+    if len(loaded) + len(objects) + ('tabular-v1' in builtins) > 8:
         raise ProtocolError('TooManySkills')
+    return value
+
+
+def validate_skill_object(value):
+    fields(value, 'id name description content_sha256 source files loaded_paths')
+    pattern(value['id'], UUID_PATTERN)
+    pattern(value['name'], SKILL_NAME)
+    text(value['name'], 64)
+    text(value['description'], 1024, False)
+    pattern(value['content_sha256'], HASH)
+    source = fields(value['source'], 'type store_id revision_id manifest_key manifest_sha256 manifest_bytes total_bytes')
+    if source['type'] != 'skill-object-v1':
+        raise ProtocolError('InvalidSkillSource')
+    pattern(source['store_id'], re.compile(r'[a-z0-9][a-z0-9-]{0,63}\Z'))
+    pattern(source['revision_id'], UUID_PATTERN)
+    pattern(source['manifest_sha256'], HASH)
+    integer(source['manifest_bytes'], 1, 16384)
+    integer(source['total_bytes'], 1, 163840)
+    key = pattern(source['manifest_key'], re.compile(r'workspaces/([0-9a-f-]{36})/skills/([0-9a-f-]{36})/revisions/([0-9a-f-]{36})/manifest\.json\Z'))
+    parts = key.split('/')
+    for index in (1, 3, 5):
+        pattern(parts[index], UUID_PATTERN)
+    if parts[5] != source['revision_id']:
+        raise ProtocolError('SkillRevisionMismatch')
+    files = array(value['files'], 17)
+    if not files or files[0].get('path') != 'SKILL.md' or files[0].get('size_bytes', 0) < 1:
+        raise ProtocolError('SkillMainMissing')
+    for file in files:
+        fields(file, 'path size_bytes media_type sha256')
+        if file['path'] != 'SKILL.md':
+            pattern(file['path'], SKILL_PATH)
+            text(file['path'], 255)
+        integer(file['size_bytes'], 0, 32768)
+        pattern(file['sha256'], HASH)
+        if file['media_type'] != 'text/plain; charset=utf-8':
+            raise ProtocolError('SkillMediaTypeMismatch')
+    unique([file['path'] for file in files])
+    paths = [file['path'] for file in files]
+    if any(left.startswith(right + '/') for left in paths for right in paths if left != right):
+        raise ProtocolError('SkillPathCollision')
+    paths = array(value['loaded_paths'], 17)
+    if not paths or paths[0] != 'SKILL.md' or any(path not in [file['path'] for file in files] for path in paths):
+        raise ProtocolError('SkillFileNotBound')
+    unique(paths)
+    if sum(file['size_bytes'] for file in files) + source['manifest_bytes'] != source['total_bytes']:
+        raise ProtocolError('SkillSizeMismatch')
     return value
 
 

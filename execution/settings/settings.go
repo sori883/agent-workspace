@@ -25,14 +25,16 @@ type Endpoint struct {
 }
 
 type WorkbenchConfig struct {
-	Enabled       bool   `json:"enabled"`
-	ModelEnabled  bool   `json:"model_enabled"`
-	PythonEnabled bool   `json:"python_enabled"`
-	CodeImage     string `json:"code_image"`
+	Enabled             bool     `json:"enabled"`
+	ModelEnabled        bool     `json:"model_enabled"`
+	PythonEnabled       bool     `json:"python_enabled"`
+	CodeImage           string   `json:"code_image"`
+	LegacyRuntimeImages []string `json:"legacy_runtime_images"`
 }
 
 type File struct {
-	Workbench    *WorkbenchConfig `json:"workbench"`
+	SkillStorage *SkillStorageConfig `json:"skill_storage"`
+	Workbench    *WorkbenchConfig    `json:"workbench"`
 	ModelGateway *struct {
 		Enabled    bool   `json:"enabled"`
 		APIKeyPath string `json:"api_key_path"`

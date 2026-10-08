@@ -97,6 +97,7 @@ type workExecutor struct {
 	readinessFailures                                         int
 	taskNotReady, processUnavailable                          bool
 	processReadFailures, processObservations                  int
+	guestReads                                                int
 }
 
 func (e *workExecutor) PrepareCodeRunner(ctx context.Context, _ string, _ time.Duration) error {
@@ -149,6 +150,7 @@ func (e *workExecutor) StartWorkbench(context.Context, native.WorkbenchRequest) 
 	return e.invoke(native.StartOperation)
 }
 func (e *workExecutor) StatusWorkbench(context.Context, native.WorkbenchRequest) (native.WorkbenchStatus, error) {
+	e.guestReads++
 	if e.readinessFailures > 0 {
 		e.readinessFailures--
 		return native.WorkbenchStatus{}, errors.New("ready_file_missing")
@@ -175,9 +177,11 @@ func (e *workExecutor) resultV2() native.WorkbenchResult {
 	return native.WorkbenchResult{SchemaVersion: 2, RunID: runID, Adapter: e.claim.WorkbenchRequest.Adapter, Status: "succeeded", Summary: "ok", Usage: gateway.ZeroUsage(), EstimatedUSD: &zero}
 }
 func (e *workExecutor) CollectWorkbench(context.Context, native.WorkbenchRequest) (native.WorkbenchResult, error) {
+	e.guestReads++
 	return e.resultV2(), nil
 }
 func (e *workExecutor) MailboxWorkbench(context.Context, string) (*native.Mailbox, error) {
+	e.guestReads++
 	if e.replies >= 2 {
 		return nil, nil
 	}
@@ -364,6 +368,59 @@ func TestWorkbenchRecoveryOnlyCollectsAndStops(t *testing.T) {
 	}
 	if !s.finished {
 		t.Fatal("recovery incomplete")
+	}
+}
+
+type workbenchStopEvidenceStore struct {
+	*workStore
+	stopConfirmed bool
+}
+
+func (s *workbenchStopEvidenceStore) Evidence(ctx context.Context, claim *Claim, operationID string, evidence map[string]any) error {
+	if err := s.workStore.Evidence(ctx, claim, operationID, evidence); err != nil {
+		return err
+	}
+	if operationID == s.intents[native.SuspendOperation] {
+		s.stopConfirmed = evidence["phase"] == "SUSPENDED" && evidence["worker_assignment"] == nil && evidence["actor"] == claim.RunID
+	}
+	return nil
+}
+
+func TestWorkbenchSuspendACKLossRecoversOnlyWithActorStopEvidence(t *testing.T) {
+	for _, stopped := range []bool{true, false} {
+		t.Run(map[bool]string{true: "stopped", false: "worker_still_assigned"}[stopped], func(t *testing.T) {
+			c, s, e := setupWorkbench(t, false)
+			proof := &workbenchStopEvidenceStore{workStore: s}
+			c.Store = proof
+			e.errorOperation = native.SuspendOperation
+			if _, err := c.RunOnce(context.Background()); err == nil || safeCode(err) != "external_effect_unknown" {
+				t.Fatalf("lost suspend acknowledgment not held: %v", err)
+			}
+			if !s.collected || s.claim.WorkbenchResult == nil || !s.failed || s.finished || proof.stopConfirmed {
+				t.Fatal("suspend uncertainty lost the collected result or fabricated stop evidence")
+			}
+			result := s.claim.WorkbenchResult
+			s.claim.Kind = "recovery"
+			s.failed = false
+			e.stopped = stopped
+			e.calls = nil
+			guestReads, intents, replies := e.guestReads, len(s.intents), e.replies
+			_, err := c.RunOnce(context.Background())
+			if stopped && (err != nil || !s.finished || s.failed || !proof.stopConfirmed) {
+				t.Fatalf("stopped actor recovery incomplete: %v", err)
+			}
+			if !stopped && (err == nil || s.finished || !s.failed || proof.stopConfirmed) {
+				t.Fatal("worker assignment accepted as stopped")
+			}
+			if e.guestReads != guestReads || e.replies != replies || len(s.intents) != intents || s.claim.WorkbenchResult != result {
+				t.Fatal("recovery reread guest, repeated model operations, or replaced the collected result")
+			}
+			for _, op := range e.calls {
+				if op != "observe_stop" && op != "observe_egress" {
+					t.Fatalf("recovery repeated a mutation: %s", op)
+				}
+			}
+		})
 	}
 }
 

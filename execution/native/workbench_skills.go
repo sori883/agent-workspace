@@ -39,6 +39,7 @@ type WorkbenchSkillContext struct {
 	LoadedSkills    []WorkbenchLoadedSkill     `json:"loaded_skills"`
 	LoadedFiles     []WorkbenchLoadedSkillFile `json:"loaded_files"`
 	BuiltinSkillIDs []string                   `json:"builtin_skill_ids"`
+	Objects         *[]WorkbenchSkillObject    `json:"objects,omitempty"`
 }
 
 func validSkillPath(path string) bool { return len(path) <= 255 && skillPathPattern.MatchString(path) }
@@ -46,7 +47,7 @@ func validSkillSummary(id, name, description string) bool {
 	return uuidPattern.MatchString(id) && len(name) <= 64 && skillNamePattern.MatchString(name) && validText(description) && len(description) <= 1024
 }
 func (c WorkbenchSkillContext) Validate() error {
-	if c.Version != 1 || c.OmittedCount < 0 || c.OmittedCount > 2147483647 || c.Catalog == nil || len(c.Catalog) > 32 || c.LoadedSkills == nil || len(c.LoadedSkills) > 8 || c.LoadedFiles == nil || len(c.LoadedFiles) > 128 || c.BuiltinSkillIDs == nil || len(c.BuiltinSkillIDs) > 2 {
+	if (c.Version != 1 && c.Version != 2) || c.OmittedCount < 0 || c.OmittedCount > 2147483647 || c.Catalog == nil || len(c.Catalog) > 32 || c.LoadedSkills == nil || len(c.LoadedSkills) > 8 || c.LoadedFiles == nil || len(c.LoadedFiles) > 128 || c.BuiltinSkillIDs == nil || len(c.BuiltinSkillIDs) > 2 {
 		return errProtocol
 	}
 	encoded, err := CanonicalJSON(c.Catalog)
@@ -100,7 +101,11 @@ func (c WorkbenchSkillContext) Validate() error {
 		}
 		seen[id] = true
 	}
-	count := len(c.LoadedSkills)
+	objectCount, err := c.validateObjects(catalog, loaded)
+	if err != nil {
+		return err
+	}
+	count := len(c.LoadedSkills) + objectCount
 	if seen["tabular-v1"] {
 		count++
 	}
@@ -123,6 +128,11 @@ func (p WorkbenchProposal) ValidateSkillBinding(c *WorkbenchSkillContext) error 
 	}
 	for _, item := range c.LoadedSkills {
 		loaded[item.ID] = true
+	}
+	for _, item := range c.ObjectSkills() {
+		if len(item.LoadedPaths) > 0 {
+			loaded[item.ID] = true
+		}
 	}
 	if p.Kind == "read_skills" {
 		available := map[string]bool{"tabular-v1": true}
@@ -151,6 +161,21 @@ func (p WorkbenchProposal) ValidateSkillBinding(c *WorkbenchSkillContext) error 
 				if ref.Path == p.Path {
 					return nil
 				}
+			}
+		}
+	}
+	for _, item := range c.ObjectSkills() {
+		if item.ID != p.SkillID || len(item.LoadedPaths) == 0 {
+			continue
+		}
+		for _, path := range item.LoadedPaths {
+			if path == p.Path {
+				return errProtocol
+			}
+		}
+		for _, ref := range item.Files {
+			if ref.Path == p.Path && ref.Path != "SKILL.md" {
+				return nil
 			}
 		}
 	}

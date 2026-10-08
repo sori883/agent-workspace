@@ -42,7 +42,7 @@ before(async () => {
     catch (error) { await client.query("ROLLBACK"); throw error; } finally { client.release(); }
   }
   await pool.query("INSERT INTO users(id,status,display_name) VALUES($1,'active','Owner'),($2,'active','Member'),($3,'active','Admin'),($4,'active','Stranger')", [owner, member, adminId, stranger]);
-  org = new WorkspaceRepository(pool); repo = new DefinitionRepository(pool);
+  org = new WorkspaceRepository(pool); repo = new DefinitionRepository(pool, undefined, { legacyWrites: true });
   workspace = (await org.create(owner, { key: randomUUID(), name: "A" })).workspace.id;
   second = (await org.create(owner, { key: randomUUID(), name: "B" })).workspace.id;
   await pool.query("INSERT INTO org_memberships VALUES($1,$2,'member','general'),($1,$3,'admin','general')", [workspace, member, adminId]);
@@ -312,7 +312,7 @@ test("v7 leaves existing v1-v6 checksums, runs, workspaces and file bytes untouc
     catch (error) { await migration.query("ROLLBACK"); throw error; } finally { migration.release(); }
     for (let i = 0; i < tables.length; i++) assert.deepEqual((await old.query(`SELECT to_jsonb(t) value FROM ${tables[i]} t ORDER BY to_jsonb(t)::text`)).rows, snapshots[i].rows);
     assert.deepEqual(await files.readChunk(owner, wid, f.file.id, 0), bytes);
-    const definitions = new DefinitionRepository(old); assert.deepEqual((await definitions.list(owner, wid)).definitions, []);
+    const definitions = new DefinitionRepository(old, undefined, { legacyWrites: true }); assert.deepEqual((await definitions.list(owner, wid)).definitions, []);
     assert.ok(await definitions.create(owner, wid, { key: randomUUID(), kind: "skill", visibility: "personal", content: skill() }));
   } finally { await old.end(); await admin.query(`DROP SCHEMA ${oldSchema} CASCADE`); }
 });
@@ -332,7 +332,7 @@ test("committed membership loss blocks waiting publication without creating a ve
     await removing.query("BEGIN"); await removing.query("SELECT 1 FROM org_workspaces WHERE id=$1 FOR UPDATE", [workspace]);
     await new WorkspaceRepository(removing).removeMember(owner, workspace, member);
     const pid = (await publishing.query("SELECT pg_backend_pid() pid")).rows[0].pid;
-    const pending = new DefinitionRepository(publishing).publish(member, workspace, c.definition.id, rev(1)); pending.catch(() => {});
+    const pending = new DefinitionRepository(publishing, undefined, { legacyWrites: true }).publish(member, workspace, c.definition.id, rev(1)); pending.catch(() => {});
     await waitBlocked(pid); await removing.query("COMMIT");
     await assert.rejects(pending, denied("workspace_not_found"));
     assert.equal((await repo.get(owner, workspace, c.definition.id)).version, null);

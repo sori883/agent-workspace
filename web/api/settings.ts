@@ -2,11 +2,24 @@ import { z } from "zod";
 import { validateIssuer } from "../shared/access-token";
 import { validateApiConfig } from "./config";
 
+export const skillStorageSettingsSchema = z.object({
+  endpoint: z.url(), bucket: z.string().regex(/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/),
+  region: z.string().min(1), forcePathStyle: z.boolean(),
+  accessKeyId: z.string().min(1), secretAccessKey: z.string().min(1),
+  storeId: z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/), allowInsecureHttp: z.boolean().default(false),
+}).strict().refine(value => {
+  const url = new URL(value.endpoint);
+  return !url.username && !url.password && !url.search && !url.hash && url.pathname === "/"
+    && (url.protocol === "https:" || value.allowInsecureHttp && url.protocol === "http:"
+      && ["localhost", "127.0.0.1", "[::1]", "host.docker.internal"].includes(url.hostname));
+});
+
 const applicationSchema = z.object({
   apiOrigin: z.url(), apiToken: z.string().min(32),
   identity: z.object({ issuer: z.url(), clientId: z.literal("ax-web"), audience: z.literal("ax-api") }).strict(),
   image: z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9._:/-]*@sha256:[a-f0-9]{64}$/),
   databaseSchema: z.string().regex(/^[a-z][a-z0-9_]{0,62}$/).default("public"),
+  skillStorage: skillStorageSettingsSchema.optional(),
 }).strict();
 const schema = applicationSchema.extend({
   database: z.object({

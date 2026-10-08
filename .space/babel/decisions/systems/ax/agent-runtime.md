@@ -1,7 +1,7 @@
 ---
 type: decision
 title: AX Task内の対話型ランタイムと外部の制御基盤
-description: AX内Runtimeと外部の認可・秘密・費用、実モデル接続・停止・継続の条件
+description: AX内Runtimeと外部制御、登録スキルのファイル原本・認可・停止の実装、後続Deep Agents移行の境界
 status: draft
 governance: context
 code_refs: 
@@ -18,6 +18,11 @@ code_refs:
   - web/app/routes/library.tsx
   - web/data/schema-v9.sql
   - web/app/components/skill-composer.tsx
+  - web/data/schema-v10.sql
+  - web/data/schema-v11.sql
+  - web/data/skill-storage.ts
+  - web/shared/skill-storage-contracts.ts
+  - ax-local/object-storage/
 sources: 
   - resource: docs/agent-runtime-design.md
   - resource: .space/tasks/ax-agent-runtime/task.md
@@ -37,13 +42,54 @@ sources:
   - resource: .space/tasks/ax-agent-workbench/general-agent-ui.md
   - resource: .space/tasks/ax-agent-workbench/automatic-skills-contract.md
   - resource: .space/tasks/ax-agent-workbench/automatic-skills.md
+  - resource: .space/tasks/ax-deep-agents/task.md
+  - resource: .space/tasks/ax-deep-agents/plan.md
+  - resource: https://docs.langchain.com/oss/python/deepagents/skills
+  - resource: https://docs.langchain.com/oss/python/langgraph/checkpointers
+  - resource: https://docs.langchain.com/oss/python/langgraph/interrupts
+  - resource: .space/tasks/ax-deep-agents/skill-storage-design.md
+  - resource: .space/tasks/ax-deep-agents/verification.md
+  - resource: .space/tasks/ax-deep-agents/evidence/storage-local.json
 generated: 
   by: agent:codex
-  at: 2026-10-08T03:59:11.081Z
+  at: 2026-10-08T14:22:23.415Z
 ---
 # AX Task内の対話型ランタイムと外部の制御基盤
 
-## 現在の判断（2026-10-07）
+## Deep Agentsへの移行方針（2026-10-08、採用済み・未実装）
+
+利用者は複数社のモデルを使える基盤の選定を求め、Python版Deep Agentsの採用と、その後に提示した管理・保存・AX実行の構成を了承した。続けてタスク分解を依頼した。現行実装はAntigravity SDKと自作の区間制御のままであり、計画作成を新runtimeの実装・配備済みとは扱わない。基点は `498abb96d7405c78985a35a32f15262e75f15ba8`。
+
+Deep Agents案とPydanticAI案を独立に具体化し、第三の担当も比較した。スキル概要・本文・補助資料の段階読込、文脈管理、複数段階の作業を既存機能から再利用しやすいことを理由にDeep Agentsを選んだ。PydanticAIは短命Taskとの引継ぎが明示的だが、今回の要件では資源取得等の組立範囲が増える。厳密な「Taskごとにモデル1回」は新設計の目的ではなく、Task内で能動的な処理を進め、待機前に保存・終了する構成へ移す。費用・回数・時間・権限の上限を広げる承認ではない。
+
+- 共通APIはTypeScript/Honoを継続し、ホストにPythonを要求しない。AXの実行管理と費用GatewayはGo、唯一の推論・道具選択ループはAX Task内のPython/Deep Agentsへ集める。サブエージェントは有効にしない。
+- 会話→依頼→Taskを区別する。一依頼のcheckpoint threadとpending writes、操作要求・結果・実行世代をapp PostgreSQLへ保存し、同じ依頼の新Taskで復元する。利用者向け会話・権限・費用の正本とSDKの復元状態は役割を分ける。TaskにDB資格情報を渡さず、依頼限定の内部窓口で読み書きする。
+- 回答待ち・隔離コードの作業待ちでは、状態と作業要求の関係を保存してから推論Taskを終了する。旧Taskの実停止と古い世代の拒否を確認して再開する。結果の先着・重複通知・障害による再実行を扱い、結果不明のモデル／外部操作を自動再送しない。
+- 生成Pythonは別の隔離Taskへ渡す。要約等を含む全モデル要求はGo Gatewayを通し、APIキー・外部資格情報は管理側に保持する。現在のGemini専用接続は複数providerとtool call/usageを扱う契約へ変更する必要がある。
+- 組み込みskillと標準promptはGit管理したimage内ファイルを継続する。画面登録をPostgreSQL本文から適応する当初案は、後段の追加設計により、ファイル原本とPGの管理情報へ分離する方針へ見直した。認可済みの不変版だけを読める形へ適応し、実行のruntime/framework/prompt/skill版を固定する。再開可能期間は対応版を保持する。共有定義と本人限定の会話・入力・結果を分離する。
+- PostgreSQLはKubernetes内外の配置を選べる。登録スキルのファイル保存は追加設計として移行範囲へ含め、大きな入力・成果物のobject storage移行、MCP・社内API・RAG・GitHub、定期実行は後続機能。外部連携の最終認可は接続先でも行い、秘密情報をprompt/checkpoint/成果物へ入れない。
+
+計画は `.space/tasks/ax-deep-agents/task.md` と `plan.md`。移行の7単位、依存、所有範囲、完了条件、旧Runを途中変換しない移行方針を記録した。実装前にDA-01で固定SDKと実AXを使った無課金の保存・再開試作を受け入れる。状態保存・再開・モデル送信の接続可能性と副作用の重複防止はまだ未検証である。第二のモデル提供元・有料検証枠、定期実行の入力/skill版選択等は対象の着手・有効化前に人間確認する。計画承認から外部書込み・有料scheduleの有効化を推定しない。
+
+## 登録スキルのファイル原本（2026-10-08、ローカル実装済み）
+
+利用者が保存設計を承認して実装を依頼したため、Deep Agents本体への移行に先行して現行Antigravity Runtimeへファイル経路を接続した。新規・編集保存のSKILL.mdと補助テキストはkind外の専用Docker RustFS 1.0.1、非公開bucket app-skills、named volume ax-app-objects-dataへ保存する。AX snapshot用ストレージとは別である。組み込みskillとpromptは引き続きimage内ファイルとし、入力・成果物はPGに残す。
+
+PGは本人・Workspace・共有範囲・不変版・manifest/hash・使用中参照の正本。原本はrevisionごとの不変キーへ条件付きPUTし、全file/manifestのbytesを検査してからPGの参照を確定する。要求ID・期待revision・writer世代・容量予約で再送と部分失敗を扱う。共有スキルの読取りと下書きの編集権限は本文取得後にも再確認する。個人用もWorkspaceごとに分かれる。
+
+Hono APIはfetch/WebCryptoベースのS3 transportを使い、Nodeとworkerdの両経路を検証した。workerdはRequest redirect=errorを受け付けないためmanualを指定し、3xxを拒否して追従しない。APIはGET/HEAD/PUT、GoはGET/HEADだけの資格を保持し、HTTPSを原則とする。ローカルHTTPは明示例外に限定し、TaskへDB/S3資格や署名付きURLを渡さない。
+
+新規Runはcontext v2で認可済み公開版の参照を固定する。Goが取得前後の認可・manifest・SHA-256を検査し、実際にロードしたファイルだけをTaskへ搬送する。Task内ファイルは0444、ディレクトリは0700。読込時に通常ファイル・hardlinkなし・symlink非追跡・サイズ/hashを確認してpromptだけを復元する。ディレクトリ0555はcapabilitiesなしのateletが終了時に削除できなかったため不採用。同UID所有者に対するmode単独を隔離保証にしない。登録scriptは実行せず、生成コードは別Taskに隔離する。復元後40KiBを超える入力はSDK起動前にskill_context_too_large・0使用量で終了する。既存の実行証拠にはモデルへ渡した本文が残る。
+
+旧公開JSON・版ID・descriptorは書き換えない。旧下書きは次の保存で原本へ移し、編集せず公開する場合は旧方式を保持する。既存rootは旧contextと固定imageのAdapterで継続する。ローカル移行はroot20・segment33・run52・公開版9・定義5の119行の内容hashを照合した。全20rootの互換フラグはfalse。旧実行へ新しいファイル形式を途中で混ぜない。
+
+本文16KiB、補助text16件/各32KiB、payload128KiB、版100件、論理128MiBを維持する。PGの物理予約256MiBは未完了・過去revisionも含む。bucket hard quota1GiBは補助制限で、volume総容量やバックアップ容量の保証ではない。自動GCはない。PG dumpと原本は一組で保全し、専用schemaの43表37行・10objectを削除復元して一致を確認した。同一PC内の復旧確認であり、別媒体への保全は未設定。
+
+実ブラウザで本人用合成スキルの登録・公開・無料preview・原本のSDK入力・正常停止・利用終了を確認し、独立inspectでAX/Actor停止・worker解放・egress拒否を照合した。初回の0555による停止失敗は、他Actorの割当なしを照合して対象worker Podを退役し、workersync→RevertActor→SuspendTaskの正式APIで回収した。保存済結果を保持し、開始・モデル送信を再実行していない。修正版は正常終了し、未解決run0・受付open・AI接続有効。外部モデル呼出しは今回0件。
+
+設計・検証・復旧の根拠は `.space/tasks/ax-deep-agents/skill-storage-design.md`、`verification.md`、`evidence/storage-local.json`。SS-01〜04は保存経路の先行実装であり、Deep Agents本体・checkpoint接続・複数provider対応・大きい入出力の移行を完了とはしない。本番提供元・地域・保持期間・遠隔backupと復旧目標は本番利用前に確認する。
+
+## AX配置の判断（2026-10-07）
 
 利用者提供の独立レビューをコードと照合し、**A：Agent RuntimeをAX Task内で、作業が進む区間だけ動かす構成**へ推奨を変更した。会話・認可・秘密・費用の正本はAX外に置く。Bの常駐Runtimeは起動遅延等の実測で必要性が示された場合の再検討案とする。これは設計判断であり、詳細全項目の人間承認や稼働保証ではない。
 

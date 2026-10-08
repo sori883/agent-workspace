@@ -1,0 +1,40 @@
+name: ax-app-objects
+services:
+  rustfs:
+    image: rustfs/rustfs:1.0.1@sha256:1803faef57627e2d9c2e7d89d655d712ddded5389040054987163043fecb6a3c
+    container_name: ax-app-objects
+    restart: unless-stopped
+    user: "0:0"
+    entrypoint: ["/bin/sh", "/opt/local/server.sh"]
+    ports:
+      - "127.0.0.1:19000:9000"
+      - "127.0.0.1:19001:9001"
+    environment:
+      RUSTFS_ACCESS_KEY_FILE: /run/rustfs-secrets/root.access-key
+      RUSTFS_SECRET_KEY_FILE: /run/rustfs-secrets/root.secret-key
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_CONSOLE_CORS_ALLOWED_ORIGINS: http://localhost:19001,http://127.0.0.1:19001
+      RUSTFS_REGION: us-east-1
+      RUSTFS_VOLUMES: /data
+      RUSTFS_OBS_LOGGER_LEVEL: warn
+      RUSTFS_OBS_LOG_DIRECTORY: ""
+    volumes:
+      - data:/data
+      - ../.state/object-storage/secrets:/run/local-secrets:ro
+      - ./server.sh:/opt/local/server.sh:ro
+    tmpfs:
+      - /run/rustfs-secrets:mode=0700
+      - /tmp:mode=1777
+    cap_drop: [ALL]
+    cap_add: [CHOWN, DAC_OVERRIDE, SETUID, SETGID]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:9000/health"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+volumes:
+  data:
+    name: ax-app-objects-data

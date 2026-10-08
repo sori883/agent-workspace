@@ -70,6 +70,11 @@ func run() int {
 	}
 	defer db.Close()
 	runner := controller.New(db, adapter, config.Image)
+	runner.SkillObjects, err = config.SkillObjectReader()
+	if err != nil {
+		report("skill_storage_config_invalid")
+		return 2
+	}
 	runner.ModelProvider, err = config.ModelProvider()
 	if err != nil {
 		report("model_gateway_config_invalid")
@@ -92,6 +97,26 @@ func run() int {
 		if config.Workbench != nil && config.Workbench.Enabled {
 			runner.WorkbenchRuntime = interactive
 			runner.WorkbenchRuntimeImage = interactiveConfig.Image
+			runner.WorkbenchRuntimes = make(map[string]controller.Executor)
+			if len(config.Workbench.LegacyRuntimeImages) > 16 {
+				report("workbench_config_invalid")
+				return 2
+			}
+			for _, image := range config.Workbench.LegacyRuntimeImages {
+				if image == interactiveConfig.Image || runner.WorkbenchRuntimes[image] != nil {
+					report("workbench_config_invalid")
+					return 2
+				}
+				legacyConfig := *interactiveConfig
+				legacyConfig.Image = image
+				legacy, err := native.Dial(legacyConfig)
+				if err != nil {
+					report("workbench_config_invalid")
+					return 2
+				}
+				defer legacy.Close()
+				runner.WorkbenchRuntimes[image] = legacy
+			}
 			runner.WorkbenchModelEnabled = config.Workbench.ModelEnabled && runner.ModelProvider != nil
 			runner.WorkbenchPythonEnabled = config.Workbench.PythonEnabled
 		}

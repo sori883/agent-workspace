@@ -136,7 +136,7 @@ const chats: ChatService = {
   async list(owner, workspace) { await checkWorkspace(owner, workspace); return { conversations: await Promise.all([...conversations.keys()].filter((id) => conversationOwners.get(id) === `${owner}:${workspace ?? "legacy"}`).reverse().map(async (id) => (await chats.get(owner, id, workspace)).conversation)) }; },
 };
 const interactive = agentFixture(runs, chats, checkWorkspace);
-const api = serve({ fetch: createApi(config, undefined, interactive.runs, interactive.chats, authenticate, organizations, interactive.agents, new FileRepository(pool), new DefinitionRepository(pool), await workbenchFixture(pool)).fetch, hostname: "127.0.0.1", port: config.apiPort });
+const api = serve({ fetch: createApi(config, undefined, interactive.runs, interactive.chats, authenticate, organizations, interactive.agents, new FileRepository(pool), new DefinitionRepository(pool, undefined, { legacyWrites: true }), await workbenchFixture(pool)).fetch, hostname: "127.0.0.1", port: config.apiPort });
 const child = spawn(process.execPath, ["--import", "tsx", "server/serve.ts"], {
   env: { ...process.env, HOST: "127.0.0.1", PORT: String(config.webPort), NODE_ENV: "production" }, stdio: "inherit",
 });

@@ -13,6 +13,7 @@ import type { Database } from "../data/db";
 import { createAuthenticator } from "../shared/access-token";
 import { AuthenticationError } from "../shared/authentication";
 import type { ApiApplicationSettings } from "./settings";
+import { S3SkillObjectStore } from "./skill-object-store";
 
 export function createRuntime(settings: ApiApplicationSettings, database: Database) {
   const repository = new DataRepository(database, { image: settings.image });
@@ -21,5 +22,6 @@ export function createRuntime(settings: ApiApplicationSettings, database: Databa
     if (rows.length !== 1) throw new AuthenticationError("unknown_identity");
     return rows[0]!.id;
   });
-  return createApi(settings, undefined, postgresRunService(repository), postgresChatService(repository), authenticate, postgresWorkspaceService(new WorkspaceRepository(database)), postgresAgentService(new AgentRepository(database, settings.image)), new FileRepository(database), new DefinitionRepository(database), new WorkbenchRepository(database));
+  const skills = settings.skillStorage ? new S3SkillObjectStore(settings.skillStorage) : undefined;
+  return createApi(settings, undefined, postgresRunService(repository), postgresChatService(repository), authenticate, postgresWorkspaceService(new WorkspaceRepository(database)), postgresAgentService(new AgentRepository(database, settings.image)), new FileRepository(database), new DefinitionRepository(database, skills), new WorkbenchRepository(database));
 }

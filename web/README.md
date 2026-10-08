@@ -14,6 +14,8 @@ flowchart LR
   Web -->|認証付きHTTP| API[Hono 共通API / NodeまたはWorkers]
   Web -->|セッション・利用者対応| PG[(PostgreSQL app)]
   API -->|受付・会話・結果| PG
+  API -->|スキル原本の保存| Objects[(S3互換ストレージ)]
+  Objects -->|許可された版とファイル| Controller
   Controller[Go execution controller] -->|ジョブ取得・証拠保存| PG
   Controller -->|同一Pod loopback| AX[AX]
   Controller -->|直接mTLS| Guest[Task内Python runner・エージェント]
@@ -41,6 +43,7 @@ python3 ax-local/keycloak/manage.py up
 python3 ax-local/keycloak/manage.py provision
 npm --prefix web run auth:migrate
 npm --prefix web run data:migrate
+ax-local/with-env.sh python3 ax-local/object-storage/manage.py start
 ```
 
 スキーマ作成には管理用接続を使います。`data:migrate`は版とSQLハッシュを検査し、異なる既存スキーマを上書きしません。初回の新規受付は閉じた状態です。再実行は受付を開閉しません。
@@ -80,7 +83,7 @@ npm --prefix web start
 
 実モデルはGemini 3.1 Flash-Liteを使います。必要なら一度だけ質問し、処理を止めて回答を待ちます。回答すると新しいAX Taskで続きを作ります。生成コードの実行、サブエージェント、外部サービス操作はまだ対応していません。モデルの返答と確定した料金の目安を表示し、状態や使用量が不明なときは追加実行を保留します。
 
-管理側ではschema v9と対応するWeb/API・controller・Runtimeイメージをそろえます。通常利用ではAI接続を有効に保ち、`deploy-execution.ts --deploy --enable-model`を使います。試験が終わったことだけを理由にモデル接続を閉じません。`--enable-model`を付けない配置は、モデルを使わない環境向けです。配置前には受付を閉じ、未解決実行がなく、DBの固定イメージ・Python許可・モデル許可が配備設定と一致することを確認します。モデル鍵はGatewayだけに渡し、Taskには渡しません。接続の維持とは別に、費用上限・未知usage・停止不明による追加実行の保留を継続します。
+管理側ではschema v11と対応するWeb/API・controller・Runtimeイメージをそろえます。通常利用ではAI接続を有効に保ち、`deploy-execution.ts --deploy --enable-model`を使います。試験が終わったことだけを理由にモデル接続を閉じません。`--enable-model`を付けない配置は、モデルを使わない環境向けです。配置前には受付を閉じ、未解決実行がなく、DBの固定イメージ・Python許可・モデル許可が配備設定と一致することを確認します。モデル鍵はGatewayだけに渡し、Taskには渡しません。接続の維持とは別に、費用上限・未知usage・停止不明による追加実行の保留を継続します。
 
 ## 標準エージェント・スキルとファイル作業
 
@@ -101,10 +104,16 @@ v8では登録・本人限定のファイル取得・実モデルによるCSV集
 | 内容 | 正本と読み込み方 |
 | --- | --- |
 | 製品同梱のプロンプト・スキル | `ax-local/task_runtime/` の製品ファイル。`builtin_catalog.json` が表示と読込の共通原本で、Runtimeはスキル本文のSHA256を検証。開発時にGit管理し、固定イメージへ組み込む。実行時のGit接続は不要 |
-| 画面で登録したスキル・指示・補助テキスト | app PostgreSQLの `ax_definitions` / `ax_definition_versions`。公開版は不変。利用者がGitを操作する必要はない |
-| 実行時のスキル候補・読み込み記録 | `ax_agent_roots.skill_catalog` に公開版の一覧を固定し、`ax_workbench_skill_loads` に本文・補助ファイルの読み込みを追記。実際に渡す内容は `ax_agent_segments.descriptor` とhashに固定 |
+| 画面で登録したスキル・指示・補助テキスト | S3互換ストレージの不変revisionに `SKILL.md` と資料を保存。名前・権限・版・保存先・hashはPostgreSQLの `ax_definitions` / `ax_definition_versions`。利用者によるGit操作は不要 |
+| 実行時のスキル候補・読み込み記録 | `ax_agent_roots.skill_catalog` に公開版の一覧を固定し、`ax_workbench_skill_loads` に本文・補助ファイルの読み込みを追記。新しい実行では保存先と許可されたファイルのhashを `ax_agent_segments.descriptor` に固定し、Goが検証・搬送する |
 | 作業履歴・途中の結果 | app PostgreSQLの `ax_agent_roots` / `ax_agent_segments` / `ax_workbench_checkpoints` |
 | 入出力ファイル | app PostgreSQLの `ax_files` / `ax_file_chunks`。Taskの一時ファイルは実行後に回収・削除 |
+
+ローカルの原本は、Kubernetes外のDocker RustFSの非公開bucket `app-skills` と、named volume `ax-app-objects-data` に保存します。起動・用途別資格・容量・バックアップは[ストレージ手順](../ax-local/object-storage/README.md)を参照してください。Node APIは無視対象の `ax-local/.state/object-storage/api.env` を読みます。別の場所では `SKILL_STORAGE_CONFIG_FILE` を指定できます。Worker APIには同じ設定を `API_SETTINGS.skillStorage` として秘密の設定経路から渡し、ローカルファイルを使いません。HTTPSを原則とし、明示したローカルHTTPだけ例外にします。未設定の環境では新しいスキルの保存を止めます。
+
+既存のDB内スキルは保持し、下書きを次に保存するとファイル原本へ切り替えます。既存の公開版と実行中の依頼は書き換えません。旧下書きを編集せず公開した場合も旧形式を維持します。Task内のスキルはファイル0444・フォルダ0700で配置し、読込みごとにhashと安全なパスを確認します。フォルダはAXの終了処理で削除できる権限を保持し、mode単独を隔離保証にはしません。ストレージ資格情報はTaskへ渡しません。モデルに実際に渡した本文は、従来どおりPostgreSQLの実行証拠に含まれます。原本の保存先変更は、会話や実行証拠から本文を消す変更ではありません。
+
+スキル原本の無課金結合確認は `node --import tsx scripts/verify-skill-storage-local.ts --run --preview` です。専用Workspaceで合成スキルを登録・公開し、明示選択からAX Taskへ搬送された本文と停止証拠を照合します。無料の固定応答を使うため、モデルのスキル選択精度や指示追従は検証しません。
 
 登録したスキルは指示と参照テキストを渡す機能です。任意スクリプト・追加パッケージ・外部接続の権限は付与しません。初期のPython環境はCSVとopenpyxlによるExcel処理を対象とし、インターネット接続やパッケージの追加インストールを許可しません。
 

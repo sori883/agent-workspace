@@ -305,6 +305,29 @@ class StageTests(unittest.TestCase):
 
 @unittest.skipUnless(sdk_available(), 'fixed SDK image required')
 class SDKTests(unittest.TestCase):
+    def test_object_skill_main_and_reference_cross_real_sdk_mailbox_without_source_secrets(self):
+        from test_workbench_storage import object_fixture
+        for read_reference in (False, True):
+            saved, data = object_fixture()
+            item = saved['workbench']['descriptor']['skill_context']['objects'][0]
+            if read_reference:
+                item['loaded_paths'].append('scripts/not-run.py')
+            rehash(saved)
+            proposal_value = ({'kind': 'output', 'text': '資料を確認しました。'} if read_reference else
+                              {'kind': 'read_skill_file', 'skill_id': VERSION, 'path': 'scripts/not-run.py'})
+            material = {(VERSION, path): data[path] for path in item['loaded_paths']}
+            result, operations, root = self.run_case(saved=saved, proposed=proposal_value, skill_objects=material)
+            self.assertEqual(result['status'], 'succeeded', result)
+            context = self.model_prompt(operations[0])['skill_context']
+            self.assertEqual(context['loaded_skills'][0]['instructions'], '本文を確認してください。')
+            self.assertEqual(bool(context['loaded_files']), read_reference)
+            if read_reference:
+                self.assertEqual(context['loaded_files'][0]['content'], data['scripts/not-run.py'].decode())
+            self.assertNotIn('manifest_key', json.dumps(operations))
+            self.assertNotIn('objects', context)
+            self.assertEqual(list((root / 'output').iterdir()), [])
+            self.assertEqual(wr.envelope(root)['request']['descriptor_sha256'], saved['request']['descriptor_sha256'])
+
     def test_progressive_skill_main_and_file_are_delivered_only_after_read(self):
         cases = [(skill_fixture(), {'kind': 'read_skills', 'skill_ids': [VERSION]}, False, False),
                  (skill_fixture(True), {'kind': 'read_skill_file', 'skill_id': VERSION, 'path': 'references/rules.md'}, True, False),
@@ -342,7 +365,7 @@ class SDKTests(unittest.TestCase):
         self.assertEqual([s['id'] for s in sent['builtin_skills']], ['general-v1', 'tabular-v1'])
         self.assertEqual(operations[1]['body'], answer)
 
-    def run_case(self, kind='python', deny=False, bad=False, saved=None, proposed=None, definitions=None):
+    def run_case(self, kind='python', deny=False, bad=False, saved=None, proposed=None, definitions=None, skill_objects=None):
         temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
         root = Path(temporary.name) / 'task'
         saved = saved or fixture()
@@ -353,6 +376,9 @@ class SDKTests(unittest.TestCase):
             for offset in range(0, len(raw), CHUNK_BYTES):
                 wr.definition_chunk(root, encoded({'run_id': run_id, 'version_id': version_id, 'index': offset // CHUNK_BYTES,
                                                   'content_base64': base64.b64encode(raw[offset:offset+CHUNK_BYTES]).decode()}))
+        for (version_id, path), raw in (skill_objects or {}).items():
+            wr.skill_file_chunk(root, encoded({'run_id': run_id, 'descriptor_sha256': saved['request']['descriptor_sha256'],
+                'skill_id': version_id, 'path': path, 'index': 0, 'content_base64': base64.b64encode(raw).decode()}))
         wr.seal(root, run_id); wr.start(root, run_id)
         operations = []; failures = []; stop = threading.Event()
         def controller():

@@ -79,6 +79,7 @@ def validate_bound_proposal(proposal, saved, bundle):
         if context is None:
             raise ProtocolError('SkillDiscoveryUnavailable')
         loaded = {item['id']: item for item in context['loaded_skills']}
+        loaded.update({item['id']: item for item in context.get('objects', [])})
         if proposal['kind'] == 'read_skills':
             available = {item['id'] for item in context['catalog']} | {'tabular-v1'}
             existing = set(loaded) | set(context['builtin_skill_ids']) | {'general-v1'}
@@ -92,6 +93,8 @@ def validate_bound_proposal(proposal, saved, bundle):
                 raise ProtocolError('SkillFileNotBound')
             if any(item['skill_id'] == proposal['skill_id'] and item['path'] == proposal['path'] for item in context['loaded_files']):
                 raise ProtocolError('SkillFileAlreadyRead')
+            if proposal['path'] in skill.get('loaded_paths', []):
+                raise ProtocolError('SkillFileAlreadyRead')
     if proposal['kind'] == 'python':
         if 'python' not in allowed_tools(bundle):
             raise ProtocolError('PythonNotAllowed')
@@ -103,13 +106,17 @@ def validate_bound_proposal(proposal, saved, bundle):
     return proposal
 
 
-def prompt_value(saved, bundle, skills):
+def prompt_value(saved, bundle, skills, skill_root=None):
     descriptor = saved['workbench']['descriptor']
     value = {'instruction': descriptor['instruction'], 'history': descriptor['history'], 'files': descriptor['inputs'],
             'definitions': bundle, 'allowed_tools': allowed_tools(bundle),
             'builtin_skills': [{key: skill[key] for key in ('id', 'sha256')} for skill in skills]}
     if 'skill_context' in descriptor:
-        value['skill_context'] = descriptor['skill_context']
+        if __package__ and '.' in __package__:
+            from ..workbench_skills import hydrate_context
+        else:
+            from workbench_skills import hydrate_context
+        value['skill_context'] = hydrate_context(saved, skill_root)
         value['builtin_skill_catalog'] = [{key: item[key] for key in ('id', 'name', 'description')} for item in builtin_catalog()]
     return value
 
@@ -142,7 +149,7 @@ async def run(saved, bundle, workspace, receipt_path):
     logging.disable(logging.CRITICAL)
     try:
         skills = load_skills(saved)
-        prompt = json_bytes(prompt_value(saved, bundle, skills), 40960).decode('utf-8')
+        prompt = json_bytes(prompt_value(saved, bundle, skills, workspace.parent), 40960).decode('utf-8')
         with proxy:
             config = make_config(workspace, skills, 'skill_context' in saved['workbench']['descriptor'])
             config.models = [ModelTarget(name=MODEL, endpoint=GeminiAPIEndpoint(base_url=proxy.base_url, api_key='workbench-mailbox-only'))]

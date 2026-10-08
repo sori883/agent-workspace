@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { readAuthConfig } from "../server/auth-config";
 import { createPool } from "../server/auth-store";
+import { readSkillStorageSettings } from "../server/skill-storage-settings";
 
 async function run() {
   const enableModel = process.argv[3] === "--enable-model";
@@ -15,6 +16,7 @@ async function run() {
   const auth = readAuthConfig();
   if (!auth.database.caPath || auth.database.port !== 55432 || !["localhost", "127.0.0.1"].includes(auth.database.host)) throw new Error("This helper targets the local Docker database.");
   const pool = createPool(auth);
+  let legacyRuntimeImages: string[] = [];
   try {
     const { rows } = await pool.query("SELECT accepting FROM ax_control WHERE id");
     if (rows.length !== 1 || rows[0].accepting) throw new Error("Application admission must be closed.");
@@ -23,7 +25,11 @@ async function run() {
     const workbench = await pool.query("SELECT runtime_image,code_image,code_profile,python_enabled,trial_enabled FROM ax_workbench_control WHERE id");
     const control = workbench.rows[0];
     if (workbench.rows.length !== 1 || control.runtime_image !== versions.runner_task || control.code_image !== versions.runner_code || control.code_profile !== "host-quota-8m-v1" || !control.python_enabled || control.trial_enabled !== enableModel) throw new Error("Workbench database settings must match the reviewed deployment and model gate.");
+    const legacy = await pool.query("SELECT DISTINCT runtime_image FROM ax_agent_roots WHERE runtime_version=2 AND state IN ('running','waiting_input') AND runtime_image<>$1", [versions.runner_task]);
+    legacyRuntimeImages = legacy.rows.map(row => row.runtime_image);
+    if (legacyRuntimeImages.length > 16 || legacyRuntimeImages.some(image => !/^localhost:5001\/[a-z0-9_./-]+@sha256:[0-9a-f]{64}$/.test(image))) throw new Error("Saved runtime images require a valid bounded allowlist.");
   } finally { await pool.end(); }
+  const skillStorage = readSkillStorageSettings(resolve(root, ".state/object-storage/controller.env"));
   const kubectl = (args: string[], input?: unknown) => execFileSync("kubectl", ["--context", "kind-ax-local", ...args], {
     env: { ...process.env, KUBECONFIG: resolve(root, "kubeconfig") },
     input: input === undefined ? undefined : JSON.stringify(input), encoding: "utf8", stdio: ["pipe", "pipe", "pipe"],
@@ -50,7 +56,10 @@ async function run() {
     substrate: { address: "api.ate-system.svc:443", server_name: "api.ate-system.svc", ca_path: "/run/servicedns-ca/trust-bundle.pem", bearer_path: "/var/run/secrets/ateapi/token" },
     secret_group_read: true, atespace: "ax-demo", image: versions.runner_task,
     interactive: { image: versions.runner_task, atespace: "ax-runtime", guest_identity: "spiffe://cluster.local/ns/ax-demo/sa/default" },
-    workbench: { enabled: true, model_enabled: enableModel, python_enabled: true, code_image: versions.runner_code },
+    workbench: { enabled: true, model_enabled: enableModel, python_enabled: true, code_image: versions.runner_code, legacy_runtime_images: legacyRuntimeImages },
+    skill_storage: { store_id: skillStorage.storeId, endpoint: skillStorage.endpoint, bucket: skillStorage.bucket,
+      region: skillStorage.region, force_path_style: skillStorage.forcePathStyle, allow_insecure_http: skillStorage.allowInsecureHttp,
+      access_key_id_path: "/run/skill-storage/access-key-id", secret_access_key_path: "/run/skill-storage/secret-access-key" },
     model_gateway: { enabled: enableModel, api_key_path: "/run/model-gateway/GEMINI_API_KEY" },
     allowed_hosts: ["generativelanguage.googleapis.com"], call_timeout_seconds: 15, lifecycle_timeout_seconds: 180,
     controller_id: "ax-local-controller", database: { host: "host.docker.internal", port: 55432, database: auth.database.database, user: "ax_execution",
@@ -65,6 +74,9 @@ async function run() {
     { apiVersion: "v1", kind: "Secret", metadata: { name: "ax-execution-database", namespace: "ax-system" }, type: "Opaque", stringData: {
       password: readFileSync(resolve(root, ".state/postgres/secrets/ax_execution.password"), "utf8").trim(),
       "ca.pem": readFileSync(auth.database.caPath, "utf8"),
+    } },
+    { apiVersion: "v1", kind: "Secret", metadata: { name: "ax-skill-storage", namespace: "ax-system" }, type: "Opaque", stringData: {
+      "access-key-id": skillStorage.accessKeyId, "secret-access-key": skillStorage.secretAccessKey,
     } },
   ] };
   if (enableModel) {
@@ -97,6 +109,7 @@ async function run() {
     volumeMounts: [
       { name: "execution-config", mountPath: "/etc/execution", readOnly: true },
       { name: "execution-database", mountPath: "/run/execution-database", readOnly: true },
+      { name: "skill-storage", mountPath: "/run/skill-storage", readOnly: true },
       ...(enableModel ? [{ name: "model-gateway", mountPath: "/run/model-gateway", readOnly: true }] : []),
       { name: "execution-identity", mountPath: "/run/podidentity", readOnly: true },
       { name: "ate-token", mountPath: "/var/run/secrets/ateapi", readOnly: true },
@@ -106,10 +119,11 @@ async function run() {
   pod.securityContext = { ...pod.securityContext, fsGroup: 65532 };
   pod.terminationGracePeriodSeconds = 30;
   for (const volume of pod.volumes) if (volume.name === "ate-token") volume.projected.defaultMode = 0o440;
-  pod.volumes = pod.volumes.filter((volume: { name: string }) => !["execution-config", "execution-database", "execution-identity", "model-gateway", "workbench-probe-config"].includes(volume.name));
+  pod.volumes = pod.volumes.filter((volume: { name: string }) => !["execution-config", "execution-database", "execution-identity", "model-gateway", "workbench-probe-config", "skill-storage"].includes(volume.name));
   pod.volumes.push(
     { name: "execution-config", configMap: { name: "ax-execution" } },
     { name: "execution-database", secret: { secretName: "ax-execution-database", defaultMode: 0o440 } },
+    { name: "skill-storage", secret: { secretName: "ax-skill-storage", defaultMode: 0o440 } },
     { name: "execution-identity", projected: { defaultMode: 0o440, sources: [
       { podCertificate: { signerName: "podidentity.podcert.ate.dev/identity", keyType: "ECDSAP256", credentialBundlePath: "credential-bundle.pem" } },
       { clusterTrustBundle: { signerName: "podidentity.podcert.ate.dev/identity", labelSelector: { matchLabels: { "podcert.ate.dev/canarying": "live" } }, path: "trust-bundle.pem" } },
