@@ -10,7 +10,27 @@ func PrepareWorkbench(r native.WorkbenchRequest, w native.Workbench, m *native.M
 	if w.Validate(r) != nil || m == nil || m.Request.Version != 2 || m.Request.Kind != "model" || m.Request.RunID != r.RunID {
 		return Prepared{}, errors.New("model_request_invalid")
 	}
-	return prepareMailbox(m, l, "workbench", 2)
+	phase := "workbench"
+	if w.Descriptor.SkillContext != nil {
+		phase = "workbench-skills"
+	}
+	return prepareMailbox(m, l, phase, 2)
+}
+func workbenchSkillResponseSchema() map[string]any {
+	schema := workbenchResponseSchema()
+	readProperties := struct {
+		Kind     map[string]any `json:"kind"`
+		SkillIDs map[string]any `json:"skill_ids"`
+	}{map[string]any{"type": "string", "enum": []string{"read_skills"}}, map[string]any{"type": "array", "items": map[string]any{"type": "string"}, "minItems": 1, "maxItems": 8}}
+	fileProperties := struct {
+		Kind    map[string]any `json:"kind"`
+		SkillID map[string]any `json:"skill_id"`
+		Path    map[string]any `json:"path"`
+	}{map[string]any{"type": "string", "enum": []string{"read_skill_file"}}, map[string]any{"type": "string"}, map[string]any{"type": "string", "minLength": 1, "maxLength": 255}}
+	schema["anyOf"] = append(schema["anyOf"].([]any),
+		map[string]any{"type": "object", "properties": readProperties, "required": []string{"kind", "skill_ids"}, "additionalProperties": false},
+		map[string]any{"type": "object", "properties": fileProperties, "required": []string{"kind", "skill_id", "path"}, "additionalProperties": false})
+	return schema
 }
 func workbenchResponseSchema() map[string]any {
 	textProperties := struct {
@@ -48,14 +68,18 @@ func RespondWorkbench(r native.WorkbenchRequest, w native.Workbench, m *native.M
 	usage := map[string]float64{}
 	if m.Request.Kind == "tool" {
 		raw, _ := json.Marshal(m.Request.Body)
-		if _, e := native.ParseWorkbenchProposal(raw); e != nil {
+		proposal, e := native.ParseWorkbenchProposal(raw)
+		if e != nil {
+			return nil, nil, e
+		}
+		if e = proposal.ValidateSkillBinding(w.Descriptor.SkillContext); e != nil {
 			return nil, nil, e
 		}
 		reply.Body["accepted"] = json.RawMessage("true")
 	} else if m.Request.Kind == "model" {
-		proposal := map[string]any{"kind": "question", "text": "集計したい列と出力形式を教えてください。"}
+		proposal := map[string]any{"kind": "question", "text": "画面の操作確認です。続けてメッセージを入力してください。AIによる応答やスキルの自動選択は行っていません。"}
 		if len(w.Descriptor.History) > 0 {
-			proposal = map[string]any{"kind": "output", "text": "無料の固定応答です。登録内容とファイル参照を確認しました。"}
+			proposal = map[string]any{"kind": "output", "text": "メッセージを受け取りました。無料の固定応答による操作確認が完了しました。AIによる応答やスキルの動作確認ではありません。"}
 		}
 		text, _ := json.Marshal(proposal)
 		reply.Body["response"], _ = json.Marshal(map[string]any{"candidates": []any{map[string]any{"index": 0, "content": map[string]any{"role": "model", "parts": []any{map[string]string{"text": string(text)}}}, "finishReason": "STOP"}}, "usageMetadata": map[string]int{"promptTokenCount": 100, "candidatesTokenCount": 20, "thoughtsTokenCount": 0, "totalTokenCount": 120}, "modelVersion": Model})

@@ -19,6 +19,8 @@ HASH = re.compile(r'[0-9a-f]{64}\Z')
 ALIAS = re.compile(r'[a-z][a-z0-9_]{0,63}\Z')
 OUTPUT = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,58}\.(csv|xlsx)\Z')
 SKILL_PATH = re.compile(r'(references|scripts|assets)/(?:[A-Za-z0-9_-][A-Za-z0-9._-]*/)*[A-Za-z0-9_-][A-Za-z0-9._-]*\Z')
+SKILL_NAME = re.compile(r'[a-z0-9]+(?:-[a-z0-9]+)*\Z')
+BUILTIN_SKILLS = ('general-v1', 'tabular-v1')
 USAGE_KEYS = {'prompt_token_count', 'candidates_token_count', 'thoughts_token_count', 'total_token_count', 'model_call_count'}
 
 
@@ -94,7 +96,21 @@ def validate_request(value):
 def validate_proposal(value, unused=None):
     if not isinstance(value, dict):
         raise ProtocolError('InvalidWorkbenchProposal')
-    if value.get('kind') != 'python':
+    if value.get('kind') == 'read_skills':
+        fields(value, 'kind skill_ids')
+        ids = array(value['skill_ids'], 8)
+        if not ids:
+            raise ProtocolError('MissingSkillReference')
+        for skill_id in ids:
+            if skill_id not in BUILTIN_SKILLS:
+                pattern(skill_id, UUID_PATTERN)
+        unique(ids)
+    elif value.get('kind') == 'read_skill_file':
+        fields(value, 'kind skill_id path')
+        pattern(value['skill_id'], UUID_PATTERN)
+        pattern(value['path'], SKILL_PATH)
+        text(value['path'], 255)
+    elif value.get('kind') != 'python':
         fields(value, 'kind text')
         if value['kind'] not in ('question', 'output', 'unsupported'):
             raise ProtocolError('InvalidWorkbenchProposal')
@@ -121,6 +137,61 @@ def validate_proposal(value, unused=None):
     return value
 
 
+def validate_skill_context(value):
+    fields(value, 'version catalog omitted_count loaded_skills loaded_files builtin_skill_ids')
+    integer(value['version'], 1, 1)
+    integer(value['omitted_count'], 0, 2147483647)
+    catalog = array(value['catalog'], 32)
+    if len(json_bytes(catalog)) > 8192:
+        raise ProtocolError('SkillCatalogTooLarge')
+    loaded = array(value['loaded_skills'], 8)
+    for entries, names in ((catalog, 'id name description'), (loaded, 'id name description instructions files')):
+        for item in entries:
+            fields(item, names)
+            pattern(item['id'], UUID_PATTERN)
+            pattern(item['name'], SKILL_NAME)
+            text(item['name'], 64)
+            text(item['description'], 1024, False)
+    unique([item['id'] for item in catalog])
+    unique([item['id'] for item in loaded])
+    summaries = {item['id']: item for item in catalog}
+    file_refs = {}
+    for item in loaded:
+        if item['id'] in summaries and any(item[key] != summaries[item['id']][key] for key in ('name', 'description')):
+            raise ProtocolError('SkillSummaryMismatch')
+        text(item['instructions'], 16384)
+        files = array(item['files'], 16)
+        for ref in files:
+            fields(ref, 'path size_bytes sha256')
+            pattern(ref['path'], SKILL_PATH)
+            text(ref['path'], 255)
+            integer(ref['size_bytes'], 0, 32768)
+            pattern(ref['sha256'], HASH)
+            file_refs[(item['id'], ref['path'])] = ref
+        unique([ref['path'] for ref in files])
+    loaded_files = array(value['loaded_files'], 128)
+    for item in loaded_files:
+        fields(item, 'skill_id path content size_bytes sha256')
+        pattern(item['skill_id'], UUID_PATTERN)
+        pattern(item['path'], SKILL_PATH)
+        text(item['path'], 255)
+        text(item['content'], 32768, False)
+        integer(item['size_bytes'], 0, 32768)
+        pattern(item['sha256'], HASH)
+        raw = item['content'].encode('utf-8')
+        ref = file_refs.get((item['skill_id'], item['path']))
+        if ref is None or any(ref[key] != item[key] for key in ('size_bytes', 'sha256')) or len(raw) != item['size_bytes'] or hashlib.sha256(raw).hexdigest() != item['sha256']:
+            raise ProtocolError('SkillFileMismatch')
+    unique([(item['skill_id'], item['path']) for item in loaded_files])
+    builtins = array(value['builtin_skill_ids'], 2)
+    if any(item not in BUILTIN_SKILLS for item in builtins):
+        raise ProtocolError('UnknownBuiltinSkill')
+    unique(builtins)
+    if len(loaded) + ('tabular-v1' in builtins) > 8:
+        raise ProtocolError('TooManySkills')
+    return value
+
+
 def validate_envelope(value):
     fields(value, 'request workbench')
     request = validate_request(value['request'])
@@ -131,7 +202,9 @@ def validate_envelope(value):
     if (workbench['mode'], workbench['profile_id']) not in (('preview', 'preview-v1'), ('model', MODEL_PROFILE)):
         raise ProtocolError('InvalidWorkbenchMode')
     integer(workbench['remaining_ms'], 0, 300000)
-    descriptor = fields(workbench['descriptor'], 'version root_id instruction definition_manifest code_profile inputs outputs history code')
+    descriptor = workbench['descriptor']
+    has_skills = isinstance(descriptor, dict) and 'skill_context' in descriptor
+    fields(descriptor, 'version root_id instruction definition_manifest code_profile inputs outputs history code' + (' skill_context' if has_skills else ''))
     integer(descriptor['version'], 2, 2)
     if descriptor['root_id'] != request['root_id'] or len(json_bytes(descriptor)) > 40960 or digest(descriptor) != request['descriptor_sha256']:
         raise ProtocolError('WorkbenchDescriptorMismatch')
@@ -150,6 +223,10 @@ def validate_envelope(value):
     if len(refs) - agents > 8:
         raise ProtocolError('TooManySkills')
     unique([ref['id'] for ref in refs])
+    if has_skills:
+        if refs or workbench['attempt_kind'] != 'runtime':
+            raise ProtocolError('InvalidSkillContextBinding')
+        validate_skill_context(descriptor['skill_context'])
     inputs = array(descriptor['inputs'], 16)
     for item in inputs:
         fields(item, 'alias file_id name size_bytes sha256')

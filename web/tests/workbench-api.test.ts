@@ -33,7 +33,7 @@ test("workbench API binds owner/workspace/grant and strictly separates v2 reques
   assert.equal((await request(`/${id}/stop`, {})).status, 200);
   assert.equal((await request(`/${id}/recover`, {})).status, 200);
   const accepted = calls;
-  for (const change of [{ owner_user_id: randomUUID() }, { workspace_id: randomUUID() }, { execution_policy: "unlimited" }, { mode: "model" }, { input_file_ids: Array.from({ length: 5 }, () => randomUUID()) }, { agent_version_id: randomUUID(), skill_version_ids: [randomUUID()] }]) assert.equal((await request("", { key, text: "集計", ...change })).status, 400);
+  for (const change of [{ owner_user_id: randomUUID() }, { workspace_id: randomUUID() }, { execution_policy: "unlimited" }, { mode: "model" }, { input_file_ids: Array.from({ length: 5 }, () => randomUUID()) }, { agent_version_id: randomUUID(), skill_version_ids: [randomUUID()] }, { builtin_skill_ids: ["unknown"] }, { builtin_skill_ids: ["tabular-v1", "tabular-v1"] }, { skill_version_ids: Array.from({ length: 8 }, () => randomUUID()), builtin_skill_ids: ["tabular-v1"] }, { agent_version_id: randomUUID(), builtin_skill_ids: ["general-v1"] }]) assert.equal((await request("", { key, text: "集計", ...change })).status, 400);
   for (const path of ["?before=bad", "?before="+randomUUID()+"&before="+randomUUID(), "?owner=forged"]) assert.equal((await request(path)).status, 400);
   assert.equal((await request(`/${id}/answer`, { key, question_id: root.question_id, expected_revision: "2", text: "amount" })).status, 400);
   assert.equal((await request(`/${id}/stop`, { run_id: run })).status, 400);

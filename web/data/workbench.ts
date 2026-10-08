@@ -19,7 +19,7 @@ export class WorkbenchRepository {
         const code = error.message;
         if (["workbench_not_found", "workspace_not_found", "file_not_found", "definition_not_found", "definition_version_not_found"].includes(code)) throw new RunServiceError(code, 404);
         if (["workspace_forbidden", "workspace_access_revoked", "definition_forbidden"].includes(code)) throw new RunServiceError(code, 403);
-        if (["invalid_request", "invalid_owner_user_id", "model_not_allowed"].includes(code)) throw new RunServiceError(code, 400);
+        if (["invalid_request", "invalid_owner_user_id", "model_not_allowed", "agent_selection_disabled", "skill_context_too_large"].includes(code)) throw new RunServiceError(code, 400);
         if (["admission_closed", "workbench_disabled", "python_disabled", "invalid_run_ledger"].includes(code)) throw new RunServiceError(code, 503);
         if (["idempotency_conflict", "agent_answer_conflict", "agent_stopped", "agent_grant_expired", "agent_grant_revoked", "agent_budget_exhausted", "pilot_estimate_limit_reached", "unresolved_run", "unknown_paid_usage", "paid_failure_requires_review", "failed_request_already_attempted", "file_not_ready", "file_quota_exceeded", "definition_archived", "definition_dependency_unavailable"].includes(code)) throw new RunServiceError(code, 409);
       }

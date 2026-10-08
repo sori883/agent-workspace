@@ -149,6 +149,9 @@ func prepareMailbox(mailbox *native.Mailbox, limits Limits, phase string, versio
 			"required": []string{"kind", "text"}, "additionalProperties": false}}
 	if version == 2 {
 		config["responseJsonSchema"] = workbenchResponseSchema()
+		if phase == "workbench-skills" {
+			config["responseJsonSchema"] = workbenchSkillResponseSchema()
+		}
 	}
 	payload, err := json.Marshal(map[string]any{"contents": contents, "systemInstruction": body["systemInstruction"], "generationConfig": config})
 	if err != nil || len(payload) > native.MaxMailboxBytes {

@@ -13,6 +13,7 @@ import { DefinitionRepository } from "../data/definitions";
 import { execFileSync } from "node:child_process";
 import { apiFunctions, executionFunctions } from "../data/permissions";
 import { workbenchApiFunctions, workbenchExecutionFunctions } from "../shared/workbench-contracts";
+import { workbenchError } from "../app/lib/workbench-copy";
 
 const schema = `workbench_test_${randomBytes(8).toString("hex")}`;
 const owner=randomUUID(), bob=randomUUID(), controller="workbench-test", token="b".repeat(64), image=`localhost:5001/runner@sha256:${"a".repeat(64)}`;
@@ -28,13 +29,13 @@ before(async()=>{
  const config={...database,ssl:caPath?{ca:readFileSync(caPath,"utf8"),rejectUnauthorized:true}:false,max:10,statement_timeout:10000};
  admin=new pg.Pool(config); await admin.query(`CREATE SCHEMA ${schema}`); pool=new pg.Pool({...config,options:`-c search_path=${schema}`});
  const client=await pool.connect();
- try {await client.query("BEGIN");for(const f of ["../server/auth-schema.sql","../server/auth-schema-v2.sql",...Array.from({length:8},(_,i)=>`../data/schema${i?`-v${i+1}`:""}.sql`)])await client.query(readFileSync(new URL(f,import.meta.url),"utf8"));await client.query("COMMIT");}catch(e){await client.query("ROLLBACK");throw e;}finally{client.release();}
+ try {await client.query("BEGIN");for(const f of ["../server/auth-schema.sql","../server/auth-schema-v2.sql",...Array.from({length:9},(_,i)=>`../data/schema${i?`-v${i+1}`:""}.sql`)])await client.query(readFileSync(new URL(f,import.meta.url),"utf8"));await client.query("COMMIT");}catch(e){await client.query("ROLLBACK");throw e;}finally{client.release();}
  await pool.query("INSERT INTO users(id,status,display_name) VALUES($1,'active','A'),($2,'active','B')",[owner,bob]);
  wid=(await new WorkspaceRepository(pool).create(owner,{key:randomUUID(),name:"Workbench"})).workspace.id;
  await pool.query("INSERT INTO org_memberships VALUES($1,$2,'member','general')",[wid,bob]);repo=new WorkbenchRepository(pool);
 });
 beforeEach(async()=>{
- await pool.query("TRUNCATE ax_runs,ax_conversations,ax_agent_roots,ax_files,ax_agent_revocations CASCADE");
+ await pool.query("TRUNCATE ax_runs,ax_conversations,ax_agent_roots,ax_files,ax_agent_revocations,ax_definitions CASCADE");
  await pool.query("INSERT INTO ax_execution_slot VALUES(true,NULL,NULL) ON CONFLICT(id) DO UPDATE SET run_id=NULL,hold_reason=NULL");
  await pool.query("UPDATE ax_control SET accepting=true");
  await pool.query("UPDATE ax_workbench_control SET trial_enabled=false,python_enabled=false,runtime_image=$1,code_image=$1,code_profile='host-quota-8m-v1'",[image]);
@@ -147,11 +148,11 @@ test("public definition versions are pinned and every use reauthorizes dependenc
  const sv=(await defs.publish(owner,wid,skill.definition.id,{key:randomUUID(),expected_revision:skill.definition.revision!})).version!;
  const agent=await defs.create(owner,wid,{key:randomUUID(),kind:"agent",visibility:"workspace",content:{name:"担当",instructions:"集計する",skill_version_ids:[sv.id],allowed_tools:["python"]}});
  const av=(await defs.publish(owner,wid,agent.definition.id,{key:randomUUID(),expected_revision:agent.definition.revision!})).version!;
- const x=await begin({agent_version_id:av.id}),c=await start();assert.equal(c.workbench.descriptor.definition_manifest[0].kind,"agent");assert.equal(c.workbench.descriptor.definition_manifest[1].id,sv.id);
- const chunk=await call("ax_workbench_definition_chunk",[c.run_id,c.generation,controller,sv.id,0]);assert.equal(hash(Buffer.from(chunk.content_base64,"base64")),sv.sha256);
- if(process.env.WORKBENCH_WRITE_FIXTURE==="1"){const agentChunk=await call("ax_workbench_definition_chunk",[c.run_id,c.generation,controller,av.id,0]);writeFileSync(new URL("../../.space/tasks/ax-agent-workbench/evidence/workbench-pg-fixture.json",import.meta.url),JSON.stringify({claim:c,definition_chunks:[agentChunk,chunk]},null,2)+"\n");}
+ await assert.rejects(call("ax_workbench_start",[owner,wid,{key:randomUUID(),text:"legacy agent",mode:"preview",input_file_ids:[],agent_version_id:av.id},`ax-run-${randomBytes(8).toString("hex")}`,exp(),token]),error("agent_selection_disabled"));
+ const x=await begin({skill_version_ids:[sv.id]}),c=await start();assert.deepEqual(c.workbench.descriptor.definition_manifest,[]);assert.equal(c.workbench.descriptor.skill_context.loaded_skills[0].id,sv.id);
+ await assert.rejects(call("ax_workbench_definition_chunk",[c.run_id,c.generation,controller,sv.id,0]),error("definition_version_not_found"));
  await defs.archive(owner,wid,skill.definition.id,{key:randomUUID(),expected_revision:(await defs.get(owner,wid,skill.definition.id)).definition.revision!});
- await assert.rejects(reserve(c,1),error("definition_dependency_unavailable"));await finish(c);assert.equal((await repo.get(owner,wid,x.root_id)).state,"failed");
+ await assert.rejects(reserve(c,1),error("definition_archived"));await finish(c);assert.equal((await repo.get(owner,wid,x.root_id)).state,"failed");
 });
 test("legacy preview and empty-effect cancel continue working after v8",async()=>{
  const old=new AgentRepository(pool,image);const x=await call("ax_agent_start",[owner,wid,{key:randomUUID(),conversation_id:randomUUID(),text:"従来"},image,`ax-run-${randomBytes(8).toString("hex")}`,exp(),token]);const c=await call("ax_claim",[controller,30]);assert.equal(c.request.schema_version,1);assert.equal(c.run_id,x.run_id);await call("ax_cancel_unstarted",[c.run_id,c.generation,controller]);
@@ -163,7 +164,7 @@ test("standalone skill and reversed input selection keep descriptor order",async
  const version=(await defs.publish(owner,wid,item.definition.id,{key:randomUUID(),expected_revision:item.definition.revision!})).version!;
  const f1=await upload(Buffer.from("a")),f2=await upload(Buffer.from("b"));await pool.query("UPDATE ax_workbench_control SET python_enabled=true");
  await begin({skill_version_ids:[version.id],input_file_ids:[f1,f2]});const c=await start(),p=python(["input_2","input_1"]);
- assert.deepEqual(c.workbench.descriptor.definition_manifest.map((x:any)=>x.id),[version.id]);await proposal(c,p);await tool(c,p);await collect(c);await finish(c);
+ assert.deepEqual(c.workbench.descriptor.definition_manifest,[]);assert.deepEqual(c.workbench.descriptor.skill_context.loaded_skills.map((x:any)=>x.id),[version.id]);await proposal(c,p);await tool(c,p);await collect(c);await finish(c);
  const code=await start();assert.deepEqual(code.workbench.descriptor.inputs.map((x:any)=>x.alias),p.input_aliases);
 });
 test("question answers remain in history across code handoff",async()=>{
@@ -255,4 +256,155 @@ test("Python proposal enforces source, selected files, output bytes and safe nam
  const p={...python(),source:"a".repeat(4096)};assert.ok(await call("ax_workbench_proposal",[model(p)]));
  for(const change of [{source:"a".repeat(4097)},{input_aliases:["input_1","input_1"]},{input_aliases:["a","b","c","d","e"]},{outputs:[{name:"_result.csv",size_limit_bytes:1}]},{outputs:[{name:"a.csv",size_limit_bytes:8388608},{name:"b.csv",size_limit_bytes:1}]}])assert.equal(await call("ax_workbench_proposal",[model({...p,...change})]),null);
  await pool.query("UPDATE ax_workbench_control SET python_enabled=true");const x=await begin(),c=await start();await proposal(c,python());await pool.query("UPDATE ax_agent_roots SET python_calls=3 WHERE id=$1",[x.root_id]);await assert.rejects(tool(c,python()),error("agent_budget_exhausted"));
+});
+
+async function publishedSkill(options:{user?:string;workspace?:string;visibility?:"personal"|"workspace";name?:string;description?:string;instructions?:string;files?:{path:string;content:string}[]}={}){
+ const defs=new DefinitionRepository(pool),user=options.user??owner,workspace=options.workspace??wid;
+ const created=await defs.create(user,workspace,{key:randomUUID(),kind:"skill",visibility:options.visibility??"personal",content:{name:options.name??"test",description:options.description??"相談時に使う",instructions:options.instructions??"本文だけの指示",files:options.files??[]}});
+ const published=await defs.publish(user,workspace,created.definition.id,{key:randomUUID(),expected_revision:created.definition.revision!});
+ return {definition:published.definition,version:published.version!,defs};
+}
+const readSkills=(...ids:string[])=>({kind:"read_skills",skill_ids:ids});
+async function completeProposal(c:any,p:any){await proposal(c,p);await tool(c,p);await collect(c);return finish(c);}
+
+test("automatic catalog contains metadata only; approved read injects one pinned main and then one file",async()=>{
+ const item=await publishedSkill({instructions:"MAIN-PRIVATE-BODY",files:[{path:"references/policy.md",content:"FILE-PRIVATE-BODY"},{path:"scripts/analyze.py",content:"NEVER-EXECUTE"}]});
+ const accepted=await begin(),first=await start(),ctx=first.workbench.descriptor.skill_context;
+ assert.deepEqual(ctx.catalog,[{id:item.version.id,name:"test",description:"相談時に使う"}]);assert.deepEqual(ctx.loaded_skills,[]);assert.deepEqual(ctx.loaded_files,[]);assert.deepEqual(first.workbench.descriptor.definition_manifest,[]);
+ assert.ok(!JSON.stringify(first).includes("MAIN-PRIVATE-BODY"));assert.ok(!JSON.stringify(first).includes("FILE-PRIVATE-BODY"));
+ const done=await completeProposal(first,readSkills(item.version.id));assert.ok(done.next_run_id);
+ assert.equal((await call("ax_finish",[first.run_id,first.generation,controller])).next_run_id,done.next_run_id);
+ assert.equal(Number((await pool.query("SELECT count(*) n FROM ax_workbench_skill_loads WHERE root_id=$1",[accepted.root_id])).rows[0].n),1);
+ const second=await start(),loaded=second.workbench.descriptor.skill_context.loaded_skills[0];assert.equal(loaded.instructions,"MAIN-PRIVATE-BODY");assert.deepEqual(loaded.files[0],{path:"references/policy.md",size_bytes:17,sha256:hash("FILE-PRIVATE-BODY")});assert.ok(!JSON.stringify(second).includes("FILE-PRIVATE-BODY"));
+ const fileRead={kind:"read_skill_file",skill_id:item.version.id,path:"references/policy.md"};assert.ok((await completeProposal(second,fileRead)).next_run_id);
+ const third=await start();assert.deepEqual(third.workbench.descriptor.skill_context.loaded_files,[{skill_id:item.version.id,path:"references/policy.md",content:"FILE-PRIVATE-BODY",size_bytes:17,sha256:hash("FILE-PRIVATE-BODY")}]);assert.ok(!JSON.stringify(third).includes("NEVER-EXECUTE"));
+ await completeProposal(third,{kind:"output",text:"完了"});const root=await repo.get(owner,wid,accepted.root_id);assert.equal(root.state,"succeeded");assert.equal(root.model_calls,3);assert.equal(root.tool_calls,3);assert.equal(root.python_calls,0);
+});
+
+test("explicit versions load immediately, exclude newer auto versions and preserve bytes through publication",async()=>{
+ const item=await publishedSkill({instructions:"OLD-PINNED"});
+ await item.defs.updateDraft(owner,wid,item.definition.id,{key:randomUUID(),expected_revision:item.definition.revision!,content:{...item.version.content,instructions:"NEW-LATEST"}});
+ const updated=await item.defs.get(owner,wid,item.definition.id);const latest=await item.defs.publish(owner,wid,item.definition.id,{key:randomUUID(),expected_revision:updated.definition.revision!});
+ const other=await publishedSkill({name:"other",instructions:"OTHER-BODY"});
+ const input={key:randomUUID(),text:"依頼",skill_version_ids:[item.version.id],builtin_skill_ids:["general-v1" as const,"tabular-v1" as const]};
+ const accepted=await repo.start(owner,wid,input,exp(),token),c=await start(),ctx=c.workbench.descriptor.skill_context;
+ assert.deepEqual(ctx.catalog.map((x:any)=>x.id),[other.version.id]);assert.equal(ctx.loaded_skills[0].id,item.version.id);assert.equal(ctx.loaded_skills[0].instructions,"OLD-PINNED");assert.ok(!JSON.stringify(c).includes(latest.version!.id));assert.deepEqual(ctx.builtin_skill_ids,["general-v1","tabular-v1"]);
+ assert.equal((await repo.start(owner,wid,input,exp(),token)).run_id,accepted.run_id);
+ await assert.rejects(pool.query("UPDATE ax_agent_roots SET skill_catalog='[]' WHERE id=$1",[accepted.root_id]),error("immutable_workbench"));
+ await assert.rejects(pool.query("UPDATE ax_workbench_skill_loads SET path='assets/x' WHERE root_id=$1",[accepted.root_id]),error("immutable_workbench"));
+ await assert.rejects(pool.query("DELETE FROM ax_workbench_skill_loads WHERE root_id=$1",[accepted.root_id]),error("immutable_workbench"));
+});
+
+test("automatic latest version is captured once even when a newer version is published",async()=>{
+ const item=await publishedSkill({instructions:"START-VERSION"});await begin();const first=await start();
+ await item.defs.updateDraft(owner,wid,item.definition.id,{key:randomUUID(),expected_revision:item.definition.revision!,content:{...item.version.content,instructions:"LATER-VERSION"}});
+ const newer=await item.defs.publish(owner,wid,item.definition.id,{key:randomUUID(),expected_revision:(await item.defs.get(owner,wid,item.definition.id)).definition.revision!});
+ assert.ok((await completeProposal(first,readSkills(item.version.id))).next_run_id);const next=await start();assert.equal(next.workbench.descriptor.skill_context.loaded_skills[0].instructions,"START-VERSION");assert.ok(!JSON.stringify(next).includes(newer.version!.id));
+});
+
+test("catalog and explicit skill access exclude other people's private, other workspaces and drafts",async()=>{
+ const own=await publishedSkill(),shared=await publishedSkill({user:bob,visibility:"workspace",name:"shared"}),privateOther=await publishedSkill({user:bob,name:"private-other"});
+ const second=(await new WorkspaceRepository(pool).create(owner,{key:randomUUID(),name:"Other"})).workspace.id;const outside=await publishedSkill({workspace:second,name:"outside"});
+ await own.defs.create(owner,wid,{key:randomUUID(),kind:"skill",visibility:"workspace",content:{name:"draft-only",description:"draft",instructions:"DRAFT-ONLY",files:[]}});
+ await assert.rejects(begin({skill_version_ids:[privateOther.version.id]}),error("definition_not_found"));await assert.rejects(begin({skill_version_ids:[outside.version.id]}),error("definition_not_found"));
+ await begin();const c=await start();assert.deepEqual(new Set(c.workbench.descriptor.skill_context.catalog.map((x:any)=>x.id)),new Set([own.version.id,shared.version.id]));
+ const p=readSkills(privateOther.version.id);await proposal(c,p);await assert.rejects(tool(c,p),error("skill_not_available"));assert.equal(Number((await pool.query("SELECT count(*) n FROM ax_workbench_skill_loads")).rows[0].n),0);
+});
+
+test("read files require a loaded main and a catalogued unread path; builtins cannot add privileges",async()=>{
+ const item=await publishedSkill({files:[{path:"references/policy.md",content:"POLICY"}]});const root=await begin(),first=await start();
+ await assert.rejects(call("ax_workbench_skill_read",[(await pool.query("SELECT a FROM ax_agent_roots a WHERE id=$1",[root.root_id])).rows[0].a,{kind:"read_skill_file",skill_id:item.version.id,path:"references/policy.md"}]),error("skill_not_loaded"));
+ assert.ok((await completeProposal(first,readSkills("tabular-v1",item.version.id))).next_run_id);const second=await start();assert.deepEqual(second.workbench.descriptor.skill_context.builtin_skill_ids,["tabular-v1"]);
+ const p=readSkills("tabular-v1");await proposal(second,p);await assert.rejects(tool(second,p),error("skill_already_loaded"));
+ const a=(await pool.query("SELECT a FROM ax_agent_roots a WHERE id=$1",[root.root_id])).rows[0].a;
+ await assert.rejects(call("ax_workbench_skill_read",[a,readSkills("general-v1")]),error("skill_already_loaded"));
+ await assert.rejects(call("ax_workbench_skill_read",[a,{kind:"read_skill_file",skill_id:item.version.id,path:"assets/missing"}]),error("skill_file_not_found"));
+ const model=(p:any)=>({candidates:[{content:{parts:[{text:JSON.stringify(p)}]},finishReason:"STOP"}]});
+ for(const p of [{kind:"read_skills",skill_ids:[]},readSkills(item.version.id,item.version.id),readSkills("http://example.com"),{kind:"read_skill_file",skill_id:item.version.id,path:"references/../secret"},{kind:"read_skill_file",skill_id:"tabular-v1",path:"references/test"}])assert.equal(await call("ax_workbench_proposal",[model(p)]),null);
+});
+
+test("archive after reservation blocks generation and archive after stop blocks handoff without read rows",async()=>{
+ const item=await publishedSkill();await pool.query("UPDATE ax_workbench_control SET trial_enabled=true");const accepted=await begin({mode:"model",allow_model:true}),c=await start();await reserve(c,1);
+ await item.defs.archive(owner,wid,item.definition.id,{key:randomUUID(),expected_revision:item.definition.revision!});
+ await assert.rejects(call("ax_agent_authorize_generation",[c.run_id,c.generation,controller,1,"e".repeat(64),100]),error("definition_archived"));
+ assert.equal((await pool.query("SELECT generation_started FROM ax_agent_operations WHERE run_id=$1",[c.run_id])).rows[0].generation_started,false);
+});
+
+test("archive and expiration during skill handoff preserve known result but roll back all new reads",async()=>{
+ for(const revoked of ["archive","expired"]){
+  const item=await publishedSkill({name:`read-${revoked}`}),accepted=await begin(),c=await start(),p=readSkills(item.version.id);await proposal(c,p);await tool(c,p);await collect(c);
+  if(revoked==="archive")await item.defs.archive(owner,wid,item.definition.id,{key:randomUUID(),expected_revision:item.definition.revision!});else await pool.query("UPDATE ax_agent_roots SET grant_expires_at=clock_timestamp()-interval '1 second' WHERE id=$1",[accepted.root_id]);
+  const done=await finish(c);assert.equal(done.resolved,true);assert.equal(done.next_run_id,null);assert.equal(Number((await pool.query("SELECT count(*) n FROM ax_workbench_skill_loads WHERE root_id=$1",[accepted.root_id])).rows[0].n),0);
+  const root=await repo.get(owner,wid,accepted.root_id);assert.equal(root.state,"stopped");assert.equal(root.failure_reason,revoked==="archive"?"definition_archived":"agent_grant_expired");
+ }
+});
+
+test("stop after accepted read does not load content or create another Task",async()=>{
+ const item=await publishedSkill(),accepted=await begin(),c=await start(),p=readSkills(item.version.id);await proposal(c,p);await tool(c,p);await collect(c);await repo.stop(owner,wid,accepted.root_id);const done=await finish(c);
+ assert.equal(done.next_run_id,null);assert.equal((await repo.get(owner,wid,accepted.root_id)).state,"stopped");assert.equal(Number((await pool.query("SELECT count(*) n FROM ax_workbench_skill_loads WHERE root_id=$1",[accepted.root_id])).rows[0].n),0);
+});
+
+test("oversized projected context rolls back handoff loads and returns an explicit reason",async()=>{
+ const item=await publishedSkill({instructions:"a".repeat(16384),files:[{path:"references/large.md",content:"b".repeat(32768)}]});
+ const accepted=await begin({skill_version_ids:[item.version.id]}),c=await start(),p={kind:"read_skill_file",skill_id:item.version.id,path:"references/large.md"};await proposal(c,p);await tool(c,p);await collect(c);const done=await finish(c);
+ assert.equal(done.resolved,true);assert.equal(done.next_run_id,null);const root=await repo.get(owner,wid,accepted.root_id);assert.equal(root.state,"failed");assert.equal(root.failure_reason,"skill_context_too_large");
+ assert.equal(Number((await pool.query("SELECT count(*) n FROM ax_workbench_skill_loads WHERE root_id=$1",[accepted.root_id])).rows[0].n),1);assert.equal(Number((await pool.query("SELECT count(*) n FROM ax_agent_segments WHERE root_id=$1",[accepted.root_id])).rows[0].n),1);
+});
+
+test("catalog byte and item bounds are deterministic and expose omitted count",async()=>{
+ for(let i=0;i<36;i++)await publishedSkill({name:`skill-${String(i).padStart(2,"0")}`,description:"説明".repeat(i<7?150:1)});
+ const first=await begin(),c=await start(),ctx=c.workbench.descriptor.skill_context;
+ assert.ok(ctx.catalog.length<=32);assert.ok(Buffer.byteLength(JSON.stringify(ctx.catalog))<=8192);assert.equal(ctx.omitted_count,36-ctx.catalog.length);assert.ok(ctx.omitted_count>0);
+ assert.equal((await repo.get(owner,wid,first.root_id)).skill_catalog_omitted,ctx.omitted_count);await completeProposal(c,{kind:"output",text:"ok"});
+ await begin();const next=await start();assert.deepEqual(next.workbench.descriptor.skill_context.catalog,ctx.catalog);assert.equal(next.workbench.descriptor.skill_context.omitted_count,ctx.omitted_count);
+});
+
+test("loaded skill and model limits include discovery instead of granting an extra budget",async()=>{
+ const items=[];for(let i=0;i<9;i++)items.push(await publishedSkill({name:`skill-${i}`}));
+ const accepted=await begin({skill_version_ids:items.slice(0,8).map(x=>x.version.id)}),c=await start(),p=readSkills(items[8].version.id);await proposal(c,p);await assert.rejects(tool(c,p),error("skill_load_limit"));await finish(c);
+ const nextRoot=await begin(),next=await start(),p2=readSkills(items[0].version.id);await proposal(next,p2);await pool.query("UPDATE ax_agent_roots SET model_calls=6 WHERE id=$1",[nextRoot.root_id]);await assert.rejects(tool(next,p2),error("agent_budget_exhausted"));
+ assert.equal(Number((await pool.query("SELECT count(*) n FROM ax_workbench_skill_loads WHERE root_id=$1",[nextRoot.root_id])).rows[0].n),0);
+});
+
+test("Python descriptors exclude new skill context while runtime continuation retains it",async()=>{
+ const item=await publishedSkill({instructions:"RUNTIME-ONLY"});await pool.query("UPDATE ax_workbench_control SET python_enabled=true");await begin({skill_version_ids:[item.version.id]});const first=await start();assert.equal(first.workbench.descriptor.skill_context.loaded_skills[0].instructions,"RUNTIME-ONLY");await completeProposal(first,python());const code=await start();assert.equal(Object.hasOwn(code.workbench.descriptor,"skill_context"),false);assert.ok(!JSON.stringify(code).includes("RUNTIME-ONLY"));
+});
+
+test("new SQL helpers have no public or service role grants and private tables remain hidden",async()=>{
+ const rows=(await pool.query("SELECT oid,proname,has_function_privilege('public',oid,'EXECUTE') public,has_function_privilege('ax_api',oid,'EXECUTE') api,has_function_privilege('ax_execution',oid,'EXECUTE') execution FROM pg_proc WHERE pronamespace=current_schema()::regnamespace AND proname IN ('ax_workbench_skill_context','ax_workbench_skill_read','ax_workbench_skill_load')")).rows;
+ assert.equal(rows.length,3);for(const row of rows){assert.equal(row.public,false);assert.equal(row.api,false);assert.equal(row.execution,false);}
+});
+
+test("v9 preserves v8 agent receipts, descriptor bytes, images and paused continuation",async()=>{
+ const oldSchema=`workbench_v8_${randomBytes(8).toString("hex")}`;await admin.query(`CREATE SCHEMA ${oldSchema}`);
+ const {caPath,...database}=prepareTestAuth().database;const oldPool=new pg.Pool({...database,ssl:caPath?{ca:readFileSync(caPath,"utf8"),rejectUnauthorized:true}:false,options:`-c search_path=${oldSchema}`});
+ const original={pool,wid,repo};
+ try{
+  const client=await oldPool.connect();try{await client.query("BEGIN");for(const file of ["../server/auth-schema.sql","../server/auth-schema-v2.sql",...Array.from({length:8},(_,i)=>`../data/schema${i?`-v${i+1}`:""}.sql`)])await client.query(readFileSync(new URL(file,import.meta.url),"utf8"));await client.query("COMMIT");}catch(e){await client.query("ROLLBACK");throw e;}finally{client.release();}
+  pool=oldPool;repo=new WorkbenchRepository(pool);await pool.query("INSERT INTO users(id,status,display_name) VALUES($1,'active','Owner')",[owner]);wid=(await new WorkspaceRepository(pool).create(owner,{key:randomUUID(),name:"Old workbench"})).workspace.id;
+  await pool.query("UPDATE ax_control SET accepting=true");await pool.query("UPDATE ax_workbench_control SET runtime_image=$1,code_image=$1,code_profile='host-quota-8m-v1'",[image]);
+  const s=await publishedSkill(),defs=s.defs,agent=await defs.create(owner,wid,{key:randomUUID(),kind:"agent",visibility:"personal",content:{name:"Old agent",instructions:"旧設定",skill_version_ids:[s.version.id],allowed_tools:["python"]}}),av=(await defs.publish(owner,wid,agent.definition.id,{key:randomUUID(),expected_revision:agent.definition.revision!})).version!;
+  const payload={key:randomUUID(),text:"Old request",mode:"preview",input_file_ids:[],agent_version_id:av.id};const accepted=await call("ax_workbench_start",[owner,wid,payload,`ax-run-${randomBytes(8).toString("hex")}`,exp(),token]),first=await start();
+  assert.equal(Object.hasOwn(first.workbench.descriptor,"skill_context"),false);assert.equal(first.workbench.descriptor.definition_manifest[0].id,av.id);await completeProposal(first,{kind:"question",text:"続けますか？"});
+  const tables=["ax_runs","ax_agent_segments","ax_agent_requests","ax_definition_versions"],snapshots=await Promise.all(tables.map(table=>pool.query(`SELECT to_jsonb(t) value FROM ${table} t ORDER BY to_jsonb(t)::text`)));
+  const migration=await pool.connect();try{await migration.query("BEGIN");await migration.query(readFileSync(new URL("../data/schema-v9.sql",import.meta.url),"utf8"));await migration.query("COMMIT");}catch(e){await migration.query("ROLLBACK");throw e;}finally{migration.release();}
+  for(let i=0;i<tables.length;i++)assert.deepEqual((await pool.query(`SELECT to_jsonb(t) value FROM ${tables[i]} t ORDER BY to_jsonb(t)::text`)).rows,snapshots[i].rows);
+  const replay=await call("ax_workbench_start",[owner,wid,payload,`ax-run-${randomBytes(8).toString("hex")}`,exp(),token]);assert.equal(replay.run_id,accepted.run_id);assert.equal(replay.replayed,true);
+  const oldRoot=await repo.get(owner,wid,accepted.root_id);assert.equal(oldRoot.state,"waiting_input");assert.equal(oldRoot.skill_catalog_omitted,0);assert.equal(oldRoot.failure_reason,null);
+  await repo.answer(owner,wid,accepted.root_id,{key:randomUUID(),question_id:oldRoot.question_id!,expected_revision:oldRoot.revision,text:"はい"},exp(),token);const next=await start();assert.equal(Object.hasOwn(next.workbench.descriptor,"skill_context"),false);assert.deepEqual(next.workbench.descriptor.definition_manifest,first.workbench.descriptor.definition_manifest);assert.equal((await pool.query("SELECT image FROM ax_runs WHERE run_id=$1",[next.run_id])).rows[0].image,image);
+  const chunk=await call("ax_workbench_definition_chunk",[next.run_id,next.generation,controller,s.version.id,0]);assert.equal(hash(Buffer.from(chunk.content_base64,"base64")),s.version.sha256);await completeProposal(next,{kind:"output",text:"旧依頼完了"});assert.equal((await repo.get(owner,wid,accepted.root_id)).state,"succeeded");
+  await assert.rejects(call("ax_workbench_start",[owner,wid,{...payload,key:randomUUID()},`ax-run-${randomBytes(8).toString("hex")}`,exp(),token]),error("agent_selection_disabled"));
+ }finally{pool=original.pool;wid=original.wid;repo=original.repo;await oldPool.end();await admin.query(`DROP SCHEMA ${oldSchema} CASCADE`);}
+});
+
+test("explicit oversized context is rejected atomically before a root or Task exists",async()=>{
+ const ids=[];for(let i=0;i<3;i++)ids.push((await publishedSkill({name:`large-${i}`,instructions:"a".repeat(16384)})).version.id);
+ await assert.rejects(begin({skill_version_ids:ids}),error("skill_context_too_large"));assert.equal(Number((await pool.query("SELECT count(*) n FROM ax_agent_roots")).rows[0].n),0);assert.equal(Number((await pool.query("SELECT count(*) n FROM ax_runs")).rows[0].n),0);assert.equal(Number((await pool.query("SELECT count(*) n FROM ax_workbench_skill_loads")).rows[0].n),0);
+});
+
+test("pre-count denial becomes a user-visible failure reason with zero cost and no retry",async()=>{
+ await pool.query("UPDATE ax_workbench_control SET trial_enabled=true");const accepted=await begin({mode:"model",allow_model:true}),c=await start(),r=await reserve(c,1);
+ const zero={prompt_token_count:0,candidates_token_count:0,thoughts_token_count:0,total_token_count:0,model_call_count:0};const reply={version:2,run_id:c.run_id,sequence:1,request_sha256:hash(r.bytes),status:"denied",body:{code:"model_input_limit"}};
+ await call("ax_agent_settle",[c.run_id,c.generation,controller,1,reply,zero,1,{outcome:"no_send",code:"model_input_limit",payload_sha256:null,counted_input_tokens:null,count_attempt:1,http_status:null,finish_reason:null,response_sha256:null}]);await finish(c);
+ const root=await repo.get(owner,wid,accepted.root_id);assert.equal(root.state,"failed");assert.equal(root.failure_reason,"model_input_limit");assert.equal(root.model_calls,0);assert.equal(root.estimated_usd,0);assert.match(workbenchError(root.failure_reason!),/AIが一度に読み込める量を超え/);assert.match(workbenchError(root.failure_reason!),/内容を短く/);
 });

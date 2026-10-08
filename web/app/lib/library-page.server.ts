@@ -17,7 +17,8 @@ export async function libraryPage(request: Request, definitionId?: string) {
   const headers = pageHeaders();
   if (session.cookie) headers.set("Set-Cookie", session.cookie);
   const query = new URL(request.url).searchParams;
-  if (["kind", "draft", "copy"].some(key => query.getAll(key).length > 1)) throw new Response("設定一覧から開き直してください。", { status: 400, headers });
+  if (["kind", "draft", "copy", "version"].some(key => query.getAll(key).length > 1)) throw new Response("設定一覧から開き直してください。", { status: 400, headers });
+  const viewingVersion = query.has("version");
   const api = definitionsClient(user.accessToken, scope.workspaceId);
   let detail: DefinitionDetail | null = null;
   let content: DefinitionContent;
@@ -29,10 +30,18 @@ export async function libraryPage(request: Request, definitionId?: string) {
       if (!z.uuid().safeParse(definitionId).success) throw new RunApiError("definition_not_found", 404);
       detail = await api.get(definitionId);
       kind = detail.definition.kind; visibility = detail.definition.visibility;
+      if (viewingVersion) {
+        const versionId = query.get("version");
+        if (!z.uuid().safeParse(versionId).success) throw new RunApiError("invalid_request", 400);
+        const version = await api.getVersion(versionId!);
+        if (version.definition_id !== definitionId || version.kind !== kind) throw new RunApiError("definition_version_not_found", 404);
+        detail = { ...detail, draft: null, version };
+      }
       const saved = detail.draft?.content ?? detail.version?.content;
       if (!saved) throw new RunApiError("invalid_api_response");
       content = saved;
     } else {
+      if (viewingVersion) throw new RunApiError("invalid_request", 400);
       if (!draftKey) {
         const target = new URL(request.url); target.searchParams.set("draft", crypto.randomUUID());
         throw redirect(target.pathname + target.search, { headers });
@@ -43,6 +52,7 @@ export async function libraryPage(request: Request, definitionId?: string) {
         if (!z.uuid().safeParse(source).success) throw new RunApiError("invalid_request", 400);
         const original = await api.get(source);
         kind = original.definition.kind;
+        if (kind === "agent") throw redirect(scopeHref("/library?retired=agent", scope), { headers });
         const saved = original.draft?.content ?? original.version?.content;
         if (!saved) throw new RunApiError("invalid_api_response");
         content = saved;
@@ -50,6 +60,7 @@ export async function libraryPage(request: Request, definitionId?: string) {
         const parsed = z.enum(["skill", "agent"]).safeParse(query.get("kind"));
         if (!parsed.success) throw redirect(scopeHref("/library", scope), { headers });
         kind = parsed.data;
+        if (kind === "agent") throw redirect(scopeHref("/library?retired=agent", scope), { headers });
         content = kind === "skill" ? { name: "", description: "", instructions: "", files: [] } : { name: "", instructions: "", skill_version_ids: [], allowed_tools: [] };
       }
     }
@@ -62,5 +73,5 @@ export async function libraryPage(request: Request, definitionId?: string) {
     const results = await Promise.allSettled(content.skill_version_ids.map(id => api.getVersion(id)));
     results.forEach((result, i) => { selectedSkills[content.skill_version_ids[i]!] = result.status === "fulfilled" ? `${result.value.content.name}（第${result.value.version}版）` : "利用できないスキル（選び直してください）"; });
   }
-  return data({ scope, csrf: session.csrf, workspaceName: await workspaceTitle(user.accessToken, scope), detail, kind, visibility, content, draftKey: draftKey ?? crypto.randomUUID(), selectedSkills, copied: query.has("copy") }, { headers });
+  return data({ scope, csrf: session.csrf, workspaceName: await workspaceTitle(user.accessToken, scope), detail, kind, visibility, content, draftKey: draftKey ?? crypto.randomUUID(), selectedSkills, viewingVersion, copied: query.has("copy") }, { headers });
 }

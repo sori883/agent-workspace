@@ -49,15 +49,16 @@ type WorkbenchHistory struct {
 	Text string `json:"text"`
 }
 type WorkbenchDescriptor struct {
-	Version            int                `json:"version"`
-	RootID             string             `json:"root_id"`
-	Instruction        string             `json:"instruction"`
-	DefinitionManifest []DefinitionRef    `json:"definition_manifest"`
-	CodeProfile        *string            `json:"code_profile"`
-	Inputs             []WorkbenchFile    `json:"inputs"`
-	Outputs            []WorkbenchOutput  `json:"outputs"`
-	History            []WorkbenchHistory `json:"history"`
-	Code               *json.RawMessage   `json:"code"`
+	Version            int                    `json:"version"`
+	RootID             string                 `json:"root_id"`
+	Instruction        string                 `json:"instruction"`
+	DefinitionManifest []DefinitionRef        `json:"definition_manifest"`
+	CodeProfile        *string                `json:"code_profile"`
+	Inputs             []WorkbenchFile        `json:"inputs"`
+	Outputs            []WorkbenchOutput      `json:"outputs"`
+	History            []WorkbenchHistory     `json:"history"`
+	Code               *json.RawMessage       `json:"code"`
+	SkillContext       *WorkbenchSkillContext `json:"skill_context,omitempty"`
 }
 type Workbench struct {
 	Version         int                 `json:"version"`
@@ -142,6 +143,9 @@ func (w Workbench) Validate(r WorkbenchRequest) error {
 	if skills > 8 {
 		return errProtocol
 	}
+	if d.SkillContext != nil && (w.AttemptKind != "runtime" || len(d.DefinitionManifest) != 0 || d.SkillContext.Validate() != nil) {
+		return errProtocol
+	}
 	seen = map[string]bool{}
 	total := 0
 	for _, f := range d.Inputs {
@@ -223,6 +227,9 @@ type WorkbenchProposal struct {
 	InputAliases []string
 	Outputs      []PythonOutput
 	Purpose      string
+	SkillIDs     []string
+	SkillID      string
+	Path         string
 }
 
 func ParseWorkbenchProposal(data []byte) (WorkbenchProposal, error) {
@@ -233,6 +240,34 @@ func ParseWorkbenchProposal(data []byte) (WorkbenchProposal, error) {
 	var kind string
 	if json.Unmarshal(fields["kind"], &kind) != nil {
 		return WorkbenchProposal{}, errProtocol
+	}
+	if kind == "read_skills" {
+		var wire struct {
+			Kind     string   `json:"kind"`
+			SkillIDs []string `json:"skill_ids"`
+		}
+		if decodeStrict(data, &wire) != nil || len(wire.SkillIDs) < 1 || len(wire.SkillIDs) > 8 {
+			return WorkbenchProposal{}, errProtocol
+		}
+		seen := map[string]bool{}
+		for _, id := range wire.SkillIDs {
+			if (!uuidPattern.MatchString(id) && id != "general-v1" && id != "tabular-v1") || seen[id] {
+				return WorkbenchProposal{}, errProtocol
+			}
+			seen[id] = true
+		}
+		return WorkbenchProposal{Kind: kind, SkillIDs: wire.SkillIDs}, nil
+	}
+	if kind == "read_skill_file" {
+		var wire struct {
+			Kind    string `json:"kind"`
+			SkillID string `json:"skill_id"`
+			Path    string `json:"path"`
+		}
+		if decodeStrict(data, &wire) != nil || !uuidPattern.MatchString(wire.SkillID) || !validSkillPath(wire.Path) {
+			return WorkbenchProposal{}, errProtocol
+		}
+		return WorkbenchProposal{Kind: kind, SkillID: wire.SkillID, Path: wire.Path}, nil
 	}
 	if kind != "python" {
 		p, e := ParseProposal(data)

@@ -17,7 +17,7 @@
       "id": "tabular-v1",
       "name": "CSV・Excelの集計",
       "description": "CSV・Excelの内容を確認し、必要に応じて集計や結果ファイルの作成を行います。",
-      "when": "選択されたCSV・Excel、または作成済みの結果ファイルの参照がある区間に適用します。",
+      "when": "依頼に必要な場合に自動で読み込みます。「/」から指定することもできます。",
       "path": "skills/tabular-v1/SKILL.md",
       "sha256": "47c67805bf384f4051ad2c7392ef9e18b194dc611c1133775646e5e8f50313d5"
     }
