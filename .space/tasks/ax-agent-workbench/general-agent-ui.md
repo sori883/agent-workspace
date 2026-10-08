@@ -66,3 +66,8 @@ Aの固定SDK0.1.20・network none試験は20件成功、skip0。最初の19件�
 ### 引き渡し
 
 製品差分の独立レビューは [general-agent-ui-review.md](general-agent-ui-review.md) に保存し、追加の必須指摘なし。実装・記録・検証を [PR #21](https://github.com/sori883/agent-workspace/pull/21) へまとめた。既存の承認方針に従い、CI成功を確認してからマージする。設計や記録だけの別PRは作成しない。
+
+
+PR #21の製品コミット `863efbd4071a0d6ca414a65517bf06cfe0c7aab5` で、GitHubのoffline-tests/web-testsはともに成功。Web側は型・単体・build・ブラウザ全体を通した（Actions run 37712266604、2026-10-08 01:22:55 UTCにブラウザ試験終了）。この後の変更はレビュー・受け入れ記録だけで、製品コード・固定image・検証対象は同じ。親はこの成果物を受け入れ、同じPRの最終チェックを通してマージする。
+
+orch doctorの旧4unit（registry-web / workbench-runtime / workbench-web / workbench-ax-integration）は今回のsource/pin変更により過去のtarget hashとの不一致を示す。旧証拠を新しい版の成功へ付け替えず、今回の変更範囲はgeneral-agent-uiで受け入れる。元の全体タスクは定期実行の回答待ちを維持する。
