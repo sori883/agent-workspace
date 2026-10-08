@@ -18,9 +18,10 @@ sources:
   - resource: execution/controller/
   - resource: .space/tasks/ax-portable-api/verification.md
   - resource: .space/tasks/ax-workspace-access/ownership.md
+  - resource: .space/tasks/ax-agent-workbench/general-agent-ui.md
 generated: 
   by: agent:codex
-  at: 2026-10-07T01:10:31.390Z
+  at: 2026-10-08T01:06:00.062Z
 ---
 # ローカルWebの境界と非同期実行
 
@@ -51,6 +52,12 @@ API/business layer、SQL、native adapter、配備設定に対応する図であ
 チャット・実行URLはworkspaceを明示し、APIのX-AX-Workspace-IDと現在所属、記録のownerで認可する。Workspaceの所有者・管理者でも他人の会話は閲覧できず、譲渡で会話や実行のownerは変わらない。旧記録はNULL Workspaceのまま `legacy=1` から本人限定の参照・安全復旧に使い、新規送信は止める。招待は確認済みメール、7日期限、取消、招待元の現在権限を検査し、秘密のハッシュだけ保存する。
 
 開始側のintentでも所属を再確認する。確定した失効は新たな開始を止めて未開始終了またはcleanupへ進み、通信不明は保留する。開始済み処理の回収・停止まで所属解除で禁止しない。詳細は[組織所属の決定](../decisions/systems/ax/workspace-access.md)、最新の確認は `.space/tasks/ax-workspace-access/verification.md`。
+
+## 現在の依頼画面（2026-10-08）
+
+Workspace一覧の主導線は `/workbench` の「新しい依頼」。標準エージェントは添付なしの相談・文章作成を扱い、ファイルと追加skillは任意のpanelで選ぶ。組み込み一覧は製品catalogを表示し、登録した設定は公開版を指定する利用リンクから選択できる。GETは実行せず、送信時の本人・所属・公開版の再検証を維持する。
+
+`/` の継続チャット、`/agent`、`/tasks` と履歴は「履歴・設定など」から利用できる。v2の一依頼を完了後に自動再開する処理は追加していない。新しい依頼へ文脈を自動継承しないことを画面に明記する。入力panelの開閉は実行方式や費用・外部送信への同意を隠さない。経緯と検証は `.space/tasks/ax-agent-workbench/general-agent-ui.md`。
 
 ## 責務と起動
 

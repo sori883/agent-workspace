@@ -122,6 +122,12 @@ export function DefinitionEditor({ initial }: { initial: Initial }) {
   return <Workspace title={detail ? detail.definition.name : `${label}を登録`} intro={isSkill ? "作業の手順と、必要な補助資料をまとめる。" : "エージェントへの指示と、使うスキルを選ぶ。"} workspaceName={initial.workspaceName}>
     <p><a href={scopeHref("/library", initial.scope)}>スキル・エージェント一覧へ</a></p>
     {detail && <p>{definitionVisibilityLabel[detail.definition.visibility]} · {detail.definition.archived_at ? "利用終了" : detail.version ? `第${detail.version.version}版を公開中` : "下書き"}</p>}
+    {!detail?.version && !detail?.definition.archived_at && <p className="org-private-note">下書きを保存したあと、公開すると依頼に使えます。公開範囲が「自分だけ」の場合は、公開後も本人だけが使えます。</p>}
+    {detail?.version && !detail.definition.archived_at && <section className="org-section" aria-labelledby="use-definition-heading">
+      <h2 id="use-definition-heading">公開した版を使う</h2>
+      <p>{detail.version.content.name}（第{detail.version.version}版）を選んで、依頼画面を開きます。下書きの変更は含まれません。</p>
+      <a className="button button-primary" href={scopeHref(`/workbench?${kind}=${detail.version.id}`, initial.scope)}>この版で依頼する</a>
+    </section>}
     {initial.copied && <p className="org-private-note">表示している内容を新しい設定として登録します。公開範囲を確認してください。作業ファイルや実行結果はコピーされません。</p>}
     {error && <div className="result result-error" ref={errorRef} tabIndex={-1}><h2>操作を確認してください</h2><p>{error}</p>{pending && <p>送信結果を確認するには、下の「同じ内容で再確認する」を押してください。</p>}</div>}
     {status && <p role="status" className="org-private-note">{status}</p>}

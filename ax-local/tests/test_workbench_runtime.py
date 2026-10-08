@@ -15,7 +15,8 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from task_runtime import runner, workbench_runner as wr
-from task_runtime.adapters.workbench import SYSTEM_INSTRUCTIONS, allowed_tools, load_skill, make_config, prompt_value, validate_bound_proposal
+from task_runtime.adapters import workbench as adapter
+from task_runtime.adapters.workbench import SYSTEM_INSTRUCTIONS, allowed_tools, load_skills, make_config, prompt_value, validate_bound_proposal
 from task_runtime.workbench_mailbox import WorkbenchMailbox
 from task_runtime.workbench_protocol import CHUNK_BYTES, ProtocolError, digest, json_bytes, load_json, validate_envelope, validate_proposal
 
@@ -86,7 +87,45 @@ class ProtocolTests(unittest.TestCase):
         with self.assertRaises(ProtocolError):
             validate_bound_proposal({**proposal(), 'input_aliases': ['unbound']}, fixture(), [])
         self.assertEqual(allowed_tools([]), ['python'])
-        self.assertIn('openpyxl', load_skill())
+        self.assertIn('openpyxl', load_skills(fixture())[0]['text'])
+
+    def test_builtin_catalog_hashes_and_conditional_selection(self):
+        catalog = load_json((adapter.RUNTIME_ROOT / 'builtin_catalog.json').read_bytes())
+        selected = load_skills(fixture())
+        self.assertEqual([item['id'] for item in selected], [catalog['defaultAgent']['id']])
+        saved = fixture()
+        saved['workbench']['descriptor']['inputs'] = [{'alias': 'input_1', 'file_id': VERSION, 'name': 'sales.csv',
+                                                       'size_bytes': 15, 'sha256': '1' * 64}]
+        rehash(saved)
+        with_files = load_skills(saved)
+        self.assertEqual([item['id'] for item in with_files], ['general-v1', 'tabular-v1'])
+        self.assertEqual(prompt_value(saved, [], with_files)['builtin_skills'],
+                         [{'id': item['id'], 'sha256': item['sha256']} for item in catalog['skills']])
+        for loaded, item in zip(with_files, catalog['skills']):
+            self.assertEqual(hashlib.sha256(loaded['text'].encode()).hexdigest(), item['sha256'])
+
+    def test_invalid_catalog_and_unselected_skill_corruption_are_rejected(self):
+        catalog = load_json((adapter.RUNTIME_ROOT / 'builtin_catalog.json').read_bytes())
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for item in catalog['skills']:
+                target = root / item['path']; target.parent.mkdir(parents=True)
+                target.write_bytes((adapter.RUNTIME_ROOT / item['path']).read_bytes())
+            catalog_path = root / 'builtin_catalog.json'
+            mutations = (lambda c: c['defaultAgent'].update(id='brief-v1'),
+                         lambda c: c['skills'][1].update(id='general-v1'),
+                         lambda c: c['skills'][0].update(path='../outside'),
+                         lambda c: c['skills'][1].update(sha256='0' * 64),
+                         lambda c: c.update(extra=True))
+            with patch.object(adapter, 'RUNTIME_ROOT', root):
+                for mutate in mutations:
+                    invalid = copy.deepcopy(catalog); mutate(invalid); catalog_path.write_bytes(json_bytes(invalid))
+                    with self.assertRaises(ProtocolError): load_skills(fixture())
+                catalog_path.write_bytes(json_bytes(catalog))
+                self.assertEqual(len(load_skills(fixture())), 1)
+                (root / catalog['skills'][1]['path']).write_text('changed')
+                with self.assertRaisesRegex(ProtocolError, 'WorkbenchSkillDigestMismatch'):
+                    load_skills(fixture())
 
 
 class StageTests(unittest.TestCase):
@@ -211,12 +250,18 @@ class StageTests(unittest.TestCase):
 
 @unittest.skipUnless(sdk_available(), 'fixed SDK image required')
 class SDKTests(unittest.TestCase):
-    def run_case(self, kind='python', deny=False, bad=False, saved=None, proposed=None):
+    def run_case(self, kind='python', deny=False, bad=False, saved=None, proposed=None, definitions=None):
         temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
         root = Path(temporary.name) / 'task'
         saved = saved or fixture()
         run_id = saved['request']['run_id']
-        wr.stage(root, encoded(saved)); wr.seal(root, run_id); wr.start(root, run_id)
+        wr.stage(root, encoded(saved))
+        for version_id, content in (definitions or {}).items():
+            raw = json_bytes(content, 131072)
+            for offset in range(0, len(raw), CHUNK_BYTES):
+                wr.definition_chunk(root, encoded({'run_id': run_id, 'version_id': version_id, 'index': offset // CHUNK_BYTES,
+                                                  'content_base64': base64.b64encode(raw[offset:offset+CHUNK_BYTES]).decode()}))
+        wr.seal(root, run_id); wr.start(root, run_id)
         operations = []; failures = []; stop = threading.Event()
         def controller():
             try:
@@ -264,10 +309,62 @@ class SDKTests(unittest.TestCase):
         result, operations, _ = self.run_case()
         self.assertEqual(result['status'], 'succeeded', result)
         wire = operations[0]['body']
-        expected = '<System>\n' + SYSTEM_INSTRUCTIONS + '\n' + load_skill() + '\n</System>'
+        expected = '<System>\n' + SYSTEM_INSTRUCTIONS + '\n' + '\n'.join(item['text'] for item in load_skills(fixture())) + '\n</System>'
         self.assertEqual(wire['systemInstruction']['parts'], [{'text': expected}])
         self.assertEqual(wire['toolConfig']['functionCallingConfig']['mode'], 'NONE')
         self.assertFalse(wire.get('tools'))
+
+    def test_default_fileless_discussion_finishes_without_python(self):
+        saved = fixture()
+        saved['workbench']['descriptor']['instruction'] = '週次会議を短くしたいので、進め方を提案してください。'
+        rehash(saved)
+        answer = {'kind': 'output', 'text': '事前共有で報告を済ませ、会議では判断が必要な議題に時間を使う案です。まず一週間試し、決定数と所要時間を振り返ってください。'}
+        result, operations, root = self.run_case(saved=saved, proposed=answer)
+        self.assertEqual(result['status'], 'succeeded', result)
+        self.assertEqual([op['kind'] for op in operations], ['model', 'tool'])
+        self.assertEqual(operations[1]['body'], answer)
+        sent = self.model_prompt(operations[0])
+        self.assertEqual(sent['instruction'], saved['workbench']['descriptor']['instruction'])
+        self.assertEqual(sent['files'], [])
+        self.assertEqual(sent['definitions'], [])
+        self.assertEqual(sent['allowed_tools'], ['python'])
+        self.assertEqual([item['id'] for item in sent['builtin_skills']], ['general-v1'])
+        self.assertEqual(result['usage']['model_call_count'], 1)
+        self.assertEqual(list((root / 'output').iterdir()), [])
+
+    def test_fileless_writing_output_and_registered_instructions_with_no_python_permission(self):
+        version = '01925adc-a00f-4000-8000-000000000004'
+        agent = {'name': '文章相談', 'instructions': '丁寧な社内向け文面を短く作成してください。',
+                 'skill_version_ids': [VERSION], 'allowed_tools': []}
+        guidance = {'name': 'invitation-writing', 'description': '読み手が行動しやすい案内',
+                    'instructions': '先に目的、次にお願いの順で書いてください。',
+                    'files': [{'path': 'scripts/reference.py', 'content': 'raise RuntimeError("must not execute")'}]}
+        refs = [{'id': item_id, 'kind': kind, 'sha256': digest(content), 'size_bytes': len(json_bytes(content))}
+                for item_id, kind, content in ((version, 'agent', agent), (VERSION, 'skill', guidance))]
+        saved = fixture(refs)
+        saved['workbench']['descriptor']['instruction'] = '来週の勉強会への招待文を作ってください。'
+        rehash(saved)
+        answer = {'kind': 'output', 'text': '皆さまの知識共有のため、来週勉強会を開催します。ご都合が合えばぜひご参加ください。'}
+        definitions = {version: agent, VERSION: guidance}
+        result, operations, root = self.run_case(saved=saved, proposed=answer, definitions=definitions)
+        self.assertEqual(result['status'], 'succeeded', result)
+        self.assertEqual(operations[1]['body'], answer)
+        sent = self.model_prompt(operations[0])
+        self.assertEqual(sent['files'], [])
+        self.assertEqual(sent['allowed_tools'], [])
+        self.assertEqual([item['content'] for item in sent['definitions']], [agent, guidance])
+        catalog = load_json((adapter.RUNTIME_ROOT / 'builtin_catalog.json').read_bytes())
+        self.assertEqual(sent['builtin_skills'], [{'id': 'general-v1', 'sha256': catalog['skills'][0]['sha256']}])
+        system = operations[0]['body']['systemInstruction']['parts'][0]['text']
+        self.assertIn(load_skills(saved)[0]['text'], system)
+        self.assertNotIn('name: tabular-v1', system)
+        self.assertNotIn(guidance['instructions'], system)
+        self.assertEqual(list((root / 'output').iterdir()), [])
+        result, operations, root = self.run_case(saved=saved, proposed=proposal(), definitions=definitions)
+        self.assertEqual(result['status'], 'failed', result)
+        self.assertEqual([op['kind'] for op in operations], ['model'])
+        self.assertEqual(result['usage']['model_call_count'], 1)
+        self.assertFalse((root / 'proposal.json').exists())
 
     def test_file_handoff_and_next_runtime_receive_results_without_reexecuting_code(self):
         source_bytes = b'amount\n100\n200\n'
@@ -301,6 +398,9 @@ print('total=' + str(total))
         self.assertEqual(sent['files'], descriptor['inputs'])
         self.assertEqual(sent['allowed_tools'], ['python'])
         self.assertEqual(sent['history'], [])
+        self.assertEqual(sent['builtin_skills'], [{key: item[key] for key in ('id', 'sha256')} for item in load_skills(saved)])
+        system = operations[0]['body']['systemInstruction']['parts'][0]['text']
+        self.assertEqual(system, '<System>\n' + SYSTEM_INSTRUCTIONS + '\n' + '\n'.join(item['text'] for item in load_skills(saved)) + '\n</System>')
         self.assertEqual(list((root / 'output').iterdir()), [])
         self.assertEqual(result['summary'], calculation['purpose'])
 
@@ -343,7 +443,7 @@ print('total=' + str(total))
         self.assertIsNotNone(system)
         system_text = '\n'.join(part['text'] for part in system['parts'])
         self.assertNotIn(preview, system_text)
-        self.assertIn(load_skill(), system_text)
+        self.assertIn(load_skills(saved)[0]['text'], system_text)
 
     def test_one_model_proposal_no_python_in_runtime_and_ack_before_receipt(self):
         result, operations, root = self.run_case()
@@ -366,7 +466,7 @@ print('total=' + str(total))
             self.assertFalse((root / 'proposal.json').exists())
 
     def test_sdk_config_no_tools_no_subagents_no_retry(self):
-        config = make_config(Path('/tmp/task/output'), load_skill())
+        config = make_config(Path('/tmp/task/output'), load_skills(fixture()))
         self.assertFalse(config.tools)
         self.assertFalse(config.capabilities.enable_subagents)
         self.assertEqual(config.budget_config.max_model_calls, 1)

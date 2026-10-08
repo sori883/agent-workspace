@@ -1,0 +1,25 @@
+{
+  "defaultAgent": {
+    "id": "general-v1",
+    "name": "標準エージェント",
+    "description": "相談や文章作成から計算・必要なファイル処理まで、依頼に応じて対応します。"
+  },
+  "skills": [
+    {
+      "id": "general-v1",
+      "name": "相談・文章作成",
+      "description": "相談、文章作成、要約、計画、計算に対応します。ファイルやPythonの実行は必要なときだけ使います。",
+      "when": "すべての依頼に適用します。ファイルの選択は不要です。",
+      "path": "skills/general-v1/SKILL.md",
+      "sha256": "0f7bae85ac7e0faa227e15f1ac4bab0041548bfd7a064ea128c19037cd107a1d"
+    },
+    {
+      "id": "tabular-v1",
+      "name": "CSV・Excelの集計",
+      "description": "CSV・Excelの内容を確認し、必要に応じて集計や結果ファイルの作成を行います。",
+      "when": "選択されたCSV・Excel、または作成済みの結果ファイルの参照がある区間に適用します。",
+      "path": "skills/tabular-v1/SKILL.md",
+      "sha256": "47c67805bf384f4051ad2c7392ef9e18b194dc611c1133775646e5e8f50313d5"
+    }
+  ]
+}

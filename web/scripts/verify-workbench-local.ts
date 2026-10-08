@@ -227,13 +227,13 @@ async function main() {
       observations.workspace_created = true; await alice.goto(`${webOrigin}/workspaces`);
     }
     check(await cards().count() === 1, "workspace_missing_or_ambiguous");
-    const href = await cards().getByRole("link", { name: "チャットを開く", exact: true }).getAttribute("href");
+    const href = await cards().getByRole("link", { name: "エージェントを開く", exact: true }).getAttribute("href");
     check(href, "workspace_link_missing");
     const workspace = identifier(localURL(href).searchParams.get("workspace")); observations.workspace_id = workspace;
     await step("bob_login"); const bob = await newPage("bob"); await login(bob, "bob");
     await step("bob_membership");
     check(await bob.getByRole("alert").count() === 0, "bob_workspace_list_failed");
-    const bobWorkspaces = await bob.locator(".org-cards > li").getByRole("link", { name: "チャットを開く", exact: true }).evaluateAll(links => links.map(link => link.getAttribute("href")));
+    const bobWorkspaces = await bob.locator(".org-cards > li").getByRole("link", { name: "エージェントを開く", exact: true }).evaluateAll(links => links.map(link => link.getAttribute("href")));
     check(bobWorkspaces.filter(link => link && localURL(link).searchParams.get("workspace") === workspace).length === 1, "bob_workspace_membership_required_before_submission");
     check(Number(counters.start) === 0, "submission_before_membership_check");
     observations.bob_workspace_membership_verified = true;
@@ -246,6 +246,7 @@ async function main() {
     await expect(alice.locator(".file-progress")).toHaveText(`${inputName}を保存しました。`);
     healthy(); check(observations.input_file_id && counters.file_begin === 1 && counters.file_put === 1 && counters.file_seal === 1, "upload_not_confirmed");
     await step("compose"); await alice.goto(`${webOrigin}/workbench?workspace=${workspace}`);
+    await alice.getByRole("button", { name: "ファイルを添付（任意）", exact: true }).click();
     const choice = alice.getByRole("checkbox", { name: `${inputName}（1 KiB）`, exact: true });
     for (let page = 0; await choice.count() === 0 && page < 10; page++) {
       const more = alice.getByRole("button", { name: "ファイルをさらに表示", exact: true });
@@ -255,12 +256,12 @@ async function main() {
       await expect.poll(() => alice.locator('.definition-choice input[type="checkbox"]').count()).toBeGreaterThan(count);
     }
     check(await choice.count() === 1, "uploaded_file_ambiguous");
-    await alice.getByRole("radio", { name: "実モデルで作業を進める", exact: true }).check();
+    await alice.getByRole("radio", { name: "AIに依頼する", exact: true }).check();
     await alice.getByRole("checkbox", { name: "外部送信とモデル利用料金を確認しました", exact: true }).check();
     await choice.check();
     await expect(alice.locator("#workbench-agent")).toHaveValue("");
     await alice.getByLabel("依頼内容", { exact: true }).fill(requestText);
-    await step("request"); await alice.getByRole("button", { name: "作業を始める", exact: true }).click();
+    await step("request"); await alice.getByRole("button", { name: "依頼を送る", exact: true }).click();
     await alice.waitForURL(url => url.origin === webOrigin && url.pathname === "/workbench" && url.searchParams.get("root") === observations.root_id && uuid.test(url.searchParams.get("root") ?? ""));
     healthy(); check(observations.root_id && observations.initial_run_id && counters.start === 1 && submittedAt > 0, "submission_unconfirmed_no_retry");
     await step("waiting"); await waitComplete(alice);

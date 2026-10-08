@@ -76,6 +76,7 @@ test("normal login keeps tokens server-side, rotates sessions and logout revokes
 
 test("two users cannot list, read, continue, download or recover each other's conversation", async ({ page, browser }) => {
   await login(page, "alice");
+  await page.goto(workspacePath(page, "/"));
   const text = `Alice専用の会話 ${randomUUID()}`;
   await page.getByLabel("メッセージ", { exact: true }).fill(text);
   await page.getByLabel("会話の外部送信とモデル利用料金を確認しました").check();

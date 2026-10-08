@@ -32,9 +32,10 @@ sources:
   - resource: .space/tasks/ax-agent-model/integration-review.md
   - resource: .space/tasks/ax-agent-workbench/task.md
   - resource: .space/tasks/ax-agent-workbench/evidence/paid-trial4.json
+  - resource: .space/tasks/ax-agent-workbench/general-agent-ui.md
 generated: 
   by: agent:codex
-  at: 2026-10-07T18:20:47.759Z
+  at: 2026-10-08T01:06:00.000Z
 ---
 # AX Task内の対話型ランタイムと外部の制御基盤
 
@@ -63,6 +64,14 @@ generated:
 codeは固定Python標準機能とopenpyxlによるCSV/XLSX処理に限定する。追加言語・動的package導入・任意ネットワーク・社内API/MCP/RAGは、この権限に含めない。定義の登録でも権限は増えない。単一/4file合計8MiB、集計、隔離境界、3区間の停止とserver-owned cleanupを実AXの合成モデルfixtureで確認した。生成モデルの適切な選択は別の少数試験で評価する。詳細は[ファイル保存](work-files.md)と[コード隔離の知識](../../../knowledge/ax-python-isolation-probe.md)。
 
 v2は承認された限定profileとして1root6モデル/8tool（Python3）・300秒・概算0.01 USD、今回検証全体0.05 USDで停止する。旧v1の3モデル/90秒等は変更しない。費用・再送・外部通信閉鎖の条件は[費用ルール](../../../rules/ax-model-spending.md)を優先する。定期実行は未実装で、本人権限でログアウト後も動き、結果は本人だけ、所属や権限喪失で停止する方針までが確定している。Webログインtokenの現在のRunGrantを、そのまま無人実行の委任へ流用しない。
+
+## 汎用の標準エージェントと利用画面（2026-10-08）
+
+利用者はファイル集計専用に見える標準エージェントを汎用化し、組み込みスキル一覧と登録後の利用導線を求めた。v2の標準指示に相談・文章作成・要約・計画・計算を追加し、添付やPythonを不要な依頼へ要求しない。実際の道具と出力形式、予算・再送・隔離条件は広げない。
+
+`builtin_catalog.json`をRuntimeとWeb表示の共通原本にする。`general-v1`は常時、`tabular-v1`はCSV/XLSXや既存の結果ファイルを参照する区間に適用する。Runtimeは固定pathと本文SHA256を検証し、実際に適用したID/hashをモデル入力へ記す。配備する固定image内catalogとWeb原本の一致は別途照合する。共有ソースだけでは異なる配備版の一致を保証しない。
+
+主入口は「新しい依頼」。ファイルと追加スキルは任意で開き、登録設定の公開後には「この版で依頼する」から固定公開版を選択する。GETで実行せず、送信時に再認可する。旧チャット・旧エージェント対話・実行記録は補助導線と既存URLに保持する。v2は一依頼の有限rootを維持し、完了後の新しい依頼へ文脈を自動継承しない。会話とrootの新しい関連表やThread保存は今回追加しない。詳細な比較と検証範囲は `.space/tasks/ax-agent-workbench/general-agent-ui.md`。
 
 ## 変更した理由と事実の訂正
 

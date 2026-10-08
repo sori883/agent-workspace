@@ -12,7 +12,24 @@ export function Workspace({ title, intro, children, sidebar, workspaceName, chat
     <a className="skip-link" href="#main">本文へ移動</a>
     <header className="site-header"><a className="brand" href="/workspaces" aria-label="AX ワークスペース ホーム"><span className="brand-symbol" aria-hidden="true">ax<span>.</span></span><span className="brand-name">ワークスペース</span></a><span className="environment-chip"><span className="status-dot" />ローカル環境</span></header>
     <div className={`page-frame ${chat ? "chat-frame" : ""}`}>
-      <aside className="sidebar run-sidebar"><p className="sidebar-label">WORKSPACE</p><nav aria-label="メインナビゲーション"><a href="/workspaces" aria-current={pathname.startsWith("/workspaces") ? "page" : undefined}>ワークスペース一覧</a><a className={pathname === "/" ? "nav-current" : undefined} aria-current={pathname === "/" ? "page" : undefined} href={scope.workspaceId || scope.legacy ? scopeHref("/", scope) : "/workspaces"}>チャット</a><a href={scope.workspaceId ? scopeHref("/agent", scope) : "/workspaces"} aria-current={pathname === "/agent" ? "page" : undefined}>エージェント対話</a><a href={scope.workspaceId ? scopeHref("/workbench", scope) : "/workspaces"} aria-current={pathname === "/workbench" ? "page" : undefined}>ファイルを使って依頼</a><a className={pathname === "/tasks" || pathname.startsWith("/runs") ? "nav-current" : undefined} href={scope.workspaceId || scope.legacy ? scopeHref("/tasks", scope) : "/workspaces"}>エージェントの実行</a><a href={scope.workspaceId ? scopeHref("/files", scope) : "/workspaces"} aria-current={pathname === "/files" ? "page" : undefined}>作業ファイル</a><a href={scope.workspaceId ? scopeHref("/library", scope) : "/workspaces"} aria-current={pathname.startsWith("/library") ? "page" : undefined}>スキル・エージェント</a><a href={scopeHref("/connection", scope)}>接続確認</a><a href={scopeHref("/account", scope)} aria-current={pathname === "/account" ? "page" : undefined}>アカウント</a>{scope.workspaceId && <a href={`/workspaces/${scope.workspaceId}`}>メンバー・設定</a>}</nav>{sidebar ?? <div className="sidebar-foot"><span className="sidebar-rule" /><strong>依頼して、<br />結果を確かめる。</strong><p>一度に1件ずつ、<br />作業を進められます。</p></div>}</aside>
+      <aside className="sidebar run-sidebar"><p className="sidebar-label">WORKSPACE</p>
+        <nav aria-label="メインナビゲーション">
+          <a href={scope.workspaceId ? scopeHref("/workbench", scope) : "/workspaces"} aria-current={pathname === "/workbench" ? "page" : undefined}>新しい依頼</a>
+          <a href={scope.workspaceId ? scopeHref("/library", scope) : "/workspaces"} aria-current={pathname.startsWith("/library") ? "page" : undefined}>スキル・エージェント</a>
+          <a href={scope.workspaceId ? scopeHref("/files", scope) : "/workspaces"} aria-current={pathname === "/files" ? "page" : undefined}>作業ファイル</a>
+          <details className="secondary-nav" open={["/", "/agent", "/tasks", "/connection", "/account"].includes(pathname) || pathname.startsWith("/runs") || pathname.startsWith("/workspaces")}>
+            <summary>履歴・設定など</summary>
+            <a href="/workspaces" aria-current={pathname === "/workspaces" ? "page" : undefined}>ワークスペース一覧</a>
+            {scope.workspaceId && <a href={`/workspaces/${scope.workspaceId}`} aria-current={pathname === `/workspaces/${scope.workspaceId}` ? "page" : undefined}>メンバー・設定</a>}
+            <a href={scopeHref("/account", scope)} aria-current={pathname === "/account" ? "page" : undefined}>アカウント</a>
+            <a href={scope.workspaceId || scope.legacy ? scopeHref("/", scope) : "/workspaces"} aria-current={pathname === "/" ? "page" : undefined}>これまでのチャット</a>
+            <a href={scope.workspaceId ? scopeHref("/agent", scope) : "/workspaces"} aria-current={pathname === "/agent" ? "page" : undefined}>以前のエージェント対話</a>
+            <a href={scope.workspaceId || scope.legacy ? scopeHref("/tasks", scope) : "/workspaces"} aria-current={pathname === "/tasks" || pathname.startsWith("/runs") ? "page" : undefined}>実行記録</a>
+            <a href={scopeHref("/connection", scope)} aria-current={pathname === "/connection" ? "page" : undefined}>接続確認</a>
+          </details>
+        </nav>
+        {sidebar ?? <div className="sidebar-foot"><span className="sidebar-rule" /><strong>依頼して、<br />結果を確かめる。</strong></div>}
+      </aside>
       <main id="main" tabIndex={-1}><div className="page-heading"><p className="eyebrow">AGENT WORKSPACE</p>{workspaceName && <p className="selected-workspace">選択中：{workspaceName}</p>}<h1>{title}</h1><p className="lead">{intro}</p></div>{children}<footer className="page-footer"><span>AX WORKSPACE</span><span>ローカルプレビュー</span></footer></main>
     </div>
   </>;

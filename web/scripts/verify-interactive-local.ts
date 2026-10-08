@@ -157,7 +157,7 @@ async function main() {
       await alice.goto(`${webOrigin}/workspaces`);
     }
     check(await cards().count() === 1, "workspace_missing_or_ambiguous");
-    const href = await cards().getByRole("link", { name: "チャットを開く", exact: true }).getAttribute("href");
+    const href = await cards().getByRole("link", { name: "エージェントを開く", exact: true }).getAttribute("href");
     check(href, "workspace_link_missing");
     const workspace = identifier(localURL(href).searchParams.get("workspace"));
     observations.workspace_id = workspace;

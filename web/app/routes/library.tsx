@@ -3,6 +3,7 @@ import type { Route } from "./+types/library";
 import { definitionListOptionsSchema } from "../../shared/definition-contracts";
 import { Notice, Workspace } from "../components/workspace";
 import { requireAuth } from "../lib/auth.server";
+import { builtinCatalog } from "../lib/builtin-catalog";
 import { definitionErrorMessage, definitionKindLabel, definitionVisibilityLabel } from "../lib/definition-copy";
 import { definitionsClient } from "../lib/definitions.server";
 import { RunApiError } from "../lib/runs.server";
@@ -33,8 +34,22 @@ export default function Library({ loaderData: value }: Route.ComponentProps) {
     const query = new URLSearchParams({ filter: options.filter, ...(options.kind ? { kind: options.kind } : {}), ...(options.include_archived ? { archived: "1" } : {}), ...(next ? { before: next } : {}) });
     return scopeHref(`/library?${query}`, value.scope);
   }
-  return <Workspace title="スキル・エージェント" intro="作業の手順や、エージェントへの指示を登録する。" workspaceName={value.workspaceName}>
-    <p className="org-private-note">このワークスペース内で、自分だけの設定と共有設定を作れます。共有するのは手順や指示です。会話・作業ファイル・実行結果は本人だけが見られます。</p>
+  return <Workspace title="スキル・エージェント" intro="標準で使える機能と、自分たちで登録した手順・指示。" workspaceName={value.workspaceName}>
+    <section className="org-section" aria-labelledby="builtin-heading">
+      <h2 id="builtin-heading">標準で使える機能</h2>
+      <h3>{builtinCatalog.defaultAgent.name}</h3>
+      <p>{builtinCatalog.defaultAgent.description}</p>
+      <p><a className="button button-primary" href={scopeHref("/workbench", value.scope)}>標準エージェントに依頼する</a></p>
+      <h3>組み込みスキル</h3>
+      <p>登録や選択は不要です。以下の条件で自動適用されます。内容は編集できません。</p>
+      <ul className="org-cards">{builtinCatalog.skills.map(skill => <li key={skill.id}>
+        <h4>{skill.name}</h4><p>{skill.description}</p><p className="field-hint">{skill.when}</p>
+      </li>)}</ul>
+    </section>
+    <section className="org-section" aria-labelledby="definitions-heading">
+    <h2 id="definitions-heading">登録したスキル・エージェント</h2>
+    <p>スキルは作業の手順、エージェントは指示と使うスキルをまとめた設定です。下書きを登録し、公開すると「この版で依頼する」から使えます。</p>
+    <p className="org-private-note">自分だけの設定か、ワークスペース共有を選べます。共有設定を使う場合も、会話・作業ファイル・結果は本人だけが見られます。</p>
     <div className="org-actions"><a className="button button-primary" href={scopeHref("/library/new?kind=skill", value.scope)}>スキルを登録</a><a className="button button-secondary" href={scopeHref("/library/new?kind=agent", value.scope)}>エージェントを登録</a></div>
     <form method="get" className="org-form library-filters">
       <input type="hidden" name="workspace" value={value.scope.workspaceId!} />
@@ -44,13 +59,17 @@ export default function Library({ loaderData: value }: Route.ComponentProps) {
       <button type="submit" className="button button-secondary">絞り込む</button>
     </form>
     {value.error && <Notice title="一覧を表示できません" error><p>{value.error}</p></Notice>}
-    {value.result && <section className="org-section" aria-labelledby="definitions-heading"><h2 id="definitions-heading">登録済みの設定</h2>
+    {value.result && <>
       {value.result.definitions.length === 0 ? <p>該当する設定はありません。</p> : <ul className="org-cards">{value.result.definitions.map(item => <li key={item.id}>
         <p>{definitionKindLabel[item.kind]} · {definitionVisibilityLabel[item.visibility]}</p>
         <h3><a href={scopeHref(`/library/${item.id}`, value.scope)}>{item.name}</a></h3>
         <p>{item.archived_at ? "利用終了" : item.latest_version ? `公開中（第${item.latest_version.version}版）` : "下書き"}{item.can_edit ? " · 編集できます" : ""}</p>
+        {!item.archived_at && (item.latest_version
+          ? <p><a href={scopeHref(`/workbench?${item.kind}=${item.latest_version.id}`, value.scope)}>この版で依頼する<span className="sr-only">：{item.latest_version.name}（第{item.latest_version.version}版）</span></a></p>
+          : <p className="field-hint">下書きは依頼に使えません。内容を確認して公開してください。</p>)}
       </li>)}</ul>}
       <div className="org-actions">{options.before && <a href={href()}>最初に戻る</a>}{value.result.next_cursor && <a href={href(value.result.next_cursor)}>次の50件</a>}</div>
-    </section>}
+    </>}
+    </section>
   </Workspace>;
 }

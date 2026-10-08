@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 137,
+  "revision": 147,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "parent",
     "session": "workbench-parent-1"
   },
   "createdAt": "2026-10-07T10:53:37.550Z",
-  "updatedAt": "2026-10-07T18:37:51.522Z",
+  "updatedAt": "2026-10-08T01:26:38.018Z",
   "units": [
     {
       "id": "workbench",
@@ -1569,6 +1569,119 @@
       ],
       "currentAttempt": 1,
       "currentSubmission": "aa3b410e-0c91-4aac-865e-3e8ee6f1c41f",
+      "contractHistory": []
+    },
+    {
+      "id": "general-agent-ui",
+      "parent": "workbench",
+      "size": "standard",
+      "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+      "track": "",
+      "owner": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "verifiers": [],
+      "scope": [
+        "Runtime/catalog（A）",
+        "library/登録導線（B）",
+        "依頼画面/nav/CSS/統合/配備（親）",
+        "独立レビュー（C）"
+      ],
+      "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "delivery",
+          "description": "G1〜G5を実動作とレビューで確認する",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "result"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 10,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "completed",
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                  "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                  "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+                  "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+                }
+              ]
+            },
+            "review": {
+              "selection": "execute",
+              "reason": "独立Cの最終差分・証拠レビューで必須指摘なし",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+                  "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+                }
+              ]
+            },
+            "deliver": {
+              "selection": "execute",
+              "reason": "製品をローカル配備しPR #21へ集約。製品コミットのCI成功を確認して親へ引渡し、同PRのマージは親が実施",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": "https://github.com/sori883/agent-workspace/pull/21",
+                  "digest": null
+                },
+                {
+                  "ref": "https://github.com/sori883/agent-workspace/actions/runs/37712266604",
+                  "digest": null
+                }
+              ]
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-08T00:50:19.063Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": "3a5f9749-fcb1-4bef-a7f4-a0369a135ce5",
       "contractHistory": []
     }
   ],
@@ -3507,6 +3620,139 @@
       "reusedFrom": null,
       "reuseReason": "",
       "at": "2026-10-07T18:37:51.360Z"
+    },
+    {
+      "id": "30c71867-5f04-4be2-8b7c-eafcdfd37a84",
+      "unit": "general-agent-ui",
+      "attempt": 1,
+      "condition": "delivery",
+      "target": {
+        "id": "result",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+            "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+          },
+          {
+            "ref": "ax-local/task_runtime/adapters/workbench.py",
+            "digest": "ee5929724ce9d9214c3271be750da4ab14672941bfcd3151695db3909a2bb592"
+          },
+          {
+            "ref": "ax-local/task_runtime/builtin_catalog.json",
+            "digest": "6da9fa1469c1e6cf4e031203f319479bf82a82681e697b98916aba8025cfcb2d"
+          },
+          {
+            "ref": "ax-local/task_runtime/skills/general-v1/SKILL.md",
+            "digest": "0f7bae85ac7e0faa227e15f1ac4bab0041548bfd7a064ea128c19037cd107a1d"
+          },
+          {
+            "ref": "ax-local/tests/test_workbench_runtime.py",
+            "digest": "1153a2a1659ac28c4f77a1671c31e35ab67860631caddea2869514893bdc7697"
+          },
+          {
+            "ref": "ax-local/versions.json",
+            "digest": "0dd4ac4cb965e7f38e4299fc9d48ef2c76acc1e4791e5ad8d3cb52c1f07e877b"
+          },
+          {
+            "ref": "web/README.md",
+            "digest": "2dfedd686e7c6402d27b6e0d591ea16629b6c5a7e132a14b31bac0ef0dc4fc28"
+          },
+          {
+            "ref": "web/app/app.css",
+            "digest": "6dbf316fca5428b549ab5cab1077e6ef900c07e606f5e6ad926d8d79fb4ebf94"
+          },
+          {
+            "ref": "web/app/components/definition-editor.tsx",
+            "digest": "b3018feff6d805c685e61ce31b951c5522af450b9461f7a0a8bc6e6d3f20dfcd"
+          },
+          {
+            "ref": "web/app/components/workspace.tsx",
+            "digest": "2ce25a2ad20a4c8caf5096aaf22c2c0f2b0847d24755229949c00f297824bc07"
+          },
+          {
+            "ref": "web/app/lib/builtin-catalog.ts",
+            "digest": "9f9ea4e1c38395f13f68ff9088dfb8cdfd2e2d980dab59a8c9dfb52fcca56d30"
+          },
+          {
+            "ref": "web/app/routes/library.tsx",
+            "digest": "811278d8e447ce60368fd48c7e6f1824eb5568d540e9fe5ee27a6636ba69f025"
+          },
+          {
+            "ref": "web/app/routes/workbench.tsx",
+            "digest": "ddb1936340172cc6c4b0cec3c764375cb03fd29cf91eba78e5a9c8d053d30aed"
+          },
+          {
+            "ref": "web/app/routes/workspace-manage.tsx",
+            "digest": "00b4bb41c01d2c47bb59713da1531a06488251411b4e463e8d6be12fde7142a5"
+          },
+          {
+            "ref": "web/app/routes/workspaces.tsx",
+            "digest": "52e20cfd2e3b66c4eb1b1fa27627437bf23e52afe1390539fed9974f9aa31302"
+          },
+          {
+            "ref": "web/scripts/verify-general-local.ts",
+            "digest": "c3b6548ce031fb0647daa8ff0fabe0abb2a076716f5fead8aa680bff63d2ce66"
+          },
+          {
+            "ref": "web/scripts/verify-interactive-local.ts",
+            "digest": "743f5e63cb0507bff558dd081b3be7eb7ae0c1ea1f498e8e4543bfe07d94996d"
+          },
+          {
+            "ref": "web/scripts/verify-workbench-local.ts",
+            "digest": "f3d0a085f1c6662c0f8ef84f43ffce943a367c43852cce6a2189fd5d4c8ded0e"
+          },
+          {
+            "ref": "web/tests/browser/auth-helper.ts",
+            "digest": "481e5a0882696e486f6688cda77a4028acdd6b788ccc4419ee6ae7156613e44f"
+          },
+          {
+            "ref": "web/tests/browser/auth.spec.ts",
+            "digest": "98f6719e169ba179a2a31043d796bf1a0aa4642df17ab057fb1f81318c847fa5"
+          },
+          {
+            "ref": "web/tests/browser/library.spec.ts",
+            "digest": "755c0a9e2071b8fb471ed54dd70fbcbd1ad3e0189cfc376b88d6c5cd2759c2bb"
+          },
+          {
+            "ref": "web/tests/browser/workbench.spec.ts",
+            "digest": "c39aa8c729fdbc863631d7760548e2a6c3b14d6103bf4650d1b605db5e19c832"
+          },
+          {
+            "ref": "web/tsconfig.json",
+            "digest": "ecd29a57e2e277b7c113f306fb09ecbccdcbb197304565c290b1ea4478eb196c"
+          }
+        ],
+        "version": "62114067fc5615f4f0394b78eadf2dbd240737064669fb5a1a1e841cfcd89971"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+          "digest": "b99f4ece7cbd6757b01515d49b49b80fc0d0ebc8fe4e45333386c11099223055"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+          "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+          "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+        }
+      ],
+      "reason": "",
+      "method": "親がA/B実装、C独立レビュー、型/build/SDK/ブラウザ/実モデルと停止・費用、製品コミットのCI成功を照合し、同PRへまとめた成果物を受け入れる",
+      "environment": "Node24.15/Bun1.4.2/SDK0.1.20/Kind local、新固定runtime22a4a52d、GitHub Actions",
+      "observedAt": "2026-10-08T01:24:00.892416+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-08T01:24:00.964Z"
     }
   ],
   "submissions": [
@@ -5699,6 +5945,150 @@
         "reason": "既存対象版と変更したseed helper、18件成功・型検査・独立レビューの証拠を照合。製品保存仕様を変えない限定修正を受入。",
         "at": "2026-10-07T18:37:51.522Z"
       }
+    },
+    {
+      "id": "3a5f9749-fcb1-4bef-a7f4-a0369a135ce5",
+      "unit": "general-agent-ui",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "30c71867-5f04-4be2-8b7c-eafcdfd37a84"
+      ],
+      "outputs": [
+        {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+              "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+            },
+            {
+              "ref": "ax-local/task_runtime/adapters/workbench.py",
+              "digest": "ee5929724ce9d9214c3271be750da4ab14672941bfcd3151695db3909a2bb592"
+            },
+            {
+              "ref": "ax-local/task_runtime/builtin_catalog.json",
+              "digest": "6da9fa1469c1e6cf4e031203f319479bf82a82681e697b98916aba8025cfcb2d"
+            },
+            {
+              "ref": "ax-local/task_runtime/skills/general-v1/SKILL.md",
+              "digest": "0f7bae85ac7e0faa227e15f1ac4bab0041548bfd7a064ea128c19037cd107a1d"
+            },
+            {
+              "ref": "ax-local/tests/test_workbench_runtime.py",
+              "digest": "1153a2a1659ac28c4f77a1671c31e35ab67860631caddea2869514893bdc7697"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "0dd4ac4cb965e7f38e4299fc9d48ef2c76acc1e4791e5ad8d3cb52c1f07e877b"
+            },
+            {
+              "ref": "web/README.md",
+              "digest": "2dfedd686e7c6402d27b6e0d591ea16629b6c5a7e132a14b31bac0ef0dc4fc28"
+            },
+            {
+              "ref": "web/app/app.css",
+              "digest": "6dbf316fca5428b549ab5cab1077e6ef900c07e606f5e6ad926d8d79fb4ebf94"
+            },
+            {
+              "ref": "web/app/components/definition-editor.tsx",
+              "digest": "b3018feff6d805c685e61ce31b951c5522af450b9461f7a0a8bc6e6d3f20dfcd"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "2ce25a2ad20a4c8caf5096aaf22c2c0f2b0847d24755229949c00f297824bc07"
+            },
+            {
+              "ref": "web/app/lib/builtin-catalog.ts",
+              "digest": "9f9ea4e1c38395f13f68ff9088dfb8cdfd2e2d980dab59a8c9dfb52fcca56d30"
+            },
+            {
+              "ref": "web/app/routes/library.tsx",
+              "digest": "811278d8e447ce60368fd48c7e6f1824eb5568d540e9fe5ee27a6636ba69f025"
+            },
+            {
+              "ref": "web/app/routes/workbench.tsx",
+              "digest": "ddb1936340172cc6c4b0cec3c764375cb03fd29cf91eba78e5a9c8d053d30aed"
+            },
+            {
+              "ref": "web/app/routes/workspace-manage.tsx",
+              "digest": "00b4bb41c01d2c47bb59713da1531a06488251411b4e463e8d6be12fde7142a5"
+            },
+            {
+              "ref": "web/app/routes/workspaces.tsx",
+              "digest": "52e20cfd2e3b66c4eb1b1fa27627437bf23e52afe1390539fed9974f9aa31302"
+            },
+            {
+              "ref": "web/scripts/verify-general-local.ts",
+              "digest": "c3b6548ce031fb0647daa8ff0fabe0abb2a076716f5fead8aa680bff63d2ce66"
+            },
+            {
+              "ref": "web/scripts/verify-interactive-local.ts",
+              "digest": "743f5e63cb0507bff558dd081b3be7eb7ae0c1ea1f498e8e4543bfe07d94996d"
+            },
+            {
+              "ref": "web/scripts/verify-workbench-local.ts",
+              "digest": "f3d0a085f1c6662c0f8ef84f43ffce943a367c43852cce6a2189fd5d4c8ded0e"
+            },
+            {
+              "ref": "web/tests/browser/auth-helper.ts",
+              "digest": "481e5a0882696e486f6688cda77a4028acdd6b788ccc4419ee6ae7156613e44f"
+            },
+            {
+              "ref": "web/tests/browser/auth.spec.ts",
+              "digest": "98f6719e169ba179a2a31043d796bf1a0aa4642df17ab057fb1f81318c847fa5"
+            },
+            {
+              "ref": "web/tests/browser/library.spec.ts",
+              "digest": "755c0a9e2071b8fb471ed54dd70fbcbd1ad3e0189cfc376b88d6c5cd2759c2bb"
+            },
+            {
+              "ref": "web/tests/browser/workbench.spec.ts",
+              "digest": "c39aa8c729fdbc863631d7760548e2a6c3b14d6103bf4650d1b605db5e19c832"
+            },
+            {
+              "ref": "web/tsconfig.json",
+              "digest": "ecd29a57e2e277b7c113f306fb09ecbccdcbb197304565c290b1ea4478eb196c"
+            }
+          ],
+          "version": "62114067fc5615f4f0394b78eadf2dbd240737064669fb5a1a1e841cfcd89971"
+        }
+      ],
+      "report": "汎用標準エージェント・組み込みcatalog・公開版利用CTA・任意添付/skill画面とnavを実装。SDK20とブラウザ49対象、型/build、実モデル1root/Python0/停止/費用を確認。PR21製品版CI成功。旧4unitのhistorical hash不一致は保持し、新版を本unitで受入。親が同PRを最終反映する。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+          "digest": "b99f4ece7cbd6757b01515d49b49b80fc0d0ebc8fe4e45333386c11099223055"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/21",
+          "digest": null
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "at": "2026-10-08T01:24:01.053Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "reason": "現行のソース・差分・独立レビュー・SDK隔離試験・ブラウザ試験・単一rootの実モデル結果を照合し、PR #21の製品変更head 863efbdでoffline-tests/web-testsが成功したことを確認した。新unitの対象と証拠に基づき今回の変更を受け入れ、同じPRの記録反映と最終チェック後のマージは親が行う。過去4unitの古いtarget digestは今回の現行版の証明として扱わない。",
+        "at": "2026-10-08T01:26:38.018Z"
+      }
     }
   ],
   "messages": [
@@ -6213,6 +6603,32 @@
       "state": "processed",
       "resolution": "accepted: 既存対象版と変更したseed helper、18件成功・型検査・独立レビューの証拠を照合。製品保存仕様を変えない限定修正を受入。",
       "at": "2026-10-07T18:37:51.427Z"
+    },
+    {
+      "id": "6d15a656-296e-46e7-8c04-33307641a23e",
+      "unit": "general-agent-ui",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "汎用標準エージェント・組み込みcatalog・公開版利用CTA・任意添付/skill画面とnavを実装。SDK20とブラウザ49対象、型/build、実モデル1root/Python0/停止/費用を確認。PR21製品版CI成功。旧4unitのhistorical hash不一致は保持し、新版を本unitで受入。親が同PRを最終反映する。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+          "digest": "b99f4ece7cbd6757b01515d49b49b80fc0d0ebc8fe4e45333386c11099223055"
+        },
+        {
+          "ref": "https://github.com/sori883/agent-workspace/pull/21",
+          "digest": null
+        }
+      ],
+      "submission": "3a5f9749-fcb1-4bef-a7f4-a0369a135ce5",
+      "state": "processed",
+      "resolution": "accepted: 現行のソース・差分・独立レビュー・SDK隔離試験・ブラウザ試験・単一rootの実モデル結果を照合し、PR #21の製品変更head 863efbdでoffline-tests/web-testsが成功したことを確認した。新unitの対象と証拠に基づき今回の変更を受け入れ、同じPRの記録反映と最終チェック後のマージは親が行う。過去4unitの古いtarget digestは今回の現行版の証明として扱わない。",
+      "at": "2026-10-08T01:24:01.053Z"
     }
   ],
   "gates": [
@@ -25958,6 +26374,1408 @@
         }
       },
       "at": "2026-10-07T18:37:51.522Z"
+    },
+    {
+      "id": "wb-20261008095018896850",
+      "hash": "9981f17c2e8910666e6476dc5e6b9a44ebdb3e4021df4cc31c24503f7fe9a3fe",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "general-agent-ui",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008095018896850",
+        "input": {
+          "parent": "workbench",
+          "size": "standard",
+          "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+          "scope": [
+            "Runtime/catalog（A）",
+            "library/登録導線（B）",
+            "依頼画面/nav/CSS/統合/配備（親）",
+            "独立レビュー（C）"
+          ],
+          "owner": {
+            "actor": "parent",
+            "session": "workbench-parent-1"
+          },
+          "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+          "conditions": [
+            {
+              "id": "delivery",
+              "description": "G1〜G5を実動作とレビューで確認する",
+              "purpose": "delivery",
+              "required": true,
+              "allowed": [
+                "pass"
+              ],
+              "target": "result"
+            }
+          ],
+          "stages": {
+            "implement": {
+              "selection": "execute",
+              "reason": "既存実装へ汎用化とUI整理を加え、利用経路を検証して1 PRへまとめる"
+            }
+          }
+        }
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 138,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存実装へ汎用化とUI整理を加え、利用経路を検証して1 PRへまとめる",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T00:50:19.063Z"
+    },
+    {
+      "id": "wb-20261008095019101128",
+      "hash": "4372af8033f60041de8ff7967a22f9587cf06f182b5e7bc9d20c8443053c6439",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "general-agent-ui",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008095019101128",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 139,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "既存実装へ汎用化とUI整理を加え、利用経路を検証して1 PRへまとめる",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T00:50:19.355Z"
+    },
+    {
+      "id": "wb-20261008101628867382",
+      "hash": "68bfc0545a847efb1bb084481e72d2c0e684290c90e714abfea8b866ed2e8044",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "general-agent-ui",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008101628867382",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/general-agent-ui.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 140,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T01:16:29.077Z"
+    },
+    {
+      "id": "wb-20261008101629091663",
+      "hash": "a13ef60e184556f5b849f860cccfc0783dd1b25ff796fa681f437dd4e5dd48ef",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "general-agent-ui",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008101629091663",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+            ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json"
+          ]
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 141,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 4,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+                    "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T01:16:29.150Z"
+    },
+    {
+      "id": "wb-20261008101823784071",
+      "hash": "a89244fea30ea6aa73b0c924e823c8c9ff5a2cebd9b2b45cdaf3746a52a5f6df",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "general-agent-ui",
+        "stage": "review",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008101823784071",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "独立Cの最終差分・証拠レビューで必須指摘なし",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/general-agent-ui-review.md"
+          ]
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 142,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 5,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+                    "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "独立Cの最終差分・証拠レビューで必須指摘なし",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+                    "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T01:18:23.938Z"
+    },
+    {
+      "id": "wb-20261008101823953545",
+      "hash": "f3ce7f90557bbf9dfdd11a74be0087286d52972d9e4b2a27472bd990b3b41a05",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "general-agent-ui",
+        "stage": "deliver",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008101823953545",
+        "input": {
+          "selection": "execute",
+          "state": "running",
+          "reason": "PR #21を作成し、CIと反映を確認する",
+          "refs": [
+            "https://github.com/sori883/agent-workspace/pull/21"
+          ]
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 143,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 6,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+                    "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "独立Cの最終差分・証拠レビューで必須指摘なし",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+                    "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "PR #21を作成し、CIと反映を確認する",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": "https://github.com/sori883/agent-workspace/pull/21",
+                    "digest": null
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T01:18:24.008Z"
+    },
+    {
+      "id": "wb-20261008102400555228",
+      "hash": "e69f75dd21419a4ca80382e4d549446cd11d8b5f25ccac665c18566f76ac1e67",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "general-agent-ui",
+        "stage": "deliver",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008102400555228",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "製品をローカル配備しPR #21へ集約。製品コミットのCI成功を確認して親へ引渡し、同PRのマージは親が実施",
+          "refs": [
+            "https://github.com/sori883/agent-workspace/pull/21",
+            "https://github.com/sori883/agent-workspace/actions/runs/37712266604"
+          ]
+        },
+        "ifVersion": 6,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 144,
+      "data": {
+        "id": "general-agent-ui",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "汎用の標準エージェント、組み込み一覧、登録から利用する依頼UIを整える",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "Runtime/catalog（A）",
+          "library/登録導線（B）",
+          "依頼画面/nav/CSS/統合/配備（親）",
+          "独立レビュー（C）"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "G1〜G5を実動作とレビューで確認する",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 7,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "implement": {
+                "selection": "execute",
+                "reason": "汎用Runtime/catalog・登録から利用するUI・任意添付とnavを実装し、実環境まで確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "SDK20、ブラウザ49対象、型/build、実モデル1依頼と停止・費用・再読込を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+                    "digest": "153953e181edeaa2a2c3c67ea8ba299981ab2278cb7d09373a570f2022c07fa4"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+                    "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "独立Cの最終差分・証拠レビューで必須指摘なし",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+                    "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "製品をローカル配備しPR #21へ集約。製品コミットのCI成功を確認して親へ引渡し、同PRのマージは親が実施",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": "https://github.com/sori883/agent-workspace/pull/21",
+                    "digest": null
+                  },
+                  {
+                    "ref": "https://github.com/sori883/agent-workspace/actions/runs/37712266604",
+                    "digest": null
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T00:50:19.063Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T01:24:00.782Z"
+    },
+    {
+      "id": "wb-20261008102400892672",
+      "hash": "dc316aaf92114ba0295b56a967f893382e4c034a7005435afe26406c2eb997ff",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "general-agent-ui",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008102400892672",
+        "input": {
+          "condition": "delivery",
+          "verdict": "pass",
+          "target": {
+            "id": "result",
+            "kind": "files",
+            "files": [
+              "ax-local/task_runtime/adapters/workbench.py",
+              "ax-local/task_runtime/builtin_catalog.json",
+              "ax-local/task_runtime/skills/general-v1/SKILL.md",
+              "ax-local/tests/test_workbench_runtime.py",
+              "ax-local/versions.json",
+              "web/README.md",
+              "web/app/app.css",
+              "web/app/components/definition-editor.tsx",
+              "web/app/components/workspace.tsx",
+              "web/app/lib/builtin-catalog.ts",
+              "web/app/routes/library.tsx",
+              "web/app/routes/workbench.tsx",
+              "web/app/routes/workspace-manage.tsx",
+              "web/app/routes/workspaces.tsx",
+              "web/scripts/verify-general-local.ts",
+              "web/scripts/verify-interactive-local.ts",
+              "web/scripts/verify-workbench-local.ts",
+              "web/tests/browser/auth-helper.ts",
+              "web/tests/browser/auth.spec.ts",
+              "web/tests/browser/library.spec.ts",
+              "web/tests/browser/workbench.spec.ts",
+              "web/tsconfig.json",
+              ".space/tasks/ax-agent-workbench/general-agent-ui-review.md"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+            ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+            ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json"
+          ],
+          "method": "親がA/B実装、C独立レビュー、型/build/SDK/ブラウザ/実モデルと停止・費用、製品コミットのCI成功を照合し、同PRへまとめた成果物を受け入れる",
+          "environment": "Node24.15/Bun1.4.2/SDK0.1.20/Kind local、新固定runtime22a4a52d、GitHub Actions",
+          "observedAt": "2026-10-08T01:24:00.892416+00:00"
+        },
+        "ifVersion": 7,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 145,
+      "data": {
+        "id": "30c71867-5f04-4be2-8b7c-eafcdfd37a84",
+        "unit": "general-agent-ui",
+        "attempt": 1,
+        "condition": "delivery",
+        "target": {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+              "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+            },
+            {
+              "ref": "ax-local/task_runtime/adapters/workbench.py",
+              "digest": "ee5929724ce9d9214c3271be750da4ab14672941bfcd3151695db3909a2bb592"
+            },
+            {
+              "ref": "ax-local/task_runtime/builtin_catalog.json",
+              "digest": "6da9fa1469c1e6cf4e031203f319479bf82a82681e697b98916aba8025cfcb2d"
+            },
+            {
+              "ref": "ax-local/task_runtime/skills/general-v1/SKILL.md",
+              "digest": "0f7bae85ac7e0faa227e15f1ac4bab0041548bfd7a064ea128c19037cd107a1d"
+            },
+            {
+              "ref": "ax-local/tests/test_workbench_runtime.py",
+              "digest": "1153a2a1659ac28c4f77a1671c31e35ab67860631caddea2869514893bdc7697"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "0dd4ac4cb965e7f38e4299fc9d48ef2c76acc1e4791e5ad8d3cb52c1f07e877b"
+            },
+            {
+              "ref": "web/README.md",
+              "digest": "2dfedd686e7c6402d27b6e0d591ea16629b6c5a7e132a14b31bac0ef0dc4fc28"
+            },
+            {
+              "ref": "web/app/app.css",
+              "digest": "6dbf316fca5428b549ab5cab1077e6ef900c07e606f5e6ad926d8d79fb4ebf94"
+            },
+            {
+              "ref": "web/app/components/definition-editor.tsx",
+              "digest": "b3018feff6d805c685e61ce31b951c5522af450b9461f7a0a8bc6e6d3f20dfcd"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "2ce25a2ad20a4c8caf5096aaf22c2c0f2b0847d24755229949c00f297824bc07"
+            },
+            {
+              "ref": "web/app/lib/builtin-catalog.ts",
+              "digest": "9f9ea4e1c38395f13f68ff9088dfb8cdfd2e2d980dab59a8c9dfb52fcca56d30"
+            },
+            {
+              "ref": "web/app/routes/library.tsx",
+              "digest": "811278d8e447ce60368fd48c7e6f1824eb5568d540e9fe5ee27a6636ba69f025"
+            },
+            {
+              "ref": "web/app/routes/workbench.tsx",
+              "digest": "ddb1936340172cc6c4b0cec3c764375cb03fd29cf91eba78e5a9c8d053d30aed"
+            },
+            {
+              "ref": "web/app/routes/workspace-manage.tsx",
+              "digest": "00b4bb41c01d2c47bb59713da1531a06488251411b4e463e8d6be12fde7142a5"
+            },
+            {
+              "ref": "web/app/routes/workspaces.tsx",
+              "digest": "52e20cfd2e3b66c4eb1b1fa27627437bf23e52afe1390539fed9974f9aa31302"
+            },
+            {
+              "ref": "web/scripts/verify-general-local.ts",
+              "digest": "c3b6548ce031fb0647daa8ff0fabe0abb2a076716f5fead8aa680bff63d2ce66"
+            },
+            {
+              "ref": "web/scripts/verify-interactive-local.ts",
+              "digest": "743f5e63cb0507bff558dd081b3be7eb7ae0c1ea1f498e8e4543bfe07d94996d"
+            },
+            {
+              "ref": "web/scripts/verify-workbench-local.ts",
+              "digest": "f3d0a085f1c6662c0f8ef84f43ffce943a367c43852cce6a2189fd5d4c8ded0e"
+            },
+            {
+              "ref": "web/tests/browser/auth-helper.ts",
+              "digest": "481e5a0882696e486f6688cda77a4028acdd6b788ccc4419ee6ae7156613e44f"
+            },
+            {
+              "ref": "web/tests/browser/auth.spec.ts",
+              "digest": "98f6719e169ba179a2a31043d796bf1a0aa4642df17ab057fb1f81318c847fa5"
+            },
+            {
+              "ref": "web/tests/browser/library.spec.ts",
+              "digest": "755c0a9e2071b8fb471ed54dd70fbcbd1ad3e0189cfc376b88d6c5cd2759c2bb"
+            },
+            {
+              "ref": "web/tests/browser/workbench.spec.ts",
+              "digest": "c39aa8c729fdbc863631d7760548e2a6c3b14d6103bf4650d1b605db5e19c832"
+            },
+            {
+              "ref": "web/tsconfig.json",
+              "digest": "ecd29a57e2e277b7c113f306fb09ecbccdcbb197304565c290b1ea4478eb196c"
+            }
+          ],
+          "version": "62114067fc5615f4f0394b78eadf2dbd240737064669fb5a1a1e841cfcd89971"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+            "digest": "b99f4ece7cbd6757b01515d49b49b80fc0d0ebc8fe4e45333386c11099223055"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+            "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/evidence/general-agent-live.json",
+            "digest": "fce0580eaf9b964c17442418f7fb501a9ff78751878c3f293de753d6d5a02f2c"
+          }
+        ],
+        "reason": "",
+        "method": "親がA/B実装、C独立レビュー、型/build/SDK/ブラウザ/実モデルと停止・費用、製品コミットのCI成功を照合し、同PRへまとめた成果物を受け入れる",
+        "environment": "Node24.15/Bun1.4.2/SDK0.1.20/Kind local、新固定runtime22a4a52d、GitHub Actions",
+        "observedAt": "2026-10-08T01:24:00.892416+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-08T01:24:00.964Z"
+      },
+      "at": "2026-10-08T01:24:00.964Z"
+    },
+    {
+      "id": "wb-20261008102400974447",
+      "hash": "ba01ffc5da0a80b172a1e4c11e760a07894648c93880fba91f0c18328aff8421",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "general-agent-ui",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008102400974447",
+        "input": {
+          "checks": [
+            "30c71867-5f04-4be2-8b7c-eafcdfd37a84"
+          ],
+          "report": "汎用標準エージェント・組み込みcatalog・公開版利用CTA・任意添付/skill画面とnavを実装。SDK20とブラウザ49対象、型/build、実モデル1root/Python0/停止/費用を確認。PR21製品版CI成功。旧4unitのhistorical hash不一致は保持し、新版を本unitで受入。親が同PRを最終反映する。",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+            "https://github.com/sori883/agent-workspace/pull/21"
+          ]
+        },
+        "ifVersion": 8,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 146,
+      "data": {
+        "id": "3a5f9749-fcb1-4bef-a7f4-a0369a135ce5",
+        "unit": "general-agent-ui",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "30c71867-5f04-4be2-8b7c-eafcdfd37a84"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+                "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+              },
+              {
+                "ref": "ax-local/task_runtime/adapters/workbench.py",
+                "digest": "ee5929724ce9d9214c3271be750da4ab14672941bfcd3151695db3909a2bb592"
+              },
+              {
+                "ref": "ax-local/task_runtime/builtin_catalog.json",
+                "digest": "6da9fa1469c1e6cf4e031203f319479bf82a82681e697b98916aba8025cfcb2d"
+              },
+              {
+                "ref": "ax-local/task_runtime/skills/general-v1/SKILL.md",
+                "digest": "0f7bae85ac7e0faa227e15f1ac4bab0041548bfd7a064ea128c19037cd107a1d"
+              },
+              {
+                "ref": "ax-local/tests/test_workbench_runtime.py",
+                "digest": "1153a2a1659ac28c4f77a1671c31e35ab67860631caddea2869514893bdc7697"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "0dd4ac4cb965e7f38e4299fc9d48ef2c76acc1e4791e5ad8d3cb52c1f07e877b"
+              },
+              {
+                "ref": "web/README.md",
+                "digest": "2dfedd686e7c6402d27b6e0d591ea16629b6c5a7e132a14b31bac0ef0dc4fc28"
+              },
+              {
+                "ref": "web/app/app.css",
+                "digest": "6dbf316fca5428b549ab5cab1077e6ef900c07e606f5e6ad926d8d79fb4ebf94"
+              },
+              {
+                "ref": "web/app/components/definition-editor.tsx",
+                "digest": "b3018feff6d805c685e61ce31b951c5522af450b9461f7a0a8bc6e6d3f20dfcd"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "2ce25a2ad20a4c8caf5096aaf22c2c0f2b0847d24755229949c00f297824bc07"
+              },
+              {
+                "ref": "web/app/lib/builtin-catalog.ts",
+                "digest": "9f9ea4e1c38395f13f68ff9088dfb8cdfd2e2d980dab59a8c9dfb52fcca56d30"
+              },
+              {
+                "ref": "web/app/routes/library.tsx",
+                "digest": "811278d8e447ce60368fd48c7e6f1824eb5568d540e9fe5ee27a6636ba69f025"
+              },
+              {
+                "ref": "web/app/routes/workbench.tsx",
+                "digest": "ddb1936340172cc6c4b0cec3c764375cb03fd29cf91eba78e5a9c8d053d30aed"
+              },
+              {
+                "ref": "web/app/routes/workspace-manage.tsx",
+                "digest": "00b4bb41c01d2c47bb59713da1531a06488251411b4e463e8d6be12fde7142a5"
+              },
+              {
+                "ref": "web/app/routes/workspaces.tsx",
+                "digest": "52e20cfd2e3b66c4eb1b1fa27627437bf23e52afe1390539fed9974f9aa31302"
+              },
+              {
+                "ref": "web/scripts/verify-general-local.ts",
+                "digest": "c3b6548ce031fb0647daa8ff0fabe0abb2a076716f5fead8aa680bff63d2ce66"
+              },
+              {
+                "ref": "web/scripts/verify-interactive-local.ts",
+                "digest": "743f5e63cb0507bff558dd081b3be7eb7ae0c1ea1f498e8e4543bfe07d94996d"
+              },
+              {
+                "ref": "web/scripts/verify-workbench-local.ts",
+                "digest": "f3d0a085f1c6662c0f8ef84f43ffce943a367c43852cce6a2189fd5d4c8ded0e"
+              },
+              {
+                "ref": "web/tests/browser/auth-helper.ts",
+                "digest": "481e5a0882696e486f6688cda77a4028acdd6b788ccc4419ee6ae7156613e44f"
+              },
+              {
+                "ref": "web/tests/browser/auth.spec.ts",
+                "digest": "98f6719e169ba179a2a31043d796bf1a0aa4642df17ab057fb1f81318c847fa5"
+              },
+              {
+                "ref": "web/tests/browser/library.spec.ts",
+                "digest": "755c0a9e2071b8fb471ed54dd70fbcbd1ad3e0189cfc376b88d6c5cd2759c2bb"
+              },
+              {
+                "ref": "web/tests/browser/workbench.spec.ts",
+                "digest": "c39aa8c729fdbc863631d7760548e2a6c3b14d6103bf4650d1b605db5e19c832"
+              },
+              {
+                "ref": "web/tsconfig.json",
+                "digest": "ecd29a57e2e277b7c113f306fb09ecbccdcbb197304565c290b1ea4478eb196c"
+              }
+            ],
+            "version": "62114067fc5615f4f0394b78eadf2dbd240737064669fb5a1a1e841cfcd89971"
+          }
+        ],
+        "report": "汎用標準エージェント・組み込みcatalog・公開版利用CTA・任意添付/skill画面とnavを実装。SDK20とブラウザ49対象、型/build、実モデル1root/Python0/停止/費用を確認。PR21製品版CI成功。旧4unitのhistorical hash不一致は保持し、新版を本unitで受入。親が同PRを最終反映する。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+            "digest": "b99f4ece7cbd6757b01515d49b49b80fc0d0ebc8fe4e45333386c11099223055"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/21",
+            "digest": null
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "at": "2026-10-08T01:24:01.053Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-08T01:24:01.053Z"
+    },
+    {
+      "id": "wb-20261008102637824806",
+      "hash": "b78a4b42fcf8b3616c20bdf45981c0328d8d7e9a1d5e7139ad876cac35c3c99d",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "general-agent-ui",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008102637824806",
+        "input": {
+          "submission": "3a5f9749-fcb1-4bef-a7f4-a0369a135ce5",
+          "reason": "現行のソース・差分・独立レビュー・SDK隔離試験・ブラウザ試験・単一rootの実モデル結果を照合し、PR #21の製品変更head 863efbdでoffline-tests/web-testsが成功したことを確認した。新unitの対象と証拠に基づき今回の変更を受け入れ、同じPRの記録反映と最終チェック後のマージは親が行う。過去4unitの古いtarget digestは今回の現行版の証明として扱わない。"
+        },
+        "ifVersion": 9,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "general-agent-ui"
+      ],
+      "evidence": [],
+      "revision": 147,
+      "data": {
+        "id": "3a5f9749-fcb1-4bef-a7f4-a0369a135ce5",
+        "unit": "general-agent-ui",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "30c71867-5f04-4be2-8b7c-eafcdfd37a84"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".space/tasks/ax-agent-workbench/general-agent-ui-review.md",
+                "digest": "82152d9626db2a825bd93f2a34c8b65865d5c5fd1d7484b7c68b723836e63b96"
+              },
+              {
+                "ref": "ax-local/task_runtime/adapters/workbench.py",
+                "digest": "ee5929724ce9d9214c3271be750da4ab14672941bfcd3151695db3909a2bb592"
+              },
+              {
+                "ref": "ax-local/task_runtime/builtin_catalog.json",
+                "digest": "6da9fa1469c1e6cf4e031203f319479bf82a82681e697b98916aba8025cfcb2d"
+              },
+              {
+                "ref": "ax-local/task_runtime/skills/general-v1/SKILL.md",
+                "digest": "0f7bae85ac7e0faa227e15f1ac4bab0041548bfd7a064ea128c19037cd107a1d"
+              },
+              {
+                "ref": "ax-local/tests/test_workbench_runtime.py",
+                "digest": "1153a2a1659ac28c4f77a1671c31e35ab67860631caddea2869514893bdc7697"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "0dd4ac4cb965e7f38e4299fc9d48ef2c76acc1e4791e5ad8d3cb52c1f07e877b"
+              },
+              {
+                "ref": "web/README.md",
+                "digest": "2dfedd686e7c6402d27b6e0d591ea16629b6c5a7e132a14b31bac0ef0dc4fc28"
+              },
+              {
+                "ref": "web/app/app.css",
+                "digest": "6dbf316fca5428b549ab5cab1077e6ef900c07e606f5e6ad926d8d79fb4ebf94"
+              },
+              {
+                "ref": "web/app/components/definition-editor.tsx",
+                "digest": "b3018feff6d805c685e61ce31b951c5522af450b9461f7a0a8bc6e6d3f20dfcd"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "2ce25a2ad20a4c8caf5096aaf22c2c0f2b0847d24755229949c00f297824bc07"
+              },
+              {
+                "ref": "web/app/lib/builtin-catalog.ts",
+                "digest": "9f9ea4e1c38395f13f68ff9088dfb8cdfd2e2d980dab59a8c9dfb52fcca56d30"
+              },
+              {
+                "ref": "web/app/routes/library.tsx",
+                "digest": "811278d8e447ce60368fd48c7e6f1824eb5568d540e9fe5ee27a6636ba69f025"
+              },
+              {
+                "ref": "web/app/routes/workbench.tsx",
+                "digest": "ddb1936340172cc6c4b0cec3c764375cb03fd29cf91eba78e5a9c8d053d30aed"
+              },
+              {
+                "ref": "web/app/routes/workspace-manage.tsx",
+                "digest": "00b4bb41c01d2c47bb59713da1531a06488251411b4e463e8d6be12fde7142a5"
+              },
+              {
+                "ref": "web/app/routes/workspaces.tsx",
+                "digest": "52e20cfd2e3b66c4eb1b1fa27627437bf23e52afe1390539fed9974f9aa31302"
+              },
+              {
+                "ref": "web/scripts/verify-general-local.ts",
+                "digest": "c3b6548ce031fb0647daa8ff0fabe0abb2a076716f5fead8aa680bff63d2ce66"
+              },
+              {
+                "ref": "web/scripts/verify-interactive-local.ts",
+                "digest": "743f5e63cb0507bff558dd081b3be7eb7ae0c1ea1f498e8e4543bfe07d94996d"
+              },
+              {
+                "ref": "web/scripts/verify-workbench-local.ts",
+                "digest": "f3d0a085f1c6662c0f8ef84f43ffce943a367c43852cce6a2189fd5d4c8ded0e"
+              },
+              {
+                "ref": "web/tests/browser/auth-helper.ts",
+                "digest": "481e5a0882696e486f6688cda77a4028acdd6b788ccc4419ee6ae7156613e44f"
+              },
+              {
+                "ref": "web/tests/browser/auth.spec.ts",
+                "digest": "98f6719e169ba179a2a31043d796bf1a0aa4642df17ab057fb1f81318c847fa5"
+              },
+              {
+                "ref": "web/tests/browser/library.spec.ts",
+                "digest": "755c0a9e2071b8fb471ed54dd70fbcbd1ad3e0189cfc376b88d6c5cd2759c2bb"
+              },
+              {
+                "ref": "web/tests/browser/workbench.spec.ts",
+                "digest": "c39aa8c729fdbc863631d7760548e2a6c3b14d6103bf4650d1b605db5e19c832"
+              },
+              {
+                "ref": "web/tsconfig.json",
+                "digest": "ecd29a57e2e277b7c113f306fb09ecbccdcbb197304565c290b1ea4478eb196c"
+              }
+            ],
+            "version": "62114067fc5615f4f0394b78eadf2dbd240737064669fb5a1a1e841cfcd89971"
+          }
+        ],
+        "report": "汎用標準エージェント・組み込みcatalog・公開版利用CTA・任意添付/skill画面とnavを実装。SDK20とブラウザ49対象、型/build、実モデル1root/Python0/停止/費用を確認。PR21製品版CI成功。旧4unitのhistorical hash不一致は保持し、新版を本unitで受入。親が同PRを最終反映する。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/general-agent-ui.md",
+            "digest": "b99f4ece7cbd6757b01515d49b49b80fc0d0ebc8fe4e45333386c11099223055"
+          },
+          {
+            "ref": "https://github.com/sori883/agent-workspace/pull/21",
+            "digest": null
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "at": "2026-10-08T01:24:01.053Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "workbench-parent-1"
+          },
+          "reason": "現行のソース・差分・独立レビュー・SDK隔離試験・ブラウザ試験・単一rootの実モデル結果を照合し、PR #21の製品変更head 863efbdでoffline-tests/web-testsが成功したことを確認した。新unitの対象と証拠に基づき今回の変更を受け入れ、同じPRの記録反映と最終チェック後のマージは親が行う。過去4unitの古いtarget digestは今回の現行版の証明として扱わない。",
+          "at": "2026-10-08T01:26:38.018Z"
+        }
+      },
+      "at": "2026-10-08T01:26:38.018Z"
     }
   ]
 }
