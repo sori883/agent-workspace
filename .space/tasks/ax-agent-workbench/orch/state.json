@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 156,
+  "revision": 163,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "parent",
     "session": "workbench-parent-1"
   },
   "createdAt": "2026-10-07T10:53:37.550Z",
-  "updatedAt": "2026-10-08T03:59:11.429Z",
+  "updatedAt": "2026-10-08T04:01:47.229Z",
   "units": [
     {
       "id": "workbench",
@@ -1719,12 +1719,12 @@
       ],
       "dependencies": [],
       "exclusions": [],
-      "version": 9,
+      "version": 16,
       "contractVersion": 1,
       "attempts": [
         {
           "number": 1,
-          "state": "running",
+          "state": "completed",
           "stages": {
             "design": {
               "selection": "execute",
@@ -1747,12 +1747,12 @@
             },
             "implement": {
               "selection": "execute",
-              "reason": "SQL/Runtime/UI/共有型を実装しレビュー修正完了",
+              "reason": "実装と独立レビュー修正完了",
               "state": "completed",
               "refs": [
                 {
                   "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
-                  "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
                 },
                 {
                   "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
@@ -1762,12 +1762,12 @@
             },
             "verify": {
               "selection": "execute",
-              "reason": "Web193・browser13・固定SDK25・Go race/vetと実モデル5区間が成功",
+              "reason": "最終Web193・browser13・SDK25・Go race/vetと実モデル5区間を確認",
               "state": "completed",
               "refs": [
                 {
                   "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
-                  "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
                 },
                 {
                   "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
@@ -1777,12 +1777,12 @@
             },
             "review": {
               "selection": "execute",
-              "reason": "独立した2モデルのP2各1件を修正し双方が解消を再確認",
+              "reason": "別モデル2担当のP2指摘を修正し各担当が解消を再確認",
               "state": "completed",
               "refs": [
                 {
                   "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
-                  "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
                 },
                 {
                   "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
@@ -1792,9 +1792,18 @@
             },
             "deliver": {
               "selection": "execute",
-              "reason": "スキル利用経路の仕様変更",
-              "state": "pending",
-              "refs": []
+              "reason": "PR22に変更一式を提出、ローカル配備と知識更新済み。CI・マージは同PRの正本で追跡",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                  "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                  "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                }
+              ]
             }
           },
           "inputs": {
@@ -1809,7 +1818,7 @@
         }
       ],
       "currentAttempt": 1,
-      "currentSubmission": null,
+      "currentSubmission": "18c7ad34-7ef1-4fc9-9875-f852052a692b",
       "contractHistory": []
     }
   ],
@@ -3881,6 +3890,251 @@
       "reusedFrom": null,
       "reuseReason": "",
       "at": "2026-10-08T01:24:00.964Z"
+    },
+    {
+      "id": "1437b259-e759-4f88-b02c-6ff9b6bd4eb2",
+      "unit": "automatic-skills",
+      "attempt": 1,
+      "condition": "delivery",
+      "target": {
+        "id": "result",
+        "kind": "files",
+        "refs": [
+          {
+            "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+            "digest": "e56e90bf39871b587341b7ca9cd09929d05c57c378b95a3badf90b750b0aad7a"
+          },
+          {
+            "ref": ".space/babel/knowledge/ax-web-foundation.md",
+            "digest": "b9402e45c3504a923c149254b0018762bbad11575e34e66ae8e91b32aafeea4d"
+          },
+          {
+            "ref": ".space/babel/log.md",
+            "digest": "c66643f9f16ce1da610751d4884b87a2ac86cee2f4799b03b0bb62c60afb62a2"
+          },
+          {
+            "ref": ".space/babel/rules/ax-model-spending.md",
+            "digest": "5ae0773ee2520df7c18f250abd09a780ef908a5882c1db178e163c68d2f7a571"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+            "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/automatic-skills-design-review.md",
+            "digest": "580bca3769af33cba22e2fe29664984b5993c89270c4d0850926aa2f187670be"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/automatic-skills-ui.md",
+            "digest": "36b6d85d27bb469e756917aafcfd7de216066962e56cc0fb3428cb79a4938e93"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+            "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+            "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-desktop.png",
+            "digest": "b6fc96a585214f2159161d75cc838dc4bdf48b7d25bd3d1632f76a1a932e4544"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-editor-mobile.png",
+            "digest": "6a0b142ceab10e9266f32bfc3bfe8d7f1e0e507dcfa127d40c1c881bce9ec679"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-mobile.png",
+            "digest": "8adf2540f9bbf959563a33fd518d06b4961157687f7c798f4978b11a26e201af"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-mobile.png",
+            "digest": "3d711a297ede7be2c8f6a59ab85d41eafa01c6f35de93aa071ce80b135a01791"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+            "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.png",
+            "digest": "a05cf5696d18f5915b99ce2ec7c25891fc6ef89eb36f6a94c4ce99db514085e8"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-result-mobile.png",
+            "digest": "eea1009b31facd5f0182bd45d0b256eed367e5106db1bc422d71687e2cb5f9b9"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-slash-mobile.png",
+            "digest": "c2d7873d6bc404b197dc7f26a7f682cfca5ee5a9865bb409240ca085e7797cf3"
+          },
+          {
+            "ref": "ax-local/task_runtime/adapters/workbench.py",
+            "digest": "9fba509ecaa450db036ad9013d5720de9a839a4b1d8d03430e112b984866165b"
+          },
+          {
+            "ref": "ax-local/task_runtime/builtin_catalog.json",
+            "digest": "56f1c2d6c34cc69c7bfced89da1a9f4c38443941b2955bcc8b217aa5dc842fb5"
+          },
+          {
+            "ref": "ax-local/task_runtime/workbench_protocol.py",
+            "digest": "3c514fb606bd1d4438ab5250540425b6c3d3429185a1532313944a29b55ff3b9"
+          },
+          {
+            "ref": "ax-local/tests/test_workbench_runtime.py",
+            "digest": "8b058349bd41283bcc1a7ccac8c64a4b77b09c81500dbb36f4f1e4b1fec92168"
+          },
+          {
+            "ref": "ax-local/versions.json",
+            "digest": "cc48dcef79de11195a902e74a067f080eb69f5c03a1e3306a13e923af32498f9"
+          },
+          {
+            "ref": "docs/agent-runtime-design.md",
+            "digest": "14d9b5bec326f73150f823dc27a1a409f8a848c4c3dd700c026b9ca15933b3ac"
+          },
+          {
+            "ref": "execution/controller/workbench_postgres_test.go",
+            "digest": "a0176b0459509bd1ce860c9eb32374aac1b9325faa81968cde1f11cbc3ab09a8"
+          },
+          {
+            "ref": "execution/gateway/model.go",
+            "digest": "1d286fa3a567743df9f955a23b5633aa63525f3531de9316fa1cd1a5cb281eb6"
+          },
+          {
+            "ref": "execution/gateway/workbench.go",
+            "digest": "be04c93095b98f30d660a0a90e57c1a68dc85962bbdd5f4ffec80f23a69bb5b7"
+          },
+          {
+            "ref": "execution/gateway/workbench_test.go",
+            "digest": "afa06dc383f0ddcc369270d145a888167b32d4db7606fffa927046cd02962f3b"
+          },
+          {
+            "ref": "execution/native/protocol.go",
+            "digest": "99d1aad661eb3ec42bf30c76e2cf402e087bd75968ae1d7d94d6911eec5e1dfd"
+          },
+          {
+            "ref": "execution/native/workbench_protocol.go",
+            "digest": "34b28dfb05fcd230520928d0d5c4945fbf17874c5c20edf5a2fa2b63cd737004"
+          },
+          {
+            "ref": "execution/native/workbench_skills.go",
+            "digest": "a1d601e806fc16bdadf66bd5297a73898db761c7d45304e6bdddfe403cc89481"
+          },
+          {
+            "ref": "execution/native/workbench_skills_test.go",
+            "digest": "b9417bf647f767e1ade6eceb530b37dd2f007dd006e83f5e691dcf8e59ed2b2d"
+          },
+          {
+            "ref": "web/README.md",
+            "digest": "e4244a584c67366ba768734aba24664f5c92ca401240e957854f7f050146ed3f"
+          },
+          {
+            "ref": "web/app/app.css",
+            "digest": "c4d596e169f1391e2d27e3e3486f5e8a37504d04ab7adc73400223e2698a2a12"
+          },
+          {
+            "ref": "web/app/components/definition-editor.tsx",
+            "digest": "783201b336633289a7e6f75ffdb142a6dcedaa0ae298a26dbf05c0aa5c6c82bb"
+          },
+          {
+            "ref": "web/app/components/skill-composer.tsx",
+            "digest": "c383e0668398cdb660b8daf20b9c249cf609bb09531b464923afedfc56faf95d"
+          },
+          {
+            "ref": "web/app/components/workspace.tsx",
+            "digest": "9ff1605a3d0bd1288956de9785e3f509ef03d4c20c6a8e480d551edab4c74d8d"
+          },
+          {
+            "ref": "web/app/lib/library-page.server.ts",
+            "digest": "e65babf8b69872a1390b603d66b9126e238d1fa185ab952a1376fe7e89d5e881"
+          },
+          {
+            "ref": "web/app/lib/workbench-copy.ts",
+            "digest": "174618ffc6c0a05edd2bbf3f5ff01696f3eee3aa0b5dd7ee6a65bd13083dd8b2"
+          },
+          {
+            "ref": "web/app/routes/library.tsx",
+            "digest": "6da6021bb8fa4ba613584922ca90eddb96104cb4c6a08ff17d7bbb1313e77887"
+          },
+          {
+            "ref": "web/app/routes/workbench.tsx",
+            "digest": "40924ceeee754302198415fbc0c9c013d90b23e0f5269ae1195693fdc7de4dd3"
+          },
+          {
+            "ref": "web/data/schema-v9.sql",
+            "digest": "c8a5b7453727333dc7ab5bdfc0031792f619420c514e7a33514ded75f81ffc8f"
+          },
+          {
+            "ref": "web/data/workbench.ts",
+            "digest": "409691d286631702bc86f94bc38c77f325ca1d53ba377aa124b2b891587676a6"
+          },
+          {
+            "ref": "web/scripts/verify-automatic-skills-local.ts",
+            "digest": "50cd36619b9ca5b924bffa53e3b8bae4224d361491a99b786799440054a5ccaf"
+          },
+          {
+            "ref": "web/scripts/verify-general-local.ts",
+            "digest": "dbc17db30357d3e4e25f4f17c4cf561cd0676573f870f7e80e7ef0109b28ff54"
+          },
+          {
+            "ref": "web/server/data-migrate.ts",
+            "digest": "cc40ffe03aa0271ab5b7487132df881d8f5a0224ed561620dcaf03242be819e5"
+          },
+          {
+            "ref": "web/shared/workbench-contracts.ts",
+            "digest": "1fc6717c2205e8874d00f52963a7cab55d5e574ef9228e5c84bf702c0d0d6060"
+          },
+          {
+            "ref": "web/tests/browser/library.spec.ts",
+            "digest": "ce2f6d52f57f4d468161978ac81411c4fea5007fd572a4fbbedb5cb31ef8ff8d"
+          },
+          {
+            "ref": "web/tests/browser/workbench.spec.ts",
+            "digest": "73148e18f715fa7229a9d4b177da822ae40f5c247b1688423a831e529528f0e8"
+          },
+          {
+            "ref": "web/tests/workbench-api.test.ts",
+            "digest": "a1094dcab119daed239b1f94e23f01879e96dec060e4426fd52e5bc9168b0928"
+          },
+          {
+            "ref": "web/tests/workbench.test.ts",
+            "digest": "0a4c5cab74dd4b1a15d67830a68847334ffa6b22b280d8edc772b7f770a5bf2c"
+          },
+          {
+            "ref": "web/tests/workspaces.test.ts",
+            "digest": "dcc3dc3085c120941f2e736f7869af3bff2166ae54276a6150990a99f471d93a"
+          }
+        ],
+        "version": "bc0a631cf5cf91dc4f594dcf1751754e9280843c96ccf40dbed18562241e909d"
+      },
+      "verdict": "pass",
+      "evidence": [
+        {
+          "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+          "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+        },
+        {
+          "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+          "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+        }
+      ],
+      "reason": "",
+      "method": "担当実装・試験結果・独立レビューと修正を照合。実ブラウザ1root、PostgreSQL精算、独立したTask停止観測、PR22の公開とローカル配備を確認",
+      "environment": "ローカルkind/Keycloak/PostgreSQL、固定SDK0.1.20、Gemini3.1FlashLite、PR22",
+      "observedAt": "2026-10-08T04:01:30.504133+00:00",
+      "performer": "parent",
+      "recordedBy": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "supersedes": null,
+      "reusedFrom": null,
+      "reuseReason": "",
+      "at": "2026-10-08T04:01:30.557Z"
     }
   ],
   "submissions": [
@@ -6217,6 +6471,262 @@
         "reason": "現行のソース・差分・独立レビュー・SDK隔離試験・ブラウザ試験・単一rootの実モデル結果を照合し、PR #21の製品変更head 863efbdでoffline-tests/web-testsが成功したことを確認した。新unitの対象と証拠に基づき今回の変更を受け入れ、同じPRの記録反映と最終チェック後のマージは親が行う。過去4unitの古いtarget digestは今回の現行版の証明として扱わない。",
         "at": "2026-10-08T01:26:38.018Z"
       }
+    },
+    {
+      "id": "18c7ad34-7ef1-4fc9-9875-f852052a692b",
+      "unit": "automatic-skills",
+      "attempt": 1,
+      "contractVersion": 1,
+      "inputs": {
+        "contractVersion": 1,
+        "contractFiles": [],
+        "dependencies": []
+      },
+      "checks": [
+        "1437b259-e759-4f88-b02c-6ff9b6bd4eb2"
+      ],
+      "outputs": [
+        {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+              "digest": "e56e90bf39871b587341b7ca9cd09929d05c57c378b95a3badf90b750b0aad7a"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-web-foundation.md",
+              "digest": "b9402e45c3504a923c149254b0018762bbad11575e34e66ae8e91b32aafeea4d"
+            },
+            {
+              "ref": ".space/babel/log.md",
+              "digest": "c66643f9f16ce1da610751d4884b87a2ac86cee2f4799b03b0bb62c60afb62a2"
+            },
+            {
+              "ref": ".space/babel/rules/ax-model-spending.md",
+              "digest": "5ae0773ee2520df7c18f250abd09a780ef908a5882c1db178e163c68d2f7a571"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+              "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/automatic-skills-design-review.md",
+              "digest": "580bca3769af33cba22e2fe29664984b5993c89270c4d0850926aa2f187670be"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/automatic-skills-ui.md",
+              "digest": "36b6d85d27bb469e756917aafcfd7de216066962e56cc0fb3428cb79a4938e93"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+              "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+              "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+              "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-desktop.png",
+              "digest": "b6fc96a585214f2159161d75cc838dc4bdf48b7d25bd3d1632f76a1a932e4544"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-editor-mobile.png",
+              "digest": "6a0b142ceab10e9266f32bfc3bfe8d7f1e0e507dcfa127d40c1c881bce9ec679"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-mobile.png",
+              "digest": "8adf2540f9bbf959563a33fd518d06b4961157687f7c798f4978b11a26e201af"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-mobile.png",
+              "digest": "3d711a297ede7be2c8f6a59ab85d41eafa01c6f35de93aa071ce80b135a01791"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+              "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.png",
+              "digest": "a05cf5696d18f5915b99ce2ec7c25891fc6ef89eb36f6a94c4ce99db514085e8"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-result-mobile.png",
+              "digest": "eea1009b31facd5f0182bd45d0b256eed367e5106db1bc422d71687e2cb5f9b9"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-slash-mobile.png",
+              "digest": "c2d7873d6bc404b197dc7f26a7f682cfca5ee5a9865bb409240ca085e7797cf3"
+            },
+            {
+              "ref": "ax-local/task_runtime/adapters/workbench.py",
+              "digest": "9fba509ecaa450db036ad9013d5720de9a839a4b1d8d03430e112b984866165b"
+            },
+            {
+              "ref": "ax-local/task_runtime/builtin_catalog.json",
+              "digest": "56f1c2d6c34cc69c7bfced89da1a9f4c38443941b2955bcc8b217aa5dc842fb5"
+            },
+            {
+              "ref": "ax-local/task_runtime/workbench_protocol.py",
+              "digest": "3c514fb606bd1d4438ab5250540425b6c3d3429185a1532313944a29b55ff3b9"
+            },
+            {
+              "ref": "ax-local/tests/test_workbench_runtime.py",
+              "digest": "8b058349bd41283bcc1a7ccac8c64a4b77b09c81500dbb36f4f1e4b1fec92168"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "cc48dcef79de11195a902e74a067f080eb69f5c03a1e3306a13e923af32498f9"
+            },
+            {
+              "ref": "docs/agent-runtime-design.md",
+              "digest": "14d9b5bec326f73150f823dc27a1a409f8a848c4c3dd700c026b9ca15933b3ac"
+            },
+            {
+              "ref": "execution/controller/workbench_postgres_test.go",
+              "digest": "a0176b0459509bd1ce860c9eb32374aac1b9325faa81968cde1f11cbc3ab09a8"
+            },
+            {
+              "ref": "execution/gateway/model.go",
+              "digest": "1d286fa3a567743df9f955a23b5633aa63525f3531de9316fa1cd1a5cb281eb6"
+            },
+            {
+              "ref": "execution/gateway/workbench.go",
+              "digest": "be04c93095b98f30d660a0a90e57c1a68dc85962bbdd5f4ffec80f23a69bb5b7"
+            },
+            {
+              "ref": "execution/gateway/workbench_test.go",
+              "digest": "afa06dc383f0ddcc369270d145a888167b32d4db7606fffa927046cd02962f3b"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "99d1aad661eb3ec42bf30c76e2cf402e087bd75968ae1d7d94d6911eec5e1dfd"
+            },
+            {
+              "ref": "execution/native/workbench_protocol.go",
+              "digest": "34b28dfb05fcd230520928d0d5c4945fbf17874c5c20edf5a2fa2b63cd737004"
+            },
+            {
+              "ref": "execution/native/workbench_skills.go",
+              "digest": "a1d601e806fc16bdadf66bd5297a73898db761c7d45304e6bdddfe403cc89481"
+            },
+            {
+              "ref": "execution/native/workbench_skills_test.go",
+              "digest": "b9417bf647f767e1ade6eceb530b37dd2f007dd006e83f5e691dcf8e59ed2b2d"
+            },
+            {
+              "ref": "web/README.md",
+              "digest": "e4244a584c67366ba768734aba24664f5c92ca401240e957854f7f050146ed3f"
+            },
+            {
+              "ref": "web/app/app.css",
+              "digest": "c4d596e169f1391e2d27e3e3486f5e8a37504d04ab7adc73400223e2698a2a12"
+            },
+            {
+              "ref": "web/app/components/definition-editor.tsx",
+              "digest": "783201b336633289a7e6f75ffdb142a6dcedaa0ae298a26dbf05c0aa5c6c82bb"
+            },
+            {
+              "ref": "web/app/components/skill-composer.tsx",
+              "digest": "c383e0668398cdb660b8daf20b9c249cf609bb09531b464923afedfc56faf95d"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "9ff1605a3d0bd1288956de9785e3f509ef03d4c20c6a8e480d551edab4c74d8d"
+            },
+            {
+              "ref": "web/app/lib/library-page.server.ts",
+              "digest": "e65babf8b69872a1390b603d66b9126e238d1fa185ab952a1376fe7e89d5e881"
+            },
+            {
+              "ref": "web/app/lib/workbench-copy.ts",
+              "digest": "174618ffc6c0a05edd2bbf3f5ff01696f3eee3aa0b5dd7ee6a65bd13083dd8b2"
+            },
+            {
+              "ref": "web/app/routes/library.tsx",
+              "digest": "6da6021bb8fa4ba613584922ca90eddb96104cb4c6a08ff17d7bbb1313e77887"
+            },
+            {
+              "ref": "web/app/routes/workbench.tsx",
+              "digest": "40924ceeee754302198415fbc0c9c013d90b23e0f5269ae1195693fdc7de4dd3"
+            },
+            {
+              "ref": "web/data/schema-v9.sql",
+              "digest": "c8a5b7453727333dc7ab5bdfc0031792f619420c514e7a33514ded75f81ffc8f"
+            },
+            {
+              "ref": "web/data/workbench.ts",
+              "digest": "409691d286631702bc86f94bc38c77f325ca1d53ba377aa124b2b891587676a6"
+            },
+            {
+              "ref": "web/scripts/verify-automatic-skills-local.ts",
+              "digest": "50cd36619b9ca5b924bffa53e3b8bae4224d361491a99b786799440054a5ccaf"
+            },
+            {
+              "ref": "web/scripts/verify-general-local.ts",
+              "digest": "dbc17db30357d3e4e25f4f17c4cf561cd0676573f870f7e80e7ef0109b28ff54"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "cc40ffe03aa0271ab5b7487132df881d8f5a0224ed561620dcaf03242be819e5"
+            },
+            {
+              "ref": "web/shared/workbench-contracts.ts",
+              "digest": "1fc6717c2205e8874d00f52963a7cab55d5e574ef9228e5c84bf702c0d0d6060"
+            },
+            {
+              "ref": "web/tests/browser/library.spec.ts",
+              "digest": "ce2f6d52f57f4d468161978ac81411c4fea5007fd572a4fbbedb5cb31ef8ff8d"
+            },
+            {
+              "ref": "web/tests/browser/workbench.spec.ts",
+              "digest": "73148e18f715fa7229a9d4b177da822ae40f5c247b1688423a831e529528f0e8"
+            },
+            {
+              "ref": "web/tests/workbench-api.test.ts",
+              "digest": "a1094dcab119daed239b1f94e23f01879e96dec060e4426fd52e5bc9168b0928"
+            },
+            {
+              "ref": "web/tests/workbench.test.ts",
+              "digest": "0a4c5cab74dd4b1a15d67830a68847334ffa6b22b280d8edc772b7f770a5bf2c"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "dcc3dc3085c120941f2e736f7869af3bff2166ae54276a6150990a99f471d93a"
+            }
+          ],
+          "version": "bc0a631cf5cf91dc4f594dcf1751754e9280843c96ccf40dbed18562241e909d"
+        }
+      ],
+      "report": "標準エージェント、自動スキル読込、slash指定を実装。無課金試験・別モデル2担当レビューの修正・実モデル5区間が成功。PR22提出とローカル反映済み。CI/マージはPRで追跡し、定期実行の既存保留は別unitに残す。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+          "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+        }
+      ],
+      "children": [],
+      "active": true,
+      "obsoleteReason": "",
+      "successor": null,
+      "createdBy": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "at": "2026-10-08T04:01:39.422Z",
+      "acceptance": {
+        "state": "accepted",
+        "actor": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "reason": "契約に対する成果物、ローカル実行と独立停止、公開PR22を照合した。モデル選択精度の保証や未承認の定期実行へ範囲を広げず、既存料金・認可・旧履歴互換を維持している。",
+        "at": "2026-10-08T04:01:47.229Z"
+      }
     }
   ],
   "messages": [
@@ -6757,6 +7267,28 @@
       "state": "processed",
       "resolution": "accepted: 現行のソース・差分・独立レビュー・SDK隔離試験・ブラウザ試験・単一rootの実モデル結果を照合し、PR #21の製品変更head 863efbdでoffline-tests/web-testsが成功したことを確認した。新unitの対象と証拠に基づき今回の変更を受け入れ、同じPRの記録反映と最終チェック後のマージは親が行う。過去4unitの古いtarget digestは今回の現行版の証明として扱わない。",
       "at": "2026-10-08T01:24:01.053Z"
+    },
+    {
+      "id": "f5b99ab0-dd45-4095-98bd-3b227ecafe4c",
+      "unit": "automatic-skills",
+      "attempt": 1,
+      "from": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "to": "parent",
+      "kind": "completion",
+      "body": "標準エージェント、自動スキル読込、slash指定を実装。無課金試験・別モデル2担当レビューの修正・実モデル5区間が成功。PR22提出とローカル反映済み。CI/マージはPRで追跡し、定期実行の既存保留は別unitに残す。",
+      "refs": [
+        {
+          "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+          "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+        }
+      ],
+      "submission": "18c7ad34-7ef1-4fc9-9875-f852052a692b",
+      "state": "processed",
+      "resolution": "accepted: 契約に対する成果物、ローカル実行と独立停止、公開PR22を照合した。モデル選択精度の保証や未承認の定期実行へ範囲を広げず、既存料金・認可・旧履歴互換を維持している。",
+      "at": "2026-10-08T04:01:39.422Z"
     }
   ],
   "gates": [
@@ -29212,6 +29744,1571 @@
         "contractHistory": []
       },
       "at": "2026-10-08T03:59:11.429Z"
+    },
+    {
+      "id": "wb-20261008130130117593",
+      "hash": "969f8a5dbe8252b75376617fc4a2a340816bd43947be3844a02b062b50d607e9",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008130130117593",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "実装と独立レビュー修正完了",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json"
+          ]
+        },
+        "ifVersion": 9,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 157,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 10,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と独立レビュー修正完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "Web193・browser13・固定SDK25・Go race/vetと実モデル5区間が成功",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "独立した2モデルのP2各1件を修正し双方が解消を再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T04:01:30.291Z"
+    },
+    {
+      "id": "wb-20261008130130305247",
+      "hash": "d93f6b8499c34e8f7f9b5235a6072b867d22e78afca83d75af9696e83c1adde0",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008130130305247",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "最終Web193・browser13・SDK25・Go race/vetと実モデル5区間を確認",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json"
+          ]
+        },
+        "ifVersion": 10,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 158,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 11,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と独立レビュー修正完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "最終Web193・browser13・SDK25・Go race/vetと実モデル5区間を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "独立した2モデルのP2各1件を修正し双方が解消を再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T04:01:30.353Z"
+    },
+    {
+      "id": "wb-20261008130130361563",
+      "hash": "bbd32ffe8f6fe441ce2c0faee3ed658198571516e9fe9727185407ee154fb9e9",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "review",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008130130361563",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "別モデル2担当のP2指摘を修正し各担当が解消を再確認",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json"
+          ]
+        },
+        "ifVersion": 11,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 159,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 12,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と独立レビュー修正完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "最終Web193・browser13・SDK25・Go race/vetと実モデル5区間を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "別モデル2担当のP2指摘を修正し各担当が解消を再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T04:01:30.412Z"
+    },
+    {
+      "id": "wb-20261008130130420087",
+      "hash": "3614b901c9aa469996cd2f7db926a91bbea8abcfc62c04c83212b70172f0141d",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "deliver",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008130130420087",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "PR22に変更一式を提出、ローカル配備と知識更新済み。CI・マージは同PRの正本で追跡",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json"
+          ]
+        },
+        "ifVersion": 12,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 160,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 13,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "実装と独立レビュー修正完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "最終Web193・browser13・SDK25・Go race/vetと実モデル5区間を確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "別モデル2担当のP2指摘を修正し各担当が解消を再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "PR22に変更一式を提出、ローカル配備と知識更新済み。CI・マージは同PRの正本で追跡",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T04:01:30.471Z"
+    },
+    {
+      "id": "wb-20261008130130504308",
+      "hash": "c1771d473d122bc183593709abf299950ca179381727176b398384dea67e065a",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "ledger record",
+      "request": {
+        "command": "ledger record",
+        "id": "automatic-skills",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008130130504308",
+        "input": {
+          "condition": "delivery",
+          "verdict": "pass",
+          "target": {
+            "id": "result",
+            "kind": "files",
+            "files": [
+              ".space/babel/decisions/systems/ax/agent-runtime.md",
+              ".space/babel/knowledge/ax-web-foundation.md",
+              ".space/babel/log.md",
+              ".space/babel/rules/ax-model-spending.md",
+              ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+              ".space/tasks/ax-agent-workbench/automatic-skills-design-review.md",
+              ".space/tasks/ax-agent-workbench/automatic-skills-ui.md",
+              ".space/tasks/ax-agent-workbench/automatic-skills.md",
+              ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+              ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+              ".space/tasks/ax-agent-workbench/evidence/automatic-skills-desktop.png",
+              ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-editor-mobile.png",
+              ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-mobile.png",
+              ".space/tasks/ax-agent-workbench/evidence/automatic-skills-mobile.png",
+              ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+              ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.png",
+              ".space/tasks/ax-agent-workbench/evidence/automatic-skills-result-mobile.png",
+              ".space/tasks/ax-agent-workbench/evidence/automatic-skills-slash-mobile.png",
+              "ax-local/task_runtime/adapters/workbench.py",
+              "ax-local/task_runtime/builtin_catalog.json",
+              "ax-local/task_runtime/workbench_protocol.py",
+              "ax-local/tests/test_workbench_runtime.py",
+              "ax-local/versions.json",
+              "docs/agent-runtime-design.md",
+              "execution/controller/workbench_postgres_test.go",
+              "execution/gateway/model.go",
+              "execution/gateway/workbench.go",
+              "execution/gateway/workbench_test.go",
+              "execution/native/protocol.go",
+              "execution/native/workbench_protocol.go",
+              "execution/native/workbench_skills.go",
+              "execution/native/workbench_skills_test.go",
+              "web/README.md",
+              "web/app/app.css",
+              "web/app/components/definition-editor.tsx",
+              "web/app/components/skill-composer.tsx",
+              "web/app/components/workspace.tsx",
+              "web/app/lib/library-page.server.ts",
+              "web/app/lib/workbench-copy.ts",
+              "web/app/routes/library.tsx",
+              "web/app/routes/workbench.tsx",
+              "web/data/schema-v9.sql",
+              "web/data/workbench.ts",
+              "web/scripts/verify-automatic-skills-local.ts",
+              "web/scripts/verify-general-local.ts",
+              "web/server/data-migrate.ts",
+              "web/shared/workbench-contracts.ts",
+              "web/tests/browser/library.spec.ts",
+              "web/tests/browser/workbench.spec.ts",
+              "web/tests/workbench-api.test.ts",
+              "web/tests/workbench.test.ts",
+              "web/tests/workspaces.test.ts"
+            ]
+          },
+          "evidence": [
+            ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json"
+          ],
+          "method": "担当実装・試験結果・独立レビューと修正を照合。実ブラウザ1root、PostgreSQL精算、独立したTask停止観測、PR22の公開とローカル配備を確認",
+          "environment": "ローカルkind/Keycloak/PostgreSQL、固定SDK0.1.20、Gemini3.1FlashLite、PR22",
+          "observedAt": "2026-10-08T04:01:30.504133+00:00"
+        },
+        "ifVersion": 13,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 161,
+      "data": {
+        "id": "1437b259-e759-4f88-b02c-6ff9b6bd4eb2",
+        "unit": "automatic-skills",
+        "attempt": 1,
+        "condition": "delivery",
+        "target": {
+          "id": "result",
+          "kind": "files",
+          "refs": [
+            {
+              "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+              "digest": "e56e90bf39871b587341b7ca9cd09929d05c57c378b95a3badf90b750b0aad7a"
+            },
+            {
+              "ref": ".space/babel/knowledge/ax-web-foundation.md",
+              "digest": "b9402e45c3504a923c149254b0018762bbad11575e34e66ae8e91b32aafeea4d"
+            },
+            {
+              "ref": ".space/babel/log.md",
+              "digest": "c66643f9f16ce1da610751d4884b87a2ac86cee2f4799b03b0bb62c60afb62a2"
+            },
+            {
+              "ref": ".space/babel/rules/ax-model-spending.md",
+              "digest": "5ae0773ee2520df7c18f250abd09a780ef908a5882c1db178e163c68d2f7a571"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+              "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/automatic-skills-design-review.md",
+              "digest": "580bca3769af33cba22e2fe29664984b5993c89270c4d0850926aa2f187670be"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/automatic-skills-ui.md",
+              "digest": "36b6d85d27bb469e756917aafcfd7de216066962e56cc0fb3428cb79a4938e93"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+              "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+              "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+              "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-desktop.png",
+              "digest": "b6fc96a585214f2159161d75cc838dc4bdf48b7d25bd3d1632f76a1a932e4544"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-editor-mobile.png",
+              "digest": "6a0b142ceab10e9266f32bfc3bfe8d7f1e0e507dcfa127d40c1c881bce9ec679"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-mobile.png",
+              "digest": "8adf2540f9bbf959563a33fd518d06b4961157687f7c798f4978b11a26e201af"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-mobile.png",
+              "digest": "3d711a297ede7be2c8f6a59ab85d41eafa01c6f35de93aa071ce80b135a01791"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+              "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.png",
+              "digest": "a05cf5696d18f5915b99ce2ec7c25891fc6ef89eb36f6a94c4ce99db514085e8"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-result-mobile.png",
+              "digest": "eea1009b31facd5f0182bd45d0b256eed367e5106db1bc422d71687e2cb5f9b9"
+            },
+            {
+              "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-slash-mobile.png",
+              "digest": "c2d7873d6bc404b197dc7f26a7f682cfca5ee5a9865bb409240ca085e7797cf3"
+            },
+            {
+              "ref": "ax-local/task_runtime/adapters/workbench.py",
+              "digest": "9fba509ecaa450db036ad9013d5720de9a839a4b1d8d03430e112b984866165b"
+            },
+            {
+              "ref": "ax-local/task_runtime/builtin_catalog.json",
+              "digest": "56f1c2d6c34cc69c7bfced89da1a9f4c38443941b2955bcc8b217aa5dc842fb5"
+            },
+            {
+              "ref": "ax-local/task_runtime/workbench_protocol.py",
+              "digest": "3c514fb606bd1d4438ab5250540425b6c3d3429185a1532313944a29b55ff3b9"
+            },
+            {
+              "ref": "ax-local/tests/test_workbench_runtime.py",
+              "digest": "8b058349bd41283bcc1a7ccac8c64a4b77b09c81500dbb36f4f1e4b1fec92168"
+            },
+            {
+              "ref": "ax-local/versions.json",
+              "digest": "cc48dcef79de11195a902e74a067f080eb69f5c03a1e3306a13e923af32498f9"
+            },
+            {
+              "ref": "docs/agent-runtime-design.md",
+              "digest": "14d9b5bec326f73150f823dc27a1a409f8a848c4c3dd700c026b9ca15933b3ac"
+            },
+            {
+              "ref": "execution/controller/workbench_postgres_test.go",
+              "digest": "a0176b0459509bd1ce860c9eb32374aac1b9325faa81968cde1f11cbc3ab09a8"
+            },
+            {
+              "ref": "execution/gateway/model.go",
+              "digest": "1d286fa3a567743df9f955a23b5633aa63525f3531de9316fa1cd1a5cb281eb6"
+            },
+            {
+              "ref": "execution/gateway/workbench.go",
+              "digest": "be04c93095b98f30d660a0a90e57c1a68dc85962bbdd5f4ffec80f23a69bb5b7"
+            },
+            {
+              "ref": "execution/gateway/workbench_test.go",
+              "digest": "afa06dc383f0ddcc369270d145a888167b32d4db7606fffa927046cd02962f3b"
+            },
+            {
+              "ref": "execution/native/protocol.go",
+              "digest": "99d1aad661eb3ec42bf30c76e2cf402e087bd75968ae1d7d94d6911eec5e1dfd"
+            },
+            {
+              "ref": "execution/native/workbench_protocol.go",
+              "digest": "34b28dfb05fcd230520928d0d5c4945fbf17874c5c20edf5a2fa2b63cd737004"
+            },
+            {
+              "ref": "execution/native/workbench_skills.go",
+              "digest": "a1d601e806fc16bdadf66bd5297a73898db761c7d45304e6bdddfe403cc89481"
+            },
+            {
+              "ref": "execution/native/workbench_skills_test.go",
+              "digest": "b9417bf647f767e1ade6eceb530b37dd2f007dd006e83f5e691dcf8e59ed2b2d"
+            },
+            {
+              "ref": "web/README.md",
+              "digest": "e4244a584c67366ba768734aba24664f5c92ca401240e957854f7f050146ed3f"
+            },
+            {
+              "ref": "web/app/app.css",
+              "digest": "c4d596e169f1391e2d27e3e3486f5e8a37504d04ab7adc73400223e2698a2a12"
+            },
+            {
+              "ref": "web/app/components/definition-editor.tsx",
+              "digest": "783201b336633289a7e6f75ffdb142a6dcedaa0ae298a26dbf05c0aa5c6c82bb"
+            },
+            {
+              "ref": "web/app/components/skill-composer.tsx",
+              "digest": "c383e0668398cdb660b8daf20b9c249cf609bb09531b464923afedfc56faf95d"
+            },
+            {
+              "ref": "web/app/components/workspace.tsx",
+              "digest": "9ff1605a3d0bd1288956de9785e3f509ef03d4c20c6a8e480d551edab4c74d8d"
+            },
+            {
+              "ref": "web/app/lib/library-page.server.ts",
+              "digest": "e65babf8b69872a1390b603d66b9126e238d1fa185ab952a1376fe7e89d5e881"
+            },
+            {
+              "ref": "web/app/lib/workbench-copy.ts",
+              "digest": "174618ffc6c0a05edd2bbf3f5ff01696f3eee3aa0b5dd7ee6a65bd13083dd8b2"
+            },
+            {
+              "ref": "web/app/routes/library.tsx",
+              "digest": "6da6021bb8fa4ba613584922ca90eddb96104cb4c6a08ff17d7bbb1313e77887"
+            },
+            {
+              "ref": "web/app/routes/workbench.tsx",
+              "digest": "40924ceeee754302198415fbc0c9c013d90b23e0f5269ae1195693fdc7de4dd3"
+            },
+            {
+              "ref": "web/data/schema-v9.sql",
+              "digest": "c8a5b7453727333dc7ab5bdfc0031792f619420c514e7a33514ded75f81ffc8f"
+            },
+            {
+              "ref": "web/data/workbench.ts",
+              "digest": "409691d286631702bc86f94bc38c77f325ca1d53ba377aa124b2b891587676a6"
+            },
+            {
+              "ref": "web/scripts/verify-automatic-skills-local.ts",
+              "digest": "50cd36619b9ca5b924bffa53e3b8bae4224d361491a99b786799440054a5ccaf"
+            },
+            {
+              "ref": "web/scripts/verify-general-local.ts",
+              "digest": "dbc17db30357d3e4e25f4f17c4cf561cd0676573f870f7e80e7ef0109b28ff54"
+            },
+            {
+              "ref": "web/server/data-migrate.ts",
+              "digest": "cc40ffe03aa0271ab5b7487132df881d8f5a0224ed561620dcaf03242be819e5"
+            },
+            {
+              "ref": "web/shared/workbench-contracts.ts",
+              "digest": "1fc6717c2205e8874d00f52963a7cab55d5e574ef9228e5c84bf702c0d0d6060"
+            },
+            {
+              "ref": "web/tests/browser/library.spec.ts",
+              "digest": "ce2f6d52f57f4d468161978ac81411c4fea5007fd572a4fbbedb5cb31ef8ff8d"
+            },
+            {
+              "ref": "web/tests/browser/workbench.spec.ts",
+              "digest": "73148e18f715fa7229a9d4b177da822ae40f5c247b1688423a831e529528f0e8"
+            },
+            {
+              "ref": "web/tests/workbench-api.test.ts",
+              "digest": "a1094dcab119daed239b1f94e23f01879e96dec060e4426fd52e5bc9168b0928"
+            },
+            {
+              "ref": "web/tests/workbench.test.ts",
+              "digest": "0a4c5cab74dd4b1a15d67830a68847334ffa6b22b280d8edc772b7f770a5bf2c"
+            },
+            {
+              "ref": "web/tests/workspaces.test.ts",
+              "digest": "dcc3dc3085c120941f2e736f7869af3bff2166ae54276a6150990a99f471d93a"
+            }
+          ],
+          "version": "bc0a631cf5cf91dc4f594dcf1751754e9280843c96ccf40dbed18562241e909d"
+        },
+        "verdict": "pass",
+        "evidence": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+          },
+          {
+            "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+            "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+          }
+        ],
+        "reason": "",
+        "method": "担当実装・試験結果・独立レビューと修正を照合。実ブラウザ1root、PostgreSQL精算、独立したTask停止観測、PR22の公開とローカル配備を確認",
+        "environment": "ローカルkind/Keycloak/PostgreSQL、固定SDK0.1.20、Gemini3.1FlashLite、PR22",
+        "observedAt": "2026-10-08T04:01:30.504133+00:00",
+        "performer": "parent",
+        "recordedBy": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "supersedes": null,
+        "reusedFrom": null,
+        "reuseReason": "",
+        "at": "2026-10-08T04:01:30.557Z"
+      },
+      "at": "2026-10-08T04:01:30.557Z"
+    },
+    {
+      "id": "wb-20261008130139356720",
+      "hash": "1ff40b21248d9a42d984a4e873b069011d1161b15db556464439abbde0a4c95e",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit submit",
+      "request": {
+        "command": "unit submit",
+        "id": "automatic-skills",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008130139356720",
+        "input": {
+          "checks": [
+            "1437b259-e759-4f88-b02c-6ff9b6bd4eb2"
+          ],
+          "report": "標準エージェント、自動スキル読込、slash指定を実装。無課金試験・別モデル2担当レビューの修正・実モデル5区間が成功。PR22提出とローカル反映済み。CI/マージはPRで追跡し、定期実行の既存保留は別unitに残す。",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills.md"
+          ]
+        },
+        "ifVersion": 14,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 162,
+      "data": {
+        "id": "18c7ad34-7ef1-4fc9-9875-f852052a692b",
+        "unit": "automatic-skills",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "1437b259-e759-4f88-b02c-6ff9b6bd4eb2"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+                "digest": "e56e90bf39871b587341b7ca9cd09929d05c57c378b95a3badf90b750b0aad7a"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-web-foundation.md",
+                "digest": "b9402e45c3504a923c149254b0018762bbad11575e34e66ae8e91b32aafeea4d"
+              },
+              {
+                "ref": ".space/babel/log.md",
+                "digest": "c66643f9f16ce1da610751d4884b87a2ac86cee2f4799b03b0bb62c60afb62a2"
+              },
+              {
+                "ref": ".space/babel/rules/ax-model-spending.md",
+                "digest": "5ae0773ee2520df7c18f250abd09a780ef908a5882c1db178e163c68d2f7a571"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/automatic-skills-design-review.md",
+                "digest": "580bca3769af33cba22e2fe29664984b5993c89270c4d0850926aa2f187670be"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/automatic-skills-ui.md",
+                "digest": "36b6d85d27bb469e756917aafcfd7de216066962e56cc0fb3428cb79a4938e93"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-desktop.png",
+                "digest": "b6fc96a585214f2159161d75cc838dc4bdf48b7d25bd3d1632f76a1a932e4544"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-editor-mobile.png",
+                "digest": "6a0b142ceab10e9266f32bfc3bfe8d7f1e0e507dcfa127d40c1c881bce9ec679"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-mobile.png",
+                "digest": "8adf2540f9bbf959563a33fd518d06b4961157687f7c798f4978b11a26e201af"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-mobile.png",
+                "digest": "3d711a297ede7be2c8f6a59ab85d41eafa01c6f35de93aa071ce80b135a01791"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.png",
+                "digest": "a05cf5696d18f5915b99ce2ec7c25891fc6ef89eb36f6a94c4ce99db514085e8"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-result-mobile.png",
+                "digest": "eea1009b31facd5f0182bd45d0b256eed367e5106db1bc422d71687e2cb5f9b9"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-slash-mobile.png",
+                "digest": "c2d7873d6bc404b197dc7f26a7f682cfca5ee5a9865bb409240ca085e7797cf3"
+              },
+              {
+                "ref": "ax-local/task_runtime/adapters/workbench.py",
+                "digest": "9fba509ecaa450db036ad9013d5720de9a839a4b1d8d03430e112b984866165b"
+              },
+              {
+                "ref": "ax-local/task_runtime/builtin_catalog.json",
+                "digest": "56f1c2d6c34cc69c7bfced89da1a9f4c38443941b2955bcc8b217aa5dc842fb5"
+              },
+              {
+                "ref": "ax-local/task_runtime/workbench_protocol.py",
+                "digest": "3c514fb606bd1d4438ab5250540425b6c3d3429185a1532313944a29b55ff3b9"
+              },
+              {
+                "ref": "ax-local/tests/test_workbench_runtime.py",
+                "digest": "8b058349bd41283bcc1a7ccac8c64a4b77b09c81500dbb36f4f1e4b1fec92168"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "cc48dcef79de11195a902e74a067f080eb69f5c03a1e3306a13e923af32498f9"
+              },
+              {
+                "ref": "docs/agent-runtime-design.md",
+                "digest": "14d9b5bec326f73150f823dc27a1a409f8a848c4c3dd700c026b9ca15933b3ac"
+              },
+              {
+                "ref": "execution/controller/workbench_postgres_test.go",
+                "digest": "a0176b0459509bd1ce860c9eb32374aac1b9325faa81968cde1f11cbc3ab09a8"
+              },
+              {
+                "ref": "execution/gateway/model.go",
+                "digest": "1d286fa3a567743df9f955a23b5633aa63525f3531de9316fa1cd1a5cb281eb6"
+              },
+              {
+                "ref": "execution/gateway/workbench.go",
+                "digest": "be04c93095b98f30d660a0a90e57c1a68dc85962bbdd5f4ffec80f23a69bb5b7"
+              },
+              {
+                "ref": "execution/gateway/workbench_test.go",
+                "digest": "afa06dc383f0ddcc369270d145a888167b32d4db7606fffa927046cd02962f3b"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "99d1aad661eb3ec42bf30c76e2cf402e087bd75968ae1d7d94d6911eec5e1dfd"
+              },
+              {
+                "ref": "execution/native/workbench_protocol.go",
+                "digest": "34b28dfb05fcd230520928d0d5c4945fbf17874c5c20edf5a2fa2b63cd737004"
+              },
+              {
+                "ref": "execution/native/workbench_skills.go",
+                "digest": "a1d601e806fc16bdadf66bd5297a73898db761c7d45304e6bdddfe403cc89481"
+              },
+              {
+                "ref": "execution/native/workbench_skills_test.go",
+                "digest": "b9417bf647f767e1ade6eceb530b37dd2f007dd006e83f5e691dcf8e59ed2b2d"
+              },
+              {
+                "ref": "web/README.md",
+                "digest": "e4244a584c67366ba768734aba24664f5c92ca401240e957854f7f050146ed3f"
+              },
+              {
+                "ref": "web/app/app.css",
+                "digest": "c4d596e169f1391e2d27e3e3486f5e8a37504d04ab7adc73400223e2698a2a12"
+              },
+              {
+                "ref": "web/app/components/definition-editor.tsx",
+                "digest": "783201b336633289a7e6f75ffdb142a6dcedaa0ae298a26dbf05c0aa5c6c82bb"
+              },
+              {
+                "ref": "web/app/components/skill-composer.tsx",
+                "digest": "c383e0668398cdb660b8daf20b9c249cf609bb09531b464923afedfc56faf95d"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "9ff1605a3d0bd1288956de9785e3f509ef03d4c20c6a8e480d551edab4c74d8d"
+              },
+              {
+                "ref": "web/app/lib/library-page.server.ts",
+                "digest": "e65babf8b69872a1390b603d66b9126e238d1fa185ab952a1376fe7e89d5e881"
+              },
+              {
+                "ref": "web/app/lib/workbench-copy.ts",
+                "digest": "174618ffc6c0a05edd2bbf3f5ff01696f3eee3aa0b5dd7ee6a65bd13083dd8b2"
+              },
+              {
+                "ref": "web/app/routes/library.tsx",
+                "digest": "6da6021bb8fa4ba613584922ca90eddb96104cb4c6a08ff17d7bbb1313e77887"
+              },
+              {
+                "ref": "web/app/routes/workbench.tsx",
+                "digest": "40924ceeee754302198415fbc0c9c013d90b23e0f5269ae1195693fdc7de4dd3"
+              },
+              {
+                "ref": "web/data/schema-v9.sql",
+                "digest": "c8a5b7453727333dc7ab5bdfc0031792f619420c514e7a33514ded75f81ffc8f"
+              },
+              {
+                "ref": "web/data/workbench.ts",
+                "digest": "409691d286631702bc86f94bc38c77f325ca1d53ba377aa124b2b891587676a6"
+              },
+              {
+                "ref": "web/scripts/verify-automatic-skills-local.ts",
+                "digest": "50cd36619b9ca5b924bffa53e3b8bae4224d361491a99b786799440054a5ccaf"
+              },
+              {
+                "ref": "web/scripts/verify-general-local.ts",
+                "digest": "dbc17db30357d3e4e25f4f17c4cf561cd0676573f870f7e80e7ef0109b28ff54"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "cc40ffe03aa0271ab5b7487132df881d8f5a0224ed561620dcaf03242be819e5"
+              },
+              {
+                "ref": "web/shared/workbench-contracts.ts",
+                "digest": "1fc6717c2205e8874d00f52963a7cab55d5e574ef9228e5c84bf702c0d0d6060"
+              },
+              {
+                "ref": "web/tests/browser/library.spec.ts",
+                "digest": "ce2f6d52f57f4d468161978ac81411c4fea5007fd572a4fbbedb5cb31ef8ff8d"
+              },
+              {
+                "ref": "web/tests/browser/workbench.spec.ts",
+                "digest": "73148e18f715fa7229a9d4b177da822ae40f5c247b1688423a831e529528f0e8"
+              },
+              {
+                "ref": "web/tests/workbench-api.test.ts",
+                "digest": "a1094dcab119daed239b1f94e23f01879e96dec060e4426fd52e5bc9168b0928"
+              },
+              {
+                "ref": "web/tests/workbench.test.ts",
+                "digest": "0a4c5cab74dd4b1a15d67830a68847334ffa6b22b280d8edc772b7f770a5bf2c"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "dcc3dc3085c120941f2e736f7869af3bff2166ae54276a6150990a99f471d93a"
+              }
+            ],
+            "version": "bc0a631cf5cf91dc4f594dcf1751754e9280843c96ccf40dbed18562241e909d"
+          }
+        ],
+        "report": "標準エージェント、自動スキル読込、slash指定を実装。無課金試験・別モデル2担当レビューの修正・実モデル5区間が成功。PR22提出とローカル反映済み。CI/マージはPRで追跡し、定期実行の既存保留は別unitに残す。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "at": "2026-10-08T04:01:39.422Z",
+        "acceptance": {
+          "state": "pending",
+          "reason": "",
+          "actor": null,
+          "at": null
+        }
+      },
+      "at": "2026-10-08T04:01:39.422Z"
+    },
+    {
+      "id": "wb-20261008130147091740",
+      "hash": "33537119c2f3419990455019d89e1cd253385dd4a72ab1d52b3e301daf5db068",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit accept",
+      "request": {
+        "command": "unit accept",
+        "id": "automatic-skills",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008130147091740",
+        "input": {
+          "submission": "18c7ad34-7ef1-4fc9-9875-f852052a692b",
+          "reason": "契約に対する成果物、ローカル実行と独立停止、公開PR22を照合した。モデル選択精度の保証や未承認の定期実行へ範囲を広げず、既存料金・認可・旧履歴互換を維持している。"
+        },
+        "ifVersion": 15,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 163,
+      "data": {
+        "id": "18c7ad34-7ef1-4fc9-9875-f852052a692b",
+        "unit": "automatic-skills",
+        "attempt": 1,
+        "contractVersion": 1,
+        "inputs": {
+          "contractVersion": 1,
+          "contractFiles": [],
+          "dependencies": []
+        },
+        "checks": [
+          "1437b259-e759-4f88-b02c-6ff9b6bd4eb2"
+        ],
+        "outputs": [
+          {
+            "id": "result",
+            "kind": "files",
+            "refs": [
+              {
+                "ref": ".space/babel/decisions/systems/ax/agent-runtime.md",
+                "digest": "e56e90bf39871b587341b7ca9cd09929d05c57c378b95a3badf90b750b0aad7a"
+              },
+              {
+                "ref": ".space/babel/knowledge/ax-web-foundation.md",
+                "digest": "b9402e45c3504a923c149254b0018762bbad11575e34e66ae8e91b32aafeea4d"
+              },
+              {
+                "ref": ".space/babel/log.md",
+                "digest": "c66643f9f16ce1da610751d4884b87a2ac86cee2f4799b03b0bb62c60afb62a2"
+              },
+              {
+                "ref": ".space/babel/rules/ax-model-spending.md",
+                "digest": "5ae0773ee2520df7c18f250abd09a780ef908a5882c1db178e163c68d2f7a571"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/automatic-skills-design-review.md",
+                "digest": "580bca3769af33cba22e2fe29664984b5993c89270c4d0850926aa2f187670be"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/automatic-skills-ui.md",
+                "digest": "36b6d85d27bb469e756917aafcfd7de216066962e56cc0fb3428cb79a4938e93"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-desktop.png",
+                "digest": "b6fc96a585214f2159161d75cc838dc4bdf48b7d25bd3d1632f76a1a932e4544"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-editor-mobile.png",
+                "digest": "6a0b142ceab10e9266f32bfc3bfe8d7f1e0e507dcfa127d40c1c881bce9ec679"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-library-mobile.png",
+                "digest": "8adf2540f9bbf959563a33fd518d06b4961157687f7c798f4978b11a26e201af"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-mobile.png",
+                "digest": "3d711a297ede7be2c8f6a59ab85d41eafa01c6f35de93aa071ce80b135a01791"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.png",
+                "digest": "a05cf5696d18f5915b99ce2ec7c25891fc6ef89eb36f6a94c4ce99db514085e8"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-result-mobile.png",
+                "digest": "eea1009b31facd5f0182bd45d0b256eed367e5106db1bc422d71687e2cb5f9b9"
+              },
+              {
+                "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-slash-mobile.png",
+                "digest": "c2d7873d6bc404b197dc7f26a7f682cfca5ee5a9865bb409240ca085e7797cf3"
+              },
+              {
+                "ref": "ax-local/task_runtime/adapters/workbench.py",
+                "digest": "9fba509ecaa450db036ad9013d5720de9a839a4b1d8d03430e112b984866165b"
+              },
+              {
+                "ref": "ax-local/task_runtime/builtin_catalog.json",
+                "digest": "56f1c2d6c34cc69c7bfced89da1a9f4c38443941b2955bcc8b217aa5dc842fb5"
+              },
+              {
+                "ref": "ax-local/task_runtime/workbench_protocol.py",
+                "digest": "3c514fb606bd1d4438ab5250540425b6c3d3429185a1532313944a29b55ff3b9"
+              },
+              {
+                "ref": "ax-local/tests/test_workbench_runtime.py",
+                "digest": "8b058349bd41283bcc1a7ccac8c64a4b77b09c81500dbb36f4f1e4b1fec92168"
+              },
+              {
+                "ref": "ax-local/versions.json",
+                "digest": "cc48dcef79de11195a902e74a067f080eb69f5c03a1e3306a13e923af32498f9"
+              },
+              {
+                "ref": "docs/agent-runtime-design.md",
+                "digest": "14d9b5bec326f73150f823dc27a1a409f8a848c4c3dd700c026b9ca15933b3ac"
+              },
+              {
+                "ref": "execution/controller/workbench_postgres_test.go",
+                "digest": "a0176b0459509bd1ce860c9eb32374aac1b9325faa81968cde1f11cbc3ab09a8"
+              },
+              {
+                "ref": "execution/gateway/model.go",
+                "digest": "1d286fa3a567743df9f955a23b5633aa63525f3531de9316fa1cd1a5cb281eb6"
+              },
+              {
+                "ref": "execution/gateway/workbench.go",
+                "digest": "be04c93095b98f30d660a0a90e57c1a68dc85962bbdd5f4ffec80f23a69bb5b7"
+              },
+              {
+                "ref": "execution/gateway/workbench_test.go",
+                "digest": "afa06dc383f0ddcc369270d145a888167b32d4db7606fffa927046cd02962f3b"
+              },
+              {
+                "ref": "execution/native/protocol.go",
+                "digest": "99d1aad661eb3ec42bf30c76e2cf402e087bd75968ae1d7d94d6911eec5e1dfd"
+              },
+              {
+                "ref": "execution/native/workbench_protocol.go",
+                "digest": "34b28dfb05fcd230520928d0d5c4945fbf17874c5c20edf5a2fa2b63cd737004"
+              },
+              {
+                "ref": "execution/native/workbench_skills.go",
+                "digest": "a1d601e806fc16bdadf66bd5297a73898db761c7d45304e6bdddfe403cc89481"
+              },
+              {
+                "ref": "execution/native/workbench_skills_test.go",
+                "digest": "b9417bf647f767e1ade6eceb530b37dd2f007dd006e83f5e691dcf8e59ed2b2d"
+              },
+              {
+                "ref": "web/README.md",
+                "digest": "e4244a584c67366ba768734aba24664f5c92ca401240e957854f7f050146ed3f"
+              },
+              {
+                "ref": "web/app/app.css",
+                "digest": "c4d596e169f1391e2d27e3e3486f5e8a37504d04ab7adc73400223e2698a2a12"
+              },
+              {
+                "ref": "web/app/components/definition-editor.tsx",
+                "digest": "783201b336633289a7e6f75ffdb142a6dcedaa0ae298a26dbf05c0aa5c6c82bb"
+              },
+              {
+                "ref": "web/app/components/skill-composer.tsx",
+                "digest": "c383e0668398cdb660b8daf20b9c249cf609bb09531b464923afedfc56faf95d"
+              },
+              {
+                "ref": "web/app/components/workspace.tsx",
+                "digest": "9ff1605a3d0bd1288956de9785e3f509ef03d4c20c6a8e480d551edab4c74d8d"
+              },
+              {
+                "ref": "web/app/lib/library-page.server.ts",
+                "digest": "e65babf8b69872a1390b603d66b9126e238d1fa185ab952a1376fe7e89d5e881"
+              },
+              {
+                "ref": "web/app/lib/workbench-copy.ts",
+                "digest": "174618ffc6c0a05edd2bbf3f5ff01696f3eee3aa0b5dd7ee6a65bd13083dd8b2"
+              },
+              {
+                "ref": "web/app/routes/library.tsx",
+                "digest": "6da6021bb8fa4ba613584922ca90eddb96104cb4c6a08ff17d7bbb1313e77887"
+              },
+              {
+                "ref": "web/app/routes/workbench.tsx",
+                "digest": "40924ceeee754302198415fbc0c9c013d90b23e0f5269ae1195693fdc7de4dd3"
+              },
+              {
+                "ref": "web/data/schema-v9.sql",
+                "digest": "c8a5b7453727333dc7ab5bdfc0031792f619420c514e7a33514ded75f81ffc8f"
+              },
+              {
+                "ref": "web/data/workbench.ts",
+                "digest": "409691d286631702bc86f94bc38c77f325ca1d53ba377aa124b2b891587676a6"
+              },
+              {
+                "ref": "web/scripts/verify-automatic-skills-local.ts",
+                "digest": "50cd36619b9ca5b924bffa53e3b8bae4224d361491a99b786799440054a5ccaf"
+              },
+              {
+                "ref": "web/scripts/verify-general-local.ts",
+                "digest": "dbc17db30357d3e4e25f4f17c4cf561cd0676573f870f7e80e7ef0109b28ff54"
+              },
+              {
+                "ref": "web/server/data-migrate.ts",
+                "digest": "cc40ffe03aa0271ab5b7487132df881d8f5a0224ed561620dcaf03242be819e5"
+              },
+              {
+                "ref": "web/shared/workbench-contracts.ts",
+                "digest": "1fc6717c2205e8874d00f52963a7cab55d5e574ef9228e5c84bf702c0d0d6060"
+              },
+              {
+                "ref": "web/tests/browser/library.spec.ts",
+                "digest": "ce2f6d52f57f4d468161978ac81411c4fea5007fd572a4fbbedb5cb31ef8ff8d"
+              },
+              {
+                "ref": "web/tests/browser/workbench.spec.ts",
+                "digest": "73148e18f715fa7229a9d4b177da822ae40f5c247b1688423a831e529528f0e8"
+              },
+              {
+                "ref": "web/tests/workbench-api.test.ts",
+                "digest": "a1094dcab119daed239b1f94e23f01879e96dec060e4426fd52e5bc9168b0928"
+              },
+              {
+                "ref": "web/tests/workbench.test.ts",
+                "digest": "0a4c5cab74dd4b1a15d67830a68847334ffa6b22b280d8edc772b7f770a5bf2c"
+              },
+              {
+                "ref": "web/tests/workspaces.test.ts",
+                "digest": "dcc3dc3085c120941f2e736f7869af3bff2166ae54276a6150990a99f471d93a"
+              }
+            ],
+            "version": "bc0a631cf5cf91dc4f594dcf1751754e9280843c96ccf40dbed18562241e909d"
+          }
+        ],
+        "report": "標準エージェント、自動スキル読込、slash指定を実装。無課金試験・別モデル2担当レビューの修正・実モデル5区間が成功。PR22提出とローカル反映済み。CI/マージはPRで追跡し、定期実行の既存保留は別unitに残す。",
+        "refs": [
+          {
+            "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            "digest": "7e95e108a08cb74c659ebbc230f1677b571186cfaa38e7ec30c0dd42c6027bed"
+          }
+        ],
+        "children": [],
+        "active": true,
+        "obsoleteReason": "",
+        "successor": null,
+        "createdBy": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "at": "2026-10-08T04:01:39.422Z",
+        "acceptance": {
+          "state": "accepted",
+          "actor": {
+            "actor": "parent",
+            "session": "workbench-parent-1"
+          },
+          "reason": "契約に対する成果物、ローカル実行と独立停止、公開PR22を照合した。モデル選択精度の保証や未承認の定期実行へ範囲を広げず、既存料金・認可・旧履歴互換を維持している。",
+          "at": "2026-10-08T04:01:47.229Z"
+        }
+      },
+      "at": "2026-10-08T04:01:47.229Z"
     }
   ]
 }
