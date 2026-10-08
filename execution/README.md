@@ -22,7 +22,8 @@ workerはcontrollerのPod identityだけを許可する固定イメージを使�
 | `controller_id` | claimを所有するcontrollerの識別子 |
 | `allowed_hosts` | モデル接続時だけ許可するホスト |
 | `model_gateway` | 対話実モデル用enabledとapi_key_path。未設定/falseは実モデル送信禁止 |
-| `workbench` | enabled、model_enabled、python_enabled、code_image。code用固定イメージと開始許可 |
+| `workbench` | enabled、model_enabled、python_enabled、code_image、legacy_runtime_images。旧回答待ち依頼のruntime image別Adapterを保持 |
+| `skill_storage` | store_id、endpoint、bucket、region、force_path_style、allow_insecure_http、access_key_id_path、secret_access_key_path。controller専用の読取り資格 |
 
 DBは外部配置できます。設定にKubernetes内のDBを必須としません。ローカル配備スクリプトだけはDockerの`localhost:55432`を対象とし、Podからは`host.docker.internal`へ接続します。外部DBでは環境に合う設定・資格情報の配備を別途用意してください。
 
@@ -36,7 +37,7 @@ v8のworkbenchは、`ax-runtime`のモデル判断と`ax-code`のPython実行を
 
 管理者は受付を閉じ、Web/APIと旧controllerを停止し、DBを保全してから `prepare-execution.ts` でv8と限定関数権限を適用します。続けて `ax_workbench_control` に確認済みのruntime/code image、`code_profile='host-quota-8m-v1'`、`python_enabled=true`、`trial_enabled=false` を設定します。既存の未解決runがある場合は先に回収します。Python許可は実Actorでの隔離・入出力・cleanup確認後に限ります。
 
-`deploy-execution.ts --deploy` はDB設定と固定digestを照合し、両atespaceへのモデル鍵注入を禁止し、モデルGatewayを閉じて配備します。限定した有料検証では、承認済み費用枠の範囲でDBのtrial gateと `--enable-model` を同時に有効にし、終了後に両方を閉じます。既存の2,000円総上限、今回の0.05 USD停止条件を自動で引き上げません。
+`deploy-execution.ts --deploy` はDB設定と固定digestを照合し、両atespaceへのモデル鍵注入を禁止し、モデルGatewayを閉じて配備します。通常利用でAI接続を有効にする場合は、承認済み費用枠の範囲でDBのtrial gateと `--enable-model` を同時に有効にします。検証が終わっただけで通常利用の接続を閉じません。既存の2,000円総上限、今回の0.05 USD停止条件を自動で引き上げません。
 
 codeの完了には通常のdeny・停止に加え、正式Actor APIの `code_cleanup` が必要です。actor UID・worker UID・worker起動世代・image・profileを検査し、host上のrunsc、残存process、quota mountの回収証拠をPGへ保存します。workerを失った場合や証拠が欠けた場合は成功にせず保留します。`inspect -code` で正式な停止・cleanupを読み戻せます。
 
@@ -165,3 +166,11 @@ AXには[管理対象領域の注入禁止patch](../ax-local/patches/README.md)�
 実usageが欠けるHTTP失敗、timeout、不完全な本文は予約を残して保留する。HTTP処理が終了しstartが確認済みのinteractive区間に限り、同じ有効claimでdeny/suspendを行うが、未知usageの予約・全体枠は解放しない。create/resumeの不明結果やlease失効・プロセス取消はこの停止分岐へ入れず、管理者の復旧確認を必要とする。失敗HTTPを無課金とは見なさない。レスポンス本文込み64KiB、各HTTP最大25秒かつroot残時間内、redirectと環境proxyなし、再試行なし。秘密、エラー本文、思考内容をログへ出さない。生成に必要な本文はGoogleへ送信される。
 
 概算は標準テキスト入力0.25 USD、思考込み出力1.50 USD/100万tokenで、cache割引は見込まない。countTokens自体の無料明記は未確認であり、0.01 USDの概算停止ガードを全請求保証とは扱わない。[共有契約と公式根拠](../.space/tasks/ax-agent-model/contract.md)に条件を記載する。検証後はmodel gateを閉じる。実モデル接続の稼働証拠は親の[検証記録](../.space/tasks/ax-agent-model/verification.md)で別途管理する。
+
+## 登録スキルのファイル原本
+
+schema v11の新規依頼は、必要になったスキルの公開版・原本manifest・ファイルhashをcontext v2に固定します。Goは現在の所属・利用権限とclaimをDBで再確認し、S3からmanifestと選択済みファイルだけを読み、size/hashを照合してAX Taskへ搬送します。Taskはsealで再検証し、`SKILL.md` と資料を読取り専用のディレクトリへ置きます。本文や補助資料を読む時点と回数は既存の段階読込みを維持します。
+
+ローカル設定の生成元は `ax-local/.state/object-storage/controller.env` です。deploy helperは読取り専用資格だけをcontrollerのSecretとして配置し、AX Taskや隔離Python Taskには渡しません。旧context v1と保存済みimageはそのまま再開できます。helperは回答待ち・稼働中の旧rootが参照するimageを最大16件まで許可リストへ残します。
+
+更新時は受付とwriterを止め、未解決実行がないことを確認し、DBと原本を対で保全します。新しいAPI・controller・runnerとschema v11をそろえてから受付を再開してください。保存先の起動・IAM・復元は[専用ストレージ手順](../ax-local/object-storage/README.md)、実測は[今回の検証記録](../.space/tasks/ax-deep-agents/verification.md)を参照します。新形式の保存を始めた後に旧APIだけへ戻すことはできません。

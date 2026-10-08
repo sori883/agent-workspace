@@ -11,11 +11,13 @@ import time
 
 if __package__:
     from . import runner
+    from . import workbench_skills
     from .mailbox import read_file, write_once
     from .workbench_mailbox import WorkbenchMailbox
     from .workbench_protocol import CHUNK_BYTES, DEFINITION_BYTES, ProtocolError, decode_base64, decode_frame, fields, integer, json_bytes, load_json, validate_definition, validate_envelope, validate_result, validate_run_id
 else:
     import runner
+    import workbench_skills
     from mailbox import read_file, write_once
     from workbench_mailbox import WorkbenchMailbox
     from workbench_protocol import CHUNK_BYTES, DEFINITION_BYTES, ProtocolError, decode_base64, decode_frame, fields, integer, json_bytes, load_json, validate_definition, validate_envelope, validate_result, validate_run_id
@@ -119,10 +121,30 @@ def definitions(root, saved):
     return result
 
 
+def skill_file_chunk(root, encoded):
+    value = fields(decode_frame(encoded), 'run_id descriptor_sha256 skill_id path index content_base64')
+    with locked(root) as directory:
+        saved = envelope(root, value['run_id'])
+        if value['descriptor_sha256'] != saved['request']['descriptor_sha256']:
+            raise ProtocolError('SkillDescriptorMismatch')
+        integer(value['index'], 0, 0)
+        metadata = workbench_skills.bound_file(saved, value['skill_id'], value['path'])
+        raw = decode_base64(value['content_base64'], CHUNK_BYTES)
+        workbench_skills.checked_bytes(raw, metadata)
+        name = workbench_skills.chunk_name(value['skill_id'], value['path'])
+        if (root / 'sealed').exists() or (root / 'start').exists():
+            if read_file(directory, name, CHUNK_BYTES) != raw:
+                raise ProtocolError('SealedSkillConflict')
+        else:
+            replay_write(directory, name, raw)
+    return {'run_id': value['run_id'], 'state': 'staged'}
+
+
 def seal(root, run_id):
     with locked(root) as directory:
         saved = envelope(root, run_id)
         definitions(root, saved)
+        workbench_skills.materialize(root, saved)
         replay_write(directory, 'sealed', saved['request']['descriptor_sha256'].encode('ascii'))
     return {'run_id': run_id, 'state': 'sealed'}
 
@@ -137,6 +159,8 @@ def start(root, run_id):
         saved = envelope(root, run_id)
         require_sealed(root, saved)
         definitions(root, saved)
+        if saved['workbench']['descriptor'].get('skill_context', {}).get('version') == 2:
+            workbench_skills.hydrate_context(saved, root)
         if saved['workbench']['remaining_ms'] <= 0 or (root / 'attempted').exists():
             raise ProtocolError('WorkbenchNotStartable')
         write_once(directory, 'start', run_id.encode('ascii'))
@@ -185,6 +209,25 @@ def reply(root, encoded):
     return WorkbenchMailbox(root, run_id).respond(encoded)
 
 
+class SkillContextTooLarge(ProtocolError):
+    pass
+
+
+def check_prompt_capacity(root, saved):
+    if saved['workbench']['descriptor'].get('skill_context', {}).get('version') != 2:
+        return
+    if __package__:
+        from .adapters.workbench import load_skills, prompt_value
+    else:
+        from adapters.workbench import load_skills, prompt_value
+    try:
+        json_bytes(prompt_value(saved, definitions(root, saved), load_skills(saved), root), 40960)
+    except ProtocolError as error:
+        if str(error) == 'JsonTooLarge':
+            raise SkillContextTooLarge('skill_context_too_large') from None
+        raise
+
+
 def execute(root, timeout=300):
     with locked(root) as directory:
         saved = envelope(root)
@@ -197,6 +240,7 @@ def execute(root, timeout=300):
               'error_type': None, 'summary': '', 'usage': None, 'estimated_usd': None}
     process = None
     try:
+        check_prompt_capacity(root, saved)
         (root / 'output').mkdir(mode=0o700)
         process = subprocess.Popen([sys.executable, str(Path(__file__).resolve()), '--root', str(root), '_adapter', run_id],
                                    stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
@@ -233,6 +277,9 @@ def execute(root, timeout=300):
         if process is not None:
             runner._kill_group(process)
         result.update(status='failed', exit_code=1, error_type=type(error).__name__, summary='')
+        if isinstance(error, SkillContextTooLarge):
+            result.update(error_type='skill_context_too_large',
+                usage={'prompt_token_count': 0, 'candidates_token_count': 0, 'thoughts_token_count': 0, 'total_token_count': 0, 'model_call_count': 0}, estimated_usd=0)
         try:
             validate_result(result)
         except ProtocolError:
@@ -263,7 +310,7 @@ def run_adapter(root, run_id):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--root', type=Path, default=Path('/workspace/task'))
-    parser.add_argument('command', choices=('stage', 'definition-chunk', 'seal', 'start', 'status', 'collect', 'mailbox', 'reply', '_adapter'))
+    parser.add_argument('command', choices=('stage', 'definition-chunk', 'skill-file-chunk', 'seal', 'start', 'status', 'collect', 'mailbox', 'reply', '_adapter'))
     parser.add_argument('value')
     args = parser.parse_args()
     root = args.root.absolute()
@@ -271,7 +318,7 @@ def main():
         if args.command == '_adapter':
             run_adapter(root, args.value)
             return 0
-        operation = {'stage': stage, 'definition-chunk': definition_chunk, 'seal': seal, 'start': start, 'status': status,
+        operation = {'stage': stage, 'definition-chunk': definition_chunk, 'skill-file-chunk': skill_file_chunk, 'seal': seal, 'start': start, 'status': status,
                      'collect': collect, 'mailbox': mailbox, 'reply': reply}[args.command]
         print(json_bytes(operation(root, args.value)).decode('utf-8'))
         return 0

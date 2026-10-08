@@ -54,6 +54,8 @@ type Executor interface {
 }
 
 type Controller struct {
+	SkillObjects           SkillObjectReader
+	WorkbenchRuntimes      map[string]Executor
 	WorkbenchRuntime       Executor
 	WorkbenchCode          Executor
 	WorkbenchRuntimeImage  string

@@ -1,0 +1,13 @@
+revision	updated_at	id	parent	owner	attempt	state	acceptance	acceptance_valid
+73	2026-10-08T14:26:04.325Z	DA-ROOT		coordinator	1	pending	pending	false
+73	2026-10-08T14:26:04.325Z	DA-01	DA-ROOT	coordinator	1	pending	pending	false
+73	2026-10-08T14:26:04.325Z	DA-02	DA-ROOT	coordinator	1	pending	pending	false
+73	2026-10-08T14:26:04.325Z	DA-03	DA-ROOT	coordinator	1	pending	pending	false
+73	2026-10-08T14:26:04.325Z	DA-04	DA-ROOT	coordinator	1	pending	pending	false
+73	2026-10-08T14:26:04.325Z	DA-05	DA-ROOT	coordinator	1	pending	pending	false
+73	2026-10-08T14:26:04.325Z	DA-06	DA-ROOT	coordinator	1	pending	pending	false
+73	2026-10-08T14:26:04.325Z	DA-07	DA-ROOT	coordinator	1	pending	pending	false
+73	2026-10-08T14:26:04.325Z	SS-01	DA-ROOT	implement_skill_storage_infra	1	completed	accepted	true
+73	2026-10-08T14:26:04.325Z	SS-02	DA-ROOT	implement_skill_storage_data	2	completed	accepted	true
+73	2026-10-08T14:26:04.325Z	SS-03	DA-ROOT	map_skill_storage_boundaries	1	completed	accepted	true
+73	2026-10-08T14:26:04.325Z	SS-04	DA-ROOT	coordinator	2	completed	accepted	true

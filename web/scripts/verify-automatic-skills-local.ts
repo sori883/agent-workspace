@@ -126,11 +126,11 @@ async function main() {
       const segments = (await pool.query("SELECT s.run_id,s.attempt_kind,s.descriptor,s.proposal,r.resolved,r.invalid,r.cleanup,r.result FROM ax_agent_segments s JOIN ax_runs r USING(run_id) WHERE s.root_id=$1 ORDER BY s.sequence", [rootId])).rows;
       check(segments.length >= 5 && segments.length <= 9, "progressive_stages_missing");
       const first = segments[0].descriptor.skill_context;
-      check(first.catalog.some((v: any) => v.id === versionId) && first.loaded_skills.length === 0 && first.loaded_files.length === 0, "not_metadata_only_initially");
+      check(first.catalog.some((v: any) => v.id === versionId) && first.loaded_skills.length === 0 && first.loaded_files.length === 0 && (first.objects?.length ?? 0) === 0, "not_metadata_only_initially");
       check(segments.some(s => s.proposal?.kind === "read_skills" && s.proposal.skill_ids.includes(versionId)), "implicit_skill_read_missing");
       check(segments.some(s => s.proposal?.kind === "read_skill_file" && s.proposal.skill_id === versionId && s.proposal.path === "references/values.csv"), "resource_read_missing");
-      check(segments.some(s => s.descriptor.skill_context?.loaded_skills.some((v: any) => v.id === versionId) && s.descriptor.skill_context.loaded_files.length === 0), "resource_loaded_eagerly");
-      check(segments.some(s => s.descriptor.skill_context?.loaded_files.some((v: any) => v.skill_id === versionId && v.content === resource)), "resource_content_missing");
+      check(segments.some(s => { const context = s.descriptor.skill_context; return context && (context.loaded_skills.some((v: any) => v.id === versionId) || context.objects?.some((v: any) => v.id === versionId && v.loaded_paths.length === 1)) && context.loaded_files.length === 0; }), "resource_loaded_eagerly");
+      check(segments.some(s => { const context = s.descriptor.skill_context; return context?.loaded_files.some((v: any) => v.skill_id === versionId && v.content === resource) || context?.objects?.some((v: any) => v.id === versionId && v.loaded_paths.includes("references/values.csv") && v.files.some((f: any) => f.path === "references/values.csv" && f.sha256 === hash(resource))); }), "resource_content_missing");
       check(segments.every(s => s.resolved && !s.invalid && s.cleanup?.egress_denied && s.cleanup?.suspended && (s.attempt_kind !== "python" || !s.descriptor.skill_context)), "cleanup_or_isolation_mismatch");
       result.server = { ...root, segments: segments.map(s => ({ run_id: s.run_id, kind: s.attempt_kind, proposal: s.proposal?.kind ?? null, estimated_usd: s.result.estimated_usd })) };
     } finally { await pool.end(); }

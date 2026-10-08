@@ -34,6 +34,10 @@ func (c *Controller) selectWorkbench(claim *Claim) (*Controller, error) {
 	if claim.Workbench.AttemptKind == "runtime" {
 		selected.Executor = c.WorkbenchRuntime
 		selected.Image = c.WorkbenchRuntimeImage
+		if claim.Image != selected.Image && c.WorkbenchRuntimes[claim.Image] != nil {
+			selected.Executor = c.WorkbenchRuntimes[claim.Image]
+			selected.Image = claim.Image
+		}
 	} else {
 		selected.Executor = c.WorkbenchCode
 		selected.Image = c.WorkbenchCodeImage
@@ -190,6 +194,9 @@ func (c *Controller) stageWorkbench(ctx context.Context, claim *Claim, executor 
 		return err
 	}
 	if w.AttemptKind == "runtime" {
+		if err := c.stageSkillObjects(ctx, claim, executor); err != nil {
+			return err
+		}
 		for _, f := range w.Descriptor.DefinitionManifest {
 			hash := sha256.New()
 			for i := 0; i < (f.SizeBytes+native.WorkbenchChunkBytes-1)/native.WorkbenchChunkBytes; i++ {

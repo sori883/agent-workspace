@@ -22,6 +22,7 @@ import { createRuntime } from "../api/runtime";
 import { parseApiSettings, type ApiSettings } from "../api/settings";
 import { postgresOptions } from "../api/postgres";
 import workerAdapter from "../api/worker";
+import { startSkillObjectFixture } from "./helpers/skill-object-fixture";
 
 const schema = `runtime_test_${randomBytes(8).toString("hex")}`;
 const directory = mkdtempSync(join(tmpdir(), "ax-worker-test-"));
@@ -29,6 +30,7 @@ let admin: pg.Pool;
 let pool: pg.Pool;
 let settings: ApiSettings;
 let fixture: Awaited<ReturnType<typeof startOidcFixture>>;
+let skillObjects: Awaited<ReturnType<typeof startSkillObjectFixture>>;
 let worker: Miniflare;
 let workerOptions: ConstructorParameters<typeof Miniflare>[0];
 let workerConnectionString: string;
@@ -49,10 +51,11 @@ before(async () => {
   admin = createPool(auth);
   await admin.query(`CREATE SCHEMA ${schema}`);
   fixture = await startOidcFixture(auth.clientSecret);
+  skillObjects = await startSkillObjectFixture();
   const { caPath, ...database } = auth.database;
   settings = parseApiSettings({ apiOrigin: `http://127.0.0.1:${port}`, apiToken: randomBytes(32).toString("hex"),
     identity: { issuer: fixture.issuer, clientId: auth.clientId, audience: auth.audience }, databaseSchema: schema,
-    database: { ...database, ca: caPath ? readFileSync(caPath, "utf8") : null },
+    database: { ...database, ca: caPath ? readFileSync(caPath, "utf8") : null }, skillStorage: skillObjects.settings,
     image: JSON.parse(readFileSync(new URL("../../ax-local/versions.json", import.meta.url), "utf8")).runner_task });
   pool = new pg.Pool(postgresOptions(settings));
   await migrateAuth(pool);
@@ -107,6 +110,7 @@ async function stopWorker() {
 after(async () => {
   if (worker) await stopWorker();
   await fixture?.close();
+  await skillObjects?.close();
   await pool?.end();
   if (admin) { await admin.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`); await admin.end(); }
   rmSync(directory, { recursive: true, force: true });
@@ -219,6 +223,26 @@ test("workerd and Node share workspace idempotency and one-time invitation token
   assert.equal(accepted.status,200);
   const detail = await (await request("node", `/v1/workspaces/${first.workspace.id}`, bob)).json() as {workspace:{access_level:string};invitations:unknown[]};
   assert.equal(detail.workspace.access_level,"member"); assert.deepEqual(detail.invitations,[]);
+});
+
+test("Node and workerd save and publish skill files through the portable S3 transport", async () => {
+  for (const runtime of ["node", "worker"] as const) {
+    const content = { name: `portable-${runtime}`, description: "File storage integration", instructions: `Only in files: ${runtime}`, files: [{ path: "references/example.md", content: "sample resource" }] };
+    const saved = await request(runtime, "/v1/definitions", alice, { key: randomUUID(), kind: "skill", visibility: "personal", content });
+    assert.equal(saved.status, 200, `${runtime}: ${await saved.clone().text()}, operations=${skillObjects.operations}`);
+    const mutation = await saved.json() as { definition: { id: string; revision: number } };
+    const read = await request(runtime, `/v1/definitions/${mutation.definition.id}`, alice);
+    assert.equal(read.status, 200);
+    assert.deepEqual((await read.json() as { draft: { content: unknown } }).draft.content, content);
+    assert.equal((await request(runtime, `/v1/definitions/${mutation.definition.id}`, bob)).status, 404);
+    const published = await request(runtime, `/v1/definitions/${mutation.definition.id}/publish`, alice, { key: randomUUID(), expected_revision: mutation.definition.revision });
+    assert.equal(published.status, 200, await published.clone().text());
+    const row = (await pool.query("SELECT draft FROM ax_definitions WHERE id=$1", [mutation.definition.id])).rows[0].draft;
+    assert.equal(row.source.type, "skill-object-v1");
+    assert.equal(row.instructions, undefined);
+    assert.ok([...skillObjects.objects.entries()].some(([key, bytes]) => key.includes(mutation.definition.id) && key.endsWith("/SKILL.md") && bytes.toString().includes(content.instructions)));
+  }
+  assert.ok(skillObjects.operations.includes("PUT") && skillObjects.operations.includes("GET"));
 });
 
 test("disabled identities are refused by both runtimes", async () => {

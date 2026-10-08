@@ -144,7 +144,7 @@ test("removed membership and revoked token cannot revive old roots",async()=>{
  await new AgentRepository(pool,image).revoke(owner,token);await assert.rejects(begin(),error("agent_grant_revoked"));
 });
 test("public definition versions are pinned and every use reauthorizes dependencies",async()=>{
- const defs=new DefinitionRepository(pool);const skill=await defs.create(owner,wid,{key:randomUUID(),kind:"skill",visibility:"workspace",content:{name:"csv",description:"集計",instructions:"CSVを集計",files:[]}});
+ const defs=new DefinitionRepository(pool, undefined, { legacyWrites: true });const skill=await defs.create(owner,wid,{key:randomUUID(),kind:"skill",visibility:"workspace",content:{name:"csv",description:"集計",instructions:"CSVを集計",files:[]}});
  const sv=(await defs.publish(owner,wid,skill.definition.id,{key:randomUUID(),expected_revision:skill.definition.revision!})).version!;
  const agent=await defs.create(owner,wid,{key:randomUUID(),kind:"agent",visibility:"workspace",content:{name:"担当",instructions:"集計する",skill_version_ids:[sv.id],allowed_tools:["python"]}});
  const av=(await defs.publish(owner,wid,agent.definition.id,{key:randomUUID(),expected_revision:agent.definition.revision!})).version!;
@@ -160,7 +160,7 @@ test("legacy preview and empty-effect cancel continue working after v8",async()=
 });
 
 test("standalone skill and reversed input selection keep descriptor order",async()=>{
- const defs=new DefinitionRepository(pool),item=await defs.create(owner,wid,{key:randomUUID(),kind:"skill",visibility:"personal",content:{name:"csv",description:"集計",instructions:"集計する",files:[]}});
+ const defs=new DefinitionRepository(pool, undefined, { legacyWrites: true }),item=await defs.create(owner,wid,{key:randomUUID(),kind:"skill",visibility:"personal",content:{name:"csv",description:"集計",instructions:"集計する",files:[]}});
  const version=(await defs.publish(owner,wid,item.definition.id,{key:randomUUID(),expected_revision:item.definition.revision!})).version!;
  const f1=await upload(Buffer.from("a")),f2=await upload(Buffer.from("b"));await pool.query("UPDATE ax_workbench_control SET python_enabled=true");
  await begin({skill_version_ids:[version.id],input_file_ids:[f1,f2]});const c=await start(),p=python(["input_2","input_1"]);
@@ -259,7 +259,7 @@ test("Python proposal enforces source, selected files, output bytes and safe nam
 });
 
 async function publishedSkill(options:{user?:string;workspace?:string;visibility?:"personal"|"workspace";name?:string;description?:string;instructions?:string;files?:{path:string;content:string}[]}={}){
- const defs=new DefinitionRepository(pool),user=options.user??owner,workspace=options.workspace??wid;
+ const defs=new DefinitionRepository(pool, undefined, { legacyWrites: true }),user=options.user??owner,workspace=options.workspace??wid;
  const created=await defs.create(user,workspace,{key:randomUUID(),kind:"skill",visibility:options.visibility??"personal",content:{name:options.name??"test",description:options.description??"相談時に使う",instructions:options.instructions??"本文だけの指示",files:options.files??[]}});
  const published=await defs.publish(user,workspace,created.definition.id,{key:randomUUID(),expected_revision:created.definition.revision!});
  return {definition:published.definition,version:published.version!,defs};
