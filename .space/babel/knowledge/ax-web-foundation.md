@@ -19,9 +19,10 @@ sources:
   - resource: .space/tasks/ax-portable-api/verification.md
   - resource: .space/tasks/ax-workspace-access/ownership.md
   - resource: .space/tasks/ax-agent-workbench/general-agent-ui.md
+  - resource: .space/tasks/ax-agent-workbench/automatic-skills.md
 generated: 
   by: agent:codex
-  at: 2026-10-08T01:06:00.062Z
+  at: 2026-10-08T03:53:45.664Z
 ---
 # ローカルWebの境界と非同期実行
 
@@ -55,9 +56,13 @@ API/business layer、SQL、native adapter、配備設定に対応する図であ
 
 ## 現在の依頼画面（2026-10-08）
 
-Workspace一覧の主導線は `/workbench` の「新しい依頼」。標準エージェントは添付なしの相談・文章作成を扱い、ファイルと追加skillは任意のpanelで選ぶ。組み込み一覧は製品catalogを表示し、登録した設定は公開版を指定する利用リンクから選択できる。GETは実行せず、送信時の本人・所属・公開版の再検証を維持する。
+Workspace一覧の主導線は `/workbench` の「新しい依頼」。標準エージェントだけを使い、添付なしの相談・文章作成にも対応する。スキルは利用可能な公開版の概要から自動で選び、必要な指示・補助資料を順に読む。入力欄の行頭`/`で公開版を明示でき、選択を外せば自動利用へ戻る。ファイル添付は任意のpanelで行う。
 
-`/` の継続チャット、`/agent`、`/tasks` と履歴は「履歴・設定など」から利用できる。v2の一依頼を完了後に自動再開する処理は追加していない。新しい依頼へ文脈を自動継承しないことを画面に明記する。入力panelの開閉は実行方式や費用・外部送信への同意を隠さない。経緯と検証は `.space/tasks/ax-agent-workbench/general-agent-ui.md`。
+「スキル」一覧は組み込みcatalogと本人用・Workspace共有の登録スキルを表示する。公開版の利用リンクは版を固定し、GETでは実行せず送信時に再認可する。スキルや資料の読み込み記録と版はapp PostgreSQL、製品同梱の指示は固定Runtime imageに保存する。具体的な上限と旧rootの互換性は[ランタイムの決定](../decisions/systems/ax/agent-runtime.md)を参照する。
+
+`/` の継続チャット、`/agent`、`/tasks` と履歴は「履歴・設定など」から利用できる。旧エージェント定義は閲覧用に残し、新規依頼の選択・登録・編集画面には使わない。v2の完了した依頼から新しい依頼へ文脈を自動継承しない。実行方式や費用・外部送信への同意は依頼画面に表示する。
+
+この節は2026-10-08の `codex/automatic-skills` に対応する。根拠と検証範囲は `.space/tasks/ax-agent-workbench/automatic-skills.md`。旧画面の経緯は同ディレクトリの `general-agent-ui.md` に残す。
 
 ## 責務と起動
 

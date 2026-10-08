@@ -15,7 +15,7 @@ export function Workspace({ title, intro, children, sidebar, workspaceName, chat
       <aside className="sidebar run-sidebar"><p className="sidebar-label">WORKSPACE</p>
         <nav aria-label="メインナビゲーション">
           <a href={scope.workspaceId ? scopeHref("/workbench", scope) : "/workspaces"} aria-current={pathname === "/workbench" ? "page" : undefined}>新しい依頼</a>
-          <a href={scope.workspaceId ? scopeHref("/library", scope) : "/workspaces"} aria-current={pathname.startsWith("/library") ? "page" : undefined}>スキル・エージェント</a>
+          <a href={scope.workspaceId ? scopeHref("/library", scope) : "/workspaces"} aria-current={pathname.startsWith("/library") ? "page" : undefined}>スキル</a>
           <a href={scope.workspaceId ? scopeHref("/files", scope) : "/workspaces"} aria-current={pathname === "/files" ? "page" : undefined}>作業ファイル</a>
           <details className="secondary-nav" open={["/", "/agent", "/tasks", "/connection", "/account"].includes(pathname) || pathname.startsWith("/runs") || pathname.startsWith("/workspaces")}>
             <summary>履歴・設定など</summary>

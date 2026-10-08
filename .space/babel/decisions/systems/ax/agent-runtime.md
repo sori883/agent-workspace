@@ -16,6 +16,8 @@ code_refs:
   - ax-local/code_runtime/
   - web/app/routes/workbench.tsx
   - web/app/routes/library.tsx
+  - web/data/schema-v9.sql
+  - web/app/components/skill-composer.tsx
 sources: 
   - resource: docs/agent-runtime-design.md
   - resource: .space/tasks/ax-agent-runtime/task.md
@@ -33,9 +35,11 @@ sources:
   - resource: .space/tasks/ax-agent-workbench/task.md
   - resource: .space/tasks/ax-agent-workbench/evidence/paid-trial4.json
   - resource: .space/tasks/ax-agent-workbench/general-agent-ui.md
+  - resource: .space/tasks/ax-agent-workbench/automatic-skills-contract.md
+  - resource: .space/tasks/ax-agent-workbench/automatic-skills.md
 generated: 
   by: agent:codex
-  at: 2026-10-08T01:06:00.000Z
+  at: 2026-10-08T03:59:11.081Z
 ---
 # AX Task内の対話型ランタイムと外部の制御基盤
 
@@ -69,9 +73,25 @@ v2は承認された限定profileとして1root6モデル/8tool（Python3）・3
 
 利用者はファイル集計専用に見える標準エージェントを汎用化し、組み込みスキル一覧と登録後の利用導線を求めた。v2の標準指示に相談・文章作成・要約・計画・計算を追加し、添付やPythonを不要な依頼へ要求しない。実際の道具と出力形式、予算・再送・隔離条件は広げない。
 
-`builtin_catalog.json`をRuntimeとWeb表示の共通原本にする。`general-v1`は常時、`tabular-v1`はCSV/XLSXや既存の結果ファイルを参照する区間に適用する。Runtimeは固定pathと本文SHA256を検証し、実際に適用したID/hashをモデル入力へ記す。配備する固定image内catalogとWeb原本の一致は別途照合する。共有ソースだけでは異なる配備版の一致を保証しない。
+`builtin_catalog.json`をRuntimeとWeb表示の共通原本にする。当初は`general-v1`を常時、`tabular-v1`をCSV/XLSXや既存の結果ファイルを参照する区間に適用した。v9の新規依頼は後述の段階的な読込へ変更した。Runtimeは固定pathと本文SHA256を検証し、実際に適用したID/hashをモデル入力へ記す。配備する固定image内catalogとWeb原本の一致は別途照合する。共有ソースだけでは異なる配備版の一致を保証しない。
 
 主入口は「新しい依頼」。ファイルと追加スキルは任意で開き、登録設定の公開後には「この版で依頼する」から固定公開版を選択する。GETで実行せず、送信時に再認可する。旧チャット・旧エージェント対話・実行記録は補助導線と既存URLに保持する。v2は一依頼の有限rootを維持し、完了後の新しい依頼へ文脈を自動継承しない。会話とrootの新しい関連表やThread保存は今回追加しない。詳細な比較と検証範囲は `.space/tasks/ax-agent-workbench/general-agent-ui.md`。
+
+## 標準エージェントへの統一と段階的なスキル読込（2026-10-08）
+
+利用者はエージェント設定と事前のスキル選択を通常利用に要求しないよう求めた。v9では新規依頼を標準エージェントへ統一し、本人が現在のWorkspaceで使える公開スキルのID・名前・説明を候補として固定する。Runtimeは内容を判断して `read_skills`、必要なら `read_skill_file` を提案し、読み込んだ指示を使って続行する。`/`で明示した版の本文は最初から渡す。登録した全本文を最初からモデルへ送らず、下書きも候補にしない。
+
+PGは `ax_agent_roots.skill_catalog` と追記専用の `ax_workbench_skill_loads` を正本とし、各Runtime区間の不変descriptorへ概要・読込済み本文・ファイル目録・取得済み資料だけを写す。補助資料はスキル本文を読んだ後、宣言済みpath単位で読む。Python区間にはskill_contextを渡さない。候補と読込済み版を開始・送信・効果の前に再認可し、候補にあっても未利用の定義が廃止された場合は安全側に停止する。
+
+同じTask内で複数のモデル・読込操作を行う案と比較し、既存の「モデル1回と提案1回を精算・実停止して次Taskへ進む」方式を採用した。既存の費用台帳とsequence契約を維持できる一方、読込ごとにTaskとモデルの往復が増え、遅延と呼出数を使う。既存rootのdescriptor/hashと旧chunk搬送は保持し、新規方式へ途中移行しない。旧agent指定は新規受付で拒否し、受付済み再送・回答継続は維持する。
+
+自動候補は最大32件かつUTF-8 JSON8KiB、明示指定と動的読込は最大8スキル（常時のgeneralを除く）、descriptorは40KiB。超過候補の件数は画面とモデルへ示し、候補外は`/`のページ送りから明示できる。入力6000トークンと128余裕の事前計数も維持し、本文・資料が多すぎる場合は短縮案内付きで停止する。権限・道具・既存root予算は増やさない。
+
+組み込みは `general-v1` を常時適用し、`tabular-v1` は新規方式では自動読込または明示指定で使う。画面はスキル登録・一覧へ絞り、旧エージェント定義は閲覧用に保持する。公開版の内容確認と送信は同じ不変版を参照する。初期実装ではslashの内容確認が現在下書きを開く不一致を独立レビューで検出し、版指定の閲覧へ修正した。
+
+合成した本人用スキル1件の実モデル試験では、概要→主本文→補助CSV→隔離Python→成果物取得の5区間を一度の送信で確認した。4モデル/1Python、実作業122.804秒。固定8KiB/40KiBの上限と既存予算を緩めず、5区間すべての実停止と通信拒否も独立観測した。詳細は `automatic-skills-paid.json` を参照する。
+
+根拠は `codex/automatic-skills` のv9変更、`.space/tasks/ax-agent-workbench/automatic-skills-contract.md` と同作業の検証記録。モデルが常に最適なスキルを選ぶことや任意の依頼への追従は保証しない。既存のモデル性能評価は利用者の希望で今回追加しない。
 
 ## 変更した理由と事実の訂正
 
@@ -135,7 +155,7 @@ v2 Runtimeは公開SDKのCustomSystemInstructionsで専用systemを指定する�
 
 Go GatewayのJSON応答schemaは全候補をkind先頭へ固定する。Go mapの辞書順ではPython枝だけinput_aliasesが先頭になり、操作選択より先に枝固有の形を選ぶことになる。schemaのキー順に従うprovider仕様と整合させ、固定順structで出力する。parse後のschemaは修正前と完全等価で、質問/完了/未対応/Pythonの選択肢、必須項目、上限を維持する。countと生成のpayloadと保存SHAも一致させる。モデル内部の枝選択を直接観測したわけではないが、順序修正後の限定試験で初めてPython実行から成果物取得まで成功した。
 
-実モデルによるCSV合計300、Runtime→隔離code→Runtime、画面のダウンロード・再表示・同じWorkspaceの別人の拒否を確認した。2モデル/1Python/実作業72.281秒。Excel・8MiB・隔離境界は固定提案の実AX試験で確認したもので、任意の依頼の成功保証ではない。すべてのTask停止、通信拒否、worker解放と同一世代cleanup、費用精算を別途照合した。試験後は有料gate/鍵mount/専用Secretを閉じる。定期実行は定義・入力の版選択が人間回答待ちで未実装。
+実モデルによるCSV合計300、Runtime→隔離code→Runtime、画面のダウンロード・再表示・同じWorkspaceの別人の拒否を確認した。2モデル/1Python/実作業72.281秒。Excel・8MiB・隔離境界は固定提案の実AX試験で確認したもので、任意の依頼の成功保証ではない。すべてのTask停止、通信拒否、worker解放と同一世代cleanup、費用精算を別途照合した。このCSV試験の終了時には有料gate/鍵mount/専用Secretを閉じた。その後、利用者は通常利用のAI接続を維持する方針へ変更した。現在は既存の料金上限を維持し、各試験の終了だけを理由にサービス全体を無効化しない。定期実行は定義・入力の版選択が人間回答待ちで未実装。
 
 根拠は `.space/tasks/ax-agent-workbench/evidence/paid-trial4.json`、`runtime-custom-system.json`、`gateway-schema-order.json` と独立レビュー。providerの順序仕様は [Google公式資料](https://ai.google.dev/gemini-api/docs/generate-content/structured-output?hl=en)を参照する。
 

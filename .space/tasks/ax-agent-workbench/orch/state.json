@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "revision": 147,
+  "revision": 156,
   "project": "/Users/const/sori883/agent-workspace",
   "coordinator": {
     "actor": "parent",
     "session": "workbench-parent-1"
   },
   "createdAt": "2026-10-07T10:53:37.550Z",
-  "updatedAt": "2026-10-08T01:26:38.018Z",
+  "updatedAt": "2026-10-08T03:59:11.429Z",
   "units": [
     {
       "id": "workbench",
@@ -1682,6 +1682,134 @@
       ],
       "currentAttempt": 1,
       "currentSubmission": "3a5f9749-fcb1-4bef-a7f4-a0369a135ce5",
+      "contractHistory": []
+    },
+    {
+      "id": "automatic-skills",
+      "parent": "workbench",
+      "size": "standard",
+      "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+      "track": "",
+      "owner": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "recorder": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "verifiers": [],
+      "scope": [
+        "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+      ],
+      "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+      "planRef": null,
+      "contractFiles": [],
+      "conditions": [
+        {
+          "id": "delivery",
+          "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+          "purpose": "delivery",
+          "required": true,
+          "allowed": [
+            "pass"
+          ],
+          "target": "result"
+        }
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "version": 9,
+      "contractVersion": 1,
+      "attempts": [
+        {
+          "number": 1,
+          "state": "running",
+          "stages": {
+            "design": {
+              "selection": "execute",
+              "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                  "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                  "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                  "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                }
+              ]
+            },
+            "implement": {
+              "selection": "execute",
+              "reason": "SQL/Runtime/UI/共有型を実装しレビュー修正完了",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                  "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                  "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                }
+              ]
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "Web193・browser13・固定SDK25・Go race/vetと実モデル5区間が成功",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                  "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                  "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                }
+              ]
+            },
+            "review": {
+              "selection": "execute",
+              "reason": "独立した2モデルのP2各1件を修正し双方が解消を再確認",
+              "state": "completed",
+              "refs": [
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                  "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                },
+                {
+                  "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                  "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                }
+              ]
+            },
+            "deliver": {
+              "selection": "execute",
+              "reason": "スキル利用経路の仕様変更",
+              "state": "pending",
+              "refs": []
+            }
+          },
+          "inputs": {
+            "contractVersion": 1,
+            "contractFiles": [],
+            "dependencies": []
+          },
+          "reason": "",
+          "next": "",
+          "resumeRef": null,
+          "createdAt": "2026-10-08T03:27:50.925Z"
+        }
+      ],
+      "currentAttempt": 1,
+      "currentSubmission": null,
       "contractHistory": []
     }
   ],
@@ -27776,6 +27904,1314 @@
         }
       },
       "at": "2026-10-08T01:26:38.018Z"
+    },
+    {
+      "id": "wb-20261008122750789221",
+      "hash": "f4edcda1c1a8fa87959f9fee67a80d1bf75303bcf2cd399f99a7b099657f8ad9",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit add",
+      "request": {
+        "command": "unit add",
+        "id": "automatic-skills",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008122750789221",
+        "input": {
+          "parent": "workbench",
+          "size": "standard",
+          "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+          "scope": [
+            "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+          ],
+          "owner": {
+            "actor": "parent",
+            "session": "workbench-parent-1"
+          },
+          "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+          "conditions": [
+            {
+              "id": "delivery",
+              "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+              "purpose": "delivery",
+              "required": true,
+              "allowed": [
+                "pass"
+              ],
+              "target": "result"
+            }
+          ],
+          "stages": {
+            "design": {
+              "selection": "execute",
+              "reason": "スキル利用経路の仕様変更"
+            },
+            "implement": {
+              "selection": "execute",
+              "reason": "スキル利用経路の仕様変更"
+            },
+            "verify": {
+              "selection": "execute",
+              "reason": "スキル利用経路の仕様変更"
+            },
+            "review": {
+              "selection": "execute",
+              "reason": "スキル利用経路の仕様変更"
+            },
+            "deliver": {
+              "selection": "execute",
+              "reason": "スキル利用経路の仕様変更"
+            }
+          }
+        }
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 148,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 1,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "pending",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": null,
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T03:27:50.925Z"
+    },
+    {
+      "id": "wb-20261008122750942866",
+      "hash": "8961cbcdb9d13c15b56ecd0978eca7728df0b8ec06f7302a40a0b9b55599924e",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit start",
+      "request": {
+        "command": "unit start",
+        "id": "automatic-skills",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008122750942866",
+        "input": {},
+        "ifVersion": 1,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 149,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 2,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T03:27:50.996Z"
+    },
+    {
+      "id": "wb-20261008123252476337",
+      "hash": "c40bdbdfea1ee5b7b1e4c7cf786379141ad11a0b9fcafab26b368f67af1b5b30",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "design",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008123252476337",
+        "input": {
+          "selection": "execute",
+          "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+          "state": "completed",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+            ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+            ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md"
+          ]
+        },
+        "ifVersion": 2,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 150,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 3,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T03:32:52.682Z"
+    },
+    {
+      "id": "wb-20261008125214900413",
+      "hash": "fbb2778eb46a2beb7a323eac35cb4627288fcce60ccc4e1cf895b77171fc3570",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008125214900413",
+        "input": {
+          "selection": "execute",
+          "state": "running",
+          "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills-contract.md"
+          ]
+        },
+        "ifVersion": 3,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 151,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 4,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T03:52:15.166Z"
+    },
+    {
+      "id": "wb-20261008125215193488",
+      "hash": "de80117d6c2b65bd94de22719203aed5285e79959c3ea6aaf53cceaae0fa75ec",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008125215193488",
+        "input": {
+          "selection": "execute",
+          "state": "running",
+          "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills-contract.md"
+          ]
+        },
+        "ifVersion": 4,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 152,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 5,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T03:52:15.296Z"
+    },
+    {
+      "id": "wb-20261008125215312159",
+      "hash": "3476664e815e830f4ac0cd2171bc8956e9c2a8b561e249dea7ffea149dbac161",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "review",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008125215312159",
+        "input": {
+          "selection": "execute",
+          "state": "running",
+          "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills-contract.md"
+          ]
+        },
+        "ifVersion": 5,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 153,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 6,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T03:52:15.433Z"
+    },
+    {
+      "id": "wb-20261008125911211292",
+      "hash": "f46a425329da8cf4bef0fc7113c20059130593933867204ebf3a7d4995070557",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "implement",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008125911211292",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "SQL/Runtime/UI/共有型を実装しレビュー修正完了",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json"
+          ]
+        },
+        "ifVersion": 6,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 154,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 7,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "SQL/Runtime/UI/共有型を実装しレビュー修正完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T03:59:11.282Z"
+    },
+    {
+      "id": "wb-20261008125911296699",
+      "hash": "d54b7985a6ee63dfb10942713be012957ec492bbb2002cee263a6c1e785b9ada",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "verify",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008125911296699",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "Web193・browser13・固定SDK25・Go race/vetと実モデル5区間が成功",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json"
+          ]
+        },
+        "ifVersion": 7,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 155,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 8,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "SQL/Runtime/UI/共有型を実装しレビュー修正完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "Web193・browser13・固定SDK25・Go race/vetと実モデル5区間が成功",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "主要実装と無課金試験が完了。独立レビューのUI修正と実環境の代表経路を検証中",
+                "state": "running",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T03:59:11.361Z"
+    },
+    {
+      "id": "wb-20261008125911369680",
+      "hash": "c880ad8ae41082c564f918f929705fc6bce919b7da91c7dcd8cc6bd43982d7f8",
+      "actor": {
+        "actor": "parent",
+        "session": "workbench-parent-1"
+      },
+      "command": "unit stage",
+      "request": {
+        "command": "unit stage",
+        "id": "automatic-skills",
+        "stage": "review",
+        "actor": "parent",
+        "session": "workbench-parent-1",
+        "operationId": "wb-20261008125911369680",
+        "input": {
+          "selection": "execute",
+          "state": "completed",
+          "reason": "独立した2モデルのP2各1件を修正し双方が解消を再確認",
+          "refs": [
+            ".space/tasks/ax-agent-workbench/automatic-skills.md",
+            ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json"
+          ]
+        },
+        "ifVersion": 8,
+        "attempt": 1
+      },
+      "affectedUnits": [
+        "automatic-skills"
+      ],
+      "evidence": [],
+      "revision": 156,
+      "data": {
+        "id": "automatic-skills",
+        "parent": "workbench",
+        "size": "standard",
+        "purpose": "標準エージェントとスキルの自動発見・段階的読み込み・スラッシュ指定を利用可能にする",
+        "track": "",
+        "owner": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "recorder": {
+          "actor": "parent",
+          "session": "workbench-parent-1"
+        },
+        "verifiers": [],
+        "scope": [
+          "設計比較、スキル利用契約、DB・Runtime・UIの統合、検証、PR納品とローカル反映"
+        ],
+        "taskRef": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+        "planRef": null,
+        "contractFiles": [],
+        "conditions": [
+          {
+            "id": "delivery",
+            "description": "自動読込、明示指定、標準だけの画面、権限・再送・費用上限が確認され、PRとローカルへ反映済み",
+            "purpose": "delivery",
+            "required": true,
+            "allowed": [
+              "pass"
+            ],
+            "target": "result"
+          }
+        ],
+        "dependencies": [],
+        "exclusions": [],
+        "version": 9,
+        "contractVersion": 1,
+        "attempts": [
+          {
+            "number": 1,
+            "state": "running",
+            "stages": {
+              "design": {
+                "selection": "execute",
+                "reason": "独立候補A/Bと比較レビューからBを採用し、descriptor投影で限定した契約を確定",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills-contract.md",
+                    "digest": "41dbc706fa0e6d39678683f8c838685ab110e1ab9004a20584af8f4009790277"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/a.md",
+                    "digest": "4ba08c86d9eb9632d398527e15e92e554f90afd22ac493002117bae374f1404a"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/design-candidates/automatic-skills/b.md",
+                    "digest": "343f1a6e755cd5ee89b0963a81ce25426f9e008bbb66a9b4a58b4e7241f98ba2"
+                  }
+                ]
+              },
+              "implement": {
+                "selection": "execute",
+                "reason": "SQL/Runtime/UI/共有型を実装しレビュー修正完了",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "verify": {
+                "selection": "execute",
+                "reason": "Web193・browser13・固定SDK25・Go race/vetと実モデル5区間が成功",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "review": {
+                "selection": "execute",
+                "reason": "独立した2モデルのP2各1件を修正し双方が解消を再確認",
+                "state": "completed",
+                "refs": [
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/automatic-skills.md",
+                    "digest": "5e2b8dd2dc8f2c838ec245bc568a1b60d50002b81fe686537306a8f7c5252214"
+                  },
+                  {
+                    "ref": ".space/tasks/ax-agent-workbench/evidence/automatic-skills-paid.json",
+                    "digest": "d4ba8a76f7c99b74b56685cae4ba9528a2ea1a8054582247542c8b7ac68e8dd6"
+                  }
+                ]
+              },
+              "deliver": {
+                "selection": "execute",
+                "reason": "スキル利用経路の仕様変更",
+                "state": "pending",
+                "refs": []
+              }
+            },
+            "inputs": {
+              "contractVersion": 1,
+              "contractFiles": [],
+              "dependencies": []
+            },
+            "reason": "",
+            "next": "",
+            "resumeRef": null,
+            "createdAt": "2026-10-08T03:27:50.925Z"
+          }
+        ],
+        "currentAttempt": 1,
+        "currentSubmission": null,
+        "contractHistory": []
+      },
+      "at": "2026-10-08T03:59:11.429Z"
     }
   ]
 }

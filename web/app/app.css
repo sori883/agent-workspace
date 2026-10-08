@@ -399,6 +399,17 @@ input { font: inherit; }
 .request-options .definition-choice { margin: 0 0 16px; }
 .request-options select { width: 100%; max-width: 100%; }
 .request-selection { overflow-wrap: anywhere; padding: 8px 12px; margin: 8px 0; background: #f0f4ff; border-left: 3px solid var(--accent); }
+.skill-command-menu { border: 1px solid var(--line); border-radius: 4px; padding: 12px; background: #fff; margin-top: 8px; }
+.skill-command-menu > p:first-child { font-weight: 700; margin-top: 0; }
+.skill-command-menu ul { list-style: none; margin: 0; padding: 0; max-height: 260px; overflow-y: auto; }
+.skill-command-menu [role="option"] { padding: 12px; min-height: 48px; cursor: pointer; overflow-wrap: anywhere; border: 2px solid transparent; }
+.skill-command-menu [role="option"][aria-selected="true"] { background: #f0f4ff; border-color: var(--accent); }
+.skill-command-menu [role="option"][aria-disabled="true"] { color: var(--muted); cursor: not-allowed; }
+.skill-command-menu small, .skill-picks small { display: block; font-size: 14px; }
+.skill-picks { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.skill-picks li { display: flex; align-items: center; gap: 8px; padding: 4px 12px; max-width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #f0f4ff; }
+.skill-picks li > span { overflow-wrap: anywhere; min-width: 0; }
+.skill-picks button { flex-shrink: 0; }
 .request-composer .request-mode { margin: 24px 0 8px; }
 .request-mode-note { font-size: 16px; }
 .request-composer .chat-consent label, .request-composer .chat-consent p { font-size: 16px; }

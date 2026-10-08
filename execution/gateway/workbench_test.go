@@ -12,11 +12,14 @@ import (
 	"testing"
 )
 
-func workbenchPreparedFixture(t *testing.T) Prepared {
+func workbenchPreparedFixture(t *testing.T, discovery ...bool) Prepared {
 	t.Helper()
 	root := "11111111-1111-4111-8111-111111111111"
 	w := native.Workbench{Version: 2, AttemptKind: "runtime", ExecutionPolicy: native.WorkbenchPolicy, Mode: "model", ProfileID: ProfileID, RemainingMS: 300000,
 		Descriptor: native.WorkbenchDescriptor{Version: 2, RootID: root, Instruction: "sum", DefinitionManifest: []native.DefinitionRef{}, Inputs: []native.WorkbenchFile{}, Outputs: []native.WorkbenchOutput{}, History: []native.WorkbenchHistory{}}}
+	if len(discovery) > 0 && discovery[0] {
+		w.Descriptor.SkillContext = &native.WorkbenchSkillContext{Version: 1, Catalog: []native.WorkbenchSkillSummary{}, LoadedSkills: []native.WorkbenchLoadedSkill{}, LoadedFiles: []native.WorkbenchLoadedSkillFile{}, BuiltinSkillIDs: []string{}}
+	}
 	descriptor, err := native.CanonicalJSON(w.Descriptor)
 	if err != nil {
 		t.Fatal(err)
@@ -28,6 +31,63 @@ func workbenchPreparedFixture(t *testing.T) Prepared {
 		t.Fatal(err)
 	}
 	return p
+}
+
+func TestWorkbenchSkillSchemaAddsOnlyReadBranchesWithKindFirst(t *testing.T) {
+	p := workbenchPreparedFixture(t, true)
+	var payload struct {
+		Config struct {
+			Schema struct {
+				AnyOf []struct {
+					Properties json.RawMessage `json:"properties"`
+					Required   []string        `json:"required"`
+					Additional bool            `json:"additionalProperties"`
+				} `json:"anyOf"`
+			} `json:"responseJsonSchema"`
+		} `json:"generationConfig"`
+	}
+	if json.Unmarshal(p.Payload, &payload) != nil || len(payload.Config.Schema.AnyOf) != 4 {
+		t.Fatal("missing skill read schema")
+	}
+	for index, want := range [][]string{{"kind", "skill_ids"}, {"kind", "skill_id", "path"}} {
+		branch := payload.Config.Schema.AnyOf[index+2]
+		decoder := json.NewDecoder(bytes.NewReader(branch.Properties))
+		decoder.Token()
+		var keys []string
+		for decoder.More() {
+			token, err := decoder.Token()
+			if err != nil {
+				t.Fatal(err)
+			}
+			keys = append(keys, token.(string))
+			var value any
+			if decoder.Decode(&value) != nil {
+				t.Fatal("invalid property")
+			}
+		}
+		if !reflect.DeepEqual(keys, want) || !reflect.DeepEqual(branch.Required, want) || branch.Additional {
+			t.Fatal("read schema order/shape changed", keys)
+		}
+	}
+}
+
+func TestWorkbenchPreviewIsGenericAndSkillReadsNeedContext(t *testing.T) {
+	root := "11111111-1111-4111-8111-111111111111"
+	w := native.Workbench{Version: 2, AttemptKind: "runtime", ExecutionPolicy: native.WorkbenchPolicy, Mode: "preview", ProfileID: PreviewProfileID, RemainingMS: 300000,
+		Descriptor: native.WorkbenchDescriptor{Version: 2, RootID: root, Instruction: "こんにちは", DefinitionManifest: []native.DefinitionRef{}, Inputs: []native.WorkbenchFile{}, Outputs: []native.WorkbenchOutput{}, History: []native.WorkbenchHistory{}}}
+	raw, _ := native.CanonicalJSON(w.Descriptor)
+	r := native.WorkbenchRequest{SchemaVersion: 2, RunID: "ax-run-0123456789abcdef", RootID: root, Adapter: "interactive", DescriptorSHA256: native.HashBytes(raw)}
+	m := &native.Mailbox{Request: native.MailboxRequest{Version: 2, RunID: r.RunID, Sequence: 1, Kind: "model"}}
+	reply, _, err := RespondWorkbench(r, w, m)
+	if err != nil || bytes.Contains(reply, []byte("集計したい列")) || !bytes.Contains(reply, []byte("操作確認")) {
+		t.Fatal("preview still assumes file aggregation", err)
+	}
+	m.Request.Kind = "tool"
+	m.Request.Sequence = 2
+	m.Request.Body = map[string]json.RawMessage{"kind": json.RawMessage(`"read_skills"`), "skill_ids": json.RawMessage(`["tabular-v1"]`)}
+	if _, _, err = RespondWorkbench(r, w, m); err == nil {
+		t.Fatal("legacy runtime obtained skill read capability")
+	}
 }
 
 func TestWorkbenchWireSchemaChoosesKindBeforeBranchSpecificFields(t *testing.T) {

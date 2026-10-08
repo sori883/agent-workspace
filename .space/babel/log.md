@@ -1,4 +1,9 @@
 ## 2026-10-08
+* **Update**: [AX Task内の対話型ランタイムと外部の制御基盤](decisions/systems/ax/agent-runtime.md).
+* **Update**: [AX Task内の対話型ランタイムと外部の制御基盤](decisions/systems/ax/agent-runtime.md).
+* **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).
+* **Update**: [AX Task内の対話型ランタイムと外部の制御基盤](decisions/systems/ax/agent-runtime.md).
+* **Update**: [AXのモデル利用費を2,000円以内に抑え、成果のない大量送信を禁止する](rules/ax-model-spending.md).
 * **Update**: [ローカルWebの境界と非同期実行](knowledge/ax-web-foundation.md).
 * **Update**: [AX Task内の対話型ランタイムと外部の制御基盤](decisions/systems/ax/agent-runtime.md).
 

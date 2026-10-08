@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { z } from "zod";
-import { agentContentSchema, definitionCreateSchema, definitionListSchema, definitionMutationResultSchema, skillContentSchema, type AgentContent, type DefinitionContent, type DefinitionDetail, type DefinitionList, type SkillContent } from "../../shared/definition-contracts";
+import { definitionCreateSchema, definitionMutationResultSchema, skillContentSchema, type DefinitionContent, type DefinitionDetail, type SkillContent } from "../../shared/definition-contracts";
 import { MAX_DEFINITION_REQUEST_BYTES } from "../../shared/definition-transfer";
 import { readLimitedText } from "../../shared/http";
 import { MAX_RUN_RESPONSE_BYTES, runHttpErrorSchema } from "../../shared/run-contracts";
@@ -9,7 +9,7 @@ import { definitionErrorMessage, definitionKindLabel, definitionVisibilityLabel 
 import { scopeHref, type WorkspaceScope } from "../lib/workspace-scope";
 import { Workspace } from "./workspace";
 
-type Initial = { scope: WorkspaceScope; csrf: string; workspaceName: string | null; detail: DefinitionDetail | null; kind: "skill" | "agent"; visibility: "personal" | "workspace"; content: DefinitionContent; draftKey: string; selectedSkills: Record<string, string>; copied: boolean };
+type Initial = { scope: WorkspaceScope; csrf: string; workspaceName: string | null; detail: DefinitionDetail | null; kind: "skill" | "agent"; visibility: "personal" | "workspace"; content: DefinitionContent; draftKey: string; selectedSkills: Record<string, string>; viewingVersion: boolean; copied: boolean };
 type Mutation = { intent: "create" | "update" | "publish" | "archive"; id?: string; input: object };
 const bytes = (text: string) => new TextEncoder().encode(text).length;
 class DefinitionRequestError extends Error {
@@ -38,20 +38,16 @@ export function DefinitionEditor({ initial }: { initial: Initial }) {
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [confirmArchive, setConfirmArchive] = useState(false);
-  const [skills, setSkills] = useState<DefinitionList | null>(null);
-  const [skillNames, setSkillNames] = useState(initial.selectedSkills);
-  const [skillBusy, setSkillBusy] = useState(false);
-  const [skillError, setSkillError] = useState("");
+  const skillNames = initial.selectedSkills;
   const errorRef = useRef<HTMLDivElement>(null);
   const lock = useRef(false);
   useEffect(() => setHydrated(true), []);
   useEffect(() => { if (error) errorRef.current?.focus(); }, [error]);
   const dirty = JSON.stringify(content) !== saved;
-  const editable = !detail || detail.definition.can_edit && !detail.definition.archived_at;
+  const editable = initial.kind === "skill" && !initial.viewingVersion && (!detail || detail.definition.can_edit && !detail.definition.archived_at);
   const kind = initial.kind;
   const isSkill = kind === "skill";
   const skill = isSkill ? content as SkillContent : null;
-  const agent = !isSkill ? content as AgentContent : null;
   const label = definitionKindLabel[kind];
   const blocked = busy || pending !== null;
 
@@ -72,7 +68,7 @@ export function DefinitionEditor({ initial }: { initial: Initial }) {
     }
   }
   async function mutate(packet: Mutation) {
-    if (lock.current) return;
+    if (!editable || lock.current) return;
     lock.current = true; setBusy(true); setError(""); setStatus(""); setPending(packet);
     try {
       const result = await transfer(packet, definitionMutationResultSchema);
@@ -86,14 +82,14 @@ export function DefinitionEditor({ initial }: { initial: Initial }) {
       setContent(newContent);
       setDetail({ definition: result.definition, draft: result.definition.can_edit ? { revision: result.definition.revision!, content: newContent } : null, version: result.version ?? detail?.version ?? null });
       setSaved(JSON.stringify(newContent));
-      setStatus(packet.intent === "publish" ? `第${result.version!.version}版を公開しました。` : packet.intent === "archive" ? "この設定の利用を終了しました。" : "下書きを保存しました。公開すると実行時に選べるようになります。");
+      setStatus(packet.intent === "publish" ? `第${result.version!.version}版を公開しました。` : packet.intent === "archive" ? "この設定の利用を終了しました。" : "下書きを保存しました。公開すると依頼に応じて自動で使われます。");
       setConfirmArchive(false);
     } catch (cause) { if (cause instanceof DefinitionRequestError && cause.definite) setPending(null); setError(cause instanceof Error ? cause.message : definitionErrorMessage("api_unavailable")); }
     finally { lock.current = false; setBusy(false); }
   }
   function save() {
-    if (pending || lock.current) return;
-    const parsed = (isSkill ? skillContentSchema : agentContentSchema).safeParse(content);
+    if (!isSkill || pending || lock.current) return;
+    const parsed = skillContentSchema.safeParse(content);
     if (!parsed.success) {
       setError(isSkill ? "名前は半角英小文字・数字・ハイフンで64文字以内にし、指示を入力してください。各項目の容量と、補助ファイルのパスの形式・重複を確認してください。" : "名前と指示を入力し、各項目の容量を確認してください。スキルは重複なしで8個まで選べます。");
       return;
@@ -104,26 +100,14 @@ export function DefinitionEditor({ initial }: { initial: Initial }) {
       void mutate({ intent: "create", input });
     }
   }
-  async function loadSkills(before?: string) {
-    if (skillBusy) return;
-    setSkillBusy(true); setSkillError("");
-    try {
-      const page = await transfer({ intent: "list", options: { kind: "skill", filter: visibility === "workspace" ? "workspace" : "all", ...(before ? { before } : {}) } }, definitionListSchema);
-      setSkills(page);
-    } catch (cause) { setSkillError(cause instanceof Error ? cause.message : definitionErrorMessage("api_unavailable")); }
-    finally { setSkillBusy(false); }
-  }
-  function selectSkill(id: string, name: string) {
-    if (!agent || agent.skill_version_ids.includes(id) || agent.skill_version_ids.length >= 8) return;
-    setContent({ ...agent, skill_version_ids: [...agent.skill_version_ids, id] });
-    setSkillNames(names => ({ ...names, [id]: name }));
-  }
 
-  return <Workspace title={detail ? detail.definition.name : `${label}を登録`} intro={isSkill ? "作業の手順と、必要な補助資料をまとめる。" : "エージェントへの指示と、使うスキルを選ぶ。"} workspaceName={initial.workspaceName}>
-    <p><a href={scopeHref("/library", initial.scope)}>スキル・エージェント一覧へ</a></p>
+  return <Workspace title={initial.viewingVersion ? `${content.name}（第${detail!.version!.version}版）` : detail ? detail.definition.name : `${label}を登録`} intro={initial.viewingVersion ? "選択した公開版の内容。実行にはこの版の指示を使います。" : isSkill ? "依頼に合うスキルを自動で使えるように、用途と手順をまとめる。" : "以前に登録したエージェントの保存内容。"} workspaceName={initial.workspaceName}>
+    <p><a href={scopeHref("/library", initial.scope)}>スキル一覧へ</a></p>
+    {initial.viewingVersion && <p><a href={scopeHref(`/library/${detail!.definition.id}`, initial.scope)}>現在の登録内容を開く</a></p>}
+    {!isSkill && <p className="org-private-note">エージェントの登録・編集・選択は終了しました。保存内容と過去の実行は残しています。<a href={scopeHref("/workbench", initial.scope)}>標準エージェントで新しい依頼を開く</a></p>}
     {detail && <p>{definitionVisibilityLabel[detail.definition.visibility]} · {detail.definition.archived_at ? "利用終了" : detail.version ? `第${detail.version.version}版を公開中` : "下書き"}</p>}
-    {!detail?.version && !detail?.definition.archived_at && <p className="org-private-note">下書きを保存したあと、公開すると依頼に使えます。公開範囲が「自分だけ」の場合は、公開後も本人だけが使えます。</p>}
-    {detail?.version && !detail.definition.archived_at && <section className="org-section" aria-labelledby="use-definition-heading">
+    {isSkill && !detail?.version && !detail?.definition.archived_at && <p className="org-private-note">下書きを保存したあと、公開すると依頼に使えます。公開範囲が「自分だけ」の場合は、公開後も本人だけが使えます。</p>}
+    {isSkill && detail?.version && !detail.definition.archived_at && <section className="org-section" aria-labelledby="use-definition-heading">
       <h2 id="use-definition-heading">公開した版を使う</h2>
       <p>{detail.version.content.name}（第{detail.version.version}版）を選んで、依頼画面を開きます。下書きの変更は含まれません。</p>
       <a className="button button-primary" href={scopeHref(`/workbench?${kind}=${detail.version.id}`, initial.scope)}>この版で依頼する</a>
@@ -135,13 +119,13 @@ export function DefinitionEditor({ initial }: { initial: Initial }) {
     {editable ? <form className="org-form library-editor" onSubmit={event => { event.preventDefault(); save(); }}>
       <fieldset disabled={blocked} className="library-fields"><legend>{detail ? "下書きを編集" : "設定内容"}</legend>
         {!detail && <fieldset className="org-options"><legend>公開範囲</legend>
-          <label><input type="radio" name="visibility" checked={visibility === "personal"} onChange={() => { setVisibility("personal"); setSkills(null); }} />自分だけで使う</label>
-          <label><input type="radio" name="visibility" checked={visibility === "workspace"} onChange={() => { setVisibility("workspace"); setSkills(null); }} />ワークスペースで共有する</label>
+          <label><input type="radio" name="visibility" checked={visibility === "personal"} onChange={() => { setVisibility("personal"); }} />自分だけで使う</label>
+          <label><input type="radio" name="visibility" checked={visibility === "workspace"} onChange={() => { setVisibility("workspace"); }} />ワークスペースで共有する</label>
           <p>共有すると、公開した指示や補助資料を全メンバーが閲覧できます。作成者と管理者が編集できます。秘密情報を含めないでください。</p>
         </fieldset>}
         <Input id="definition-name" label={isSkill ? "スキル名" : "エージェント名"} value={content.name} change={name => setContent({ ...content, name })} limit={isSkill ? 64 : 256} required hint={isSkill ? "半角英小文字・数字・ハイフン。例：sales-summary" : "例：月次売上レポート"} />
-        {skill && <Input id="definition-description" label="スキルの説明" value={skill.description} change={description => setContent({ ...skill, description })} limit={1024} hint="どのような依頼に使う手順かを説明してください。" />}
-        <Input id="definition-instructions" label="指示" value={content.instructions} change={instructions => setContent({ ...content, instructions })} limit={16384} multiline required hint="目的、作業の順序、結果のまとめ方を記入してください。" />
+        {skill && <Input id="definition-description" label="スキルの説明" value={skill.description} change={description => setContent({ ...skill, description })} limit={1024} hint="自動で選ぶための説明です。何をしたいときに使うか、対象や使わない条件を具体的に書いてください。例：売上CSVを部門別に集計したいときに使う。" />}
+        <Input id="definition-instructions" label="指示" value={content.instructions} change={instructions => setContent({ ...content, instructions })} limit={16384} multiline required hint="スキルを使うときに読み込む指示です。目的、作業の順序、結果のまとめ方を記入してください。必要な補助資料はパスで示します。" />
         {skill && <section aria-labelledby="supplements-heading"><h2 id="supplements-heading">補助ファイル</h2><p className="field-hint">必要な場合だけ追加してください。UTF-8のテキストを16件まで、1件32 KiB、設定全体で128 KiBまで保存できます。CSV・Excelの作業データは「作業ファイル」から追加します。</p>
           {skill.files.map((file, index) => <fieldset className="library-supplement" key={index}><legend>補助ファイル {index + 1}</legend>
             <Input id={`supplement-path-${index}`} label="ファイル名" value={file.path} limit={255} required hint="references/、scripts/、assets/のいずれかで始まる半角英数字のパス。例：references/columns.md" change={path => setContent({ ...skill, files: skill.files.map((f, i) => i === index ? { ...f, path } : f) })} />
@@ -150,22 +134,14 @@ export function DefinitionEditor({ initial }: { initial: Initial }) {
           </fieldset>)}
           <button className="button button-secondary" type="button" disabled={skill.files.length >= 16} onClick={() => setContent({ ...skill, files: [...skill.files, { path: "", content: "" }] })}>補助ファイルを追加</button><p className="field-hint">スクリプトを登録しても自動では実行されません。</p>
         </section>}
-        {agent && <>
-          <section aria-labelledby="skills-heading"><h2 id="skills-heading">使用するスキル</h2><p>公開済みの版を8個まで選べます。後から新しい版が公開されても、この選択は変わりません。</p>
-            {agent.skill_version_ids.length > 0 ? <ul className="library-selected">{agent.skill_version_ids.map(id => <li key={id}>{skillNames[id] ?? "選択済みスキル"}<button className="text-button" type="button" onClick={() => setContent({ ...agent, skill_version_ids: agent.skill_version_ids.filter(value => value !== id) })}>選択を外す<span className="sr-only">：{skillNames[id] ?? "スキル"}</span></button></li>)}</ul> : <p>まだ選択していません。</p>}
-            <button className="button button-secondary" type="button" disabled={skillBusy || !hydrated} onClick={() => void loadSkills()}>スキルを探す</button>
-            {skillError && <p className="field-error">＊{skillError}</p>}
-            {skills && <div className="library-picker"><ul>{skills.definitions.filter(item => item.latest_version !== null).map(item => <li key={item.id}><span>{item.latest_version!.name}（第{item.latest_version!.version}版） · {definitionVisibilityLabel[item.visibility]}</span><button className="button button-secondary" type="button" disabled={agent.skill_version_ids.length >= 8 || agent.skill_version_ids.includes(item.latest_version!.id)} onClick={() => selectSkill(item.latest_version!.id, `${item.latest_version!.name}（第${item.latest_version!.version}版）`)}>選ぶ<span className="sr-only">：{item.latest_version!.name}</span></button></li>)}</ul>{skills.definitions.every(item => item.latest_version === null) && <p>このページに公開済みのスキルはありません。</p>}{skills.next_cursor && <button className="text-button" type="button" disabled={skillBusy} onClick={() => void loadSkills(skills.next_cursor!)}>次の50件</button>}</div>}
-          </section>
-          <fieldset className="org-options"><legend>使える道具</legend><label><input type="checkbox" checked={agent.allowed_tools.includes("python")} onChange={event => setContent({ ...agent, allowed_tools: event.target.checked ? ["python"] : [] })} />Pythonでファイルを集計・作成する</label><p>実行時の権限と上限の範囲で利用します。指示を記入しても、この許可を広げることはできません。</p></fieldset>
-        </>}
+
       </fieldset>
       <button className="button button-primary" type="submit" disabled={!hydrated || blocked}>{detail ? "下書きを保存" : "下書きを登録"}</button>
       <noscript><p>設定の登録・編集にはJavaScriptが必要です。</p></noscript>
     </form> : <section className="org-section"><h2>保存されている内容</h2><ContentView content={content} skillNames={skillNames} /></section>}
-    {detail && editable && <section className="org-section" aria-labelledby="publish-heading"><h2 id="publish-heading">公開する</h2><p>保存した下書きを新しい版として公開します。{visibility === "workspace" ? "ワークスペースの全メンバーが選んで使えるようになります。" : "自分の作業で選んで使えるようになります。"}すでに始まった作業は、開始時に選んだ版を使い続けます。</p>{dirty && <p>先に下書きを保存してください。</p>}<button className="button button-primary" type="button" disabled={!hydrated || blocked || dirty} onClick={() => void mutate({ intent: "publish", id: detail.definition.id, input: { key: crypto.randomUUID(), expected_revision: detail.definition.revision } })}>保存した下書きを公開</button></section>}
+    {detail && editable && <section className="org-section" aria-labelledby="publish-heading"><h2 id="publish-heading">公開する</h2><p>保存した下書きを新しい版として公開します。{visibility === "workspace" ? "ワークスペースの全メンバーの依頼で自動選択の候補になります。" : "自分の依頼で自動選択の候補になります。"}すでに始まった作業は、開始時に選んだ版を使い続けます。</p>{dirty && <p>先に下書きを保存してください。</p>}<button className="button button-primary" type="button" disabled={!hydrated || blocked || dirty} onClick={() => void mutate({ intent: "publish", id: detail.definition.id, input: { key: crypto.randomUUID(), expected_revision: detail.definition.revision } })}>保存した下書きを公開</button></section>}
     {detail?.version && editable && <details className="org-section"><summary>公開中の第{detail.version.version}版を確認</summary><ContentView content={detail.version.content} skillNames={skillNames} /></details>}
-    {detail && <section className="org-section"><h2>コピーして登録</h2><p>名前や公開範囲を変えたい場合は、新しい設定としてコピーできます。</p><a className="button button-secondary" href={scopeHref(`/library/new?copy=${detail.definition.id}&draft=${initial.draftKey}`, initial.scope)}>コピーして新規登録</a></section>}
+    {isSkill && !initial.viewingVersion && detail && <section className="org-section"><h2>コピーして登録</h2><p>名前や公開範囲を変えたい場合は、新しい設定としてコピーできます。</p><a className="button button-secondary" href={scopeHref(`/library/new?copy=${detail.definition.id}&draft=${initial.draftKey}`, initial.scope)}>コピーして新規登録</a></section>}
     {detail && editable && <section className="org-section"><h2>利用を終了する</h2><p>新しい作業では使えなくなります。過去の版と実行記録は残ります。</p><label className="org-check"><input type="checkbox" checked={confirmArchive} disabled={blocked} onChange={event => setConfirmArchive(event.target.checked)} />この設定の利用を終了する</label><button className="button button-secondary" type="button" disabled={!hydrated || blocked || !confirmArchive} onClick={() => void mutate({ intent: "archive", id: detail.definition.id, input: { key: crypto.randomUUID(), expected_revision: detail.definition.revision } })}>利用終了にする</button></section>}
   </Workspace>;
 }

@@ -62,3 +62,37 @@ func TestPublishedDefinitionsFromPostgresKeepByteHashes(t *testing.T) {
 		}
 	}
 }
+
+func TestWorkbenchClaimAcceptsBoundSkillContextWithoutDefinitionTransfer(t *testing.T) {
+	raw, err := os.ReadFile("testdata/workbench-claim.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wire map[string]json.RawMessage
+	if json.Unmarshal(raw, &wire) != nil {
+		t.Fatal("fixture malformed")
+	}
+	var workbench native.Workbench
+	var request native.WorkbenchRequest
+	if native.DecodeStrict(wire["workbench"], &workbench) != nil || native.DecodeStrict(wire["request"], &request) != nil {
+		t.Fatal("fixture did not decode")
+	}
+	workbench.Descriptor.SkillContext = &native.WorkbenchSkillContext{Version: 1,
+		Catalog:      []native.WorkbenchSkillSummary{{ID: "01925adc-a00f-4000-8000-000000000002", Name: "sales-sum", Description: "集計"}},
+		LoadedSkills: []native.WorkbenchLoadedSkill{}, LoadedFiles: []native.WorkbenchLoadedSkillFile{}, BuiltinSkillIDs: []string{}}
+	descriptor, err := native.CanonicalJSON(workbench.Descriptor)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request.DescriptorSHA256 = native.HashBytes(descriptor)
+	wire["workbench"], _ = json.Marshal(workbench)
+	wire["request"], _ = json.Marshal(request)
+	raw, _ = json.Marshal(wire)
+	claim, err := parseClaim(raw)
+	if err != nil || claim.Workbench.Descriptor.SkillContext == nil || len(claim.Workbench.Descriptor.DefinitionManifest) != 0 {
+		t.Fatal("new catalog claim lost its binding", err)
+	}
+	if _, err = parseClaim([]byte(strings.Replace(string(raw), "sales-sum", "changed", 1))); err == nil {
+		t.Fatal("catalog mutation bypassed descriptor hash")
+	}
+}

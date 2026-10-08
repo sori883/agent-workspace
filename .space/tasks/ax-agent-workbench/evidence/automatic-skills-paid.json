@@ -1,0 +1,137 @@
+{
+  "request_sha256": "872fefd70a952aa89f749bdf3b138cf353f76852b9750843d814817af106f0e3",
+  "starts": 1,
+  "passed": true,
+  "browser_elapsed_ms": 129254,
+  "artifact_sha256": "ad38decba1555cc679529dc2fe74ba13e9f3d4adf7ca23697702acbdd81fcd20",
+  "server": {
+    "state": "succeeded",
+    "model_calls": 4,
+    "tool_calls": 4,
+    "python_calls": 1,
+    "active_ms": "122804",
+    "skill_discovery": true,
+    "segments": [
+      {
+        "run_id": "ax-run-b84f84872b7f7401",
+        "kind": "runtime",
+        "proposal": "read_skills",
+        "estimated_usd": 0.00053525
+      },
+      {
+        "run_id": "ax-run-7fa2ffcc4edd4cc1",
+        "kind": "runtime",
+        "proposal": "read_skill_file",
+        "estimated_usd": 0.000628
+      },
+      {
+        "run_id": "ax-run-21653db6b82f4b09",
+        "kind": "runtime",
+        "proposal": "python",
+        "estimated_usd": 0.0008
+      },
+      {
+        "run_id": "ax-run-e53808f28b79461d",
+        "kind": "python",
+        "proposal": null,
+        "estimated_usd": 0
+      },
+      {
+        "run_id": "ax-run-76e9ecbf07444791",
+        "kind": "runtime",
+        "proposal": "output",
+        "estimated_usd": 0.00068225
+      }
+    ]
+  },
+  "phase": "verify",
+  "failure": null,
+  "root_id": "3836c710-5f9e-418b-a025-789a25a420ca",
+  "skill_version_id": "63ee5bdd-bb27-4482-a671-e3cc0020dd9f",
+  "workspace_id": "f36f61ec-d5c5-438d-99d7-fd2185f72b16",
+  "observed_at": "2026-10-08T03:57:41.435Z",
+  "independent_stop": [
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-b84f84872b7f7401",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    },
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-7fa2ffcc4edd4cc1",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    },
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-21653db6b82f4b09",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    },
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": null,
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-76e9ecbf07444791",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    },
+    {
+      "actor_observed": true,
+      "actor_stopped": true,
+      "ax_suspended": true,
+      "code_cleanup": {
+        "actor": "ax-run-e53808f28b79461d",
+        "actor_uid": "09ffa35c-c74e-408b-b3da-d237507b411f",
+        "worker_uid": "312925c4-01a3-489f-9d0f-b0eaa7c80d9a",
+        "generation": "1552eb34-6969-402f-a353-3748460d0d81",
+        "image": "localhost:5001/ax-code-runner@sha256:8485abc6e29320c34a68e0bc79b3db21c01feecf10cc87b0d1ddbc3b27ef1642",
+        "profile": "host-quota-8m-v1",
+        "cleaned": true
+      },
+      "egress_denied": true,
+      "egress_observed": true,
+      "run_id": "ax-run-e53808f28b79461d",
+      "task_observed": true,
+      "verified_stopped_and_denied": true,
+      "worker_unassigned": true
+    }
+  ],
+  "observed_cost_usd": "0.002645500",
+  "cumulative_cost_usd": "0.010542000",
+  "server_end_state": {
+    "unresolved": 0,
+    "invalid": 0,
+    "execution_slot_empty": true,
+    "admission_enabled": true,
+    "ai_enabled": true,
+    "python_enabled": true
+  },
+  "limitations": [
+    "A single synthetic skill and resource confirms progressive loading, not optimal selection or reliable adherence for every request.",
+    "No new explicit-selection paid call; fixed SDK/SQL and browser tests cover explicit first-turn injection."
+  ]
+}

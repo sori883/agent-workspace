@@ -300,15 +300,24 @@ func checkShape(data []byte, kind reflect.Type) error {
 		return nil
 	}
 	var fields map[string]json.RawMessage
-	if json.Unmarshal(data, &fields) != nil || len(fields) != kind.NumField() {
+	if json.Unmarshal(data, &fields) != nil {
 		return errProtocol
 	}
 	for i := 0; i < kind.NumField(); i++ {
 		field := kind.Field(i)
-		value, exists := fields[field.Tag.Get("json")]
-		if !exists || checkShape(value, field.Type) != nil {
+		tag := strings.Split(field.Tag.Get("json"), ",")
+		value, exists := fields[tag[0]]
+		optional := len(tag) == 2 && tag[1] == "omitempty"
+		if !exists && optional {
+			continue
+		}
+		if !exists || optional && bytes.Equal(bytes.TrimSpace(value), []byte("null")) || checkShape(value, field.Type) != nil {
 			return errProtocol
 		}
+		delete(fields, tag[0])
+	}
+	if len(fields) != 0 {
+		return errProtocol
 	}
 	return nil
 }

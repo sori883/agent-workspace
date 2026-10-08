@@ -204,8 +204,8 @@ async function main() {
       && !["root", "agent", "skill"].some(key => draftURL.searchParams.has(key)), "unexpected_draft_selection");
     observations.draft_key = draft;
     await expect(page.locator(".request-agent > span")).toHaveText(builtinCatalog.defaultAgent.name);
-    await expect(page.locator("#workbench-agent")).toHaveValue("");
-    await expect(page.locator('#request-settings input[type="checkbox"]:checked, #request-files input[type="checkbox"]:checked')).toHaveCount(0);
+    await expect(page.locator("#workbench-agent")).toHaveCount(0);
+    await expect(page.locator('.skill-picks > li, #request-files input[type="checkbox"]:checked')).toHaveCount(0);
     await expect(page.locator(".request-selection")).toHaveCount(0); observations.default_agent_verified = true;
     await page.getByRole("radio", { name: "AIに依頼する", exact: true }).check();
     await page.getByRole("checkbox", { name: "外部送信とモデル利用料金を確認しました", exact: true }).check();
